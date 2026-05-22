@@ -1,0 +1,492 @@
+---
+title: "Synapse-Sys: making relationships executable"
+category: product case study
+status: prototype
+pubDate: 2026-05-21
+tags: [ai, product-design, design-engineering, canvas, agents]
+readTime: 12 min
+summary: "How I built an AI-native spatial thinking tool where connecting two ideas becomes the interface for generating new insight."
+group: "Synapse-Sys"
+order: -1
+---
+
+## Summary
+
+Most AI tools make you leave the thing you are working on. You write, draw, map, or plan in one place, then ask a chat box to comment from the side.
+
+Synapse-Sys started from a different product bet:
+
+> The relationship between two ideas should be executable.
+
+On the canvas, a user places two thoughts, draws a connection, and chooses what that connection means: expand, compare, synthesize, summarize. The result does not return as a chat response. It becomes a new node in the graph, with lineage back to the ideas that produced it.
+
+That one decision shaped the whole product. It affected the object model, the AI prompt architecture, edge routing, pending states, graph transactions, usage budgets, onboarding, and billing.
+
+I built Synapse-Sys as a working design-engineering prototype: a product argument implemented deeply enough that the interaction model, frontend architecture, backend constraints, and AI economics could be tested together.
+
+## Project frame
+
+- Role: product designer and design engineer; solo product owner for concept, interaction model, implementation direction, QA, and hardening
+- Timeline: March 7 to May 8, 2026
+- Stack: Next.js, React, TypeScript, Supabase, Drizzle, Konva, Redis, Polar, PostHog, Sentry
+- Status: solo pre-launch prototype, not a launched customer product
+- Core artifact: an AI-augmented graph canvas where edges trigger operations and generated results become first-class nodes
+- Evidence base: 121 commits on `origin/main`, 10 phase docs, PRD, interaction specs, audit reports, hardening docs, tests, and production-readiness notes
+
+## What a hiring manager should take from this
+
+Synapse-Sys is a solo prototype, not a launched customer product. I am showing it because it demonstrates product design work that is hard to fake in static portfolio screens:
+
+- I defined the interaction model: relationships as executable commands, not chat as a sidebar.
+- I translated that model into product mechanics: edge operations, generated nodes, lineage, failure states, budget limits, and graph transactions.
+- I designed for legibility in a dense spatial interface: routing, labels, ghost suggestions, culling, zoom, selection, and pending states.
+- I used LLMs as implementation partners, but kept ownership of product judgment, system constraints, QA, hardening, and integration.
+
+The result is a working AI-native canvas that makes a product argument, not just a visual concept.
+
+## The product bet
+
+The first version of the product could have been simple: a canvas, some cards, a prompt box, and a button that says “Ask AI.”
+
+I did not want that product.
+
+The interesting behavior was not asking AI about one note. The interesting behavior was asking AI about a relationship already expressed visually.
+
+So the edge became the command surface.
+
+That sounds small, but it changes everything. If the edge is the interface, then the product needs to understand nodes, relationships, operation types, generated results, lineage, labels, routing, failure states, and cost. A line is no longer a decoration. It is a promise that something can happen.
+
+That was the design challenge:
+
+> How do you make an AI canvas where the user feels like they are thinking spatially, not sending prompts into a side panel?
+
+## Who this was for
+
+The target user was someone doing early-stage synthesis work: product strategists, researchers, founders, designers, or technical leads trying to turn scattered ideas into a structured point of view.
+
+Their workflow usually jumps between tools:
+
+- Notes for raw thoughts.
+- Whiteboards for relationships.
+- Chat tools for generation.
+- Docs for synthesis.
+- Spreadsheets or task tools for follow-through.
+
+Synapse-Sys explored a narrower question: what if the synthesis step happened directly on the relationship between ideas?
+
+That meant the product had to support active thinking while the structure was still changing. It was not designed for polished presentation mapping. It was designed for the messy middle: the moment when a person is still figuring out what the ideas mean together.
+
+## Alternatives I considered
+
+The edge-as-command model was not the only possible interaction.
+
+- **AI sidebar**: familiar, easy to build, but it pulls the user out of the canvas and turns spatial thinking back into chat.
+- **Node action menu**: good for single-node operations, but weak for operations that depend on the relationship between two ideas.
+- **Global prompt box**: flexible, but it makes the user explain context that the graph already contains.
+- **Automatic suggestions everywhere**: impressive at first, but it risks filling the canvas with AI output the user did not ask for.
+- **Executable edges**: harder to build, but it lets the user express intent spatially and keeps the AI response inside the graph.
+
+I chose executable edges because they made the product's interaction model match its thesis: the relationship is where the thinking happens.
+
+## The loop
+
+The core loop is intentionally short.
+
+```synapse-loop
+```
+
+A user creates or imports ideas as nodes. They connect two nodes. The connection opens a small operation picker. The user chooses `expand`, `compare`, `synthesize`, or `summarize`. Synapse-Sys creates a result node in the canvas, then rewires the graph so the generated idea sits between the original concepts.
+
+That is the product in one move.
+
+The AI output is not a modal, a paragraph under the fold, or a message in a transcript. It becomes material on the canvas. The user can move it, edit it, connect it, fork from it, or use it as source material for another operation.
+
+## What made it hard
+
+The interaction is simple from the user's side, but difficult under the surface.
+
+If an AI operation changes graph topology, a failure can corrupt the product state. The early implementation made the interface feel fast by creating pending nodes and replacement edges before the AI result was actually ready. That looked good on the happy path.
+
+It was wrong.
+
+Provider timeout, budget failure, network failure, or a failed edge insert could leave the graph in a half-mutated state: original edge gone, skeleton node stuck, replacement edges pointing at the wrong thing.
+
+That was the moment the product stopped being a demo. The beautiful interaction needed a stricter contract.
+
+I changed the model:
+
+- Show pending feedback locally so the product still feels instant.
+- Do not mutate the persisted graph while the AI call is running.
+- If AI fails, remove the local pending node and restore the original edge.
+- If AI succeeds, commit the graph transformation in one server-side transaction.
+
+The transaction inserts the result node, deletes the original edge, creates `source -> result`, and creates `result -> target`. The user still sees immediate feedback, but the database only changes when the operation can complete cleanly.
+
+```synapse-edge-operation
+```
+
+**Proof of product judgment**
+
+The initial interaction made the canvas feel responsive, but it allowed persisted graph state to diverge from what the user saw. I changed the design contract instead of only fixing the bug: optimistic feedback stayed local, while durable graph mutation moved into a single server-side transaction.
+
+That preserved the user experience without pretending the operation had succeeded before the system could guarantee it.
+
+The product proof is the middle state. It looks real enough to keep the product moving, but it is not durable until the AI result can be committed safely.
+
+What a reader should see here:
+
+- The canvas can show immediate feedback without pretending the operation already succeeded.
+- The failed state is designed, not treated as an edge case.
+- The final state changes the graph topology in a way the user can understand visually.
+
+That is the kind of design engineering I care about: keep the magic, remove the lie.
+
+## The canvas needed DOM and geometry
+
+A pure canvas implementation would have made edge rendering easier and node editing worse. A pure DOM implementation would have made node cards easier and graph geometry worse.
+
+I chose a hybrid architecture:
+
+- Konva renders the grid, edges, hit regions, connection previews, and selection geometry.
+- HTML renders the rich node cards above the canvas using the same viewport transform.
+
+That split let nodes behave like real interface objects while edges behaved like graph geometry. A node can have text selection, edit states, resize handles, tooltips, rich content, buttons, context menus, and accessibility hooks. An edge can have orthogonal routing, dash animation, bridge arcs, z-ordering, labels, invisible hit regions, and zoom-compensated strokes.
+
+The tradeoff is that two worlds have to stay synchronized. Pan, zoom, drag, culling, selection, and resize all need to agree about the same coordinate system.
+
+The rendering model is a layer cake, not one canvas doing everything:
+
+```synapse-rendering
+```
+
+That split let the product keep tool-like node behavior without giving up graph-specific geometry.
+
+What a reader should see here:
+
+- Nodes behave like editable interface objects.
+- Edges behave like graph geometry.
+- Pan, zoom, drag, selection, and resize all stay visually aligned.
+
+This decision made the product feel like a tool instead of a drawing.
+
+## The edge system became a product surface
+
+Once the edge became the command surface, edge quality became product quality.
+
+I could not use simple straight lines. Dense idea maps need clear paths, readable labels, and crossings that do not turn the canvas into spaghetti.
+
+The edge system grew into its own visual language:
+
+- Orthogonal paths instead of arbitrary diagonals.
+- Port selection based on source and target geometry.
+- Minimum elbow stubs so arrows never sit flush against nodes.
+- Obstacle avoidance so edges avoid clipping through intermediate cards.
+- Corridor deconfliction for shared horizontal channels.
+- Bridge arcs for perpendicular crossings.
+- Operation-specific dash patterns.
+- Label placement that avoids bridges and other labels.
+- Z-order rules for selected, hovered, operation-typed, and plain edges.
+
+One route looked appealing and still stayed out of the product: a PCB-style staircase fan-out for shared ports. It was clever, but visually cluttered.
+
+That is a design decision inside engineering. Technical sophistication only matters if it improves the user's read of the canvas.
+
+**Design decision**
+
+I rejected the most technically impressive routing option because it made the canvas harder to read. The chosen system optimized for comprehension: predictable elbows, readable labels, bridge arcs at crossings, and selected-edge priority.
+
+The edge pipeline became a readability system:
+
+```synapse-edge-routing
+```
+
+What a reader should see here:
+
+- The rejected route packs many edges into one visual bundle.
+- The chosen route separates channels so each relationship is easier to follow.
+- The product values scanning and selection over algorithmic cleverness.
+
+## Suggestions had to stay ghosts
+
+AI suggestions are useful until they become clutter.
+
+If every related concept becomes a permanent node, the graph stops feeling authored by the user. It becomes AI debris.
+
+So suggestions became ghost nodes.
+
+A ghost node is visible but not committed. It appears near the selected idea, connected by a faint suggestion line. The user can accept it, dismiss it, or ignore it. If they accept it, the ghost materializes into a real node and the graph updates. If they do nothing, the suggestion can disappear without polluting the canvas.
+
+This was a product-design decision with real state complexity behind it:
+
+- Cache suggestions by source node.
+- Track ghost anchors.
+- Place ghosts around the selected node.
+- Displace nearby nodes without permanently moving them.
+- Materialize optimistically.
+- Pan the viewport enough to reveal the new branch.
+
+The important principle was simple:
+
+> AI should widen the user's peripheral vision, not take over the map.
+
+Ghost nodes sit between suggestion and commitment:
+
+```synapse-ghosts
+```
+
+The state model protects authorship. The AI can point at a direction, but only the user decides what becomes part of the map.
+
+What a reader should see here:
+
+- Suggested content is visible but not committed.
+- Accepting a suggestion turns it into normal canvas material.
+- Dismissing or ignoring it leaves the map clean.
+
+## The product had to survive outside the canvas
+
+The canvas was the heart of the product, but a tool is not shippable because the core interaction works once.
+
+Users need accounts. They need recovery links that work. They need budgets. They need share links. They need exports. They need billing. They need settings. They need error states. The product needs security boundaries and observability.
+
+That layer arrived in waves:
+
+- Supabase SSR auth and protected routes.
+- Drizzle schema for canvases, nodes, edges, groups, usage, profiles, plans, subscriptions, draft topics, and milestones.
+- Server actions with authorization helpers.
+- Share links with expiry and fork behavior.
+- JSON, Markdown, Obsidian, FigJam, and GDPR exports.
+- AI usage events and monthly operation budgets.
+- Redis-backed rate limits.
+- PostHog events and Sentry instrumentation.
+- Settings, pricing, profile, onboarding, and public share pages.
+
+This is where the work became more than design taste. Every SaaS wrapper decision forced the product to answer a practical question:
+
+- Who owns this canvas?
+- Who can mutate this node?
+- What happens when the user runs out of AI operations?
+- Can the user recover their account?
+- What happens if a shared link expires?
+- Can I switch billing providers without rewriting the product?
+- Can I inspect failures after launch?
+
+The SaaS layer was the trust layer around the canvas:
+
+```synapse-trust
+```
+
+What a reader should see here:
+
+- The product answers ownership, sharing, recovery, export, and usage questions.
+- AI work is tied to budget and plan state, not treated as free background magic.
+- The canvas is presented as part of a shippable product surface, not an isolated prototype.
+
+## System shape
+
+The architecture followed the product loop. The canvas owned the interaction, server actions owned mutation, AI providers owned generation, and Redis/usage tables constrained cost.
+
+```synapse-system
+```
+
+The important boundary is not the specific stack. It is where trust lives: the client can show pending state, but durable graph mutation, budget enforcement, auth checks, and provider calls stay server-side.
+
+## Billing became a product dependency
+
+The billing story is one of the cleanest examples of architecture paying for itself.
+
+The product started with Lemon Squeezy. Merchant rejection forced a move to Stripe. Stripe solved the immediate problem but moved tax handling back onto the product. The next move was Polar as a Merchant of Record.
+
+That could have been a mess. Instead, billing had already been put behind a provider interface.
+
+The active provider became a product configuration choice instead of a rewrite. The subscription model stayed provider-agnostic, and product actions called a stable billing contract instead of a concrete payment SDK.
+
+The tradeoff was accepting a little abstraction earlier than a tiny MVP might normally need. In this case, the abstraction paid off within the same week because the business constraint changed twice.
+
+The billing abstraction was deliberately boring:
+
+```synapse-billing
+```
+
+When the provider changed, product code did not need to learn a new payment worldview. It kept calling the same interface.
+
+What a reader should see here:
+
+- The product survived a business constraint change.
+- The billing decision protected pricing, plans, and AI budgets from provider churn.
+- The point is not the payment vendor; it is the boundary around the product.
+
+## The AI layer needed economics, not just prompts
+
+An AI product has four pressures at once: quality, speed, cost, and safety.
+
+Synapse-Sys could not treat the model call as a black box. Different operations have different stakes. A quick ghost suggestion does not need the same quality bar as a synthesis result. A URL extraction needs SSRF protection. A streaming operation needs cancellation, heartbeat, and server-derived prompts. Every operation needs budget enforcement.
+
+The AI layer became a routed subsystem rather than a direct model call:
+
+```synapse-ai-layer
+```
+
+Different operations could now make different cost and quality choices. A ghost suggestion, a URL extraction, and a synthesis result do not need the same route.
+
+One hard decision: rate limits fail closed on Redis errors.
+
+That can block a legitimate user during infrastructure failure. But failing open in an AI product can mean uncontrolled spend and abuse. I chose budget and abuse protection over optimistic availability for that path.
+
+The prompt boundary also became explicit:
+
+```synapse-prompt-boundary
+```
+
+What a reader should see here:
+
+- Different AI actions have different cost and quality profiles.
+- User-authored text is treated as content, not trusted instruction.
+- The AI system protects spend, safety, and output shape before anything becomes canvas material.
+
+## The terminal identity had to learn restraint
+
+The first visual identity was loud by design: black background, phosphor green, VT323, pixel shadows, scanline energy, terminal boot behavior.
+
+That gave Synapse-Sys a memorable shape. It also created a real risk: the interface could become more interested in its own atmosphere than in the user's ideas.
+
+Audits called this out. The canvas needed stronger hierarchy. Node content needed to be easier to read. The green needed secondary tones. Glow needed restraint. Landing CTAs needed contrast. The product had to keep the terminal identity without making every surface scream at the same volume.
+
+So the system changed:
+
+- Secondary green was introduced.
+- Glow intensity was reduced.
+- Tooltips were added.
+- Node title wrapping and truncation were revisited.
+- Side panel word-wrap was fixed.
+- Theme first-paint issues were corrected.
+- Mobile and touch foundations were added.
+- Content-first node passes improved scanability.
+
+This is a taste tradeoff. A strong visual identity is valuable, but only if it serves the work.
+
+The taste system had to balance identity against legibility:
+
+```synapse-taste
+```
+
+The design lesson was not to abandon taste. It was to make taste subordinate to the user's work.
+
+What a reader should see here:
+
+- The visual identity is still recognizable.
+- The quieter version makes node content easier to read.
+- Taste is treated as a product constraint, not decoration.
+
+## Performance had to preserve place
+
+Canvas performance is not only about frame rate. It is about preserving the user's sense of place.
+
+If panning stutters, if zoom jumps away from the cursor, if selected nodes disappear during culling, or if pinch gestures fight the browser, the user stops trusting the canvas.
+
+So performance work focused on interaction fidelity:
+
+- Cursor-stable wheel zoom.
+- Trackpad pan and zoom behavior closer to Figma expectations.
+- Viewport culling with world-space bounds.
+- Quantized viewport keys to reduce recomputation.
+- Larger touch buckets.
+- Render-set freezing during active gestures.
+- Forced rendering for selected, focused, and side-panel nodes.
+- Pinch and drag throttling.
+- Session-only positions during gestures.
+
+The landing hero sphere had its own version of the same problem. It needed to feel alive without becoming expensive. The implementation moved through crash fixes, performance rewrites, lookup-table colors, scratch buckets, frame limiting, and reduced-motion behavior.
+
+The performance work was about preserving place:
+
+```synapse-performance
+```
+
+What a reader should see here:
+
+- The object under the cursor stays under the cursor during zoom.
+- Selection does not disappear during active gestures.
+- Performance work is framed as preserving trust, not chasing abstract speed.
+
+## How I used LLMs without outsourcing judgment
+
+Synapse-Sys was built with heavy LLM assistance. The important distinction is that the LLMs were execution partners, not product owners.
+
+I owned the product thesis, interaction model, architecture constraints, review process, QA criteria, and hardening priorities. The models helped generate and revise code inside that system.
+
+The important work was creating an environment where LLMs could build inside constraints:
+
+- Architecture rules defined the stack, boundaries, and product constraints.
+- Phase plans broke implementation into scoped steps.
+- Product and interaction specs defined behavior before code.
+- Design audits turned weak points into implementation waves.
+- Server-action rules prevented casual client-side data mutation.
+- AI guardrails kept model calls server-side and structured.
+- Test coverage protected routing, culling, budget behavior, import validation, share behavior, and edge operation behavior.
+
+The operating model was simple: use LLMs to move quickly through build work, then stay with the product through the parts that require ownership after the demo: auth gates, budget enforcement, mobile gestures, analytics expansion, edge-operation correctness, dependency advisories, and access control.
+
+The skill I want to show is not "I prompted code into existence." It is that I can turn product judgment into explicit constraints, use AI to accelerate implementation, and still own the product when the system gets messy.
+
+## Evidence snapshot
+
+| Question | What the project can prove today |
+| --- | --- |
+| Is there a working product artifact? | Yes: canvas, graph operations, auth, billing, sharing, exports, profile, settings, playground, and public pages were built as working product surfaces. |
+| Is the core interaction technically real? | Yes: edge operations create graph changes, result nodes, rollback behavior, and transactional commits. |
+| Was the design driven by explicit product rules? | Yes: the interaction model, edge decisions, AI guardrails, and hardening passes shaped what the product allowed users to do. |
+| Did the product reach launched-customer validation? | No. This is a solo pre-launch prototype, so the case should be read as zero-to-one product exploration, not shipped business impact. |
+| Are all production risks closed? | No. RLS deployment drift and real infra integration coverage are still called out as gaps. |
+
+## What broke
+
+The case study would be dishonest if it only showed the clean path.
+
+The most useful failures were the ones that exposed weak product contracts:
+
+- Edge operations could fail and leave bad graph state.
+- Operation picker state raced.
+- AI budget enforcement missed some operation paths.
+- Password recovery had real-world email-scanner and hash-link issues.
+- The terminal aesthetic sometimes reduced hierarchy instead of strengthening identity.
+
+Each failure forced a clearer product rule, not just a local fix.
+
+## What this does not prove yet
+
+This case is strongest as a design-engineering and zero-to-one product exploration case. It is weaker as a Staff Product Designer shipped-impact case because it does not yet include:
+
+- Real customer adoption or retention.
+- Usability findings from external users.
+- Activation funnel metrics.
+- Generated-node reuse or ghost-node acceptance data.
+- A public demo video or annotated screenshots.
+- Real infrastructure integration proof for every critical backend path.
+
+Those are the next evidence gaps I would close before positioning Synapse-Sys as a launched product case study.
+
+## What I would tighten next
+
+If I kept pushing Synapse-Sys, I would focus on fewer things, not more features.
+
+- Make the activation loop measurable: first node, first edge, first AI operation, first branch, first share.
+- Turn public share pages into a real acquisition loop.
+- Move onboarding state server-side so it survives devices.
+- Close the RLS migration drift so database policy is not dependent on a side script.
+- Add real integration tests around DB/RLS/webhook paths instead of relying mostly on mocks.
+- Keep reducing visual noise so the terminal identity supports content instead of competing with it.
+- Build a small template/gallery surface before adding more AI operations.
+
+The product does not need more magic before it needs clearer measurement and trust.
+
+## What this shows
+
+Synapse-Sys is not interesting because it has a canvas, or because it uses AI, or because it has a lot of commits.
+
+It is interesting because one product decision created a chain of design and engineering consequences:
+
+> Make relationships executable.
+
+That decision forced a real product system: spatial interaction, graph topology, AI operation design, edge routing, speculative suggestions, transaction safety, usage economics, billing, security, performance, and launch surfaces.
+
+This is the kind of design-engineering work I want to keep doing: defining the product logic, making the interaction model concrete, using code to expose the hard parts early, and staying with the system until the original idea can survive real constraints.

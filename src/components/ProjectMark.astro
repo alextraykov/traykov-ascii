@@ -1,0 +1,71 @@
+---
+import PaveTurntable from "./PaveTurntable.astro";
+import SvgLogoTurntable from "./SvgLogoTurntable.astro";
+
+type Props = {
+  group: string;
+  title?: string;
+};
+
+const { group, title = "" } = Astro.props;
+const normalized = `${group} ${title}`.toLowerCase();
+const mark = normalized.includes("pave")
+  ? "pave"
+  : normalized.includes("pointlearn")
+    ? "pointlearn"
+  : normalized.includes("quickbase") || normalized.includes("synapse")
+    ? "synapse"
+    : "personal";
+---
+
+<div class={`project-mark project-mark--${mark}`} aria-hidden="true">
+  {
+    mark === "pave" ? (
+      <PaveTurntable
+        class="project-turntable is-pave"
+        asciiClass="project-turntable__ascii"
+        mode="card"
+        renderSize={0.82}
+        ariaLabel=""
+      />
+    ) : mark === "synapse" ? (
+      <div class="project-video-turntable is-synapse">
+        <video
+          class="project-video-turntable__media"
+          src="/case-studies/media/synapse-sys-card-turntable.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+        ></video>
+      </div>
+    ) : mark === "pointlearn" ? (
+      <SvgLogoTurntable
+        class="project-turntable is-pointlearn"
+        asciiClass="project-turntable__ascii"
+        name="pointlearn"
+        svgSrc="/pointlearn-fox.svg"
+        renderSize={1.08}
+        depth={44}
+        bevel={2.8}
+        density={5}
+        glyphDetail={8}
+        ariaLabel=""
+      />
+    ) : (
+      <SvgLogoTurntable
+        class="project-turntable is-personal"
+        asciiClass="project-turntable__ascii"
+        name="personal"
+        svgSrc="/sasi2.svg"
+        renderSize={1.26}
+        depth={54}
+        bevel={3.2}
+        density={5}
+        glyphDetail={8}
+        ariaLabel=""
+      />
+    )
+  }
+</div>

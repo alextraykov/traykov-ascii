@@ -1,0 +1,81 @@
+---
+title: {Feature Name}
+category: {page | composite}
+status: {shipped | prototype | exploration}
+route: {#hash-route or n/a}
+related_docs:
+  - docs/handoffs/{...}.md
+  - docs/previews/{...}.md
+  - docs/prd-pm-pd/{...}.md
+  - docs/diagrams/{...}.md
+---
+
+## TL;DR
+
+Two sentences max: what this feature is, why it matters, who it serves.
+
+## Problem
+
+Who hits this surface? What are they trying to accomplish? What was broken, missing, or unclear before this design existed? Ground this in real user behavior or documented research when possible — cite `docs/prd-pm-pd/` or `docs/previews/` if they exist.
+
+## Constraints
+
+The rules every option had to satisfy:
+
+- **Design tokens only** — no hardcoded values. See `src/tokens/tokens.css`.
+- **Dark mode parity** — `.dark` class on `<html>` auto-updates all tokens.
+- **Motion tokens** — durations and easings from `--motion-duration-*` / `--motion-ease-*`. Every enter has an exit. Respect `prefers-reduced-motion`.
+- **No Tailwind** — pure CSS with BEM naming.
+- **React 19 + Framer Motion + pure CSS** — the stack is fixed.
+- **Content guidelines** — see `docs/content-guidelines/principles.md`.
+
+Feature-specific constraints go here too.
+
+## Options Considered
+
+Enumerate the alternatives that were on the table — not just the winner.
+
+- **A — {name}**: description. Why it was appealing. Why it was rejected.
+- **B — {name}**: description. Why it was appealing. Why it was rejected.
+- **C — {name}** (chosen): description. Why it won.
+
+Use `mermaid` fences for any flow/state/sequence diagrams. The site renderer converts these into RFC-style ASCII diagrams with monoline boxes and dot-matrix shadows automatically, so keep node labels short and use `<br/>` only where a deliberate line break helps scanning.
+
+## Decision
+
+The chosen approach, in prose. What it looks like, how it behaves, and what it refuses to do. Be specific about the shape — not "we designed a panel" but "we chose a right-docked 320px inspector with three collapsible sections that persist across page nav".
+
+## Screenshots
+
+<Screenshot src="../screenshots/{category}/{feature}-light.png" caption="Light mode — default state" />
+<Screenshot src="../screenshots/{category}/{feature}-dark.png" caption="Dark mode — default state" />
+
+For composites, include state shots: hover, focus, open, error, empty, loading — whatever's non-obvious.
+
+## Interaction & Motion Notes
+
+- Enter/exit pairs and their timing tokens.
+- Interruptible transitions (rapid toggling behavior).
+- `prefers-reduced-motion` fallback.
+- Focus management on mount/unmount.
+- Keyboard affordances.
+
+## Implementation Notes
+
+- **Entry file**: `src/.../Feature.tsx:NN`
+- **Styles**: `src/.../Feature.css`
+- **State**: local React state / Zustand slice / context / URL hash
+- **Notable hooks or patterns**: e.g. `useHashNavigation`, `useDarkMode`, `AnimatePresence` composition.
+- **Related composites**: what this reuses, what reuses it.
+
+Reference file paths with line numbers so future contributors can jump straight in.
+
+## Tradeoffs
+
+What we gave up to get what we got. Performance vs. expressiveness, simplicity vs. flexibility, surface area vs. legibility.
+
+## Open Questions / Future Work
+
+- Known sharp edges.
+- Things punted intentionally.
+- Ideas we'd explore next.

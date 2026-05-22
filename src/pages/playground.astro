@@ -1,0 +1,384 @@
+---
+import PaveTurntable from "../components/PaveTurntable.astro";
+import SvgLogoTurntable from "../components/SvgLogoTurntable.astro";
+import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
+import ObjTurntable from "../components/ObjTurntable.astro";
+import "../styles/global.css";
+
+const playgroundDiagrams = [
+  {
+    id: "obj-turntable",
+    title: "GLB to ASCII",
+    aria: "GLB playground rendering pipeline",
+    marker: "playground-obj-arrow",
+    steps: [
+      ["01 / Load GLB", "/models/me.glb"],
+      ["02 / Normalize mesh", "bounds + scale + material"],
+      ["03 / Motion shader", "tilt + shake displace vertices"],
+      ["04 / ASCII output", "WebGL sample to glyph grid"]
+    ]
+  },
+  {
+    id: "pave-turntable",
+    title: "PAVE to ASCII",
+    aria: "PAVE playground rendering pipeline",
+    marker: "playground-pave-arrow",
+    steps: [
+      ["01 / Load SVG", "/pave-symbol-black.svg"],
+      ["02 / Extrude shape", "SVG paths to Three.js mesh"],
+      ["03 / Tune turntable", "size + depth + lighting"],
+      ["04 / ASCII output", "hidden WebGL to glyph grid"]
+    ]
+  },
+  {
+    id: "sasi-turntable",
+    title: "Logo to ASCII",
+    aria: "Personal logo playground rendering pipeline",
+    marker: "playground-sasi-arrow",
+    steps: [
+      ["01 / Load mark", "/sasi2.svg"],
+      ["02 / Build geometry", "SVG curves to extruded mesh"],
+      ["03 / Reveal on motion", "turntable + hover sampling"],
+      ["04 / ASCII output", "static fallback to live glyphs"]
+    ]
+  },
+  {
+    id: "synapse-turntable",
+    title: "SynapseSys to ASCII",
+    aria: "SynapseSys playground rendering pipeline",
+    marker: "playground-synapse-arrow",
+    steps: [
+      ["01 / Load system mark", "/synapse-sys-logo.svg"],
+      ["02 / Segment geometry", "symbol surfaces + depth"],
+      ["03 / Light interface", "rim + fill + contrast"],
+      ["04 / ASCII output", "sampled glyph field"]
+    ]
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ASCII Shader Playground - Alexander Traykov</title>
+    <meta
+      name="description"
+      content="Interactive Cyrillic ASCII shader playground for tuning flame, ripple, plume, and smoke forms."
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="playground-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/playground">Playground</a>
+      </nav>
+    </header>
+
+    <main class="playground-shell">
+      <section class="playground-stage" aria-label="ASCII shader playground">
+        <div class="playground-ascii" data-ascii-playground>
+          <canvas aria-hidden="true"></canvas>
+          <pre aria-hidden="true" lang="bg"></pre>
+          <ObjTurntable
+            class="playground-turntable playground-turntable--obj"
+            name="me"
+            objSrc="/models/me.glb"
+            playgroundKey="obj"
+            renderSize={0.86}
+            ariaLabel=""
+          />
+          <PaveTurntable
+            class="playground-turntable playground-turntable--pave"
+            playgroundKey="pave"
+            renderSize={0.72}
+            ariaLabel=""
+          />
+          <SvgLogoTurntable
+            class="playground-turntable playground-turntable--sasi"
+            name="sasi"
+            svgSrc="/sasi2.svg"
+            playgroundKey="sasi"
+            renderSize={0.7}
+            ariaLabel=""
+          />
+          <SynapseSysTurntable
+            class="playground-turntable playground-turntable--synapse"
+            playgroundKey="synapse"
+            renderSize={0.74}
+            ariaLabel=""
+          />
+        </div>
+      </section>
+
+      <aside class="playground-controls" aria-label="Shader controls">
+        <div class="playground-flip-tabs" role="tablist" aria-label="Playground panel">
+          <button type="button" class="is-active" role="tab" aria-selected="true" data-playground-tab="controls">
+            Controls
+          </button>
+          <button type="button" role="tab" aria-selected="false" data-playground-tab="how">
+            How
+          </button>
+        </div>
+
+        <div class="control-group">
+          <label for="example">Preview</label>
+          <select id="example" data-example>
+            <option value="obj-turntable" selected>Me GLB</option>
+            <option value="pave-turntable">PAVE</option>
+            <option value="sasi-turntable">Personal logo</option>
+            <option value="synapse-turntable">SynapseSys</option>
+          </select>
+        </div>
+
+        <div class="playground-settings">
+          <span>Settings JSON</span>
+          <textarea data-playground-settings readonly spellcheck="false"></textarea>
+          <button type="button" data-playground-copy-settings>Copy settings JSON</button>
+        </div>
+
+        <div class="control-grid">
+          <label>
+            <span>Speed <output data-output="speed">0.12</output></span>
+            <input type="range" min="0" max="0.5" step="0.01" value="0.12" data-control="speed" />
+          </label>
+          <label>
+            <span>Scale <output data-output="scale">2.20</output></span>
+            <input type="range" min="0.7" max="6" step="0.05" value="2.2" data-control="scale" />
+          </label>
+          <label>
+            <span>Width <output data-output="width">0.52</output></span>
+            <input type="range" min="0.12" max="1.2" step="0.01" value="0.52" data-control="width" />
+          </label>
+          <label>
+            <span>Height <output data-output="height">0.92</output></span>
+            <input type="range" min="0.25" max="1.4" step="0.01" value="0.92" data-control="height" />
+          </label>
+          <label>
+            <span>Sway <output data-output="sway">0.10</output></span>
+            <input type="range" min="0" max="0.36" step="0.01" value="0.1" data-control="sway" />
+          </label>
+          <label>
+            <span>Detail <output data-output="detail">0.42</output></span>
+            <input type="range" min="0" max="1" step="0.01" value="0.42" data-control="detail" />
+          </label>
+          <label>
+            <span>Smoke <output data-output="smoke">0.10</output></span>
+            <input type="range" min="0" max="0.6" step="0.01" value="0.1" data-control="smoke" />
+          </label>
+          <label>
+            <span>Flicker <output data-output="flicker">0.08</output></span>
+            <input type="range" min="0" max="0.28" step="0.01" value="0.08" data-control="flicker" />
+          </label>
+          <label>
+            <span>Brightness <output data-output="brightness">0.04</output></span>
+            <input type="range" min="-0.1" max="0.28" step="0.01" value="0.04" data-control="brightness" />
+          </label>
+          <label>
+            <span>Contrast <output data-output="contrast">1.15</output></span>
+            <input type="range" min="0.55" max="2.2" step="0.01" value="1.15" data-control="contrast" />
+          </label>
+          <label>
+            <span>Density <output data-output="density">10</output></span>
+            <input type="range" min="5" max="18" step="1" value="10" data-control="density" />
+          </label>
+          <label>
+            <span>Glow <output data-output="glow">0.22</output></span>
+            <input type="range" min="0" max="0.8" step="0.01" value="0.22" data-control="glow" />
+          </label>
+          <label>
+            <span>Colour <output data-output="color">0.08</output></span>
+            <input type="range" min="0" max="1" step="0.01" value="0.08" data-control="color" />
+          </label>
+          <label>
+            <span>Mouse heat <output data-output="mouse">0.18</output></span>
+            <input type="range" min="0" max="0.9" step="0.01" value="0.18" data-control="mouse" />
+          </label>
+          <label>
+            <span>Click heat <output data-output="click">0.45</output></span>
+            <input type="range" min="0" max="1" step="0.01" value="0.45" data-control="click" />
+          </label>
+          <label class="control-toggle">
+            <span>Reveal</span>
+            <input type="checkbox" checked data-control="enableReveal" />
+          </label>
+          <label>
+            <span>Reveal time <output data-output="revealDuration">1.28</output></span>
+            <input type="range" min="0.12" max="3" step="0.01" value="1.28" data-control="revealDuration" />
+          </label>
+          <label>
+            <span>Reveal scatter <output data-output="revealScatter">0.55</output></span>
+            <input type="range" min="0" max="1" step="0.01" value="0.55" data-control="revealScatter" />
+          </label>
+          <label class="control-toggle">
+            <span>Disperse</span>
+            <input type="checkbox" checked data-control="enableDisperse" />
+          </label>
+          <label>
+            <span>Disperse heat <output data-output="disperse">1.00</output></span>
+            <input type="range" min="0" max="2.4" step="0.01" value="1" data-control="disperse" />
+          </label>
+          <label>
+            <span>Magnetisation <output data-output="magnetism">1.00</output></span>
+            <input type="range" min="0" max="2.4" step="0.01" value="1" data-control="magnetism" />
+          </label>
+          <label>
+            <span>Disperse radius <output data-output="disperseRadius">1.00</output></span>
+            <input type="range" min="0.2" max="2.4" step="0.01" value="1" data-control="disperseRadius" />
+          </label>
+          <label>
+            <span>Trail decay <output data-output="trailDecay">1.00</output></span>
+            <input type="range" min="0.2" max="3" step="0.01" value="1" data-control="trailDecay" />
+          </label>
+          <label class="control-toggle">
+            <span>Explosion</span>
+            <input type="checkbox" checked data-control="enableExplosion" />
+          </label>
+          <label>
+            <span>Explosion force <output data-output="explosion">1.00</output></span>
+            <input type="range" min="0" max="2.4" step="0.01" value="1" data-control="explosion" />
+          </label>
+          <label>
+            <span>Explosion radius <output data-output="explosionRadius">1.00</output></span>
+            <input type="range" min="0.2" max="2.4" step="0.01" value="1" data-control="explosionRadius" />
+          </label>
+          <label>
+            <span>Ripple <output data-output="ripple">1.00</output></span>
+            <input type="range" min="0" max="2.4" step="0.01" value="1" data-control="ripple" />
+          </label>
+          <label class="control-toggle">
+            <span>Colour click</span>
+            <input type="checkbox" data-control="enableColorClick" />
+          </label>
+          <label>
+            <span>Click colour <output data-output="colorClick">1.00</output></span>
+            <input type="range" min="0" max="2" step="0.01" value="1" data-control="colorClick" />
+          </label>
+          <label class="control-toggle">
+            <span>Colour disperse</span>
+            <input type="checkbox" data-control="enableColorDisperse" />
+          </label>
+          <label>
+            <span>Disperse colour <output data-output="colorDisperse">1.00</output></span>
+            <input type="range" min="0" max="2" step="0.01" value="1" data-control="colorDisperse" />
+          </label>
+        </div>
+
+        <div class="playground-how-panel" data-playground-how hidden>
+          {playgroundDiagrams.map((diagram) => (
+            <div
+              class="turntable-process playground-process"
+              data-playground-diagram={diagram.id}
+              aria-label={diagram.aria}
+              hidden={diagram.id !== "obj-turntable"}
+            >
+              <p>{diagram.title}</p>
+              <svg viewBox="0 0 360 520" role="img" aria-label={diagram.aria}>
+                <defs>
+                  <marker id={diagram.marker} markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                {diagram.steps.map((step, index) => (
+                  <>
+                    {index > 0 && <path class="arrow" d={`M180 ${106 + (index - 1) * 128} V${142 + (index - 1) * 128}`}></path>}
+                    <g class="node">
+                      <rect x="24" y={24 + index * 128} width="312" height="72"></rect>
+                      <text x="44" y={54 + index * 128}>{step[0]}</text>
+                      <text x="44" y={78 + index * 128} class="mono">{step[1]}</text>
+                    </g>
+                  </>
+                ))}
+              </svg>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </main>
+
+    <script is:inline>
+      (() => {
+        const controlsPanel = document.querySelector(".playground-controls");
+        const tabButtons = document.querySelectorAll("[data-playground-tab]");
+        const howPanel = document.querySelector("[data-playground-how]");
+        const settingsOutput = document.querySelector("[data-playground-settings]");
+        const copySettingsButton = document.querySelector("[data-playground-copy-settings]");
+        const previewControl = document.querySelector("[data-example]");
+        const diagrams = document.querySelectorAll("[data-playground-diagram]");
+
+        const syncHowDiagram = () => {
+          const activePreview = previewControl?.value || "obj-turntable";
+          diagrams.forEach((diagram) => {
+            diagram.hidden = diagram.getAttribute("data-playground-diagram") !== activePreview;
+          });
+        };
+
+        const collectSettings = () => {
+          const controls = {};
+          document.querySelectorAll("[data-control]").forEach((control) => {
+            controls[control.dataset.control] = control.type === "checkbox" ? (control.checked ? 1 : 0) : Number(control.value);
+          });
+          if (!settingsOutput) return;
+          settingsOutput.value = JSON.stringify(
+            {
+              renderer: "playground-turntable",
+              version: 1,
+              preview: previewControl?.value || "pave-turntable",
+              controls
+            },
+            null,
+            2
+          );
+        };
+
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const activeTab = button.dataset.playgroundTab;
+            tabButtons.forEach((tabButton) => {
+              const isActive = tabButton.dataset.playgroundTab === activeTab;
+              tabButton.classList.toggle("is-active", isActive);
+              tabButton.setAttribute("aria-selected", String(isActive));
+            });
+            if (controlsPanel && activeTab !== "how" && controlsPanel.classList.contains("is-flipped")) {
+              controlsPanel.classList.add("is-flipping-back");
+              window.setTimeout(() => controlsPanel.classList.remove("is-flipping-back"), 260);
+            }
+            controlsPanel?.classList.toggle("is-flipped", activeTab === "how");
+            if (howPanel) howPanel.hidden = activeTab !== "how";
+          });
+        });
+
+        document.querySelectorAll("[data-control]").forEach((control) => {
+          control.addEventListener("input", collectSettings);
+          control.addEventListener("change", collectSettings);
+        });
+        previewControl?.addEventListener("change", () => {
+          collectSettings();
+          syncHowDiagram();
+        });
+
+        copySettingsButton?.addEventListener("click", async () => {
+          collectSettings();
+          await navigator.clipboard.writeText(settingsOutput?.value || "");
+          copySettingsButton.textContent = "Copied";
+          window.setTimeout(() => {
+            copySettingsButton.textContent = "Copy settings JSON";
+          }, 900);
+        });
+
+        collectSettings();
+        syncHowDiagram();
+      })();
+    </script>
+    <script is:inline src="/ascii-playground.js"></script>
+    <script>
+      import "../scripts/obj-turntable.js";
+      import "../scripts/pave-symbol-turntable.js";
+      import "../scripts/sasi-logo-turntable.js";
+    </script>
+  </body>
+</html>

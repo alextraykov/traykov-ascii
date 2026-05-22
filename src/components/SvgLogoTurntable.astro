@@ -1,0 +1,63 @@
+---
+type Props = {
+  class?: string;
+  asciiClass?: string;
+  name: string;
+  svgSrc: string;
+  hoverOnly?: boolean;
+  playgroundKey?: string;
+  renderSize?: number;
+  depth?: number;
+  bevel?: number;
+  density?: number;
+  glyphDetail?: number;
+  contrast?: number;
+  brightness?: number;
+  glow?: number;
+  staticAscii?: string;
+  ariaLabel?: string;
+};
+
+const {
+  class: className = "",
+  asciiClass = "",
+  name,
+  svgSrc,
+  hoverOnly = false,
+  playgroundKey,
+  renderSize,
+  depth,
+  bevel,
+  density,
+  glyphDetail,
+  contrast,
+  brightness,
+  glow,
+  staticAscii = "",
+  ariaLabel = `${name} logo 3D ASCII turntable`
+} = Astro.props;
+
+const classes = [className, hoverOnly ? "has-hover-turntable" : ""].filter(Boolean).join(" ");
+---
+
+<div
+  class={classes}
+  data-sasi-logo-turntable
+  data-turntable-name={name}
+  data-svg-src={svgSrc}
+  data-hover-turntable={hoverOnly ? true : undefined}
+  data-playground-turntable={playgroundKey}
+  data-render-size={renderSize}
+  data-card-depth={depth}
+  data-card-bevel={bevel}
+  data-card-density={density}
+  data-card-glyph-detail={glyphDetail}
+  data-card-contrast={contrast}
+  data-card-brightness={brightness}
+  data-card-glow={glow}
+  aria-label={ariaLabel}
+  aria-hidden={ariaLabel ? undefined : "true"}
+>
+  {staticAscii && <pre class="project-turntable__static">{staticAscii}</pre>}
+  <pre class={staticAscii ? "project-turntable__ascii" : asciiClass || undefined} data-sasi-ascii>{staticAscii}</pre>
+</div>

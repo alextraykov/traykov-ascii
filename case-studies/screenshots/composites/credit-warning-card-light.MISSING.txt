@@ -1,0 +1,1 @@
+.credit-warning-card not visible on #pricing. Captured host page instead.

@@ -1,0 +1,147 @@
+---
+import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Synapse 3D Turntable - Alexander Traykov</title>
+    <meta name="description" content="Extruded 3D Synapse logo turntable rendered as ASCII." />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="pave-turntable-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Back to portfolio">AT</a>
+      <nav aria-label="Primary">
+        <a href="/">Portfolio</a>
+        <a href="/pave-turntable/">PAVE</a>
+        <a href="/sasi-turntable/">Sasi</a>
+        <a href="/playground">Playground</a>
+      </nav>
+    </header>
+
+    <SynapseSysTurntable
+      class="pave-turntable-stage"
+      asciiClass="pave-turntable-ascii"
+      renderSize={1}
+      ariaLabel="Synapse logo 3D ASCII turntable"
+    />
+
+    <aside class="pave-turntable-controls" aria-label="Synapse ASCII controls">
+      <div class="control-group pave-turntable-preview-select">
+        <label for="turntable-preview">Preview</label>
+        <select id="turntable-preview" data-turntable-preview-select>
+          <option value="/pave-turntable/">PAVE</option>
+          <option value="/obj-turntable/">Me GLB</option>
+          <option value="/sasi-turntable/">Personal logo</option>
+          <option value="/synapse-turntable/" selected>SynapseSys</option>
+          <option value="/playground/">All previews</option>
+        </select>
+      </div>
+
+      <div class="pave-turntable-panel">
+        <div class="pave-turntable-tabs" role="tablist" aria-label="Turntable panel">
+          <button type="button" class="is-active" role="tab" aria-selected="true" data-sasi-tab="settings">
+            Copy
+          </button>
+          <button type="button" role="tab" aria-selected="false" data-sasi-tab="how">
+            How
+          </button>
+        </div>
+
+        <div class="pave-turntable-panel-face is-active" data-sasi-panel="settings">
+          <div class="pave-turntable-settings">
+            <span>Settings JSON</span>
+            <textarea data-sasi-settings readonly spellcheck="false"></textarea>
+            <button type="button" data-sasi-copy-settings>Copy settings JSON</button>
+          </div>
+        </div>
+
+        <div class="pave-turntable-panel-face" data-sasi-panel="how" hidden>
+          <div class="turntable-process" aria-label="SVG to 3D ASCII turntable pipeline">
+            <p>SVG to 3D ASCII</p>
+            <svg viewBox="0 0 360 520" role="img" aria-label="Synapse turntable rendering pipeline">
+              <defs>
+                <marker id="synapse-process-arrow" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
+                  <path d="M0,0 L10,4 L0,8 Z" fill="currentColor"></path>
+                </marker>
+              </defs>
+              <g class="node">
+                <rect x="24" y="24" width="312" height="72"></rect>
+                <text x="44" y="54">01 / Parse SVG</text>
+                <text x="44" y="78" class="mono">paths + fills + masks</text>
+              </g>
+              <path class="arrow" d="M180 106 V142"></path>
+              <g class="node">
+                <rect x="24" y="152" width="312" height="72"></rect>
+                <text x="44" y="182">02 / Build geometry</text>
+                <text x="44" y="206" class="mono">extrude shapes in Three.js</text>
+              </g>
+              <path class="arrow" d="M180 234 V270"></path>
+              <g class="node">
+                <rect x="24" y="280" width="312" height="72"></rect>
+                <text x="44" y="310">03 / Turntable light</text>
+                <text x="44" y="334" class="mono">rotate mesh + shaded sides</text>
+              </g>
+              <path class="arrow" d="M180 362 V398"></path>
+              <g class="node">
+                <rect x="24" y="408" width="312" height="72"></rect>
+                <text x="44" y="438">04 / ASCII sample</text>
+                <text x="44" y="462" class="mono">hidden WebGL to glyph grid</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <label>
+        <span>Speed <output data-sasi-output="speed">0.28</output></span>
+        <input type="range" min="0" max="1.2" step="0.01" value="0.28" data-sasi-control="speed" />
+      </label>
+      <label>
+        <span>Size <output data-sasi-output="renderSize">1.00</output></span>
+        <input type="range" min="0.2" max="3.2" step="0.01" value="1" data-sasi-control="renderSize" />
+      </label>
+      <label>
+        <span>Depth <output data-sasi-output="depth">54</output></span>
+        <input type="range" min="8" max="140" step="1" value="54" data-sasi-control="depth" />
+      </label>
+      <label>
+        <span>Bevel <output data-sasi-output="bevel">3.2</output></span>
+        <input type="range" min="0" max="14" step="0.1" value="3.2" data-sasi-control="bevel" />
+      </label>
+      <label>
+        <span>Density <output data-sasi-output="density">9</output></span>
+        <input type="range" min="5" max="18" step="1" value="9" data-sasi-control="density" />
+      </label>
+      <label>
+        <span>Glyph detail <output data-sasi-output="glyphDetail">4</output></span>
+        <input type="range" min="2" max="9" step="1" value="4" data-sasi-control="glyphDetail" />
+      </label>
+      <label>
+        <span>Hover <output data-sasi-output="hover">0.30</output></span>
+        <input type="range" min="0" max="1" step="0.01" value="0.3" data-sasi-control="hover" />
+      </label>
+      <label>
+        <span>Brightness <output data-sasi-output="brightness">-0.03</output></span>
+        <input type="range" min="-0.4" max="0.4" step="0.01" value="-0.03" data-sasi-control="brightness" />
+      </label>
+      <label>
+        <span>Contrast <output data-sasi-output="contrast">1.42</output></span>
+        <input type="range" min="0.5" max="3" step="0.01" value="1.42" data-sasi-control="contrast" />
+      </label>
+      <label>
+        <span>Glow <output data-sasi-output="glow">0.18</output></span>
+        <input type="range" min="0" max="0.9" step="0.01" value="0.18" data-sasi-control="glow" />
+      </label>
+    </aside>
+
+    <script>
+      import "../scripts/sasi-logo-turntable.js";
+      import "../scripts/turntable-preview-select.js";
+    </script>
+  </body>
+</html>

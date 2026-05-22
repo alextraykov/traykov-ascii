@@ -1,0 +1,1 @@
+.notifConfig not visible on #notifications. Captured host page instead.

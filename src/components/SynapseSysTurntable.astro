@@ -1,0 +1,42 @@
+---
+import SvgLogoTurntable from "./SvgLogoTurntable.astro";
+
+type Props = {
+  class?: string;
+  asciiClass?: string;
+  hoverOnly?: boolean;
+  playgroundKey?: string;
+  renderSize?: number;
+  staticAscii?: string;
+  ariaLabel?: string;
+};
+
+const {
+  class: className = "",
+  asciiClass = "",
+  hoverOnly = false,
+  playgroundKey,
+  renderSize = 0.3,
+  staticAscii = "",
+  ariaLabel = "SynapseSys logo 3D ASCII turntable"
+} = Astro.props;
+---
+
+<SvgLogoTurntable
+  class={className}
+  asciiClass={asciiClass}
+  name="synapse"
+  svgSrc="/synapse-sys-logo.svg"
+  hoverOnly={hoverOnly}
+  playgroundKey={playgroundKey}
+  renderSize={renderSize}
+  depth={54}
+  bevel={3.2}
+  density={5}
+  glyphDetail={9}
+  brightness={-0.03}
+  contrast={1.42}
+  glow={0.18}
+  staticAscii={staticAscii}
+  ariaLabel={ariaLabel}
+/>

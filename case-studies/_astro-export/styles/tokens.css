@@ -1,0 +1,570 @@
+/* =============================================================================
+   PAVE DESIGN TOKENS
+   =============================================================================
+   Single source of truth for all design values.
+   Components MUST use these tokens - no hard-coded values.
+   Brand source: Figma file -EXT--Quickbase_Reunion_Shared (Reunion, March 2026)
+   ============================================================================= */
+
+:root {
+  /* ===== Background Colors ===== */
+
+  /* ===== Light Theme — near-white achromatic ===== */
+  --color-bg-page: #FAFAFA;
+  --color-bg-secondary: #F5F5F5;
+  --color-bg-surface: #EFEFEF;
+  --color-bg-input: #FFFFFF;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-selected: rgba(0, 0, 0, 0.06);
+  --color-bg-active: rgba(0, 0, 0, 0.06);
+  --color-bg-disabled: #E8E8E8;
+  --color-bg-success: #E8FAF3;
+  --color-bg-warning: #FFFCE8;
+  --color-bg-error: #FFE8E0;
+  --color-bg-error-hover: #FFD6CC;
+  --color-bg-popover: #FFFFFF;
+  --color-bg-tertiary: #E8E8E8;
+  --color-bg-inverse: #1A1A1A;
+  --color-bg-sidebar-transparent: rgba(250, 250, 250, 0.72);
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: var(--color-border-light);
+  --color-border-light: #E5E5E5;
+  --color-border-medium: #D4D4D4;
+  --color-border-divider: rgba(0, 0, 0, 0.08);
+  --color-border-focus: #05875A;
+  --color-border-secondary: #D4D4D4;
+
+  /* ===== Text Colors ===== */
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #737373;
+  --color-text-tertiary: #A3A3A3;
+  --color-text-inverse: #FAFAFA;
+
+  /* ===== Accent Colors ===== */
+  --color-accent-primary: #04764E;
+  --color-accent-primary-hover: #058558;
+  --color-accent-hover: var(--color-accent-primary-hover);
+  --color-accent-primary-alpha: rgba(4, 118, 78, 0.1);
+  --color-text-on-accent: #FFFFFF;
+
+  /* ===== CTA ===== */
+  --color-cta-primary: #04764E;
+  --color-cta-primary-hover: #058558;
+  --color-text-on-cta: #FFFFFF;
+
+  /* User avatar colors */
+  --color-avatar-bg: #FFC8FA;
+  --color-avatar-text: #78008C;
+  --color-avatar-hover: #FF99F6;
+
+  /* ===== Semantic Colors ===== */
+
+  /* Destructive — Pave Red brand color, used for destructive buttons/actions */
+  --color-destructive: #FF5F32;
+  --color-destructive-hover: #E8501F;
+  --color-text-on-destructive: #ffffff;
+
+  /* Error/Danger
+     Derived from Pave Red for WCAG AA compliance on text usage.
+     Brand #FF5F32 used directly for destructive button fills (white text on it = 3.03:1,
+     so use --color-text-on-destructive which is white — acceptable for large UI elements).
+     Darkened variants below for text-on-white contexts. */
+  --color-error: #B8421F;
+  --color-error-hover: #A33A1B;
+  --color-border-error: #CC4C28;
+  --color-border-error-subtle: #FFD6CC;
+  --color-text-error: #B8421F;
+  --color-bg-error-subtle: var(--color-bg-error);
+  --color-error-bg: var(--color-bg-error);
+
+  /* Success
+     Brand base: #05875A (Pave Green — rich green)
+     Foreground #047A51: 5.37:1 vs white, 5.28:1 vs off-white (#FAFFF0) — WCAG AA
+     Hover      #046E48: 6.31:1 vs white — WCAG AA
+     Border     #047A51: 5.37:1 vs white — WCAG 1.4.11 UI component PASS
+     BG light   #E8FAF3: near-black (#1c1917) 16.16:1 — WCAG AA
+     BG dark    #0E3826: white (#FAFAF9) 12.47:1 — WCAG AA
+     Text-on-accent: white (#FFFFFF) at 5.37:1 on base bg */
+  --color-success: #047A51;
+  --color-success-hover: #046E48;
+  --color-border-success: #047A51;
+  --color-text-success: #047A51;
+  --color-bg-success-subtle: var(--color-bg-success);
+
+  /* Warning
+     Brand base: #FFFA00 (Pave Yellow — pure yellow, 1.11:1 on white — unusable as text)
+     Foreground #8C6800: 5.13:1 vs white, 5.04:1 vs off-white (#FAFFF0) — WCAG AA (amber-gold)
+     Hover      #7A5200: 6.92:1 vs white — WCAG AA
+     Border     #B38600: 3.32:1 vs white — WCAG 1.4.11 UI component PASS (3:1 min)
+     BG light   #FFFCE8: near-black (#1c1917) 16.94:1 — WCAG AA (preserves yellow tint)
+     BG dark    #3D3410: white (#FAFAF9) 11.85:1 — WCAG AA
+     Text-on-accent: if brand yellow (#FFFA00) bg → use black (15.76:1)
+     Text-on-accent: if amber (#8C6800) bg → use white (5.13:1) */
+  --color-warning: #8C6800;
+  --color-warning-hover: #7A5200;
+  --color-warning-light: #FFFCE8;
+  --color-warning-dark: #7A5200;
+  --color-border-warning: #B38600;
+  --color-border-warning-subtle: #E8D080;
+  --color-text-warning: #8C6800;
+  --color-bg-warning-subtle: var(--color-bg-warning);
+  --color-bg-warning-hover: #FFF9D0;
+  --color-warning-bg: var(--color-bg-warning);
+
+  /* Info
+     Brand base: #004BF0 (Pave Blue — deep blue)
+     Foreground #004BF0: 6.43:1 vs white, 6.32:1 vs off-white (#FAFFF0) — WCAG AA
+     Hover      #003CC2: 8.66:1 vs white — WCAG AA
+     Border     #1A5DF2: 5.40:1 vs white — WCAG 1.4.11 UI component PASS
+     BG light   #EDF2FF: near-black (#1c1917) 15.61:1 — WCAG AA
+     BG dark    #0C2052: white (#FAFAF9) 14.96:1 — WCAG AA
+     Text-on-accent: white (#FFFFFF) at 6.43:1 on base bg */
+  --color-info: #004BF0;
+  --color-bg-info: #EDF2FF;
+  --color-border-info: #1A5DF2;
+  --color-text-info: #004BF0;
+  --color-bg-info-subtle: var(--color-bg-info);
+
+  /* ===== Overlay Colors ===== */
+
+  --color-overlay: rgba(0, 0, 0, 0.4);
+  --color-overlay-light: rgba(250, 250, 250, 0.96);
+
+  /* ===== Additional Semantic Colors ===== */
+
+  /* Muted surfaces */
+  --color-bg-muted: #E8E8E8;
+
+  /* Text aliases */
+  --color-text-muted: #A3A3A3;
+
+  /* Button context - allows buttons to adapt to their container */
+  --button-secondary-bg: transparent;
+
+  /* ===== Brand Palette (Figma reference, node IDs from Reunion file) ===== */
+
+  /* Core palette (node 2794:905) */
+  --color-brand-green: #05875A;
+  --color-brand-oatmeal: #E1D7C8;
+  --color-brand-off-white: #FAFFF0;
+  --color-brand-gray: #BEBEBE;
+  --color-brand-black: #000000;
+
+  /* Expanded palette — vivid (node 2794:782) */
+  --color-brand-dark-green: #285A41;
+  --color-brand-teal: #146E82;
+  --color-brand-yellow: #FFFA00;
+  --color-brand-red: #FF5F32;
+  --color-brand-blue: #004BF0;
+  --color-brand-purple: #78008C;
+
+  /* Expanded palette — pastel (node 2794:782) */
+  --color-brand-pastel-green: #D7E6BE;
+  --color-brand-pastel-teal: #A0FFD2;
+  --color-brand-pastel-yellow: #F5EB9B;
+  --color-brand-pastel-red: #FFD7C3;
+  --color-brand-pastel-blue: #AFF0FA;
+  --color-brand-pastel-purple: #FFC8FA;
+
+  /* ===== Legacy Aliases (consumed by components, mapped to Pave tokens) ===== */
+  --color-primary-hover: var(--color-accent-primary-hover);
+  --color-primary-light: var(--color-accent-primary-alpha);
+  --color-text-link: var(--color-accent-primary);
+  --overlay-bg: var(--color-overlay);
+  --color-accent-primary-bg: var(--color-accent-primary-alpha);
+
+  /* ===== Status Strip Colors (PreviewPanel draft/live indicators) ===== */
+  --color-strip-draft: #E8E3D6;
+  --color-strip-live: #D1E7DD;
+
+  /* ===== Chat Mode Colors (Plan / Build / Data) ===== */
+  --color-mode-plan: var(--color-info);
+  --color-mode-plan-bg: var(--color-bg-info);
+  --color-mode-build: var(--color-warning);
+  --color-mode-build-bg: var(--color-bg-warning);
+  --color-mode-data: #146E82;
+  --color-mode-data-bg: #E0F5F5;
+
+  /* ===========================================================================
+     SPACING
+     =========================================================================== */
+  --spacing-2xs: 0.125rem;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 0.75rem;
+  --spacing-lg: 1rem;
+  --spacing-xl: 1.5rem;
+  --spacing-2xl: 2rem;
+  --spacing-3xl: 3rem;
+  --spacing-4xl: 4rem;
+
+  /* Special sizes */
+  --spacing-xs-plus: 0.375rem;
+  --spacing-sm-plus: 0.625rem;
+  --spacing-md-plus: 0.875rem;
+  --spacing-lg-plus: 1.25rem;
+  --spacing-xl-plus: 1.75rem;
+  --spacing-2xl-plus: 2.5rem;
+
+  /* Compound values */
+  --spacing-sm-lg: 0.5rem 1rem;
+  --spacing-md-lg: 0.75rem 1rem;
+  --spacing-lg-xl: 1rem 1.5rem;
+
+  /* ===========================================================================
+     BORDER RADIUS
+     =========================================================================== */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ===========================================================================
+     TYPOGRAPHY
+     =========================================================================== */
+
+  /* ===== Font Families ===== */
+  --font-family-base: "Polymath", system-ui, sans-serif;
+  --font-family-display: "Pinokio Grand", "Polymath", serif;
+
+  /* ===== Font Sizes ===== */
+  /* Adjusted for Polymath metrics (smaller x-height than Inter) */
+  --font-size-2xs: 0.6875rem;  /* 11px — dense UI, labels, captions */
+  --font-size-xs: 0.8125rem;   /* 13px (was 12px) — +1px */
+  --font-size-sm: 0.9375rem;   /* 15px (was 14px) — +1px */
+  --font-size-base: 1rem;      /* 16px — unchanged, base stays readable */
+  --font-size-md: 1rem;        /* 16px — same as base */
+  --font-size-lg: 1.125rem;    /* 18px (was 18px) — unchanged */
+  --font-size-xl: 1.25rem;     /* 20px (was 20px) — unchanged */
+  --font-size-2xl: 1.5rem;     /* 24px — unchanged */
+  --font-size-3xl: 2rem;       /* 32px (was 30px) — +2px for display headings */
+  --font-size-4xl: 2.5rem;     /* 40px (was 36px) — +4px for display headings */
+
+  /* Special sizes */
+  --font-size-close-button: 1.75rem;
+  --font-size-body-alt: 0.8125rem;
+
+  /* ===== Font Weights ===== */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ===== Line Heights ===== */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* ===========================================================================
+     SHADOWS
+     =========================================================================== */
+
+  /* ===== Elevation Shadows ===== */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* ===== Interactive Shadows ===== */
+  --shadow-focus: 0 0 0 2px var(--color-bg-page), 0 0 0 4px var(--color-border-focus);
+  --shadow-focus-tight: 0 0 0 2px var(--color-bg-page), 0 0 0 3px var(--color-border-focus);
+  --shadow-focus-error: 0 0 0 3px rgba(155, 29, 32, 0.25);
+
+  /* ===== Component-Specific Shadows ===== */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* ===========================================================================
+     TRANSITIONS
+     =========================================================================== */
+
+  /* ===== Durations ===== */
+  --transition-fast: 0.15s;
+  --transition-base: 0.2s;
+  --transition-slow: 0.3s;
+  --transition-instant: 0.1s;
+
+  /* ===== Easing Functions ===== */
+  --ease-default: ease;
+  --ease-in: ease-in;
+  --ease-out: ease-out;
+  --ease-in-out: ease-in-out;
+
+  /* ===== Common Transition Combinations ===== */
+  --transition-all-fast: all 0.15s ease;
+  --transition-all-base: all 0.2s ease;
+  --transition-background: background 0.15s ease;
+  --transition-background-slow: background 0.2s ease;
+  --transition-background-instant: background 0.1s ease;
+  --transition-color: color 0.2s ease;
+  --transition-color-fast: color 0.15s ease;
+  --transition-width: width 0.3s ease;
+
+  /* Multi-property transitions */
+  --transition-colors: color 0.2s ease, background-color 0.2s ease;
+  --transition-border-shadow: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  /* Motion tokens */
+  --motion-duration-default: 200ms;
+  --motion-duration-instant: 50ms;
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 200ms;
+  --motion-duration-medium: 250ms;
+  --motion-duration-slow: 350ms;
+  --motion-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --motion-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --transition-shadow: box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
+  --transition-transform: transform var(--motion-duration-fast) var(--motion-ease-standard);
+
+  /* ===========================================================================
+     Z-INDEX LAYERS
+     =========================================================================== */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-dropdown-overlay: 10;
+  --z-sticky: 20;
+  --z-sidebar: 100;
+  --z-topnav: 200;
+  --z-modal-backdrop: 1000;
+  --z-modal: 1000;
+  --z-popover: 10000;
+  --z-tooltip: 10001;
+  --z-toast: 10002;
+
+  /* ===========================================================================
+     LAYOUT CONSTANTS
+     =========================================================================== */
+
+  /* ===== Max Widths (Container Sizes) ===== */
+  --max-width-sm: 640px;
+  --max-width-md: 800px;
+  --max-width-lg: 1200px;
+  --max-width-xl: 1400px;
+  --max-width-2xl: 1536px;
+
+  /* ===== Header/Navigation Dimensions ===== */
+  --height-topnav: 60px;
+  --width-sidebar: 250px;
+  --width-sidebar-collapsed: 60px;
+
+  /* ===== Dropdown/Select Dimensions ===== */
+  --width-dropdown-min: 350px;
+  --width-dropdown-standard: 400px;
+  --width-dropdown-large: 500px;
+  --height-dropdown-max: 400px;
+  --height-dropdown-content-max: 350px;
+
+  /* ===== Modal Dimensions ===== */
+  --width-modal-sm: 28rem;
+  --width-modal-md: 37.5rem;
+  --width-modal-lg: 50rem;
+  --height-modal: 90vh;
+
+  /* ===== Breakpoints ===== */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* ===========================================================================
+     OPACITY LEVELS
+     =========================================================================== */
+  --opacity-disabled: 0.5;
+  --opacity-hover: 0.9;
+
+  /* ===========================================================================
+     SHADCN/UI COMPATIBILITY TOKENS
+     =========================================================================== */
+  --font-size: 16px;
+  --background: var(--color-bg-surface);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-bg-surface);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-bg-popover);
+  --popover-foreground: var(--color-text-primary);
+  --primary-foreground: var(--color-text-on-accent);
+  --secondary: var(--color-bg-surface);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-bg-muted);
+  --muted-foreground: var(--color-text-tertiary);
+  --accent-foreground: var(--color-text-primary);
+  --destructive: var(--color-error);
+  --destructive-foreground: var(--color-text-on-accent);
+  --border: var(--color-border-divider);
+  --input: transparent;
+  --input-background: var(--color-bg-input);
+  --switch-background: var(--color-border-medium);
+  --ring: var(--color-border-focus);
+  --radius: var(--radius-lg);
+
+  /* Charts */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Sidebar — green theme */
+  --sidebar: #04764E;
+  --sidebar-foreground: rgba(255, 255, 255, 0.95);
+  --sidebar-primary: #058558;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: rgba(255, 255, 255, 0.95);
+  --sidebar-border: rgba(255, 255, 255, 0.15);
+  --sidebar-ring: rgba(255, 255, 255, 0.4);
+
+  /* Accordion gradient ramp (light) */
+  --accordion-gradient-100: #E7F3EF;
+  --accordion-gradient-200: #CDE7DE;
+  --accordion-gradient-300: #ACD7C8;
+  --accordion-gradient-400: #82C3AC;
+  --accordion-gradient-500: #58AF91;
+  --accordion-gradient-600: #2F9B76;
+  --accordion-gradient-700: #05875A;
+  --accordion-gradient-800: #04714B;
+  --accordion-gradient-900: #035A3C;
+}
+
+/* ============================================================================
+   DARK MODE
+   ============================================================================ */
+
+.dark {
+  /* ===== Dark Theme — Pave Green off-dark (H:160° green tint) ===== */
+  --color-bg-page: #111715;
+  --color-bg-secondary: #161D1B;
+  --color-bg-surface: #1C2220;
+  --color-bg-input: #141A18;
+  --color-bg-hover: rgba(255, 255, 255, 0.06);
+  --color-bg-selected: rgba(255, 255, 255, 0.08);
+  --color-bg-active: rgba(255, 255, 255, 0.08);
+  --color-bg-disabled: #212725;
+  --color-bg-success: #0E3826;
+  --color-bg-warning: #3D3410;
+  --color-bg-error: #3D1818;
+  --color-bg-error-hover: #4A2020;
+  --color-bg-popover: #161D1B;
+  --color-bg-tertiary: #212725;
+  --color-bg-inverse: #EAECEB;
+  --color-bg-sidebar-transparent: rgba(17, 23, 21, 0.6);
+  --color-bg-muted: #212725;
+
+  /* Border Colors */
+  --color-border-light: #262C2A;
+  --color-border-medium: #303634;
+  --color-border-divider: rgba(255, 255, 255, 0.08);
+  --color-border-focus: #05875A;
+  --color-border-secondary: #303634;
+
+  /* Text Colors */
+  --color-text-primary: #EAECEB;
+  --color-text-secondary: #85938F;
+  --color-text-tertiary: #616B68;
+  --color-text-inverse: #111715;
+  --color-text-muted: #616B68;
+
+  /* Accent Colors — Pave Green */
+  --color-accent-primary: #04764E;
+  --color-accent-primary-hover: #058558;
+  --color-accent-primary-alpha: rgba(4, 118, 78, 0.15);
+  --color-text-on-accent: #EAECEB;
+
+  /* CTA */
+  --color-cta-primary: #04764E;
+  --color-cta-primary-hover: #058558;
+  --color-text-on-cta: #EAECEB;
+
+  /* User avatar colors */
+  --color-avatar-bg: #3d3a52;
+  --color-avatar-text: #c4b5fd;
+  --color-avatar-hover: #4a4663;
+
+  /* Semantic Colors — Dark Mode */
+  --color-error: #FF7A52;
+  --color-error-hover: #FF6B40;
+  --color-border-error: #FF7A52;
+  --color-border-error-subtle: #6B2E22;
+  --color-text-error: #FF7A52;
+  --color-bg-error-subtle: var(--color-bg-error);
+  --color-error-bg: var(--color-bg-error);
+
+  --color-success: #05C47A;
+  --color-success-hover: #04B06D;
+  --color-border-success: #05C47A;
+  --color-text-success: #05C47A;
+  --color-bg-success-subtle: var(--color-bg-success);
+
+  --color-warning: #D4A000;
+  --color-warning-hover: #E8B400;
+  --color-warning-light: #3D3410;
+  --color-warning-dark: #E8B400;
+  --color-border-warning: #D4A000;
+  --color-border-warning-subtle: #5C4E00;
+  --color-text-warning: #D4A000;
+  --color-bg-warning-subtle: var(--color-bg-warning);
+  --color-bg-warning-hover: #4A4200;
+  --color-warning-bg: var(--color-bg-warning);
+
+  --color-info: #5B8BFF;
+  --color-bg-info: #0C2052;
+  --color-border-info: #5B8BFF;
+  --color-text-info: #5B8BFF;
+  --color-bg-info-subtle: var(--color-bg-info);
+
+  /* Status Strip Colors */
+  --color-strip-draft: #44403C;
+  --color-strip-live: #14532D;
+
+  /* Overlay */
+  --color-overlay: rgba(17, 23, 21, 0.7);
+  --color-overlay-light: rgba(17, 23, 21, 0.95);
+
+  --button-secondary-bg: transparent;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-focus: 0 0 0 2px #111715, 0 0 0 4px #05875A;
+  --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Accordion gradient ramp (dark — inverted: 100 = darkest) */
+  --accordion-gradient-100: #035A3C;
+  --accordion-gradient-200: #04714B;
+  --accordion-gradient-300: #197E5A;
+  --accordion-gradient-400: #2F8C69;
+  --accordion-gradient-500: #449978;
+  --accordion-gradient-600: #5AA788;
+  --accordion-gradient-700: #6FB497;
+  --accordion-gradient-800: #85C2A6;
+  --accordion-gradient-900: #9ACFB5;
+}
+
+/* =============================================================================
+   REDUCED MOTION PREFERENCES
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-default: 0ms;
+    --motion-duration-instant: 0ms;
+    --motion-duration-fast: 0ms;
+    --motion-duration-normal: 0ms;
+    --motion-duration-medium: 0ms;
+    --motion-duration-slow: 0ms;
+  }
+}

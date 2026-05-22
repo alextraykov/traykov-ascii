@@ -1,0 +1,184 @@
+/* =============================================================================
+   Case-Study Preview Frame — shared chrome around every embedded component.
+   Self-contained: depends only on design tokens + light/dark via `.dark` class.
+   ============================================================================= */
+
+.cs-frame {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl, 16px);
+  background: var(--color-bg-surface);
+  overflow: hidden;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  isolation: isolate;
+  transition: border-color var(--motion-duration-fast) var(--motion-ease-default);
+}
+
+.cs-frame.dark {
+  /* Local dark scope — redeclares the inverted tokens via existing .dark cascade */
+  color-scheme: dark;
+}
+
+.cs-frame__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-bg-page);
+  min-height: 48px;
+}
+
+.cs-frame__title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.cs-frame__title {
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.005em;
+}
+
+.cs-frame__subtitle {
+  margin: 2px 0 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  line-height: var(--line-height-tight);
+}
+
+.cs-frame__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.cs-frame__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.cs-frame__icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--motion-duration-fast) var(--motion-ease-default),
+    color var(--motion-duration-fast) var(--motion-ease-default),
+    border-color var(--motion-duration-fast) var(--motion-ease-default);
+}
+
+.cs-frame__icon-button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-medium);
+}
+
+.cs-frame__icon-button:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+.cs-frame__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-base);
+  cursor: pointer;
+  transition:
+    background var(--motion-duration-fast) var(--motion-ease-default),
+    color var(--motion-duration-fast) var(--motion-ease-default),
+    border-color var(--motion-duration-fast) var(--motion-ease-default);
+}
+
+.cs-frame__chip:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.cs-frame__chip--active {
+  background: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent-primary);
+}
+
+.cs-frame__chip--active:hover {
+  background: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
+}
+
+.cs-frame__chip-group {
+  display: inline-flex;
+  gap: 4px;
+  padding: 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border-light);
+}
+
+.cs-frame__chip-group .cs-frame__chip {
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
+}
+
+.cs-frame__chip-group .cs-frame__chip--active {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Stage area ───────────────────────────────────────────────────────────── */
+
+.cs-frame__stage {
+  position: relative;
+  padding: var(--spacing-xl);
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-frame--stage-neutral .cs-frame__stage {
+  background: var(--color-bg-surface);
+}
+
+.cs-frame--stage-page .cs-frame__stage {
+  background: var(--color-bg-page);
+}
+
+.cs-frame--stage-dark .cs-frame__stage {
+  background: #0f0f0f;
+  color: #f5f5f5;
+}
+
+/* ─── Reduced motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-frame,
+  .cs-frame__icon-button,
+  .cs-frame__chip {
+    transition: none;
+  }
+}

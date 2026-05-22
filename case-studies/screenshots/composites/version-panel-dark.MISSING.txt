@@ -1,0 +1,1 @@
+.version-panel not visible on #template-editor. Captured host page instead.

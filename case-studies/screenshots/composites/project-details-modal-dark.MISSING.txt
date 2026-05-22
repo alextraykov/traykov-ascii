@@ -1,0 +1,1 @@
+.project-details-modal not visible on #projects. Captured host page instead.

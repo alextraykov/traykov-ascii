@@ -1,0 +1,42 @@
+---
+type Props = {
+  class?: string;
+  asciiClass?: string;
+  mode?: "card" | "stage";
+  hoverOnly?: boolean;
+  playgroundKey?: string;
+  renderSize?: number;
+  controls?: boolean;
+  staticAscii?: string;
+  ariaLabel?: string;
+};
+
+const {
+  class: className = "",
+  asciiClass = "",
+  mode,
+  hoverOnly = false,
+  playgroundKey,
+  renderSize,
+  controls = false,
+  staticAscii = "",
+  ariaLabel = "PAVE symbol 3D ASCII turntable"
+} = Astro.props;
+
+const classes = [className, hoverOnly ? "has-hover-turntable" : ""].filter(Boolean).join(" ");
+---
+
+<div
+  class={classes}
+  data-pave-turntable
+  data-pave-mode={mode}
+  data-pave-controls={controls ? true : undefined}
+  data-hover-turntable={hoverOnly ? true : undefined}
+  data-playground-turntable={playgroundKey}
+  data-render-size={renderSize}
+  aria-label={ariaLabel}
+  aria-hidden={ariaLabel ? undefined : "true"}
+>
+  {staticAscii && <pre class="project-turntable__static">{staticAscii}</pre>}
+  <pre class={staticAscii ? "project-turntable__ascii" : asciiClass || undefined} data-pave-ascii>{staticAscii}</pre>
+</div>

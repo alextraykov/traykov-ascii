@@ -1,0 +1,22 @@
+/* Import fonts */
+@import "../fonts/fonts.css";
+
+/* Import design tokens */
+@import "../tokens/tokens.css";
+
+/* Apply theme colors to body */
+body {
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+  margin: 0;
+  padding: 0;
+}
+
+/* Page headings use Pinokio Grand display font */
+.page-title,
+h1.page-title {
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-3xl);
+}

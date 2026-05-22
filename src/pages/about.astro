@@ -1,0 +1,287 @@
+---
+import ObjTurntable from "../components/ObjTurntable.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import "../styles/global.css";
+
+const identities = [
+  "designer",
+  "father",
+  "husband",
+  "son",
+  "grandchild",
+  "grappler",
+  "pourover enjoyer",
+  "walker",
+  "writer",
+  "yapper",
+  "notebook hoarder",
+  "coffee tinkerer",
+  "mat philosopher",
+  "Sofia dad",
+  "question asker",
+  "systems gardener",
+  "slow runner",
+  "early riser",
+  "deadline negotiator",
+  "friendly menace"
+];
+
+const experience = [
+  {
+    role: "UX Team Lead",
+    company: "Quickbase",
+    period: "July 2023 - Current",
+    body:
+      "Leading UX work at Quickbase across product surfaces, team rituals, and design execution. The role sits between hands-on product design, management, and helping designers grow through sharper critique and clearer product thinking."
+  },
+  {
+    role: "Senior Product Designer",
+    company: "Quickbase",
+    period: "July 2022 - July 2023",
+    body:
+      "Worked on Quickbase's Solution Hub and led design for one of the company's largest 2022 initiatives. Partnered across product, engineering, and stakeholder groups to move complex platform work from ambiguity into shippable product decisions."
+  },
+  {
+    role: "Senior Product Designer",
+    company: "PeakShift",
+    period: "January 2022 - June 2022",
+    body:
+      "Helped establish hiring, design research, and design marketing foundations while working across products including bolt.fun, Alby, and BTC Payer."
+  },
+  {
+    role: "Product Designer",
+    company: "Toptal",
+    period: "April 2019 - January 2022",
+    body:
+      "Designed for staff experience and internal tools, with a focus on operational workflows used by Toptal teams."
+  },
+  {
+    role: "Product Designer",
+    company: "MarketVision Consulting Group",
+    period: "August 2018 - April 2019",
+    body:
+      "Created mobile design systems for iOS and Android, redesigned desktop component systems, and worked on UX research, analytics, usability, user-centered product improvements, and web/UI copy."
+  },
+  {
+    role: "Product Designer",
+    company: "eAssist",
+    period: "January 2018 - August 2018",
+    body:
+      "Worked across a broad range of digital projects for a business process outsourcing company, including data analytics products, dashboards, and marketing-driven websites."
+  },
+  {
+    role: "Product Designer",
+    company: "Pruvit",
+    period: "May 2017 - January 2018",
+    body:
+      "Focused on designing and maintaining component systems for mobile applications across iOS and Android in an iteration-heavy product process."
+  },
+  {
+    role: "UI/UX Designer",
+    company: "Canbrowser",
+    period: "April 2017 - April 2018",
+    body:
+      "Redesigned a complex private software initiative supporting the CAN industry.",
+    href: "https://canbrowser.com/"
+  },
+  {
+    role: "UI/UX Designer",
+    company: "Noxious.one",
+    period: "July 2016 - November 2016",
+    body:
+      "Worked on CMS-oriented design, mobile app design, wireframing, prototyping, and ideation.",
+    href: "https://noxious.one/"
+  },
+  {
+    role: "Junior UI/UX Designer",
+    company: "Kickflip",
+    period: "August 2015 - December 2015",
+    body:
+      "Designed graphic design materials for HealthXL and worked on a website for Obecto, one of Bulgaria's largest software development companies.",
+    href: "https://kickflip.digital"
+  },
+  {
+    role: "Junior Web Designer",
+    company: "Stenik",
+    period: "December 2014 - April 2015",
+    body:
+      "Designed eCommerce work for leading Bulgarian brands, including the largest cinema eCommerce website in Bulgaria.",
+    href: "https://www.stenikgroup.com/en/"
+  }
+];
+
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About - Alexander Traykov</title>
+    <meta
+      name="description"
+      content="About Alexander Traykov, product designer, UX team lead, father, husband, and design practitioner based in Sofia."
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/">Work</a>
+        <a href="/about/">About</a>
+        <a href="/playground">Playground</a>
+      </nav>
+    </header>
+
+    <main class="about-page">
+      <section class="about-hero section-shell" aria-labelledby="about-title">
+        <ObjTurntable
+          class="about-turntable"
+          asciiClass="about-turntable__ascii"
+          name="me"
+          objSrc="/models/me.glb"
+          renderSize={0.9}
+          density={5}
+          glyphDetail={9}
+          brightness={-0.02}
+          contrast={1.42}
+          click={0.46}
+          glow={0.18}
+          ariaLabel=""
+        />
+
+        <div class="about-hero-copy">
+          <p class="section-kicker">About</p>
+          <h1 id="about-title" class="about-title">
+            <span class="about-title__prefix">Alexander is a</span>
+            <span
+              class="identity-rotator"
+              data-identity-rotator
+              data-words={JSON.stringify(identities)}
+            >designer</span>
+          </h1>
+        </div>
+      </section>
+
+      <section class="about-grid section-shell" aria-label="About Alexander">
+        <div class="about-copy">
+          <span class="about-caption">Alexander Traykov</span>
+          <p>
+            Greetings, friend. I'm Alexander, a full-time father, husband, and designer.
+          </p>
+          <p>
+            My design journey began at 17, sparked by an opportunity from my graphic design teacher.
+            I designed a poster for the Sofia Philharmonic Orchestra that was shown all around my hometown, igniting my passion for deisgn. Since that moment, design has felt like a calling,
+            and I have kept following it.
+          </p>
+          <p>
+            Years later, I find myself thriving as a Product Lead at Quickbase, juggling the realms of leadership, management and IC work. 
+          </p>
+          <p>
+            A short summary of who am I as a person - extroverted, occasionally long-winded dude with
+            a strong interest in building things, combat sports, coffee and nature.
+          </p>
+          <p>
+            In my personal life, I proudly wear the badge of being a father of 3 beautiful kids, who became one of the
+            clearest reasons for me to exist. Their presence is a testament to the love I share with
+            my equally remarkable wife, who's been beside me for more than 10 years.
+          </p>
+        </div>
+      </section>
+
+      <section class="about-experience section-shell" aria-labelledby="experience-title">
+        <div class="section-heading">
+          <p class="section-kicker">Work experience</p>
+          <h2 id="experience-title">A path through products, systems, and teams.</h2>
+        </div>
+
+        <div class="experience-list">
+          {experience.map((item) => (
+            <article class="experience-item">
+              <div>
+                <p>{item.period}</p>
+                <h3>{item.company} - {item.role}</h3>
+              </div>
+              <div>
+                <p>{item.body}</p>
+                {item.href && <a href={item.href} target="_blank" rel="noreferrer">Visit</a>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+    <script>
+      import "../scripts/obj-turntable.js";
+    </script>
+    <script is:inline>
+      (() => {
+        const rotator = document.querySelector("[data-identity-rotator]");
+        if (!rotator) return;
+
+        const words = JSON.parse(rotator.getAttribute("data-words") || "[]");
+        if (!words.length) return;
+
+        let index = 0;
+        const nextWord = () => {
+          rotator.classList.remove("is-revealing");
+          rotator.classList.add("is-reversing");
+
+          window.setTimeout(() => {
+            index = (index + 1) % words.length;
+            rotator.textContent = words[index];
+            rotator.classList.remove("is-reversing");
+            rotator.classList.add("is-revealing");
+          }, 260);
+        };
+
+        rotator.classList.add("is-revealing");
+        window.setInterval(nextWord, 1350);
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        const turntable = document.querySelector(".about-turntable");
+        const hero = document.querySelector(".about-hero");
+        if (!turntable || !hero) return;
+
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        let ticking = false;
+
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+        const update = () => {
+          ticking = false;
+
+          if (reduceMotion.matches) {
+            turntable.style.setProperty("--about-turntable-parallax", "0px");
+            return;
+          }
+
+          const scrollY = window.scrollY || window.pageYOffset || 0;
+          const scrollRange = Math.max(180, Math.min(420, hero.offsetHeight * 0.62));
+          const progress = clamp(scrollY / scrollRange, 0, 1);
+          const parallax = Math.round(progress * 190);
+
+          turntable.style.setProperty("--about-turntable-parallax", `${parallax}px`);
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(update);
+        };
+
+        update();
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        reduceMotion.addEventListener?.("change", requestUpdate);
+      })();
+    </script>
+  </body>
+</html>

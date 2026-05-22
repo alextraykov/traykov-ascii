@@ -1,0 +1,334 @@
+---
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ASCII Shader Explainer</title>
+    <meta name="description" content="Visual diagrams explaining the ASCII shader pipeline." />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="explainer-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Back to portfolio">AT</a>
+      <nav aria-label="Primary">
+        <a href="/">Portfolio</a>
+        <a href="/playground">Playground</a>
+      </nav>
+    </header>
+
+    <main class="explainer-shell">
+      <section class="explainer-hero">
+        <p class="section-kicker">ASCII shader system</p>
+        <h1>From moving light to symbols.</h1>
+        <p>
+          The shader makes a tiny grayscale image. The ASCII layer samples that image, adds dither,
+          then chooses symbols. Hover and click operate on the same grid.
+        </p>
+      </section>
+
+      <section class="diagram-card wide">
+        <div class="diagram-copy">
+          <p class="section-kicker">01 / Pipeline</p>
+          <h2>Shader field to glyph field</h2>
+        </div>
+        <svg class="pipeline-diagram" viewBox="0 0 1120 330" role="img" aria-label="ASCII shader pipeline">
+          <defs>
+            <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+              <path d="M0,0 L12,4 L0,8 Z" fill="currentColor"></path>
+            </marker>
+          </defs>
+          <g class="node">
+            <rect x="34" y="64" width="190" height="170"></rect>
+            <text x="62" y="106">Fragment shader</text>
+            <text x="62" y="146" class="mono">noise + ripple</text>
+            <text x="62" y="176" class="mono">falloff + time</text>
+            <text x="62" y="214" class="big">gray field</text>
+          </g>
+          <path class="arrow" d="M246 149 H344"></path>
+          <g class="node">
+            <rect x="365" y="64" width="190" height="170"></rect>
+            <text x="393" y="106">Read pixels</text>
+            <text x="393" y="146" class="mono">tiny canvas</text>
+            <text x="393" y="176" class="mono">one cell each</text>
+            <text x="393" y="214" class="big">brightness</text>
+          </g>
+          <path class="arrow" d="M577 149 H675"></path>
+          <g class="node">
+            <rect x="696" y="64" width="190" height="170"></rect>
+            <text x="724" y="106">Quantize</text>
+            <text x="724" y="146" class="mono">brightness</text>
+            <text x="724" y="176" class="mono">+ Bayer dither</text>
+            <text x="724" y="214" class="big">symbol index</text>
+          </g>
+          <path class="arrow" d="M908 149 H996"></path>
+          <g class="node output">
+            <rect x="1010" y="64" width="76" height="170"></rect>
+            <text x="1026" y="108" class="glyph">·</text>
+            <text x="1026" y="142" class="glyph">+</text>
+            <text x="1026" y="176" class="glyph">*</text>
+            <text x="1026" y="210" class="glyph">✶</text>
+          </g>
+        </svg>
+      </section>
+
+      <section class="diagram-grid">
+        <article class="diagram-card">
+          <div class="diagram-copy">
+            <p class="section-kicker">02 / Sampling</p>
+            <h2>Cells sample light.</h2>
+            <p>Each grid cell reads local brightness. Dense light becomes dense symbols.</p>
+          </div>
+          <div class="sample-diagram" aria-hidden="true">
+            <div class="field-grid">
+              <span class="v1"></span><span class="v2"></span><span class="v3"></span><span class="v4"></span>
+              <span class="v2"></span><span class="v4"></span><span class="v5"></span><span class="v6"></span>
+              <span class="v1"></span><span class="v3"></span><span class="v6"></span><span class="v8"></span>
+              <span class="v2"></span><span class="v5"></span><span class="v7"></span><span class="v9"></span>
+            </div>
+            <div class="diagram-arrow">sample</div>
+            <div class="glyph-panel">· + * ✦<br />+ + * ✶<br />+ * ✶ ✸<br />* ✶ ✸ ✹</div>
+          </div>
+        </article>
+
+        <article class="diagram-card">
+          <div class="diagram-copy">
+            <p class="section-kicker">03 / Dither</p>
+            <h2>Threshold pattern breaks bands.</h2>
+            <p>A Bayer matrix nudges neighboring cells differently, then time adds a small motion term.</p>
+          </div>
+          <div class="bayer-diagram" aria-hidden="true">
+            <span>0</span><span>8</span><span>2</span><span>10</span>
+            <span>12</span><span>4</span><span>14</span><span>6</span>
+            <span>3</span><span>11</span><span>1</span><span>9</span>
+            <span>15</span><span>7</span><span>13</span><span>5</span>
+          </div>
+        </article>
+
+        <article class="diagram-card">
+          <div class="diagram-copy">
+            <p class="section-kicker">04 / Interaction</p>
+            <h2>Hover and click edit grid state.</h2>
+            <p>Hover turns cells on. Click injects energy into a small damped wave simulation.</p>
+          </div>
+          <svg class="interaction-diagram" viewBox="0 0 520 260" role="img" aria-label="Hover and click grid diagram">
+            <g class="cell-grid">
+              <rect x="32" y="32" width="22" height="22"></rect><rect x="66" y="32" width="22" height="22"></rect><rect x="100" y="32" width="22" height="22"></rect><rect x="134" y="32" width="22" height="22"></rect><rect x="168" y="32" width="22" height="22"></rect><rect x="202" y="32" width="22" height="22"></rect><rect x="236" y="32" width="22" height="22" class="wave"></rect><rect x="270" y="32" width="22" height="22"></rect><rect x="304" y="32" width="22" height="22"></rect><rect x="338" y="32" width="22" height="22"></rect><rect x="372" y="32" width="22" height="22"></rect><rect x="406" y="32" width="22" height="22"></rect>
+              <rect x="32" y="66" width="22" height="22"></rect><rect x="66" y="66" width="22" height="22"></rect><rect x="100" y="66" width="22" height="22"></rect><rect x="134" y="66" width="22" height="22"></rect><rect x="168" y="66" width="22" height="22"></rect><rect x="202" y="66" width="22" height="22" class="wave"></rect><rect x="236" y="66" width="22" height="22"></rect><rect x="270" y="66" width="22" height="22"></rect><rect x="304" y="66" width="22" height="22"></rect><rect x="338" y="66" width="22" height="22"></rect><rect x="372" y="66" width="22" height="22"></rect><rect x="406" y="66" width="22" height="22"></rect>
+              <rect x="32" y="100" width="22" height="22"></rect><rect x="66" y="100" width="22" height="22"></rect><rect x="100" y="100" width="22" height="22"></rect><rect x="134" y="100" width="22" height="22"></rect><rect x="168" y="100" width="22" height="22"></rect><rect x="202" y="100" width="22" height="22" class="active"></rect><rect x="236" y="100" width="22" height="22" class="active"></rect><rect x="270" y="100" width="22" height="22" class="active"></rect><rect x="304" y="100" width="22" height="22"></rect><rect x="338" y="100" width="22" height="22"></rect><rect x="372" y="100" width="22" height="22"></rect><rect x="406" y="100" width="22" height="22"></rect>
+              <rect x="32" y="134" width="22" height="22"></rect><rect x="66" y="134" width="22" height="22"></rect><rect x="100" y="134" width="22" height="22"></rect><rect x="134" y="134" width="22" height="22"></rect><rect x="168" y="134" width="22" height="22"></rect><rect x="202" y="134" width="22" height="22" class="active"></rect><rect x="236" y="134" width="22" height="22" class="active"></rect><rect x="270" y="134" width="22" height="22" class="active"></rect><rect x="304" y="134" width="22" height="22" class="wave"></rect><rect x="338" y="134" width="22" height="22"></rect><rect x="372" y="134" width="22" height="22"></rect><rect x="406" y="134" width="22" height="22"></rect>
+              <rect x="32" y="168" width="22" height="22"></rect><rect x="66" y="168" width="22" height="22"></rect><rect x="100" y="168" width="22" height="22"></rect><rect x="134" y="168" width="22" height="22"></rect><rect x="168" y="168" width="22" height="22"></rect><rect x="202" y="168" width="22" height="22"></rect><rect x="236" y="168" width="22" height="22"></rect><rect x="270" y="168" width="22" height="22"></rect><rect x="304" y="168" width="22" height="22"></rect><rect x="338" y="168" width="22" height="22" class="wave"></rect><rect x="372" y="168" width="22" height="22"></rect><rect x="406" y="168" width="22" height="22"></rect>
+            </g>
+            <path class="wave-line" d="M120 130 C178 74 245 74 306 130 S410 190 468 130"></path>
+          </svg>
+        </article>
+
+        <article class="diagram-card">
+          <div class="diagram-copy">
+            <p class="section-kicker">05 / Pave card mark</p>
+            <h2>Same shader, logo mask.</h2>
+            <p>The card mark samples the same field, but only emits symbols inside a Pave-shaped mask.</p>
+          </div>
+          <div class="mask-diagram" aria-hidden="true">
+            <div class="glyph-panel">✶ ✶ ✶ ✶ ✶<br />✶ ✶     ✶<br />✶ ✶   ✶<br />✶ ✶ ✶ ✶<br />✶ ✶<br />✶ ✶  ✶ ✶</div>
+            <div>
+              <span>shader field</span>
+              <span>masked output</span>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <style>
+      .explainer-page {
+        min-height: 100svh;
+        background: #050505;
+      }
+
+      .explainer-shell {
+        width: min(100% - 36px, 1180px);
+        margin-inline: auto;
+        padding: 128px 0 80px;
+      }
+
+      .explainer-hero {
+        max-width: 860px;
+        margin-bottom: 32px;
+      }
+
+      .explainer-hero h1,
+      .diagram-copy h2 {
+        margin: 10px 0 0;
+        font-family: var(--mono);
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .explainer-hero h1 {
+        font-size: clamp(42px, 8vw, 112px);
+        line-height: 0.92;
+      }
+
+      .explainer-hero p,
+      .diagram-copy p {
+        color: rgba(243, 243, 240, 0.68);
+        line-height: 1.55;
+      }
+
+      .diagram-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .diagram-card {
+        border: 1px solid rgba(243, 243, 240, 0.16);
+        background: #080808;
+        padding: clamp(18px, 3vw, 30px);
+      }
+
+      .diagram-card.wide {
+        margin-bottom: 14px;
+      }
+
+      .diagram-copy h2 {
+        font-size: clamp(24px, 3vw, 42px);
+        line-height: 1;
+      }
+
+      .pipeline-diagram,
+      .interaction-diagram {
+        width: 100%;
+        height: auto;
+        margin-top: 24px;
+        color: rgba(243, 243, 240, 0.76);
+      }
+
+      .node rect,
+      .cell-grid rect {
+        fill: #101010;
+        stroke: rgba(243, 243, 240, 0.22);
+      }
+
+      .node text {
+        fill: rgba(243, 243, 240, 0.86);
+        font: 700 20px var(--mono);
+      }
+
+      .node .mono {
+        fill: rgba(243, 243, 240, 0.58);
+        font-size: 15px;
+      }
+
+      .node .big,
+      .node .glyph {
+        fill: #f3f3f0;
+        font-size: 24px;
+      }
+
+      .arrow,
+      .wave-line {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        marker-end: url(#arrow);
+      }
+
+      .sample-diagram {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .field-grid,
+      .bayer-diagram {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border: 1px solid rgba(243, 243, 240, 0.18);
+      }
+
+      .field-grid span,
+      .bayer-diagram span {
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(243, 243, 240, 0.12);
+        font-family: var(--mono);
+      }
+
+      .v1 { background: #161616; }
+      .v2 { background: #242424; }
+      .v3 { background: #363636; }
+      .v4 { background: #484848; }
+      .v5 { background: #5c5c5c; }
+      .v6 { background: #777; }
+      .v7 { background: #909090; }
+      .v8 { background: #aaa; }
+      .v9 { background: #d0d0d0; }
+
+      .diagram-arrow {
+        font: 700 11px var(--mono);
+        color: rgba(243, 243, 240, 0.58);
+        text-transform: uppercase;
+      }
+
+      .glyph-panel {
+        color: #f3f3f0;
+        font: 800 22px/1.35 var(--mono);
+        white-space: pre;
+      }
+
+      .bayer-diagram {
+        margin-top: 24px;
+      }
+
+      .bayer-diagram span {
+        min-height: 58px;
+        color: rgba(243, 243, 240, 0.78);
+      }
+
+      .cell-grid .active {
+        fill: #f3f3f0;
+      }
+
+      .cell-grid .wave {
+        fill: #f3f3f0;
+      }
+
+      .wave-line {
+        stroke: #f3f3f0;
+        marker-end: none;
+      }
+
+      .mask-diagram {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(140px, 0.6fr);
+        gap: 20px;
+        align-items: center;
+        margin-top: 24px;
+      }
+
+      .mask-diagram div:last-child {
+        display: grid;
+        gap: 10px;
+        color: rgba(243, 243, 240, 0.62);
+        font: 700 12px var(--mono);
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 760px) {
+        .diagram-grid,
+        .sample-diagram,
+        .mask-diagram {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </body>
+</html>

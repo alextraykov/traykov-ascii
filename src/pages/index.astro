@@ -1,0 +1,158 @@
+---
+import ProjectMark from "../components/ProjectMark.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { getCaseStudies } from "../lib/content";
+import "../styles/global.css";
+
+const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"];
+const caseStudies = getCaseStudies();
+const featuredCards = featuredIds
+  .map((id) => caseStudies.find((study) => study.id === id))
+  .filter((study): study is NonNullable<typeof study> => study !== undefined)
+  .map((study) => ({
+    ...study,
+    title:
+      study.id === "designing-pave"
+        ? "Designing Pave"
+        : study.id === "synapse-sys"
+          ? "Synapse-Sys"
+          : study.title,
+    status: "Preview only"
+  }));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alexander Traykov - Product Design Portfolio</title>
+    <meta
+      name="description"
+      content="Product design portfolio of Alexander Traykov, focused on AI product surfaces, design systems, and Quickbase platform work."
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/playground">Playground</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="ascii-stage hero-stage" data-ascii-shader>
+          <canvas aria-hidden="true"></canvas>
+          <pre aria-hidden="true" lang="bg"></pre>
+        </div>
+
+        <div class="hero-copy">
+          <p class="eyebrow reveal">UX design lead / Product systems / AI-native tools</p>
+          <h1 id="hero-title" class="name-reveal">
+            <span>Alexander</span>
+            <span>Traykov</span>
+          </h1>
+          <p class="hero-summary reveal">
+            I am shaping product systems for AI-native tools, enterprise software, and design-engineering workflows. This site is an early portfolio pass: about, playground, and a small grid of case studies in progress.
+          </p>
+          <div class="landing-actions" aria-label="Primary pages">
+            <a href="/about/">About</a>
+            <a href="/playground">Playground</a>
+          </div>
+        </div>
+
+        <a class="scroll-cue" href="#work" aria-label="Scroll to work">
+          <span></span>
+        </a>
+      </section>
+
+      <section id="work" class="work section-shell" aria-labelledby="work-title">
+        <div class="section-heading">
+          <p class="section-kicker">Case studies</p>
+          <h2 id="work-title">Being rebuilt, still alive on hover.</h2>
+        </div>
+
+        <div class="project-grid">
+          {featuredCards.map((study, index) => (
+            <details class:list={["project-card", "project-card--expandable", "project-card--construction", study.id === "synapse-sys" && "project-card--synapse-sys", study.id === "synapse-sys" && "project-card--synapsis"]}>
+              <summary class="project-card__body" aria-label={`${study.title} case study preview`}>
+                <ProjectMark group={study.group} title={study.title} />
+                <div class="project-copy">
+                  <span class="project-index">{String(index + 1).padStart(2, "0")} / {study.group}</span>
+                  <h3>{study.title}</h3>
+                  {study.summary && <p>{study.summary}</p>}
+                  <span class="construction-status">{study.status}</span>
+                  <span class="project-card__toggle" aria-hidden="true">Expand</span>
+                </div>
+              </summary>
+              <div class="project-card__expanded">
+                <dl class="project-card__meta">
+                  {study.role && (
+                    <div>
+                      <dt>Role</dt>
+                      <dd>{study.role}</dd>
+                    </div>
+                  )}
+                  {study.year && (
+                    <div>
+                      <dt>Year</dt>
+                      <dd>{study.year}</dd>
+                    </div>
+                  )}
+                  {study.readTime && (
+                    <div>
+                      <dt>Read</dt>
+                      <dd>{study.readTime}</dd>
+                    </div>
+                  )}
+                </dl>
+                {study.tags.length > 0 && (
+                  <p class="project-card__tags">{study.tags.join(" / ")}</p>
+                )}
+                <a class="project-card__link" href={study.href}>Open case study</a>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+
+    <script is:inline src="/ascii-shader.js?v=static-project-mark-2"></script>
+    <script>
+      import "../scripts/synapse-card-scramble.js";
+
+      const loadProjectTurntables = () => {
+        import("../scripts/pave-symbol-turntable.js");
+        import("../scripts/sasi-logo-turntable.js");
+      };
+      let turntablesQueued = false;
+      const queueProjectTurntables = () => {
+        if (turntablesQueued) return;
+        turntablesQueued = true;
+        loadProjectTurntables();
+      };
+
+      document.querySelector(".project-grid")?.addEventListener("pointerenter", queueProjectTurntables, {
+        once: true
+      });
+      document.querySelector(".project-grid")?.addEventListener("focusin", queueProjectTurntables, {
+        once: true
+      });
+      window.setTimeout(queueProjectTurntables, 4200);
+
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(() => {
+          if (window.scrollY > window.innerHeight * 0.35) queueProjectTurntables();
+        }, { timeout: 2600 });
+      }
+    </script>
+  </body>
+</html>

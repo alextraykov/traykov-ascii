@@ -1,0 +1,1 @@
+.message-queue not visible on #builder. Captured host page instead.

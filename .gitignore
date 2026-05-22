@@ -1,0 +1,8 @@
+node_modules/
+dist/
+audit-artifacts/
+.astro/
+.DS_Store
+*.log
+*.zip
+/02.obj

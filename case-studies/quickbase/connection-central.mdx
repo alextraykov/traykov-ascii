@@ -1,0 +1,149 @@
+---
+title: "Connection Central"
+summary: "Redesigning Connection Central in Quickbase to give admins clearer pipeline visibility, better resource tracking, and faster troubleshooting."
+role: "Lead Product Designer"
+year: 2024
+group: "Quickbase"
+order: 1
+coverBefore: "/images/connection-central-before.jpg"
+coverAfter: "/images/connection-central-after.jpg"
+---
+
+import ImageComparisonSlider from '@/components/terminal/ImageComparisonSlider';
+import LivePreview from '@/components/terminal/LivePreview';
+import MidnightButton from '@/components/demos/MidnightButton';
+import MidnightButtonSource from '@/components/demos/MidnightButton.tsx?raw';
+
+# CONNECTION CENTRAL ENHANCEMENTS FOR PIPELINES
+
+## Team
+
+- **Product Manager** — [Stasha Markovska](https://linkedin.com/in/stasha-markovska)
+- **Product Designer** — [Alexander Traykov](https://linkedin.com/in/alexandertraykov)
+- **Content Designer** — [Eva Miranda](https://linkedin.com/in/evamiranda)
+- **Engineer** — [Dimitar Gradev](https://linkedin.com/in/dimitar-gradev), [Dessie Ivanova](https://linkedin.com/in/dessie-ivanova)
+
+## 1. INTRODUCTION/PROBLEM
+
+### Making Pipeline Management Better for Quickbase Admins
+
+<ImageComparisonSlider
+  beforeImage="/images/connection-central-before.jpg"
+  afterImage="/images/connection-central-after.jpg"
+  client:visible
+/>
+
+### Live component sample
+
+A demo button from the same design language — click it, the state is real, the source below is the actual file.
+
+<LivePreview
+  source={MidnightButtonSource}
+  language="tsx"
+  title="MidnightButton"
+  client:visible
+>
+  <MidnightButton>Primary button</MidnightButton>
+</LivePreview>
+
+As product designer, I led the Connection Central redesign in Quickbase because admins had big problems
+
+> they couldn't see clearly what was happening with their pipelines.
+
+Admins had hard time watching pipeline status, finding what resources were used, and fixing problems fast. The interface was too split up. I wanted to make simple, data-rich hub that makes pipeline management easier.
+
+- Admins couldn't easily see pipeline status, errors, or how resources connect to each other.
+- Realm admins had no single view to see all pipeline activity across apps.
+- Old interface had no good filtering or detailed resource breakdowns, making decisions slower.
+
+## 2. ROLE AND GOALS
+
+### Lead Product Designer
+
+As UX lead for this project, I worked with product managers, engineers, and Quickbase stakeholders to make useful, user-focused solution. I did user research, wireframes, prototypes, and made changes based on feedback. But also had to think about technical limits, tight schedule, and planning how to release Connection Central in phases.
+
+Goals
+
+- Make pipeline activity easy to see and understand.
+- Create better resource tracking with easy filters and popups.
+- Let users quickly move through different parts of Quickbase.
+- Make good base for phase-by-phase launch.
+
+## 3. APPROACH/PROCESS
+
+### Research
+
+We made a survey for Solution Architects and main users who work with Connection Central every day. From June to July 2024, we got answers from 13 people with different jobs and experience. This helped us know how they use current version and what they want to improve.
+
+![Research Finding 1](/images/connection-central/cc-research-01.png)
+
+![Research Finding 2](/images/connection-central/cc-research-02.png)
+
+![Research Finding 3](/images/connection-central/cc-research-03.png)
+
+![Research Finding 4](/images/connection-central/cc-research-04.png)
+
+#### What We Found
+
+- Pipeline control → Users need better ways to access and control pipelines, like on/off switches and managing who owns them.
+- Information access → Fast access to ownership details, activity logs, and pipeline status is important.
+- Error handling → Users want better error tracking with counts and history.
+- Visual tools → Many asked for better data visuals and pipeline diagrams beyond YAML format - we left this for later.
+- Data entry → Required fields should be clearly marked, with better field sorting options.
+- Design → Users wanted same language style, color codes for states, and better space use.
+
+These findings matched with older feedback, showing users wanted better pipeline control, clearer error reporting, and easier interface for long time.
+
+### Ideas
+
+The idea phase took long time. I tried many different designs - nested details for each connection that open/close, giving more control and insight, dashboard pages, overviews and more.
+
+![Design Iterations for Connection Central](/images/connection-central/cc-iterrations.png)
+
+> But this stopped suddenly because team resources moved to help with the big Quickbase AI project.
+
+With few resources and time pressure, the team and I had to make design that was technically possible and still met user needs.
+
+## 4. SOLUTION
+
+### Final Design
+
+![Connection Central Overview](/images/connection-central/cc-homepage-overview.png)
+
+The redesigned Connection Central represents a significant leap forward in pipeline management capabilities. While the introduction of essential features like pipeline linking, status tracking, and activity monitoring brought immediate improvements to admin workflows, the crown jewel of this redesign is the sophisticated resource management system. The granular resource breakdown, particularly through the innovative resource popover, transforms how admins navigate between interconnected tables, apps, and pipeline steps. This deep integration, combined with advanced filtering capabilities, creates a seamless experience for managing complex pipeline architectures, making it a game-changer for Quickbase administrators.
+
+#### Advanced Resource Filtering
+
+![Advanced Resource Filtering Interface](/images/cc-resources-popover-advanced-filtering.png)
+
+- Full type filtering → Users can filter by all 24 Quickbase resource types, from basic ones like Text, Number, Date to complex ones like Formula, User, Rich text.
+- Location filter → Easy switching between Current app and External app resources, helping admins see data flow across Quickbase.
+- Step analysis → Filter based on how resources are used - in one step or many steps - showing patterns and ways to improve.
+- Search with filters → Strong search tool that works with filters, helping admins find resources quickly in their filtered view.
+
+#### Resource Management and Navigation
+
+![Resource Popover Interface](/images/cc-resource-popover.jpg)
+
+- Interactive resource popup → Smart popup that shows when clicking resource counts, showing all connected fields.
+- Field info display → Each resource shows important info - field name, type, source table, and which pipeline steps use it.
+- Page system for many resources → Good page system for hundreds of resources across many tables and apps.
+- Quick navigation links → Direct links to related tables, apps, and pipeline steps, making movement across platform fast.
+
+## 5. RESULTS/IMPACT
+
+### Outcomes
+
+Because of NDA limits, I can only share rough results. The new design had good impact
+
+- User engagement → Users used it more than our goal, mainly because of better interface and filtering.
+- Troubleshooting → Admins fixed problems about 25% faster, making pipeline management more efficient.
+- Feedback → Scores were over 4 out of 5, with users liking the search and resource tools most.
+
+### General Metrics
+
+While exact numbers are secret, we saw
+
+- Adoption → Most target users started using new interface in first month.
+- Efficiency → Finding resources became about 20% faster.
+- Satisfaction → About 80-85% of users said they could see pipeline activities much better.

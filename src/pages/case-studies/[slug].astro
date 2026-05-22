@@ -1,0 +1,100 @@
+---
+import PaveTurntable from "../../components/PaveTurntable.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SynapseSysTurntable from "../../components/SynapseSysTurntable.astro";
+import { getCaseStudies, renderMarkdown } from "../../lib/content";
+import "../../styles/global.css";
+
+export function getStaticPaths() {
+  return getCaseStudies().map((study) => ({
+    params: { slug: study.id },
+    props: { study },
+  }));
+}
+
+const { study } = Astro.props;
+const isPaveStudy = study.group.toLowerCase().includes("pave");
+const isSynapseSysStudy = study.id === "synapse-sys";
+const heroTitle = isPaveStudy ? "Designing Pave — AI app builder surfaces" : study.title;
+const heroSummary = isPaveStudy
+  ? "A design-intent prototype for an AI-driven internal app builder: chat creates the model, diagrams make the AI legible, and direct manipulation lets users refine the output without regenerating it."
+  : study.summary;
+const caseMeta = [study.readTime, study.tags.join(" / ") || study.group].filter(Boolean).join(" / ");
+const pageTitle = `${heroTitle} - Alexander Traykov`;
+const metaDescription = heroSummary || `${heroTitle} case study.`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+
+    <header class="site-nav">
+      <a class="brand" href="/#top" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/about/">About</a>
+        <a href="/playground">Playground</a>
+      </nav>
+    </header>
+
+    <main id="top" class="case-page">
+      <section class:list={["case-hero", (isPaveStudy || isSynapseSysStudy) && "case-hero--turntable"]} aria-labelledby="case-title">
+        {isPaveStudy ? (
+          <PaveTurntable
+            class="case-hero-turntable"
+            asciiClass="case-hero-turntable__ascii"
+            renderSize={0.94}
+            ariaLabel=""
+          />
+        ) : isSynapseSysStudy ? (
+          <SynapseSysTurntable
+            class="case-hero-turntable"
+            asciiClass="case-hero-turntable__ascii"
+            renderSize={0.94}
+            ariaLabel=""
+          />
+        ) : (
+          <div class="ascii-stage compact-stage" data-ascii-shader>
+            <canvas aria-hidden="true"></canvas>
+            <pre aria-hidden="true" lang="bg"></pre>
+          </div>
+        )}
+        <div class="case-hero-copy section-shell">
+          <a class="case-back" href="/case-studies/">Back to cases</a>
+          <p class="section-kicker">{study.group} / {study.category ?? "case study"} / {study.year ?? study.status ?? "Prototype"}</p>
+          <h1 id="case-title">{heroTitle}</h1>
+          <p class="case-hero-summary">{heroSummary}</p>
+          <p class="case-hero-meta"><span>{caseMeta}</span></p>
+        </div>
+      </section>
+
+      <article class="case-study case-detail section-shell">
+        <div class="case-body">
+          {study.image && (
+            <figure class="case-cover">
+              <img src={study.image} alt="" loading="eager" />
+            </figure>
+          )}
+          <div class="case-study-body" set:html={renderMarkdown(study.body)} />
+        </div>
+      </article>
+    </main>
+
+    <SiteFooter links={[{ label: "All cases", href: "/case-studies/" }]} />
+
+    <script is:inline src="/ascii-shader.js?v=case-pages-2"></script>
+    {isSynapseSysStudy && <script src="/synapse-mini-canvas.js" defer></script>}
+    <script>
+      import "../../scripts/pave-symbol-turntable.js";
+      import "../../scripts/sasi-logo-turntable.js";
+    </script>
+  </body>
+</html>

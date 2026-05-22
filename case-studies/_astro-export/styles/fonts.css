@@ -1,0 +1,41 @@
+/* Polymath — body text */
+@font-face {
+  font-family: "Polymath";
+  src: url("./Polymath-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("./Polymath-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Pinokio Grand — page headings / display */
+@font-face {
+  font-family: "Pinokio Grand";
+  src: url("./PinokioGrandTrial-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pinokio Grand";
+  src: url("./PinokioGrandTrial-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pinokio Grand";
+  src: url("./PinokioGrandTrial-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,1 @@
+.spacing-controls not visible on #builder. Captured host page instead.

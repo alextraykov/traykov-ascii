@@ -5,6 +5,8 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 
 const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
+const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
+const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/gltf/");
@@ -31,7 +33,7 @@ document.querySelectorAll("[data-obj-turntable]").forEach((root) => {
     brightness: Number(root.dataset.cardBrightness || -0.02),
     contrast: Number(root.dataset.cardContrast || 1.42),
     glyphDetail: Number(root.dataset.cardGlyphDetail || 9),
-    hover: isCard ? 0 : isAboutTurntable ? 0.18 : 0.28,
+    hover: Number(root.dataset.cardHover || (isCard ? 0 : isAboutTurntable ? 0.18 : 0.28)),
     click: Number(root.dataset.cardClick || (isCard ? 0 : 0.46)),
     glow: Number(root.dataset.cardGlow || 0.18),
     enableReveal: Number(root.dataset.cardEnableReveal || 1),
@@ -133,6 +135,12 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   let wavePrevious = new Float32Array(cols * rows);
   let waveNext = new Float32Array(cols * rows);
   let objectMask = new Uint8Array(cols * rows);
+  let sourceGlyphs = new Array(cols * rows).fill(" ");
+  let outputGlyphs = new Array(cols * rows).fill(" ");
+  let sourceScores = new Float32Array(cols * rows);
+  let targetScores = new Float32Array(cols * rows);
+  let hasTrail = false;
+  let hasRipple = false;
   let turntableAngle = 0;
   let lastRenderTime = 0;
   let hoverPoint = { x: 0, y: 0, heat: 0 };
@@ -242,8 +250,6 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     const height = Math.max(1, Math.floor(rect.height));
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    const renderScale = Math.min(1, 960 / width, 720 / height);
-    renderer.setSize(Math.max(1, Math.floor(width * renderScale)), Math.max(1, Math.floor(height * renderScale)), false);
 
     const minCols = isCard ? 24 : 56;
     const maxCols = isCard ? 44 : 210;
@@ -251,6 +257,12 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     const maxRows = isCard ? 18 : 120;
     cols = Math.max(minCols, Math.min(maxCols, Math.floor(width / controls.density)));
     rows = Math.max(minRows, Math.min(maxRows, Math.floor(height / (controls.density * 1.55))));
+
+    const sourceScale = isCard ? 2 : 1.15;
+    const renderWidth = Math.max(1, Math.min(width, Math.floor(cols * sourceScale)));
+    const renderHeight = Math.max(1, Math.min(height, Math.floor(renderWidth * (height / width))));
+    renderer.setSize(renderWidth, renderHeight, false);
+
     sampleCanvas.width = cols;
     sampleCanvas.height = rows;
     trailBuffer = new Float32Array(cols * rows);
@@ -258,6 +270,12 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     wavePrevious = new Float32Array(cols * rows);
     waveNext = new Float32Array(cols * rows);
     objectMask = new Uint8Array(cols * rows);
+    sourceGlyphs = new Array(cols * rows).fill(" ");
+    outputGlyphs = new Array(cols * rows).fill(" ");
+    sourceScores = new Float32Array(cols * rows);
+    targetScores = new Float32Array(cols * rows);
+    hasTrail = false;
+    hasRipple = false;
 
     ascii.style.fontSize = `${isCard ? Math.max(6.5, Math.min(9, width / (cols * 0.62))) : Math.max(7, width / (cols * 0.62))}px`;
     ascii.style.lineHeight = `${height / rows}px`;
@@ -306,6 +324,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
 
   const addTrail = (centerX, centerY, strength = 1) => {
     if (controls.hover <= 0) return;
+    let didAddTrail = false;
     const radiusBase = useRepulsion ? Math.max(6, Math.min(18, cols * 0.068)) : Math.max(4, Math.min(12, cols * 0.045));
     const radius = radiusBase * Math.max(0.2, controls.disperseRadius);
     const minX = Math.max(0, Math.floor(centerX - radius));
@@ -324,8 +343,10 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
           trailBuffer[index],
           Math.pow(1 - distance, useRepulsion ? 1.35 : 1.6) * strength * Math.max(0, controls.disperse)
         );
+        didAddTrail = true;
       }
     }
+    hasTrail ||= didAddTrail;
   };
 
   const updateTrail = (time) => {
@@ -349,11 +370,18 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         : 0;
     root.style.setProperty("--obj-click-tint", clickTint.toFixed(3));
     root.style.setProperty("--obj-disperse-tint", disperseTint.toFixed(3));
-    if (controls.hover <= 0) return;
+    if (controls.hover <= 0 || !hasTrail) return;
+    let nextHasTrail = false;
     for (let i = 0; i < trailBuffer.length; i++) {
       const next = trailBuffer[i] * decay;
-      trailBuffer[i] = next > 0.01 ? next : 0;
+      if (next > 0.01) {
+        trailBuffer[i] = next;
+        nextHasTrail = true;
+      } else {
+        trailBuffer[i] = 0;
+      }
     }
+    hasTrail = nextHasTrail;
   };
 
   const markHoverPoint = (point, strength = 1) => {
@@ -480,6 +508,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
 
   const injectRipple = (centerX, centerY) => {
     if (controls.click <= 0 || controls.enableExplosion <= 0 || controls.ripple <= 0) return;
+    let didInjectRipple = false;
     const radius = Math.max(3, Math.min(8, cols * 0.036));
     const minX = Math.max(1, Math.floor(centerX - radius));
     const maxX = Math.min(cols - 2, Math.ceil(centerX + radius));
@@ -493,13 +522,16 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         const index = y * cols + x;
         if (!objectMask[index]) continue;
         waveCurrent[index] += Math.cos((distance / radius) * Math.PI * 0.5) * 1.85 * Math.max(0, controls.ripple);
+        didInjectRipple = true;
       }
     }
+    hasRipple ||= didInjectRipple;
   };
 
   const stepRipple = () => {
-    if (controls.click <= 0 || controls.enableExplosion <= 0 || controls.ripple <= 0) return;
+    if (controls.click <= 0 || controls.enableExplosion <= 0 || controls.ripple <= 0 || !hasRipple) return;
     const damping = 0.965;
+    let nextHasRipple = false;
 
     for (let y = 1; y < rows - 1; y++) {
       const row = y * cols;
@@ -516,7 +548,12 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
             (objectMask[index + cols] ? waveCurrent[index + cols] : 0)) *
           0.5;
         const next = (neighborAverage - wavePrevious[index]) * damping;
-        waveNext[index] = Math.abs(next) > 0.006 ? next : 0;
+        if (Math.abs(next) > 0.006) {
+          waveNext[index] = next;
+          nextHasRipple = true;
+        } else {
+          waveNext[index] = 0;
+        }
       }
     }
 
@@ -525,6 +562,21 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     waveCurrent = waveNext;
     waveNext = previous;
     waveNext.fill(0);
+    hasRipple = nextHasRipple;
+  };
+
+  const hasActiveDisplacement = () => {
+    if (hasTrail || hasRipple) return true;
+    const heat =
+      controls.enableDisperse > 0 ? hoverPoint.heat * Math.max(0, controls.hover) * Math.max(0, controls.disperse) : 0;
+    const explosionHeat =
+      controls.enableExplosion > 0
+        ? explosionPoint.heat * Math.max(0, controls.click) * Math.max(0, controls.explosion)
+        : 0;
+    const motionHeat = useDeviceMotion
+      ? Math.abs(motion.tiltX) * 0.95 + Math.abs(motion.tiltY) * 0.72 + motion.shake * 1.45
+      : 0;
+    return heat > 0.01 || explosionHeat > 0.01 || motionHeat > 0.01;
   };
 
   const toAscii = (time = performance.now()) => {
@@ -534,8 +586,8 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
     updateObjectMask(pixels);
     const totalCells = cols * rows;
-    const sourceGlyphs = new Array(totalCells).fill(" ");
-    const sourceScores = new Float32Array(totalCells);
+    sourceGlyphs.fill(" ");
+    sourceScores.fill(0);
     const maxRampIndex = Math.min(ASCII_RAMP.length - 1, Math.max(2, Math.round(controls.glyphDetail)));
 
     for (let y = 0; y < rows; y++) {
@@ -546,7 +598,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         const trail = trailBuffer[cellIndex] || 0;
         const isObjectCell = objectMask[cellIndex] === 1;
         const ripple =
-          controls.click > 0 && controls.enableExplosion > 0 && controls.ripple > 0 && isObjectCell
+          hasRipple && controls.click > 0 && controls.enableExplosion > 0 && controls.ripple > 0 && isObjectCell
             ? Math.abs(waveCurrent[cellIndex] || 0)
             : 0;
         const motionTone = useDeviceMotion && isObjectCell ? Math.min(0.18, motion.shake * 0.16) : 0;
@@ -570,11 +622,11 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
       }
     }
 
-    const outputGlyphs = shouldDisplace() ? displaceGlyphs(sourceGlyphs, sourceScores) : sourceGlyphs;
+    const output = shouldDisplace() && hasActiveDisplacement() ? displaceGlyphs(sourceGlyphs, sourceScores) : sourceGlyphs;
     const lines = [];
     for (let y = 0; y < rows; y++) {
       let line = "";
-      for (let x = 0; x < cols; x++) line += outputGlyphs[y * cols + x];
+      for (let x = 0; x < cols; x++) line += output[y * cols + x];
       lines.push(line);
     }
 
@@ -582,8 +634,8 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const displaceGlyphs = (sourceGlyphs, sourceScores) => {
-    const targetGlyphs = new Array(sourceGlyphs.length).fill(" ");
-    const targetScores = new Float32Array(sourceGlyphs.length);
+    outputGlyphs.fill(" ");
+    targetScores.fill(0);
     const heat =
       controls.enableDisperse > 0 ? hoverPoint.heat * Math.max(0, controls.hover) * Math.max(0, controls.disperse) : 0;
     const radius = Math.max(10, Math.min(28, cols * 0.14)) * Math.max(0.2, controls.disperseRadius);
@@ -667,13 +719,13 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         const targetIndex = targetY * cols + targetX;
         const score = sourceScores[sourceIndex] + explosionHeat * 0.06 + motionHeat * 0.04;
         if (score >= targetScores[targetIndex]) {
-          targetGlyphs[targetIndex] = glyph;
+          outputGlyphs[targetIndex] = glyph;
           targetScores[targetIndex] = score;
         }
       }
     }
 
-    return targetGlyphs;
+    return outputGlyphs;
   };
 
   const settingsOutput = document.querySelector("[data-obj-settings]");
@@ -850,7 +902,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     stepRipple();
     updateTrail(time);
 
-    if (time - lastAscii > (isCard ? 64 : 42) || reduceMotion.matches) {
+    if (time - lastAscii > (isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL) || reduceMotion.matches) {
       lastAscii = time;
       toAscii(time);
     }

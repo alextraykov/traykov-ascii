@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 
 const LANDING_ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
+const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
+const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 
 document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
   const ascii = root.querySelector("[data-pave-ascii]");
@@ -169,8 +171,6 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     const height = Math.max(1, Math.floor(rect.height));
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    const renderScale = Math.min(1, 960 / width, 720 / height);
-    renderer.setSize(Math.max(1, Math.floor(width * renderScale)), Math.max(1, Math.floor(height * renderScale)), false);
 
     const minCols = isCard ? 22 : 56;
     const maxCols = isCard ? 34 : 210;
@@ -178,6 +178,12 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     const maxRows = isCard ? 14 : 120;
     cols = Math.max(minCols, Math.min(maxCols, Math.floor(width / controls.density)));
     rows = Math.max(minRows, Math.min(maxRows, Math.floor(height / (controls.density * 1.55))));
+
+    const sourceScale = isCard ? 3 : 2.4;
+    const renderWidth = Math.max(1, Math.min(width, Math.floor(cols * sourceScale)));
+    const renderHeight = Math.max(1, Math.min(height, Math.floor(renderWidth * (height / width))));
+    renderer.setSize(renderWidth, renderHeight, false);
+
     sampleCanvas.width = cols;
     sampleCanvas.height = rows;
     trailBuffer = new Float32Array(cols * rows);
@@ -286,7 +292,7 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     renderer.render(scene, camera);
     updateTrail(time);
 
-    if (time - lastAscii > (isCard ? 64 : 42) || reduceMotion.matches) {
+    if (time - lastAscii > (isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL) || reduceMotion.matches) {
       lastAscii = time;
       toAscii(time);
     }

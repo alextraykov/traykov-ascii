@@ -11,8 +11,25 @@ type Props = {
   glyphDetail?: number;
   contrast?: number;
   brightness?: number;
+  hover?: number;
   click?: number;
   glow?: number;
+  enableReveal?: number;
+  revealDuration?: number;
+  revealScatter?: number;
+  enableDisperse?: number;
+  disperse?: number;
+  magnetism?: number;
+  disperseRadius?: number;
+  trailDecay?: number;
+  enableExplosion?: number;
+  explosion?: number;
+  explosionRadius?: number;
+  ripple?: number;
+  enableColorClick?: number;
+  colorClick?: number;
+  enableColorDisperse?: number;
+  colorDisperse?: number;
   staticAscii?: string;
   ariaLabel?: string;
 };
@@ -29,8 +46,25 @@ const {
   glyphDetail,
   contrast,
   brightness,
+  hover,
   click,
   glow,
+  enableReveal,
+  revealDuration,
+  revealScatter,
+  enableDisperse,
+  disperse,
+  magnetism,
+  disperseRadius,
+  trailDecay,
+  enableExplosion,
+  explosion,
+  explosionRadius,
+  ripple,
+  enableColorClick,
+  colorClick,
+  enableColorDisperse,
+  colorDisperse,
   staticAscii = "",
   ariaLabel = `${name} 3D ASCII turntable`
 } = Astro.props;
@@ -51,8 +85,25 @@ const asciiClasses = [staticAscii ? "project-turntable__ascii" : "", asciiClass]
   data-card-glyph-detail={glyphDetail}
   data-card-contrast={contrast}
   data-card-brightness={brightness}
+  data-card-hover={hover}
   data-card-click={click}
   data-card-glow={glow}
+  data-card-enable-reveal={enableReveal}
+  data-card-reveal-duration={revealDuration}
+  data-card-reveal-scatter={revealScatter}
+  data-card-enable-disperse={enableDisperse}
+  data-card-disperse={disperse}
+  data-card-magnetism={magnetism}
+  data-card-disperse-radius={disperseRadius}
+  data-card-trail-decay={trailDecay}
+  data-card-enable-explosion={enableExplosion}
+  data-card-explosion={explosion}
+  data-card-explosion-radius={explosionRadius}
+  data-card-ripple={ripple}
+  data-card-enable-color-click={enableColorClick}
+  data-card-color-click={colorClick}
+  data-card-enable-color-disperse={enableColorDisperse}
+  data-card-color-disperse={colorDisperse}
   aria-label={ariaLabel}
   aria-hidden={ariaLabel ? undefined : "true"}
 >

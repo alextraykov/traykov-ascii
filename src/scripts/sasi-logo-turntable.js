@@ -3,6 +3,8 @@ import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 
 const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
+const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
+const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 
 document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
   const ascii = root.querySelector("[data-sasi-ascii]");
@@ -296,8 +298,6 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     const height = Math.max(1, Math.floor(rect.height));
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    const renderScale = Math.min(1, 960 / width, 720 / height);
-    renderer.setSize(Math.max(1, Math.floor(width * renderScale)), Math.max(1, Math.floor(height * renderScale)), false);
 
     const minCols = isCard ? 24 : 56;
     const maxCols = isCard ? 44 : 210;
@@ -305,6 +305,12 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     const maxRows = isCard ? 18 : 120;
     cols = Math.max(minCols, Math.min(maxCols, Math.floor(width / controls.density)));
     rows = Math.max(minRows, Math.min(maxRows, Math.floor(height / (controls.density * 1.55))));
+
+    const sourceScale = isCard ? 2 : 1.25;
+    const renderWidth = Math.max(1, Math.min(width, Math.floor(cols * sourceScale)));
+    const renderHeight = Math.max(1, Math.min(height, Math.floor(renderWidth * (height / width))));
+    renderer.setSize(renderWidth, renderHeight, false);
+
     sampleCanvas.width = cols;
     sampleCanvas.height = rows;
     trailBuffer = new Float32Array(cols * rows);
@@ -520,7 +526,7 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     renderer.render(scene, camera);
     updateTrail(time);
 
-    if (time - lastAscii > (isCard ? 64 : 42) || reduceMotion.matches) {
+    if (time - lastAscii > (isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL) || reduceMotion.matches) {
       lastAscii = time;
       toAscii(time);
     }

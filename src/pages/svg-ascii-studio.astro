@@ -1,0 +1,32 @@
+---
+import StudioWorkbench from "../../apps/svg-ascii-studio/src/components/StudioWorkbench.astro";
+import "../styles/global.css";
+import "../../apps/svg-ascii-studio/src/styles/app.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A portfolio-native mini tool for turning uploaded SVG marks into tuned 3D ASCII turntables and exportable outputs."
+    />
+    <title>ASCII Studio - Alexander Traykov</title>
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="portfolio-studio-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/playground">Playground</a>
+        <a href="/svg-ascii-studio/">Studio</a>
+      </nav>
+    </header>
+
+    <StudioWorkbench />
+  </body>
+</html>

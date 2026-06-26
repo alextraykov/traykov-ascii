@@ -1,5 +1,5 @@
 ---
-title: "Synapse-Sys: making relationships executable"
+title: "Synapse-Sys"
 category: product case study
 status: prototype
 pubDate: 2026-05-21
@@ -33,7 +33,7 @@ I built Synapse-Sys as a working design-engineering prototype: a product argumen
 - Core artifact: an AI-augmented graph canvas where edges trigger operations and generated results become first-class nodes
 - Evidence base: 121 commits on `origin/main`, 10 phase docs, PRD, interaction specs, audit reports, hardening docs, tests, and production-readiness notes
 
-## What a hiring manager should take from this
+## Reviewer takeaway
 
 Synapse-Sys is a solo prototype, not a launched customer product. I am showing it because it demonstrates product design work that is hard to fake in static portfolio screens:
 
@@ -95,6 +95,13 @@ The core loop is intentionally short.
 ```synapse-loop
 ```
 
+```recording-placeholder
+title: Core loop: relationship becomes an operation
+file: public/case-studies/media/synapse-sys-core-loop.mp4
+capture: Create two nodes, draw the edge, choose `synthesize`, and show the generated node landing back on the canvas with lineage.
+why: This should replace the abstract product claim with visible proof of the executable-edge interaction.
+```
+
 A user creates or imports ideas as nodes. They connect two nodes. The connection opens a small operation picker. The user chooses `expand`, `compare`, `synthesize`, or `summarize`. Synapse-Sys creates a result node in the canvas, then rewires the graph so the generated idea sits between the original concepts.
 
 That is the product in one move.
@@ -125,19 +132,20 @@ The transaction inserts the result node, deletes the original edge, creates `sou
 ```synapse-edge-operation
 ```
 
+```recording-placeholder
+title: Edge operation: pending, success, and rollback
+file: public/case-studies/media/synapse-sys-edge-operation-states.mp4
+capture: Run one edge operation through pending and success, then record a forced failure or mocked timeout that removes the pending result and leaves the original edge intact.
+why: This is the strongest proof that the interaction is not just a happy-path animation.
+```
+
 **Proof of product judgment**
 
 The initial interaction made the canvas feel responsive, but it allowed persisted graph state to diverge from what the user saw. I changed the design contract instead of only fixing the bug: optimistic feedback stayed local, while durable graph mutation moved into a single server-side transaction.
 
 That preserved the user experience without pretending the operation had succeeded before the system could guarantee it.
 
-The product proof is the middle state. It looks real enough to keep the product moving, but it is not durable until the AI result can be committed safely.
-
-What a reader should see here:
-
-- The canvas can show immediate feedback without pretending the operation already succeeded.
-- The failed state is designed, not treated as an edge case.
-- The final state changes the graph topology in a way the user can understand visually.
+The product proof is the middle state: the canvas gives the user feedback immediately, but the durable graph remains unchanged until the server can insert the result node and replace the original edge in one transaction. The failure path matters as much as the success path because it proves the design has a recovery contract.
 
 That is the kind of design engineering I care about: keep the magic, remove the lie.
 
@@ -159,13 +167,14 @@ The rendering model is a layer cake, not one canvas doing everything:
 ```synapse-rendering
 ```
 
-That split let the product keep tool-like node behavior without giving up graph-specific geometry.
+```recording-placeholder
+title: Hybrid rendering: DOM nodes aligned to canvas geometry
+file: public/case-studies/media/synapse-sys-hybrid-rendering.mp4
+capture: Pan, zoom, drag a node, edit text inside a card, and show the edge ports staying locked to the same world-space positions.
+why: This should make the DOM/Konva split legible as a product decision instead of an implementation footnote.
+```
 
-What a reader should see here:
-
-- Nodes behave like editable interface objects.
-- Edges behave like graph geometry.
-- Pan, zoom, drag, selection, and resize all stay visually aligned.
+That split let the product keep tool-like node behavior without giving up graph-specific geometry. The proof is alignment under stress: text editing, resize handles, edge hit regions, and selection geometry all have to stay in the same coordinate system while the viewport moves.
 
 This decision made the product feel like a tool instead of a drawing.
 
@@ -200,11 +209,14 @@ The edge pipeline became a readability system:
 ```synapse-edge-routing
 ```
 
-What a reader should see here:
+```recording-placeholder
+title: Edge routing: readable lanes over clever bundling
+file: public/case-studies/media/synapse-sys-edge-routing.mp4
+capture: Show a dense node cluster with several relationships, then hover/select edges so labels, bridge arcs, and z-order changes make the route readable.
+why: Static routing diagrams are not enough; this needs motion to prove the edge system is an interaction surface.
+```
 
-- The rejected route packs many edges into one visual bundle.
-- The chosen route separates channels so each relationship is easier to follow.
-- The product values scanning and selection over algorithmic cleverness.
+The useful comparison is not "simple versus complex." It is "can a user still follow one relationship when the graph is dense?" The rejected route compressed connections into a clever-looking bundle. The chosen route spends more space so individual relationships remain selectable, labelable, and understandable.
 
 ## Suggestions had to stay ghosts
 
@@ -234,13 +246,14 @@ Ghost nodes sit between suggestion and commitment:
 ```synapse-ghosts
 ```
 
-The state model protects authorship. The AI can point at a direction, but only the user decides what becomes part of the map.
+```recording-placeholder
+title: Ghost suggestions: AI proposes without taking authorship
+file: public/case-studies/media/synapse-sys-ghost-suggestions.mp4
+capture: Select a node, reveal ghost suggestions, accept one into the graph, then dismiss another without leaving committed nodes behind.
+why: This is the cleanest way to show the authorship rule: AI can suggest, but only the user commits.
+```
 
-What a reader should see here:
-
-- Suggested content is visible but not committed.
-- Accepting a suggestion turns it into normal canvas material.
-- Dismissing or ignoring it leaves the map clean.
+The state model protects authorship. Suggested content has a visible position and relationship, but it does not become graph material until the user accepts it. Ignoring or dismissing the suggestion leaves no cleanup debt on the canvas.
 
 ## The product had to survive outside the canvas
 
@@ -275,11 +288,14 @@ The SaaS layer was the trust layer around the canvas:
 ```synapse-trust
 ```
 
-What a reader should see here:
+```recording-placeholder
+title: Product shell: account, budget, share, and export surfaces
+file: public/case-studies/media/synapse-sys-product-shell.mp4
+capture: Move from canvas to settings/profile, show monthly AI operation budget, create or inspect a share link, and open export options.
+why: This proves the canvas sat inside a product system rather than an isolated interaction prototype.
+```
 
-- The product answers ownership, sharing, recovery, export, and usage questions.
-- AI work is tied to budget and plan state, not treated as free background magic.
-- The canvas is presented as part of a shippable product surface, not an isolated prototype.
+This layer is evidence that the prototype had to answer product questions, not only canvas questions: ownership, recovery, exports, sharing, plan state, and usage limits.
 
 ## System shape
 
@@ -307,13 +323,16 @@ The billing abstraction was deliberately boring:
 ```synapse-billing
 ```
 
+```recording-placeholder
+title: Billing boundary: provider swap without product rewrite
+file: public/case-studies/media/synapse-sys-billing-boundary.mp4
+capture: Show pricing/account state and the plan/budget update path. If source footage is available, pair it with a short code walkthrough of the provider interface and webhook boundary.
+why: The value is the boundary, not the vendor. The clip should make that architecture visible.
+```
+
 When the provider changed, product code did not need to learn a new payment worldview. It kept calling the same interface.
 
-What a reader should see here:
-
-- The product survived a business constraint change.
-- The billing decision protected pricing, plans, and AI budgets from provider churn.
-- The point is not the payment vendor; it is the boundary around the product.
+The product survived provider churn because pricing, plan state, and AI budgets talked to a stable billing boundary. The payment vendor changed; the product contract did not.
 
 ## The AI layer needed economics, not just prompts
 
@@ -324,6 +343,13 @@ Synapse-Sys could not treat the model call as a black box. Different operations 
 The AI layer became a routed subsystem rather than a direct model call:
 
 ```synapse-ai-layer
+```
+
+```recording-placeholder
+title: AI operation routes: ghost, extract, and synthesis paths
+file: public/case-studies/media/synapse-sys-ai-routing.mp4
+capture: Trigger a low-stakes ghost suggestion and a higher-stakes synthesis operation. Show how budget state, loading behavior, and output shape differ.
+why: This should make the AI layer feel like product economics and safety work, not generic prompt plumbing.
 ```
 
 Different operations could now make different cost and quality choices. A ghost suggestion, a URL extraction, and a synthesis result do not need the same route.
@@ -337,11 +363,7 @@ The prompt boundary also became explicit:
 ```synapse-prompt-boundary
 ```
 
-What a reader should see here:
-
-- Different AI actions have different cost and quality profiles.
-- User-authored text is treated as content, not trusted instruction.
-- The AI system protects spend, safety, and output shape before anything becomes canvas material.
+The boundary is the point: user-authored text is content, not trusted instruction. The server owns the operation spec, prompt construction, budget check, provider call, and output validation before anything becomes canvas material.
 
 ## The terminal identity had to learn restraint
 
@@ -369,13 +391,14 @@ The taste system had to balance identity against legibility:
 ```synapse-taste
 ```
 
-The design lesson was not to abandon taste. It was to make taste subordinate to the user's work.
+```recording-placeholder
+title: Visual restraint: terminal identity versus readable canvas
+file: public/case-studies/media/synapse-sys-visual-restraint.mp4
+capture: Compare the louder early terminal treatment with the restrained canvas pass: node hierarchy, reduced glow, tooltip clarity, and content wrapping.
+why: Taste decisions need before/after evidence, especially when the original direction had personality but hurt legibility.
+```
 
-What a reader should see here:
-
-- The visual identity is still recognizable.
-- The quieter version makes node content easier to read.
-- Taste is treated as a product constraint, not decoration.
+The design lesson was not to abandon taste. It was to make taste subordinate to the user's work: keep the terminal identity, reduce the parts that competed with node content, and reserve emphasis for interaction state.
 
 ## Performance had to preserve place
 
@@ -402,11 +425,14 @@ The performance work was about preserving place:
 ```synapse-performance
 ```
 
-What a reader should see here:
+```recording-placeholder
+title: Canvas performance: preserving place during gestures
+file: public/case-studies/media/synapse-sys-performance-gestures.mp4
+capture: Record cursor-stable zoom, trackpad pan, selected-node visibility during culling, and reduced-motion behavior if available.
+why: Performance claims are weak without motion; this clip should show spatial trust directly.
+```
 
-- The object under the cursor stays under the cursor during zoom.
-- Selection does not disappear during active gestures.
-- Performance work is framed as preserving trust, not chasing abstract speed.
+The product measure is whether the user still trusts where they are. The object under the cursor should stay under the cursor during zoom, selected nodes should not disappear during culling, and active gestures should preserve the user's mental map.
 
 ## How I used LLMs without outsourcing judgment
 
@@ -460,7 +486,7 @@ This case is strongest as a design-engineering and zero-to-one product explorati
 - Usability findings from external users.
 - Activation funnel metrics.
 - Generated-node reuse or ghost-node acceptance data.
-- A public demo video or annotated screenshots.
+- Final recorded MP4 evidence or annotated screenshots.
 - Real infrastructure integration proof for every critical backend path.
 
 Those are the next evidence gaps I would close before positioning Synapse-Sys as a launched product case study.

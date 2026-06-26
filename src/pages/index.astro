@@ -1,8 +1,32 @@
 ---
+import ObjTurntable from "../components/ObjTurntable.astro";
 import ProjectMark from "../components/ProjectMark.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { getCaseStudies } from "../lib/content";
 import "../styles/global.css";
+
+const identities = [
+  "designer",
+  "father",
+  "husband",
+  "son",
+  "grandchild",
+  "grappler",
+  "pourover enjoyer",
+  "walker",
+  "writer",
+  "yapper",
+  "notebook hoarder",
+  "coffee tinkerer",
+  "mat philosopher",
+  "Sofia dad",
+  "question asker",
+  "systems gardener",
+  "slow runner",
+  "early riser",
+  "deadline negotiator",
+  "friendly menace"
+];
 
 const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"];
 const caseStudies = getCaseStudies();
@@ -42,34 +66,55 @@ const featuredCards = featuredIds
         <a href="/">Home</a>
         <a href="/about/">About</a>
         <a href="/playground">Playground</a>
+        <a href="/svg-ascii-studio/">Studio</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="ascii-stage hero-stage" data-ascii-shader>
-          <canvas aria-hidden="true"></canvas>
-          <pre aria-hidden="true" lang="bg"></pre>
-        </div>
+      <section class="about-hero section-shell" aria-labelledby="hero-title">
+        <ObjTurntable
+          class="about-turntable"
+          asciiClass="about-turntable__ascii"
+          name="me"
+          objSrc="/models/me.glb"
+          renderSize={0.9}
+          density={5}
+          glyphDetail={9}
+          brightness={-0.02}
+          contrast={1.42}
+          hover={0.28}
+          click={0.46}
+          glow={0.18}
+          enableReveal={1}
+          revealDuration={1280}
+          revealScatter={0.55}
+          enableDisperse={1}
+          disperse={1}
+          magnetism={1}
+          disperseRadius={1}
+          trailDecay={1}
+          enableExplosion={1}
+          explosion={1}
+          explosionRadius={1}
+          ripple={1}
+          enableColorClick={0}
+          colorClick={1}
+          enableColorDisperse={0}
+          colorDisperse={1}
+          ariaLabel=""
+        />
 
-        <div class="hero-copy">
-          <p class="eyebrow reveal">UX design lead / Product systems / AI-native tools</p>
-          <h1 id="hero-title" class="name-reveal">
-            <span>Alexander</span>
-            <span>Traykov</span>
+        <div class="about-hero-copy">
+          <p class="section-kicker">About</p>
+          <h1 id="hero-title" class="about-title">
+            <span class="about-title__prefix">Alexander is a</span>
+            <span
+              class="identity-rotator"
+              data-identity-rotator
+              data-words={JSON.stringify(identities)}
+            >designer</span>
           </h1>
-          <p class="hero-summary reveal">
-            I am shaping product systems for AI-native tools, enterprise software, and design-engineering workflows. This site is an early portfolio pass: about, playground, and a small grid of case studies in progress.
-          </p>
-          <div class="landing-actions" aria-label="Primary pages">
-            <a href="/about/">About</a>
-            <a href="/playground">Playground</a>
-          </div>
         </div>
-
-        <a class="scroll-cue" href="#work" aria-label="Scroll to work">
-          <span></span>
-        </a>
       </section>
 
       <section id="work" class="work section-shell" aria-labelledby="work-title">
@@ -80,44 +125,58 @@ const featuredCards = featuredIds
 
         <div class="project-grid">
           {featuredCards.map((study, index) => (
-            <details class:list={["project-card", "project-card--expandable", "project-card--construction", study.id === "synapse-sys" && "project-card--synapse-sys", study.id === "synapse-sys" && "project-card--synapsis"]}>
-              <summary class="project-card__body" aria-label={`${study.title} case study preview`}>
-                <ProjectMark group={study.group} title={study.title} />
-                <div class="project-copy">
-                  <span class="project-index">{String(index + 1).padStart(2, "0")} / {study.group}</span>
-                  <h3>{study.title}</h3>
-                  {study.summary && <p>{study.summary}</p>}
-                  <span class="construction-status">{study.status}</span>
-                  <span class="project-card__toggle" aria-hidden="true">Expand</span>
+            study.id === "synapse-sys" ? (
+              <article class:list={["project-card", "project-card--direct", "project-card--construction", "project-card--synapse-sys", "project-card--synapsis"]}>
+                <a href={study.href} aria-label={`Open ${study.title} case study`}>
+                  <ProjectMark group={study.group} title={study.title} />
+                  <div class="project-copy">
+                    <span class="project-index">{String(index + 1).padStart(2, "0")} / {study.group}</span>
+                    <h3>{study.title}</h3>
+                    {study.summary && <p>{study.summary}</p>}
+                    <span class="construction-status">Open case study</span>
+                  </div>
+                </a>
+              </article>
+            ) : (
+              <details class:list={["project-card", "project-card--expandable", "project-card--construction"]}>
+                <summary class="project-card__body" aria-label={`${study.title} case study preview`}>
+                  <ProjectMark group={study.group} title={study.title} />
+                  <div class="project-copy">
+                    <span class="project-index">{String(index + 1).padStart(2, "0")} / {study.group}</span>
+                    <h3>{study.title}</h3>
+                    {study.summary && <p>{study.summary}</p>}
+                    <span class="construction-status">{study.status}</span>
+                    <span class="project-card__toggle" aria-hidden="true">Expand</span>
+                  </div>
+                </summary>
+                <div class="project-card__expanded">
+                  <dl class="project-card__meta">
+                    {study.role && (
+                      <div>
+                        <dt>Role</dt>
+                        <dd>{study.role}</dd>
+                      </div>
+                    )}
+                    {study.year && (
+                      <div>
+                        <dt>Year</dt>
+                        <dd>{study.year}</dd>
+                      </div>
+                    )}
+                    {study.readTime && (
+                      <div>
+                        <dt>Read</dt>
+                        <dd>{study.readTime}</dd>
+                      </div>
+                    )}
+                  </dl>
+                  {study.tags.length > 0 && (
+                    <p class="project-card__tags">{study.tags.join(" / ")}</p>
+                  )}
+                  <a class="project-card__link" href={study.href}>Open case study</a>
                 </div>
-              </summary>
-              <div class="project-card__expanded">
-                <dl class="project-card__meta">
-                  {study.role && (
-                    <div>
-                      <dt>Role</dt>
-                      <dd>{study.role}</dd>
-                    </div>
-                  )}
-                  {study.year && (
-                    <div>
-                      <dt>Year</dt>
-                      <dd>{study.year}</dd>
-                    </div>
-                  )}
-                  {study.readTime && (
-                    <div>
-                      <dt>Read</dt>
-                      <dd>{study.readTime}</dd>
-                    </div>
-                  )}
-                </dl>
-                {study.tags.length > 0 && (
-                  <p class="project-card__tags">{study.tags.join(" / ")}</p>
-                )}
-                <a class="project-card__link" href={study.href}>Open case study</a>
-              </div>
-            </details>
+              </details>
+            )
           ))}
         </div>
       </section>
@@ -125,9 +184,32 @@ const featuredCards = featuredIds
 
     <SiteFooter />
 
-    <script is:inline src="/ascii-shader.js?v=static-project-mark-2"></script>
     <script>
+      import "../scripts/obj-turntable.js";
       import "../scripts/synapse-card-scramble.js";
+
+      const rotator = document.querySelector("[data-identity-rotator]");
+      if (rotator) {
+        const words = JSON.parse(rotator.getAttribute("data-words") || "[]");
+
+        if (words.length) {
+          let index = 0;
+          const nextWord = () => {
+            rotator.classList.remove("is-revealing");
+            rotator.classList.add("is-reversing");
+
+            window.setTimeout(() => {
+              index = (index + 1) % words.length;
+              rotator.textContent = words[index];
+              rotator.classList.remove("is-reversing");
+              rotator.classList.add("is-revealing");
+            }, 260);
+          };
+
+          rotator.classList.add("is-revealing");
+          window.setInterval(nextWord, 1350);
+        }
+      }
 
       const loadProjectTurntables = () => {
         import("../scripts/pave-symbol-turntable.js");
@@ -153,6 +235,45 @@ const featuredCards = featuredIds
           if (window.scrollY > window.innerHeight * 0.35) queueProjectTurntables();
         }, { timeout: 2600 });
       }
+    </script>
+    <script is:inline>
+      (() => {
+        const turntable = document.querySelector(".about-turntable");
+        const hero = document.querySelector(".about-hero");
+        if (!turntable || !hero) return;
+
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        let ticking = false;
+
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+        const update = () => {
+          ticking = false;
+
+          if (reduceMotion.matches) {
+            turntable.style.setProperty("--about-turntable-parallax", "0px");
+            return;
+          }
+
+          const scrollY = window.scrollY || window.pageYOffset || 0;
+          const scrollRange = Math.max(180, Math.min(420, hero.offsetHeight * 0.62));
+          const progress = clamp(scrollY / scrollRange, 0, 1);
+          const parallax = Math.round(progress * 190);
+
+          turntable.style.setProperty("--about-turntable-parallax", `${parallax}px`);
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(update);
+        };
+
+        update();
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        reduceMotion.addEventListener?.("change", requestUpdate);
+      })();
     </script>
   </body>
 </html>

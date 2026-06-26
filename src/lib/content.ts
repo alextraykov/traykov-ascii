@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 export type Matter = Record<string, string | number | string[]>;
@@ -568,6 +568,10 @@ function renderSynapseNode(label: string, className: string): string {
   return `<div class="synapse-node ${esc(className)}"><span>${esc(label)}</span></div>`;
 }
 
+function renderSynapseEdgeLabel(label: string, className: string): string {
+  return `<div class="synapse-edge-label ${esc(className)}">${esc(label)}</div>`;
+}
+
 function renderSynapseFigure(
   kind: string,
   title: string,
@@ -576,14 +580,65 @@ function renderSynapseFigure(
   caption: string,
   initialStep = steps[0]?.key ?? "default"
 ): string {
+  const markerId = `synapse-arrow-${kind}`;
+  const markerDef = `<defs><marker id="${esc(markerId)}" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" /></marker></defs>`;
+  const diagramBody = body
+    .replaceAll('aria-hidden="true">', `aria-hidden="true">${markerDef}`)
+    .replaceAll('<path class="synapse-line', `<path marker-end="url(#${esc(markerId)})" class="synapse-line`);
+
   return `<figure class="synapse-mini synapse-mini--${esc(kind)}" data-synapse-mini data-step="${esc(initialStep)}">
   <div class="synapse-mini__header">
     <p>${esc(title)}</p>
     ${renderSynapseControls(steps)}
   </div>
-  <div class="synapse-mini__viewport">${body}</div>
+  <div class="synapse-mini__viewport">${diagramBody}</div>
   <figcaption>${esc(caption)}</figcaption>
 </figure>`;
+}
+
+function renderRecordingPlaceholder(code: string): string {
+  const fields = new Map<string, string>();
+  const notes: string[] = [];
+
+  for (const rawLine of code.split("\n")) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    const match = line.match(/^([A-Za-z][\w-]*):\s*(.+)$/);
+    if (match) {
+      fields.set(match[1].toLowerCase(), match[2]);
+    } else {
+      notes.push(line.replace(/^[-*]\s+/, ""));
+    }
+  }
+
+  const title = fields.get("title") ?? "Record MP4 example";
+  const file = fields.get("file") ?? "case-studies/media/synapse-sys-example.mp4";
+  const capture = fields.get("capture") ?? fields.get("show") ?? notes.join(" ");
+  const why = fields.get("why");
+  const publicRelativePath = file.replace(/^public\//, "");
+  const publicFilePath = join(process.cwd(), "public", publicRelativePath);
+  const videoSrc = `/${publicRelativePath}`;
+
+  if (existsSync(publicFilePath)) {
+    return `<figure class="recording-media">
+  <video class="recording-media__video" src="${esc(videoSrc)}" autoplay muted loop playsinline preload="metadata"></video>
+  <figcaption>
+    <span>MP4</span>
+    <strong>${inlineMarkdown(title)}</strong>
+    ${capture ? `<em>${inlineMarkdown(capture)}</em>` : ""}
+  </figcaption>
+</figure>`;
+  }
+
+  return `<aside class="recording-placeholder">
+  <p class="recording-placeholder__kicker">MP4 placeholder</p>
+  <h3>${inlineMarkdown(title)}</h3>
+  <dl>
+    <div><dt>File</dt><dd><code>${esc(file)}</code></dd></div>
+    ${capture ? `<div><dt>Capture</dt><dd>${inlineMarkdown(capture)}</dd></div>` : ""}
+    ${why ? `<div><dt>Why</dt><dd>${inlineMarkdown(why)}</dd></div>` : ""}
+  </dl>
+</aside>`;
 }
 
 function renderSynapseMiniCanvas(language: string): string | null {
@@ -598,19 +653,22 @@ function renderSynapseMiniCanvas(language: string): string | null {
           { key: "branch", label: "Branch" }
         ],
         `<svg class="synapse-lines" viewBox="0 0 1000 430" aria-hidden="true">
-          <path class="synapse-line synapse-line--base" d="M205 180 C315 110 430 110 545 180" />
-          <path class="synapse-line synapse-line--base" d="M205 250 C315 320 430 320 545 250" />
-          <path class="synapse-line synapse-line--active synapse-step synapse-step--operate synapse-step--branch" d="M545 215 C650 215 700 215 800 215" />
-          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--branch" d="M800 215 C860 150 895 120 940 94" />
-          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--branch" d="M800 215 C860 280 895 315 940 340" />
+          <path class="synapse-line synapse-line--base synapse-step synapse-step--connect synapse-step--operate synapse-step--branch" d="M235 175 H410 V215 H530" />
+          <path class="synapse-line synapse-line--base synapse-step synapse-step--connect synapse-step--operate synapse-step--branch" d="M235 255 H410 V215 H530" />
+          <path class="synapse-line synapse-line--active synapse-step synapse-step--operate synapse-step--branch" d="M560 215 H790" />
+          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--branch" d="M790 215 H870 V105 H930" />
+          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--branch" d="M790 215 H870 V330 H930" />
         </svg>
-        ${renderSynapseNode("Idea A", "synapse-node--idea-a")}
-        ${renderSynapseNode("Idea B", "synapse-node--idea-b")}
-        ${renderSynapseNode("Connection", "synapse-node--edge-menu synapse-step synapse-step--connect synapse-step--operate synapse-step--branch")}
-        ${renderSynapseNode("Generated node", "synapse-node--result synapse-step synapse-step--branch")}
-        ${renderSynapseNode("New branch", "synapse-node--branch-a synapse-step synapse-step--branch")}
-        ${renderSynapseNode("Follow-up", "synapse-node--branch-b synapse-step synapse-step--branch")}`,
-        "The AI response becomes canvas material, not a side-panel answer."
+        ${renderSynapseNode("Source idea", "synapse-node--idea-a")}
+        ${renderSynapseNode("Target idea", "synapse-node--idea-b")}
+        ${renderSynapseNode("Edge action", "synapse-node--edge-menu synapse-step synapse-step--connect synapse-step--operate synapse-step--branch")}
+        ${renderSynapseNode("AI result node", "synapse-node--result synapse-step synapse-step--branch")}
+        ${renderSynapseNode("Branch", "synapse-node--branch-a synapse-node--small synapse-step synapse-step--branch")}
+        ${renderSynapseNode("Next edge", "synapse-node--branch-b synapse-node--small synapse-step synapse-step--branch")}
+        ${renderSynapseEdgeLabel("draw connection", "synapse-edge-label--loop-connect synapse-step synapse-step--connect synapse-step--operate synapse-step--branch")}
+        ${renderSynapseEdgeLabel("choose synthesize", "synapse-edge-label--loop-operate synapse-step synapse-step--operate synapse-step--branch")}
+        ${renderSynapseEdgeLabel("result is reusable", "synapse-edge-label--loop-branch synapse-step synapse-step--branch")}`,
+        "The diagram is the product thesis: two user-authored ideas, an executable relationship, and an AI result that becomes reusable graph material."
       );
     case "synapse-edge-operation":
       return renderSynapseFigure(
@@ -623,11 +681,11 @@ function renderSynapseMiniCanvas(language: string): string | null {
           { key: "failed", label: "Failed" }
         ],
         `<svg class="synapse-lines" viewBox="0 0 1000 430" aria-hidden="true">
-          <path class="synapse-line synapse-step synapse-step--before synapse-step--failed" d="M240 215 C390 215 580 215 760 215" />
-          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--pending" d="M240 215 C335 170 420 170 500 215" />
-          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--pending" d="M500 215 C585 260 660 260 760 215" />
-          <path class="synapse-line synapse-line--active synapse-step synapse-step--committed" d="M240 215 C335 170 420 170 500 215" />
-          <path class="synapse-line synapse-line--active synapse-step synapse-step--committed" d="M500 215 C585 260 660 260 760 215" />
+          <path class="synapse-line synapse-step synapse-step--before synapse-step--failed" d="M245 215 H760" />
+          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--pending" d="M245 215 H390 V165 H500" />
+          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--pending" d="M500 165 H620 V215 H760" />
+          <path class="synapse-line synapse-line--active synapse-step synapse-step--committed" d="M245 215 H390 V165 H500" />
+          <path class="synapse-line synapse-line--active synapse-step synapse-step--committed" d="M500 165 H620 V215 H760" />
         </svg>
         ${renderSynapseNode("Source idea", "synapse-node--source")}
         ${renderSynapseNode("Target idea", "synapse-node--target")}
@@ -648,7 +706,7 @@ function renderSynapseMiniCanvas(language: string): string | null {
         <div class="synapse-status synapse-step synapse-step--pending">Local only. No persisted graph mutation yet.</div>
         <div class="synapse-status synapse-step synapse-step--committed">Single transaction: insert result, replace original edge.</div>
         <div class="synapse-status synapse-step synapse-step--failed">Rollback leaves the original edge intact.</div>`,
-        "The key product rule: optimistic feedback can be local, but durable topology changes must commit atomically."
+        "This is the correctness contract: the UI may speculate, but the database only moves from A -> B to A -> Result -> B in one committed operation."
       );
     case "synapse-rendering":
       return renderSynapseFigure(
@@ -660,11 +718,11 @@ function renderSynapseMiniCanvas(language: string): string | null {
           { key: "html", label: "HTML" }
         ],
         `<div class="synapse-layer synapse-layer--viewport">Shared viewport: x, y, scale</div>
-        <div class="synapse-layer synapse-layer--konva synapse-step synapse-step--konva">Konva: grid, edges, hit regions, previews</div>
-        <div class="synapse-layer synapse-layer--html synapse-step synapse-step--html">HTML: editable cards, buttons, tooltips</div>
+        <div class="synapse-layer synapse-layer--konva synapse-step synapse-step--konva">Konva layer: grid, ports, edge hit regions, drag preview</div>
+        <div class="synapse-layer synapse-layer--html synapse-step synapse-step--html">HTML layer: editable cards, menus, resize handles, tooltips</div>
         <svg class="synapse-lines" viewBox="0 0 1000 430" aria-hidden="true">
-          <path class="synapse-line synapse-line--ghost" d="M205 240 L795 240" />
-          <path class="synapse-line synapse-line--active synapse-step synapse-step--konva" d="M260 305 C410 350 590 350 740 305" />
+          <path class="synapse-line synapse-line--ghost" d="M205 240 H795" />
+          <path class="synapse-line synapse-line--active synapse-step synapse-step--konva" d="M260 315 H430 V350 H740" />
         </svg>
         ${renderSynapseNode("Editable node", "synapse-node--render-a synapse-step synapse-step--html")}
         ${renderSynapseNode("Graph node", "synapse-node--render-b synapse-step synapse-step--html")}`,
@@ -680,16 +738,16 @@ function renderSynapseMiniCanvas(language: string): string | null {
         ],
         `<svg class="synapse-lines" viewBox="0 0 1000 430" aria-hidden="true">
           <g class="synapse-step synapse-step--bus">
-            <path class="synapse-line synapse-line--heavy" d="M245 205 H410 V95 H760" />
-            <path class="synapse-line synapse-line--heavy" d="M245 205 H430 V175 H760" />
-            <path class="synapse-line synapse-line--heavy" d="M245 205 H450 V255 H760" />
-            <path class="synapse-line synapse-line--heavy" d="M245 205 H470 V335 H760" />
+            <path class="synapse-line synapse-line--heavy" d="M245 215 H410 V95 H760" />
+            <path class="synapse-line synapse-line--heavy" d="M245 215 H430 V175 H760" />
+            <path class="synapse-line synapse-line--heavy" d="M245 215 H450 V255 H760" />
+            <path class="synapse-line synapse-line--heavy" d="M245 215 H470 V335 H760" />
           </g>
           <g class="synapse-step synapse-step--offset">
-            <path class="synapse-line synapse-line--active" d="M245 150 H395 V95 H760" />
-            <path class="synapse-line" d="M245 188 H435 V175 H760" />
-            <path class="synapse-line" d="M245 226 H475 V255 H760" />
-            <path class="synapse-line" d="M245 264 H515 V335 H760" />
+            <path class="synapse-line synapse-line--active" d="M245 145 H395 V95 H760" />
+            <path class="synapse-line" d="M245 190 H435 V175 H760" />
+            <path class="synapse-line" d="M245 235 H475 V255 H760" />
+            <path class="synapse-line" d="M245 280 H515 V335 H760" />
           </g>
         </svg>
         ${renderSynapseNode("Shared source", "synapse-node--route-source")}
@@ -697,6 +755,8 @@ function renderSynapseMiniCanvas(language: string): string | null {
         ${renderSynapseNode("B", "synapse-node--route-b synapse-node--small")}
         ${renderSynapseNode("C", "synapse-node--route-c synapse-node--small")}
         ${renderSynapseNode("D", "synapse-node--route-d synapse-node--small")}
+        ${renderSynapseEdgeLabel("shared port collapses meaning", "synapse-edge-label--route-bus synapse-step synapse-step--bus")}
+        ${renderSynapseEdgeLabel("separate lanes preserve scanability", "synapse-edge-label--route-offset synapse-step synapse-step--offset")}
         <div class="synapse-status synapse-step synapse-step--bus">Technically clever. Visually reads as one thick bundle.</div>
         <div class="synapse-status synapse-step synapse-step--offset">Less clever. Easier to scan and select.</div>`,
         "The rejected implementation matters because it shows the taste bar: route quality is measured by readability, not algorithmic cleverness.",
@@ -712,9 +772,9 @@ function renderSynapseMiniCanvas(language: string): string | null {
           { key: "dismissed", label: "Dismissed" }
         ],
         `<svg class="synapse-lines" viewBox="0 0 1000 430" aria-hidden="true">
-          <path class="synapse-line synapse-line--active" d="M260 215 C365 170 455 170 560 215" />
-          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--suggested synapse-step--dismissed" d="M560 215 C650 260 720 260 820 215" />
-          <path class="synapse-line synapse-line--active synapse-step synapse-step--accepted" d="M560 215 C650 260 720 260 820 215" />
+          <path class="synapse-line synapse-line--active" d="M260 215 H560" />
+          <path class="synapse-line synapse-line--ghost synapse-step synapse-step--suggested synapse-step--dismissed" d="M560 215 H700 V215 H820" />
+          <path class="synapse-line synapse-line--active synapse-step synapse-step--accepted" d="M560 215 H700 V215 H820" />
         </svg>
         ${renderSynapseNode("Selected idea", "synapse-node--source")}
         ${renderSynapseNode("Real neighbor", "synapse-node--result-center")}
@@ -871,6 +931,8 @@ function renderSynapseMiniCanvas(language: string): string | null {
 function renderCodeFence(language: string, codeLines: string[]): string {
   const code = codeLines.join("\n");
   const normalized = language.toLowerCase();
+  if (normalized === "recording-placeholder") return renderRecordingPlaceholder(code);
+
   const synapseFigure = renderSynapseMiniCanvas(normalized);
   if (synapseFigure) return synapseFigure;
 
@@ -881,8 +943,124 @@ function renderCodeFence(language: string, codeLines: string[]): string {
   return `<pre class="code-block"><code>${esc(code)}</code></pre>`;
 }
 
-export function renderMarkdown(body: string): string {
-  const lines = body
+type BlufSection = {
+  title: string;
+  body: string;
+};
+
+const blufTitleMap: Record<string, string> = {
+  summary: "Summary",
+  "project frame": "Project frame",
+  "what a hiring manager should take from this": "Reviewer takeaway",
+  "reviewer takeaway": "Reviewer takeaway",
+};
+
+function normalizeHeading(value: string): string {
+  return value
+    .replace(/[*_`]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function extractOpeningBlufSections(lines: string[]): { sections: BlufSection[]; rest: string[] } {
+  const firstContentIndex = lines.findIndex((line) => line.trim());
+  if (firstContentIndex === -1) return { sections: [], rest: lines };
+
+  const firstHeading = lines[firstContentIndex].match(/^##\s+(.+)$/);
+  if (!firstHeading || normalizeHeading(firstHeading[1]) !== "summary") {
+    return { sections: [], rest: lines };
+  }
+
+  const sections: BlufSection[] = [];
+  let index = firstContentIndex;
+
+  while (index < lines.length && sections.length < 3) {
+    const heading = lines[index].match(/^##\s+(.+)$/);
+    if (!heading) break;
+
+    const title = blufTitleMap[normalizeHeading(heading[1])];
+    if (!title) break;
+
+    const bodyLines: string[] = [];
+    index += 1;
+
+    while (index < lines.length && !/^##\s+/.test(lines[index])) {
+      bodyLines.push(lines[index]);
+      index += 1;
+    }
+
+    sections.push({ title, body: bodyLines.join("\n").trim() });
+  }
+
+  if (!sections.length) return { sections: [], rest: lines };
+
+  return {
+    sections,
+    rest: [...lines.slice(0, firstContentIndex), ...lines.slice(index)],
+  };
+}
+
+function renderBlufPointList(body: string, maxPoints = 3): string {
+  const points: { text: string; quote: boolean }[] = [];
+  let paragraph: string[] = [];
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return;
+    points.push({ text: paragraph.join(" "), quote: false });
+    paragraph = [];
+  };
+
+  for (const rawLine of body.split("\n")) {
+    const line = rawLine.trim();
+    if (!line) {
+      flushParagraph();
+      continue;
+    }
+
+    const bullet = line.match(/^[-*]\s+(.+)$/);
+    if (bullet) {
+      flushParagraph();
+      points.push({ text: bullet[1], quote: false });
+      continue;
+    }
+
+    const quote = line.match(/^>\s+(.+)$/);
+    if (quote) {
+      flushParagraph();
+      points.push({ text: quote[1], quote: true });
+      continue;
+    }
+
+    paragraph.push(line);
+  }
+
+  flushParagraph();
+
+  return `<ul class="case-bluf-note__points">${points
+    .slice(0, maxPoints)
+    .map(
+      (point) =>
+        `<li${point.quote ? ' class="case-bluf-note__point--quote"' : ""}>${inlineMarkdown(point.text)}</li>`
+    )
+    .join("")}</ul>`;
+}
+
+function renderBlufSections(sections: BlufSection[]): string {
+  const notes = sections
+    .map(
+      (section, index) => `<section class="case-bluf-note case-bluf-note--${index + 1}">
+<p class="case-bluf-note__eyebrow">BLUF ${index + 1}</p>
+<h2>${esc(section.title)}</h2>
+<div class="case-bluf-note__body">${renderBlufPointList(section.body)}</div>
+</section>`
+    )
+    .join("");
+
+  return `<div class="case-bluf" aria-label="Project BLUF">${notes}</div>`;
+}
+
+export function renderMarkdown(body: string, enableBluf = true): string {
+  let lines = body
     .split("\n")
     .filter((line) => !line.startsWith("import "));
 
@@ -890,6 +1068,14 @@ export function renderMarkdown(body: string): string {
   let list: string[] = [];
   let code: { language: string; lines: string[] } | null = null;
   let mdxComponent = false;
+
+  if (enableBluf) {
+    const opening = extractOpeningBlufSections(lines);
+    if (opening.sections.length) {
+      html.push(renderBlufSections(opening.sections));
+      lines = opening.rest;
+    }
+  }
 
   const flushList = () => {
     if (!list.length) return;

@@ -1,0 +1,463 @@
+<main class="studio-shell" data-studio data-view="ascii" data-source-state="empty">
+  <header class="studio-topbar">
+    <div class="studio-title-block">
+      <p class="eyebrow">ASCII Studio</p>
+      <h1>Make a 3D ASCII logo from an SVG</h1>
+      <p class="studio-subtitle">
+        Drop a filled logo mark, choose a dither look, tune the turntable, and export the result.
+      </p>
+    </div>
+    <div class="topbar-actions" role="group" aria-label="Preview mode">
+      <button class="is-active" type="button" data-view-mode="ascii" aria-pressed="true">ASCII</button>
+      <button type="button" data-view-mode="solid" aria-pressed="false">3D source</button>
+      <button type="button" data-view-mode="both" aria-pressed="false">Compare</button>
+    </div>
+  </header>
+
+  <section class="workbench" aria-label="SVG ASCII workbench">
+    <aside class="source-panel side-panel" data-side-panel="source" aria-label="SVG source">
+      <div class="panel-heading side-panel-heading">
+        <div class="side-panel-title">
+          <h2>Source</h2>
+          <span data-source-name>No source loaded</span>
+        </div>
+        <button
+          class="panel-collapse-button"
+          type="button"
+          data-collapse-panel="source"
+          aria-controls="source-panel-body"
+          aria-expanded="true"
+          aria-label="Collapse source panel"
+        >Hide</button>
+      </div>
+
+      <div class="side-panel-body" id="source-panel-body" data-side-panel-body="source">
+        <label class="dropzone" data-dropzone>
+          <input type="file" accept=".svg,image/svg+xml" data-file-input />
+          <span>Select or drop an SVG</span>
+          <strong>Browse file</strong>
+          <small>Best with simple filled paths or outlined strokes.</small>
+        </label>
+
+        <details class="import-tools">
+          <summary>
+            <span>Paste SVG markup</span>
+            <small>Inline import without a file</small>
+          </summary>
+          <textarea
+            data-svg-paste
+            spellcheck="false"
+            placeholder="<svg viewBox=&quot;0 0 320 320&quot;>...</svg>"
+          ></textarea>
+          <div class="button-row">
+            <button type="button" data-load-paste>Load pasted SVG</button>
+            <button type="button" data-clear-source>Clear</button>
+          </div>
+        </details>
+
+        <div class="sample-strip" aria-label="Sample SVG marks">
+          <button type="button" data-load-sample="mark" aria-pressed="false">Mark</button>
+          <button type="button" data-load-sample="badge" aria-pressed="false">Badge</button>
+          <button type="button" data-load-sample="spark" aria-pressed="false">Spark</button>
+        </div>
+
+        <div class="source-preview" aria-label="Source SVG preview">
+          <div data-svg-preview>
+            <span class="source-preview-empty">No SVG loaded</span>
+          </div>
+        </div>
+
+        <div class="source-actions">
+          <button type="button" data-reset-sample>Load sample mark</button>
+          <button type="button" data-clear-source>Clear source</button>
+        </div>
+
+        <div class="source-guidance">
+          <p>Works best with:</p>
+          <ul>
+            <li>Filled logo marks</li>
+            <li>Outlined text</li>
+            <li>Simple strokes</li>
+          </ul>
+          <p>Masks, filters, rasters, and complex gradients may be ignored.</p>
+        </div>
+
+        <dl class="source-diagnostics" aria-label="Source diagnostics">
+          <div>
+            <dt>Security</dt>
+            <dd data-diagnostic="security">No active SVG</dd>
+          </div>
+          <div>
+            <dt>Geometry</dt>
+            <dd data-diagnostic="geometry">No mesh generated</dd>
+          </div>
+          <div>
+            <dt>Performance</dt>
+            <dd data-diagnostic="performance">Ready</dd>
+          </div>
+        </dl>
+
+        <div class="status-line" data-status aria-live="polite">No source loaded. Select or drop an SVG to begin.</div>
+      </div>
+    </aside>
+
+    <section class="stage-panel" aria-label="Turntable preview">
+      <div class="stage-toolbar">
+        <span>Live ASCII turntable</span>
+        <div class="button-row">
+          <button type="button" data-toggle-pause>Pause</button>
+          <button type="button" data-copy-ascii data-export-requires-valid disabled>Copy ASCII</button>
+          <button type="button" data-download-png data-export-requires-valid disabled>PNG</button>
+          <button type="button" data-fullscreen-stage>Full preview</button>
+        </div>
+      </div>
+      <div class="stage-frame" data-stage>
+        <div class="solid-preview" data-render-host aria-hidden="true"></div>
+        <pre class="ascii-preview" data-ascii-output aria-label="ASCII turntable output"></pre>
+        <div class="stage-empty" data-stage-empty data-stage-drop-target>
+          <strong>Select or drop an SVG</strong>
+          <span>Drag a plain logo file here, browse from the source panel, paste markup, or start from a sample.</span>
+          <button type="button" data-stage-browse>Browse SVG</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="control-panel side-panel" data-side-panel="controls" aria-label="Turntable controls">
+      <div class="panel-heading side-panel-heading">
+        <div class="side-panel-title">
+          <h2>Controls</h2>
+          <span>Tune and export</span>
+        </div>
+        <button
+          class="panel-collapse-button"
+          type="button"
+          data-collapse-panel="controls"
+          aria-controls="controls-panel-body"
+          aria-expanded="true"
+          aria-label="Collapse controls panel"
+        >Hide</button>
+      </div>
+
+      <div class="side-panel-body" id="controls-panel-body" data-side-panel-body="controls">
+        <div class="control-tabs" role="tablist" aria-label="Control panel">
+          <button class="is-active" type="button" role="tab" aria-selected="true" data-panel-tab="controls">Tune</button>
+          <button type="button" role="tab" aria-selected="false" data-panel-tab="export">Export</button>
+        </div>
+
+        <div class="panel-stack is-active" data-panel="controls" role="tabpanel">
+        <section class="control-section control-section--look" data-control-section="look">
+          <div class="section-heading">
+            <h2>Look templates</h2>
+            <button type="button" data-reset-preset>Reset look</button>
+          </div>
+          <div class="preset-grid" aria-label="ASCII dither presets">
+            <button class="preset-card is-active" type="button" data-preset="clean">
+              <strong>Clean logo</strong>
+              <span>Sharp silhouette, light dither.</span>
+            </button>
+            <button class="preset-card" type="button" data-preset="dense">
+              <strong>Dense print</strong>
+              <span>Heavier glyphs with fine tonal steps.</span>
+            </button>
+            <button class="preset-card" type="button" data-preset="wire">
+              <strong>Wireframe</strong>
+              <span>Linear ASCII texture for outlines.</span>
+            </button>
+            <button class="preset-card" type="button" data-preset="crt">
+              <strong>CRT dither</strong>
+              <span>Bayer grain with soft glow.</span>
+            </button>
+            <button class="preset-card" type="button" data-preset="poster">
+              <strong>Poster halftone</strong>
+              <span>High contrast with chunky texture.</span>
+            </button>
+            <button class="preset-card" type="button" data-preset="binary">
+              <strong>Binary mark</strong>
+              <span>Strict 0/1 output for graphic logos.</span>
+            </button>
+          </div>
+          <p class="preset-status" data-preset-status>Clean logo active</p>
+        </section>
+
+        <section class="control-section" data-control-section="quick">
+          <div class="section-heading">
+            <h2>Quick tune</h2>
+            <span>Novice-safe controls</span>
+          </div>
+          <div class="control-grid">
+            <label>
+              <span>Detail <output data-output="density">9</output></span>
+              <input type="range" min="4" max="22" step="1" value="9" data-control="density" />
+            </label>
+            <label>
+              <span>Contrast <output data-output="contrast">1.35</output></span>
+              <input type="range" min="0.35" max="3.4" step="0.01" value="1.35" data-control="contrast" />
+            </label>
+            <label>
+              <span>Texture <output data-output="ditherStrength">0.16</output></span>
+              <input type="range" min="0" max="0.55" step="0.01" value="0.16" data-control="ditherStrength" />
+            </label>
+            <label>
+              <span>Depth <output data-output="depth">60</output></span>
+              <input type="range" min="4" max="160" step="1" value="60" data-control="depth" />
+            </label>
+            <label>
+              <span>Spin <output data-output="speed">0.28</output></span>
+              <input type="range" min="0" max="1.2" step="0.01" value="0.28" data-control="speed" />
+            </label>
+            <label>
+              <span>Scale <output data-output="objectScale">1.00</output></span>
+              <input type="range" min="0.35" max="2.2" step="0.01" value="1" data-control="objectScale" />
+            </label>
+          </div>
+        </section>
+
+        <details class="control-section" data-control-section="ascii">
+          <summary>
+            <span>Detailed ASCII</span>
+            <small>Rows, threshold, ramp, and glow</small>
+          </summary>
+          <div class="section-body">
+            <label>
+              <span>Rows <output data-output="rowScale">1.55</output></span>
+              <input type="range" min="1" max="2.4" step="0.01" value="1.55" data-control="rowScale" />
+            </label>
+            <label>
+              <span>Brightness <output data-output="brightness">0.00</output></span>
+              <input type="range" min="-0.35" max="0.35" step="0.01" value="0" data-control="brightness" />
+            </label>
+            <label>
+              <span>Threshold <output data-output="threshold">0.965</output></span>
+              <input type="range" min="0.7" max="0.995" step="0.001" value="0.965" data-control="threshold" />
+            </label>
+            <label>
+              <span>Glyphs <output data-output="glyphDetail">8</output></span>
+              <input type="range" min="2" max="12" step="1" value="8" data-control="glyphDetail" />
+            </label>
+            <div class="field-row">
+              <label>
+                <span>Mode</span>
+                <select data-control="ditherMode">
+                  <option value="none">None</option>
+                  <option value="bayer2">Bayer 2</option>
+                  <option value="bayer4" selected>Bayer 4</option>
+                  <option value="noise">Noise</option>
+                </select>
+              </label>
+              <label>
+                <span>Ramp</span>
+                <select data-control="ramp">
+                  <option value="classic" selected>Classic</option>
+                  <option value="dense">Dense</option>
+                  <option value="wire">Wire</option>
+                  <option value="binary">Binary</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              <span>Glow <output data-output="glow">0.18</output></span>
+              <input type="range" min="0" max="1.2" step="0.01" value="0.18" data-control="glow" />
+            </label>
+            <label class="toggle-row">
+              <span>Invert</span>
+              <input type="checkbox" data-control="invert" />
+            </label>
+          </div>
+        </details>
+
+        <details class="control-section" data-control-section="geometry">
+          <summary>
+            <span>Detailed geometry</span>
+            <small>Bevel and curve resolution</small>
+          </summary>
+          <div class="section-body">
+            <label>
+              <span>Bevel <output data-output="bevel">4.0</output></span>
+              <input type="range" min="0" max="16" step="0.1" value="4" data-control="bevel" />
+            </label>
+            <label>
+              <span>Curves <output data-output="curveSegments">32</output></span>
+              <input type="range" min="8" max="80" step="1" value="32" data-control="curveSegments" />
+            </label>
+          </div>
+        </details>
+
+        <details class="control-section" data-control-section="pose">
+          <summary>
+            <span>Detailed pose</span>
+            <small>Rotation, camera, and wobble</small>
+          </summary>
+          <div class="section-body">
+            <label>
+              <span>Rotate X <output data-output="rotationX">-0.18</output></span>
+              <input type="range" min="-1.4" max="1.4" step="0.01" value="-0.18" data-control="rotationX" />
+            </label>
+            <label>
+              <span>Rotate Y <output data-output="rotationY">0.00</output></span>
+              <input type="range" min="-3.14" max="3.14" step="0.01" value="0" data-control="rotationY" />
+            </label>
+            <label>
+              <span>Rotate Z <output data-output="rotationZ">-0.06</output></span>
+              <input type="range" min="-1.2" max="1.2" step="0.01" value="-0.06" data-control="rotationZ" />
+            </label>
+            <label>
+              <span>Wobble <output data-output="wobble">0.02</output></span>
+              <input type="range" min="0" max="0.18" step="0.01" value="0.02" data-control="wobble" />
+            </label>
+            <label>
+              <span>Camera <output data-output="cameraDistance">8.4</output></span>
+              <input type="range" min="4" max="14" step="0.1" value="8.4" data-control="cameraDistance" />
+            </label>
+            <label>
+              <span>FOV <output data-output="fov">34</output></span>
+              <input type="range" min="16" max="72" step="1" value="34" data-control="fov" />
+            </label>
+          </div>
+        </details>
+
+        <details class="control-section" data-control-section="material">
+          <summary>
+            <span>Detailed material</span>
+            <small>Color, metal, and roughness</small>
+          </summary>
+          <div class="section-body">
+            <div class="swatch-grid">
+              <label>
+                <span>Front</span>
+                <input type="color" value="#080808" data-control="frontColor" />
+              </label>
+              <label>
+                <span>Side</span>
+                <input type="color" value="#747064" data-control="sideColor" />
+              </label>
+              <label>
+                <span>Ground</span>
+                <input type="color" value="#fbfbf8" data-control="backgroundColor" />
+              </label>
+            </div>
+            <label>
+              <span>Metal <output data-output="metalness">0.08</output></span>
+              <input type="range" min="0" max="1" step="0.01" value="0.08" data-control="metalness" />
+            </label>
+            <label>
+              <span>Rough <output data-output="roughness">0.42</output></span>
+              <input type="range" min="0.05" max="1" step="0.01" value="0.42" data-control="roughness" />
+            </label>
+          </div>
+        </details>
+
+        <details class="control-section" data-control-section="light">
+          <summary>
+            <span>Detailed light</span>
+            <small>Ambient, key, rim, and fill</small>
+          </summary>
+          <div class="section-body">
+            <label>
+              <span>Ambient <output data-output="ambient">0.88</output></span>
+              <input type="range" min="0" max="2" step="0.01" value="0.88" data-control="ambient" />
+            </label>
+            <label>
+              <span>Key <output data-output="key">4.8</output></span>
+              <input type="range" min="0" max="8" step="0.1" value="4.8" data-control="key" />
+            </label>
+            <label>
+              <span>Rim <output data-output="rim">3.2</output></span>
+              <input type="range" min="0" max="8" step="0.1" value="3.2" data-control="rim" />
+            </label>
+            <label>
+              <span>Fill <output data-output="fill">2.1</output></span>
+              <input type="range" min="0" max="8" step="0.1" value="2.1" data-control="fill" />
+            </label>
+          </div>
+        </details>
+
+        <details class="control-section" data-control-section="interaction">
+          <summary>
+            <span>Detailed interaction</span>
+            <small>Pointer heat and click trail</small>
+          </summary>
+          <div class="section-body">
+            <label>
+              <span>Hover <output data-output="hover">0.32</output></span>
+              <input type="range" min="0" max="1.2" step="0.01" value="0.32" data-control="hover" />
+            </label>
+            <label>
+              <span>Trail <output data-output="trailDecay">520</output></span>
+              <input type="range" min="120" max="1800" step="10" value="520" data-control="trailDecay" />
+            </label>
+            <label>
+              <span>Click <output data-output="clickBoost">1.20</output></span>
+              <input type="range" min="0" max="3" step="0.05" value="1.2" data-control="clickBoost" />
+            </label>
+          </div>
+        </details>
+      </div>
+
+        <div class="panel-stack" data-panel="export" role="tabpanel" hidden>
+        <section class="export-section export-section--primary">
+          <div class="panel-heading">
+            <h2>Share outputs</h2>
+          </div>
+          <div class="export-actions">
+            <button type="button" data-copy-ascii data-export-requires-valid disabled>Copy ASCII frame</button>
+            <button type="button" data-download-ascii data-export-requires-valid disabled>Download TXT</button>
+            <button type="button" data-download-png data-export-requires-valid disabled>Download PNG</button>
+            <button type="button" data-copy-settings data-export-requires-valid disabled>Copy settings</button>
+            <button type="button" data-download-settings data-export-requires-valid disabled>Download JSON</button>
+            <button type="button" data-download-svg data-export-requires-valid disabled>Download SVG</button>
+          </div>
+        </section>
+        <section class="export-section">
+          <div class="panel-heading">
+            <h2>Export options</h2>
+          </div>
+          <div class="section-body">
+            <label>
+              <span>PNG scale <output data-output="exportScale">2.00</output></span>
+              <input type="range" min="1" max="4" step="0.25" value="2" data-control="exportScale" />
+            </label>
+            <label class="toggle-row">
+              <span>Portfolio credit</span>
+              <input type="checkbox" data-control="includeAttribution" checked />
+            </label>
+          </div>
+        </section>
+        <section class="export-section">
+          <div class="panel-heading">
+            <h2>Share loop</h2>
+          </div>
+          <div class="share-card">
+            <p data-share-copy>Made a 3D ASCII turntable in Alexander Traykov's ASCII Studio.</p>
+            <div class="export-actions">
+              <button type="button" data-copy-share data-export-requires-valid disabled>Copy share text</button>
+              <button type="button" data-copy-share-url data-export-requires-valid disabled>Copy studio link</button>
+              <button type="button" data-share-twitter data-export-requires-valid disabled>Tweet</button>
+              <a href="https://traykov.cc/?utm_source=ascii-studio&utm_medium=export&utm_campaign=studio-share">Portfolio</a>
+            </div>
+          </div>
+        </section>
+        <section class="export-section">
+          <div class="panel-heading">
+            <h2>Settings JSON</h2>
+          </div>
+          <textarea data-settings-output readonly spellcheck="false"></textarea>
+        </section>
+        <section class="export-section">
+          <div class="panel-heading">
+            <h2>Three.js object</h2>
+            <div class="button-row">
+              <button type="button" data-copy-code data-export-requires-valid disabled>Copy</button>
+              <button type="button" data-download-code data-export-requires-valid disabled>Download</button>
+            </div>
+          </div>
+          <textarea data-code-output readonly spellcheck="false"></textarea>
+        </section>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script>
+  import "../scripts/studio.js";
+</script>

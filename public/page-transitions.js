@@ -4,27 +4,36 @@
   if (!body) return;
   const nav = document.querySelector(".site-nav");
   let navRevealTimer = 0;
+  const topThreshold = 4;
+
+  const syncNavPosition = () => {
+    body.classList.toggle("is-nav-at-top", window.scrollY <= topThreshold);
+  };
 
   const revealNav = () => {
     window.clearTimeout(navRevealTimer);
+    syncNavPosition();
     body.classList.remove("is-nav-scrolling");
   };
 
   const hideNavWhileScrolling = () => {
     if (!nav) return;
     window.clearTimeout(navRevealTimer);
+    syncNavPosition();
 
-    if (window.scrollY <= 0 || nav.matches(":focus-within")) {
+    if (window.scrollY <= topThreshold || nav.matches(":focus-within")) {
       revealNav();
       return;
     }
 
     body.classList.add("is-nav-scrolling");
-    navRevealTimer = window.setTimeout(revealNav, 160);
+    navRevealTimer = window.setTimeout(revealNav, 520);
   };
 
   if (nav) {
+    syncNavPosition();
     window.addEventListener("scroll", hideNavWhileScrolling, { passive: true });
+    window.addEventListener("resize", syncNavPosition);
     nav.addEventListener("focusin", revealNav);
     nav.addEventListener("pointerenter", revealNav);
   }

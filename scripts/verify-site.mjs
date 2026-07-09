@@ -5,6 +5,7 @@ const files = [
   "astro.config.mjs",
   "vercel.json",
   "src/components/ProjectCard.astro",
+  "src/components/ProjectMark.astro",
   "src/components/SiteFooter.astro",
   "src/pages/index.astro",
   "src/pages/about.astro",
@@ -86,8 +87,8 @@ const caseRoutesAreHidden = caseRouteFiles.every(
 const vercelHidesCaseRoutes =
   has("vercel.json", '"source": "/case-studies"') &&
   has("vercel.json", '"source": "/case-studies/"') &&
-  has("vercel.json", '"source": "/case-studies/:path*/"') &&
-  has("vercel.json", '"source": "/case-studies/:path*"') &&
+  has("vercel.json", '"source": "/case-studies/:path((?!media/).*)"') &&
+  !has("vercel.json", '"source": "/case-studies/:path*"') &&
   has("vercel.json", '"destination": "/"');
 
 const checks = [
@@ -112,6 +113,11 @@ const checks = [
       has("src/styles/global.css", "opacity: 1")
   ],
   ["Work and case-study routes are hidden", caseRoutesAreHidden && vercelHidesCaseRoutes],
+  [
+    "Case-study preview media remains routable",
+    has("src/components/ProjectMark.astro", 'src="/case-studies/media/synapse-sys-card-turntable.mp4"') &&
+      has("vercel.json", "(?!media/)")
+  ],
   [
     "Content helper preserves case-study source",
     has("src/lib/content.ts", 'walkFiles(caseStudyRoot, ".mdx")') &&

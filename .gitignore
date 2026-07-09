@@ -6,3 +6,4 @@ audit-artifacts/
 *.log
 *.zip
 /02.obj
+.vercel

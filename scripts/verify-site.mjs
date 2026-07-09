@@ -7,6 +7,7 @@ const files = [
   "src/components/ProjectCard.astro",
   "src/components/ProjectMark.astro",
   "src/components/SiteFooter.astro",
+  "src/components/SiteHead.astro",
   "src/pages/index.astro",
   "src/pages/about.astro",
   "src/pages/case-studies/index.astro",
@@ -20,6 +21,12 @@ const files = [
   "src/scripts/motion/count-up.js",
   "src/scripts/synapse-card-scramble.js",
   "public/ascii-shader.js",
+  "public/favicon.svg",
+  "public/favicon-32.png",
+  "public/apple-touch-icon.png",
+  "public/og-image.png",
+  "public/og-image.svg",
+  "public/site.webmanifest",
   "case-studies/_template.mdx",
   "case-studies/pages/designing-pave.mdx",
   "case-studies/pages/synapse-sys.mdx",
@@ -72,17 +79,21 @@ const noPublicCaseStudyLinks = publicUiFiles.every(
     !has(file, 'label: "Work"')
 );
 
-const caseRoutesAreHidden = caseRouteFiles.every(
-  (file) =>
-    has(file, 'meta name="robots" content="noindex, nofollow"') &&
-    has(file, 'meta http-equiv="refresh" content="0;url=/"') &&
-    has(file, 'href="/">Return home</a>') &&
-    !has(file, "work-directory") &&
-    !has(file, "case-sibling-nav") &&
-    !has(file, "case-reading-tools") &&
-    !has(file, "All work") &&
-    !has(file, "Back to WIP previews")
-);
+const caseRoutesAreHidden =
+  caseRouteFiles.every(
+    (file) =>
+      has(file, "SiteHead") &&
+      has(file, "noindex") &&
+      has(file, 'refresh="0;url=/"') &&
+      has(file, 'href="/">Return home</a>') &&
+      !has(file, "work-directory") &&
+      !has(file, "case-sibling-nav") &&
+      !has(file, "case-reading-tools") &&
+      !has(file, "All work") &&
+      !has(file, "Back to WIP previews")
+  ) &&
+  has("src/components/SiteHead.astro", '<meta name="robots" content="noindex, nofollow"') &&
+  has("src/components/SiteHead.astro", '<meta http-equiv="refresh" content={refresh}');
 
 const vercelHidesCaseRoutes =
   has("vercel.json", '"source": "/case-studies"') &&
@@ -94,6 +105,18 @@ const vercelHidesCaseRoutes =
 const checks = [
   ["Astro dependency exists", has("package.json", '"astro"')],
   ["Astro config exists", has("astro.config.mjs", "defineConfig")],
+  [
+    "Brand favicon and social preview metadata exist",
+    has("src/components/SiteHead.astro", 'href="/favicon.svg"') &&
+      has("src/components/SiteHead.astro", 'property="og:image"') &&
+      has("src/components/SiteHead.astro", 'name="twitter:image"') &&
+      exists("public/favicon.svg") &&
+      exists("public/favicon-32.png") &&
+      exists("public/apple-touch-icon.png") &&
+      exists("public/og-image.png") &&
+      exists("public/og-image.svg") &&
+      exists("public/site.webmanifest")
+  ],
   ["Shared project card is preview-only", has("src/components/ProjectCard.astro", "project-card__body") && noPublicCaseStudyLinks],
   [
     "Home recent work uses three preview cards",

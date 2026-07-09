@@ -1,5 +1,6 @@
 ---
 import StudioWorkbench from "../../apps/svg-ascii-studio/src/components/StudioWorkbench.astro";
+import SiteHead from "../components/SiteHead.astro";
 import "../styles/global.css";
 import "../../apps/svg-ascii-studio/src/styles/app.css";
 ---
@@ -7,13 +8,11 @@ import "../../apps/svg-ascii-studio/src/styles/app.css";
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="A portfolio-native mini tool for turning uploaded SVG marks into tuned 3D ASCII turntables and exportable outputs."
+    <SiteHead
+      title="ASCII Studio - Alexander Traykov"
+      description="A portfolio-native mini tool for turning uploaded SVG marks into tuned 3D ASCII turntables and exportable outputs."
+      path="/svg-ascii-studio/"
     />
-    <title>ASCII Studio - Alexander Traykov</title>
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="portfolio-studio-page">

@@ -1,6 +1,7 @@
 ---
 import ObjTurntable from "../components/ObjTurntable.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import SiteHead from "../components/SiteHead.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { getCaseStudies } from "../lib/content";
 import "../styles/global.css";
@@ -66,12 +67,10 @@ const aboutTurntableFallback = String.raw`
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Alexander Traykov - Product Design Portfolio</title>
-    <meta
-      name="description"
-      content="Product design portfolio of Alexander Traykov, focused on AI product surfaces, design systems, and Quickbase platform work."
+    <SiteHead
+      title="Alexander Traykov - Product Design Portfolio"
+      description="Product design portfolio of Alexander Traykov, focused on AI product surfaces, design systems, and complex software."
+      path="/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>

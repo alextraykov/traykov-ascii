@@ -1,5 +1,6 @@
 ---
 import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
 import "../styles/global.css";
 
 const identities = [
@@ -114,12 +115,10 @@ const experience = [
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>About - Alexander Traykov</title>
-    <meta
-      name="description"
-      content="About Alexander Traykov, product designer, UX team lead, father, husband, and design practitioner based in Sofia."
+    <SiteHead
+      title="About - Alexander Traykov"
+      description="About Alexander Traykov, product designer, UX team lead, father, husband, and design practitioner based in Sofia."
+      path="/about/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>

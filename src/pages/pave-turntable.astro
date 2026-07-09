@@ -1,15 +1,17 @@
 ---
 import PaveTurntable from "../components/PaveTurntable.astro";
+import SiteHead from "../components/SiteHead.astro";
 import "../styles/global.css";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PAVE 3D Turntable - Alexander Traykov</title>
-    <meta name="description" content="Extruded 3D PAVE symbol turntable rendered with Three.js." />
+    <SiteHead
+      title="PAVE 3D Turntable - Alexander Traykov"
+      description="Extruded 3D PAVE symbol turntable rendered with Three.js."
+      path="/pave-turntable/"
+    />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="pave-turntable-page">

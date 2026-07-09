@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Alexander Traykov product design portfolio">
+  <rect width="1200" height="630" fill="#fbfbf8"/>
+  <path d="M0 0h1200v630H0z" fill="#fbfbf8"/>
+  <g fill="#080808" opacity=".08" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="22">
+    <text x="52" y="72">. : + * # % @ . : + * # % @ . : + * # % @ . : + * # % @</text>
+    <text x="52" y="562">@ % # * + : . @ % # * + : . @ % # * + : . @ % # * + :</text>
+  </g>
+  <rect x="52" y="52" width="1096" height="526" fill="none" stroke="#080808" stroke-width="3"/>
+  <rect x="76" y="76" width="112" height="112" fill="#080808"/>
+  <text x="101" y="151" fill="#fbfbf8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="52" font-weight="800">AT</text>
+  <text x="76" y="264" fill="#080808" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="28" letter-spacing="0">PRODUCT DESIGN PORTFOLIO</text>
+  <text x="76" y="358" fill="#080808" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="76" font-weight="700" letter-spacing="0">Alexander Traykov</text>
+  <text x="80" y="425" fill="#080808" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="28">AI product surfaces / systems / complex software</text>
+  <g transform="translate(76 488)" fill="none" stroke="#080808" stroke-width="2">
+    <rect width="238" height="52"/>
+    <rect x="258" width="214" height="52"/>
+    <rect x="492" width="258" height="52"/>
+  </g>
+  <g fill="#080808" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" font-weight="700">
+    <text x="100" y="521">PAVE / WIP</text>
+    <text x="358" y="521">SYNAPSE</text>
+    <text x="592" y="521">POINTLEARN</text>
+  </g>
+  <g transform="translate(860 132)" fill="#080808" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">
+    <text x="0" y="0">.................</text>
+    <text x="0" y="28">....::::++++::::.</text>
+    <text x="0" y="56">..::++**####**::</text>
+    <text x="0" y="84">.:+**########**+:</text>
+    <text x="0" y="112">:+*###******###*+</text>
+    <text x="0" y="140">:+*##++::::++##*+</text>
+    <text x="0" y="168">.:+**########**+:</text>
+    <text x="0" y="196">..::++**##**++::</text>
+    <text x="0" y="224">....:::::::::...</text>
+  </g>
+</svg>

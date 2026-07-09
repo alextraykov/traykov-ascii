@@ -1,0 +1,19 @@
+{
+  "name": "Alexander Traykov",
+  "short_name": "AT",
+  "icons": [
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#080808",
+  "background_color": "#fbfbf8",
+  "display": "standalone"
+}

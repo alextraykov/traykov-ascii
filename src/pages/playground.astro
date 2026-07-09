@@ -1,5 +1,6 @@
 ---
 import PaveTurntable from "../components/PaveTurntable.astro";
+import SiteHead from "../components/SiteHead.astro";
 import SvgLogoTurntable from "../components/SvgLogoTurntable.astro";
 import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
 import ObjTurntable from "../components/ObjTurntable.astro";
@@ -60,12 +61,10 @@ const playgroundDiagrams = [
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ASCII Shader Playground - Alexander Traykov</title>
-    <meta
-      name="description"
-      content="Interactive Cyrillic ASCII shader playground for tuning flame, ripple, plume, and smoke forms."
+    <SiteHead
+      title="ASCII Shader Playground - Alexander Traykov"
+      description="Interactive Cyrillic ASCII shader playground for tuning flame, ripple, plume, and smoke forms."
+      path="/playground"
     />
     <script src="/page-transitions.js" defer></script>
   </head>

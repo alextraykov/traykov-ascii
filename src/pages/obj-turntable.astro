@@ -1,15 +1,17 @@
 ---
 import ObjTurntable from "../components/ObjTurntable.astro";
+import SiteHead from "../components/SiteHead.astro";
 import "../styles/global.css";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GLB 3D ASCII Turntable - Alexander Traykov</title>
-    <meta name="description" content="Imported GLB model rendered as a WebGL turntable with an ASCII filter." />
+    <SiteHead
+      title="GLB 3D ASCII Turntable - Alexander Traykov"
+      description="Imported GLB model rendered as a WebGL turntable with an ASCII filter."
+      path="/obj-turntable/"
+    />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="pave-turntable-page">

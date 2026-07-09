@@ -1,4 +1,5 @@
 ---
+import SiteHead from "../../components/SiteHead.astro";
 import { getCaseStudies } from "../../lib/content";
 import "../../styles/global.css";
 
@@ -15,11 +16,13 @@ const { study } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta http-equiv="refresh" content="0;url=/" />
-    <title>{study.title} hidden - Alexander Traykov</title>
+    <SiteHead
+      title={`${study.title} hidden - Alexander Traykov`}
+      description="This case-study route is hidden while the public portfolio preview stays focused on WIP cards."
+      path={`/case-studies/${study.id}/`}
+      noindex
+      refresh="0;url=/"
+    />
   </head>
   <body>
     <main class="hidden-route" aria-label="Hidden case study">

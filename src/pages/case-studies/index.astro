@@ -1,15 +1,18 @@
 ---
+import SiteHead from "../../components/SiteHead.astro";
 import "../../styles/global.css";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta http-equiv="refresh" content="0;url=/" />
-    <title>Hidden - Alexander Traykov</title>
+    <SiteHead
+      title="Hidden - Alexander Traykov"
+      description="This work route is hidden while the portfolio case studies remain in progress."
+      path="/case-studies/"
+      noindex
+      refresh="0;url=/"
+    />
   </head>
   <body>
     <main class="hidden-route" aria-label="Hidden route">

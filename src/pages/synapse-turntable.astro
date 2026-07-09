@@ -1,4 +1,5 @@
 ---
+import SiteHead from "../components/SiteHead.astro";
 import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
 import "../styles/global.css";
 ---
@@ -6,10 +7,11 @@ import "../styles/global.css";
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Synapse 3D Turntable - Alexander Traykov</title>
-    <meta name="description" content="Extruded 3D Synapse logo turntable rendered as ASCII." />
+    <SiteHead
+      title="Synapse 3D Turntable - Alexander Traykov"
+      description="Extruded 3D Synapse logo turntable rendered as ASCII."
+      path="/synapse-turntable/"
+    />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="pave-turntable-page">

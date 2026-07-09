@@ -15,6 +15,11 @@
       "permanent": false
     },
     {
+      "source": "/case-studies/:path*/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/case-studies/:path*",
       "destination": "/",
       "permanent": false

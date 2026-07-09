@@ -86,6 +86,7 @@ const caseRoutesAreHidden = caseRouteFiles.every(
 const vercelHidesCaseRoutes =
   has("vercel.json", '"source": "/case-studies"') &&
   has("vercel.json", '"source": "/case-studies/"') &&
+  has("vercel.json", '"source": "/case-studies/:path*/"') &&
   has("vercel.json", '"source": "/case-studies/:path*"') &&
   has("vercel.json", '"destination": "/"');
 

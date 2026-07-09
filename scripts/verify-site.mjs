@@ -69,8 +69,6 @@ const publicUiFiles = [
   "src/pages/about.astro"
 ];
 
-const caseRouteFiles = ["src/pages/case-studies/index.astro", "src/pages/case-studies/[slug].astro"];
-
 const noPublicCaseStudyLinks = publicUiFiles.every(
   (file) =>
     !has(file, 'href="/case-studies/"') &&
@@ -79,21 +77,28 @@ const noPublicCaseStudyLinks = publicUiFiles.every(
     !has(file, 'label: "Work"')
 );
 
-const caseRoutesAreHidden =
-  caseRouteFiles.every(
-    (file) =>
-      has(file, "SiteHead") &&
-      has(file, "noindex") &&
-      has(file, 'refresh="0;url=/"') &&
-      has(file, 'href="/">Return home</a>') &&
-      !has(file, "work-directory") &&
-      !has(file, "case-sibling-nav") &&
-      !has(file, "case-reading-tools") &&
-      !has(file, "All work") &&
-      !has(file, "Back to WIP previews")
-  ) &&
+const caseIndexRouteIsHidden =
+  has("src/pages/case-studies/index.astro", "SiteHead") &&
+  has("src/pages/case-studies/index.astro", "noindex") &&
+  has("src/pages/case-studies/index.astro", 'refresh="0;url=/"') &&
+  has("src/pages/case-studies/index.astro", 'href="/">Return home</a>') &&
+  !has("src/pages/case-studies/index.astro", "work-directory") &&
+  !has("src/pages/case-studies/index.astro", "case-reading-tools") &&
   has("src/components/SiteHead.astro", '<meta name="robots" content="noindex, nofollow"') &&
   has("src/components/SiteHead.astro", '<meta http-equiv="refresh" content={refresh}');
+
+const caseDetailShellIsRecovered =
+  has("src/pages/case-studies/[slug].astro", "SiteHead") &&
+  has("src/pages/case-studies/[slug].astro", "noindex") &&
+  !has("src/pages/case-studies/[slug].astro", 'refresh="0;url=/"') &&
+  has("src/pages/case-studies/[slug].astro", "renderMarkdown(study.body)") &&
+  has("src/pages/case-studies/[slug].astro", "getCaseStudyHeadings") &&
+  has("src/pages/case-studies/[slug].astro", "case-reader-layout--with-tools") &&
+  has("src/pages/case-studies/[slug].astro", "case-reading-tools") &&
+  has("src/pages/case-studies/[slug].astro", "data-case-target") &&
+  has("src/pages/case-studies/[slug].astro", "case-walkthrough") &&
+  has("src/pages/case-studies/[slug].astro", "case-progress") &&
+  !has("src/pages/case-studies/[slug].astro", "case-gate");
 
 const vercelHidesCaseRoutes =
   has("vercel.json", '"source": "/case-studies"') &&
@@ -135,7 +140,11 @@ const checks = [
       has("src/styles/global.css", ".about-hero-copy") &&
       has("src/styles/global.css", "opacity: 1")
   ],
-  ["Work and case-study routes are hidden", caseRoutesAreHidden && vercelHidesCaseRoutes],
+  ["Work index route remains hidden", caseIndexRouteIsHidden],
+
+  ["Case detail reader shell is recovered", caseDetailShellIsRecovered],
+
+  ["Vercel still hides case-study routes", vercelHidesCaseRoutes],
   [
     "Case-study preview media remains routable",
     has("src/components/ProjectMark.astro", 'src="/case-studies/media/synapse-sys-card-turntable.mp4"') &&

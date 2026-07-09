@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 const files = [
   "package.json",
   "astro.config.mjs",
+  "vercel.json",
   "src/components/ProjectCard.astro",
   "src/components/SiteFooter.astro",
   "src/pages/index.astro",
@@ -36,6 +37,8 @@ const files = [
 ];
 
 const source = Object.fromEntries(files.map((file) => [file, existsSync(file) ? readFileSync(file, "utf8") : ""]));
+const has = (file, text) => source[file].includes(text);
+const exists = (file) => existsSync(file);
 
 const expectedRoutes = [
   "designing-pave",
@@ -51,37 +54,53 @@ const expectedRoutes = [
   "bolt-fun"
 ];
 
-const has = (file, text) => source[file].includes(text);
-const exists = (file) => existsSync(file);
-const workIndexIsGatedPreviewMap =
-  has("src/pages/case-studies/index.astro", "Portfolio map") &&
-  has("src/pages/case-studies/index.astro", "work-directory") &&
-  has("src/pages/case-studies/index.astro", "Pave case studies") &&
-  has("src/pages/case-studies/index.astro", "AI product studies") &&
-  has("src/pages/case-studies/index.astro", "Product systems leadership") &&
-  has("src/pages/case-studies/index.astro", "Archive") &&
-  has("src/pages/case-studies/index.astro", "WIP previews") &&
-  has("src/pages/case-studies/index.astro", "WIP / preview only") &&
-  has("src/pages/case-studies/index.astro", "Deep evidence stays inside case studies") &&
-  !has("src/pages/case-studies/index.astro", "Supporting routes") &&
-  !has("src/pages/case-studies/index.astro", "<details");
-const caseDetailsAreGated =
-  has("src/pages/case-studies/[slug].astro", "case-gate") &&
-  has("src/pages/case-studies/[slug].astro", "noindex, nofollow") &&
-  has("src/pages/case-studies/[slug].astro", "WIP / preview only") &&
-  !has("src/pages/case-studies/[slug].astro", "set:html={renderMarkdown(study.body)}");
+const publicUiFiles = [
+  "src/components/ProjectCard.astro",
+  "src/components/SiteFooter.astro",
+  "src/pages/index.astro",
+  "src/pages/about.astro"
+];
+
+const caseRouteFiles = ["src/pages/case-studies/index.astro", "src/pages/case-studies/[slug].astro"];
+
+const noPublicCaseStudyLinks = publicUiFiles.every(
+  (file) =>
+    !has(file, 'href="/case-studies/"') &&
+    !has(file, "href={study.href}") &&
+    !has(file, "/case-studies/#") &&
+    !has(file, 'label: "Work"')
+);
+
+const caseRoutesAreHidden = caseRouteFiles.every(
+  (file) =>
+    has(file, 'meta name="robots" content="noindex, nofollow"') &&
+    has(file, 'meta http-equiv="refresh" content="0;url=/"') &&
+    has(file, 'href="/">Return home</a>') &&
+    !has(file, "work-directory") &&
+    !has(file, "case-sibling-nav") &&
+    !has(file, "case-reading-tools") &&
+    !has(file, "All work") &&
+    !has(file, "Back to WIP previews")
+);
+
+const vercelHidesCaseRoutes =
+  has("vercel.json", '"source": "/case-studies"') &&
+  has("vercel.json", '"source": "/case-studies/"') &&
+  has("vercel.json", '"source": "/case-studies/:path*"') &&
+  has("vercel.json", '"destination": "/"');
 
 const checks = [
-  ["Astro dependency exists", has("package.json", "\"astro\"")],
+  ["Astro dependency exists", has("package.json", '"astro"')],
   ["Astro config exists", has("astro.config.mjs", "defineConfig")],
-  ["Shared direct project card exists", has("src/components/ProjectCard.astro", "href={study.href}")],
+  ["Shared project card is preview-only", has("src/components/ProjectCard.astro", "project-card__body") && noPublicCaseStudyLinks],
   [
-    "Home recent work uses three direct cards",
+    "Home recent work uses three preview cards",
     has("src/pages/index.astro", "ProjectCard") &&
       has("src/pages/index.astro", 'const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"]') &&
       has("src/pages/index.astro", "Recent case studies.") &&
-      has("src/pages/index.astro", "View older work") &&
-      has("src/pages/index.astro", "work-footer") &&
+      has("src/pages/index.astro", "WIP / preview only") &&
+      !has("src/pages/index.astro", "View older work") &&
+      !has("src/pages/index.astro", "work-footer") &&
       !has("src/pages/index.astro", "<details")
   ],
   [
@@ -91,56 +110,33 @@ const checks = [
       has("src/styles/global.css", ".about-hero-copy") &&
       has("src/styles/global.css", "opacity: 1")
   ],
+  ["Work and case-study routes are hidden", caseRoutesAreHidden && vercelHidesCaseRoutes],
   [
-    "Work index is a route map",
-    has("src/pages/case-studies/index.astro", "Portfolio map") &&
-      has("src/pages/case-studies/index.astro", "work-directory") &&
-      has("src/pages/case-studies/index.astro", "Pave case studies") &&
-      has("src/pages/case-studies/index.astro", "AI product studies") &&
-      has("src/pages/case-studies/index.astro", "Product systems leadership") &&
-      has("src/pages/case-studies/index.astro", "Archive") &&
-      has("src/pages/case-studies/index.astro", "Deep evidence stays inside the case studies") &&
-      !has("src/pages/case-studies/index.astro", "Supporting routes") &&
-      !has("src/pages/case-studies/index.astro", "<details")
-  ],
-  [
-    "Detail pages have piece-to-piece routing",
-    has("src/pages/case-studies/[slug].astro", "previousStudy") &&
-      has("src/pages/case-studies/[slug].astro", "nextStudy") &&
-      has("src/pages/case-studies/[slug].astro", "case-sibling-nav") &&
-      has("src/pages/case-studies/[slug].astro", "All work")
-  ],
-  [
-    "Detail pages have readable long-case navigation",
-    has("src/pages/case-studies/[slug].astro", "getCaseStudyHeadings") &&
-      has("src/pages/case-studies/[slug].astro", "case-reading-tools") &&
-      has("src/pages/case-studies/[slug].astro", "data-case-target")
-  ],
-  [
-    "Content helper loads routable case studies",
-    has("src/lib/content.ts", "walkFiles(caseStudyRoot, \".mdx\")") &&
+    "Content helper preserves case-study source",
+    has("src/lib/content.ts", 'walkFiles(caseStudyRoot, ".mdx")') &&
       has("src/lib/content.ts", "getAdjacentCaseStudies") &&
       expectedRoutes.every((route) => has("src/lib/content.ts", `"${route}"`))
   ],
   [
     "Markdown renderer keeps visual evidence readable",
     has("src/lib/content.ts", "renderStructuredDiagram") &&
-      has("src/lib/content.ts", "normalized === \"mermaid\"") &&
+      has("src/lib/content.ts", 'normalized === "mermaid"') &&
       has("src/lib/content.ts", "case-image-grid") &&
       has("src/lib/content.ts", "case-video-copy")
   ],
   [
-    "IA styles exist",
+    "IA styles remain available for future unlock",
     has("src/styles/global.css", ".work-directory") &&
       has("src/styles/global.css", ".case-sibling-nav") &&
       has("src/styles/global.css", ".case-breadcrumb") &&
       has("src/styles/global.css", ".case-preview-placeholder")
   ],
   [
-    "Footer exposes global and contextual routes",
+    "Footer exposes public routes only",
     has("src/components/SiteFooter.astro", "siteLinks") &&
       has("src/components/SiteFooter.astro", "links.length > 0") &&
-      has("src/components/SiteFooter.astro", "Back to top")
+      has("src/components/SiteFooter.astro", "Back to top") &&
+      !has("src/components/SiteFooter.astro", 'href: "/case-studies/"')
   ],
   [
     "Core case-study content exists",
@@ -158,7 +154,7 @@ const checks = [
       has("case-studies/pages/pave-marketplace.mdx", "Marketplace")
   ],
   [
-    "Legacy work remains routeable",
+    "Legacy work source remains preserved",
     has("case-studies/quickbase/connection-central.mdx", "Connection Central") &&
       has("case-studies/old-work/bolt-fun.mdx", "Old work")
   ],
@@ -167,11 +163,7 @@ const checks = [
     has("src/styles/global.css", "@media (max-width: 700px)") &&
       has("src/styles/global.css", "prefers-reduced-motion")
   ],
-  [
-    "Shader asset remains wired",
-    has("public/ascii-shader.js", "getContext(\"webgl\"") &&
-      has("src/pages/case-studies/index.astro", "/ascii-shader.js")
-  ],
+  ["Shader asset remains available", has("public/ascii-shader.js", 'getContext("webgl"')],
   [
     "Motion tokens exist",
     has("src/styles/global.css", "--ease-out-expo") &&
@@ -196,23 +188,12 @@ const checks = [
     has("AGENTS.md", "DO NOT TOUCH") &&
       has("CLAUDE.md", "AGENTS.md") &&
       exists("docs/design-language.md")
-  ],
-  [
-    "Case page has progress and sibling previews",
-    has("src/pages/case-studies/[slug].astro", "case-progress") &&
-      has("src/pages/case-studies/[slug].astro", "case-sibling-nav__preview")
   ]
 ];
 
-const normalizedChecks = checks
-  .filter(([label]) => label !== "Work index is a route map")
-  .concat([
-    ["Work index is a gated preview map", workIndexIsGatedPreviewMap],
-    ["Detail pages are WIP gated", caseDetailsAreGated]
-  ]);
-const failures = normalizedChecks.filter(([, passed]) => !passed);
+const failures = checks.filter(([, passed]) => !passed);
 
-for (const [label, passed] of normalizedChecks) {
+for (const [label, passed] of checks) {
   console.log(`${passed ? "PASS" : "FAIL"} ${label}`);
 }
 

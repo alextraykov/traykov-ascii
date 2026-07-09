@@ -1,0 +1,86 @@
+---
+title: "Pipelines - automation users could trust"
+category: product case study
+status: shipped
+pubDate: 2026-07-04
+tags: [automation, integrations, ai, enterprise-software, quickbase]
+heroImage: /case-studies/quickbase/pipelines-ai-step-creation-flow.webp
+readTime: 8 min
+summary: "Three years designing Quickbase Pipelines patterns: one OAuth connection anatomy, AI-assisted creation that never auto-commits, Bulk Trigger measurement, and a code-mode escape hatch."
+role: "Lead Product Designer"
+year: 2026
+group: "Quickbase"
+order: -5
+---
+
+## Summary
+
+Pipelines is Quickbase's automation engine. The design challenge was trust: a non-developer builder authorizes Slack, Shopify, QuickBooks, Gmail, Snowflake, or internal data, then lets automation run against production systems.
+
+My work across the domain centered on systems over screens:
+
+- One OAuth connect anatomy across many providers.
+- AI-assisted step creation that proposes work but keeps every field reviewable.
+- Bulk Trigger UX and measurement planning.
+- Code mode for builders who need a higher ceiling than visual configuration can provide.
+
+## OAuth connect: one anatomy, many channels
+
+Every provider asks for something different: OAuth scopes, store URLs, sandbox/production choice, service accounts, or long permission ladders.
+
+The mistake would be designing a new connection screen every time. I designed one reusable anatomy and let provider-specific complexity instantiate inside it.
+
+![OAuth connect anatomy for Pipelines.](/case-studies/quickbase/pipelines-oauth-connect-anatomy.webp)
+
+Two decisions mattered.
+
+First, permissions should be written in plain language, not raw scope strings. The person authorizing a business workflow is often not an OAuth engineer.
+
+Second, sandbox vs. production needed to be a first-class choice. Hiding that as a setting is how a builder corrupts real books by accident.
+
+## AI creation: propose, show work, leave it editable
+
+The Pipelines AI creation flow shipped as IN-17508 and later showed strong adoption. It lets a builder describe a step in plain language, then AI proposes a sequence and fills fields.
+
+The critical constraint: it does not auto-commit. Every field remains reviewable and editable.
+
+![AI step creation flow, from recommendation through populated fields.](/case-studies/quickbase/pipelines-ai-step-creation-flow.webp)
+
+This is the same product instinct that later shaped Pave: show the model's interpretation before letting it spend user trust.
+
+Measured adoption from the archive Pendo table:
+
+- Generate Steps with AI: 1,124 accounts, 1,973 visitors, 4,087 events.
+- Populate all steps: 1,000 accounts, 1,835 visitors, 4,727 events.
+- The generate flow was active 343 out of 365 days.
+
+## Bulk Trigger: name the thing, then measure it
+
+Pipelines originally fired one row at a time. Builders moving thousands of records needed a model that was faster and easier to reason about.
+
+I worked on the UX and feedback loop around Bulk Trigger, including terminology cleanup. "Bulk" and "Batch" cannot mean whatever the last person meant in Slack. Naming is design because ambiguous nouns ship ambiguous features.
+
+![Bulk Trigger flow through multi-record automation.](/case-studies/quickbase/pipelines-bulk-trigger-flow.webp)
+
+Measured adoption in the archive:
+
+- On New Bulk Event Trigger: 61 accounts and 74 visitors.
+
+The stronger performance story in the archive is engineering-owned, so I would keep it contextual unless paired with the actual engineering evidence in a walkthrough.
+
+## Code mode: the escape hatch
+
+Visual editors keep the floor low. They also cap the ceiling.
+
+For power users, I designed a Jinja code-mode editor and the lock/disable rules needed so code mode and visual mode would not corrupt each other.
+
+![Pipelines code-mode editor spec.](/case-studies/quickbase/pipelines-code-mode.webp)
+
+The tradeoff is real. Supporting both paths doubles edge cases. But an automation product that traps advanced builders in a wizard loses the people who make it valuable.
+
+## What this proves
+
+This case is less about one hero screen and more about domain ownership over time. OAuth, AI creation, Bulk Trigger, and code mode are separate surfaces, but the through-line is consistent:
+
+> Make powerful automation understandable before it becomes dangerous.
+

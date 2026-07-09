@@ -1,5 +1,4 @@
 ---
-import ObjTurntable from "../components/ObjTurntable.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import "../styles/global.css";
 
@@ -130,30 +129,15 @@ const experience = [
     <header class="site-nav">
       <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
-        <a href="/">Work</a>
-        <a href="/about/">About</a>
-        <a href="/playground">Playground</a>
-        <a href="/svg-ascii-studio/">Studio</a>
+        <a href="/case-studies/" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/playground" data-scramble>Playground</a>
+        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
       </nav>
     </header>
 
-    <main class="about-page">
+    <main id="top" class="about-page">
       <section class="about-hero section-shell" aria-labelledby="about-title">
-        <ObjTurntable
-          class="about-turntable"
-          asciiClass="about-turntable__ascii"
-          name="me"
-          objSrc="/models/me.glb"
-          renderSize={0.9}
-          density={5}
-          glyphDetail={9}
-          brightness={-0.02}
-          contrast={1.42}
-          click={0.46}
-          glow={0.18}
-          ariaLabel=""
-        />
-
         <div class="about-hero-copy">
           <p class="section-kicker">About</p>
           <h1 id="about-title" class="about-title">
@@ -167,7 +151,7 @@ const experience = [
         </div>
       </section>
 
-      <section class="about-grid section-shell" aria-label="About Alexander">
+      <section class="about-grid section-shell" aria-label="About Alexander" data-reveal="rise">
         <div class="about-copy">
           <span class="about-caption">Alexander Traykov</span>
           <p>
@@ -193,13 +177,13 @@ const experience = [
         </div>
       </section>
 
-      <section class="about-experience section-shell" aria-labelledby="experience-title">
+      <section class="about-experience section-shell" aria-labelledby="experience-title" data-reveal="rise">
         <div class="section-heading">
           <p class="section-kicker">Work experience</p>
           <h2 id="experience-title">A path through products, systems, and teams.</h2>
         </div>
 
-        <div class="experience-list">
+        <div class="experience-list" data-reveal-group>
           {experience.map((item) => (
             <article class="experience-item">
               <div>
@@ -217,9 +201,6 @@ const experience = [
     </main>
 
     <SiteFooter />
-    <script>
-      import "../scripts/obj-turntable.js";
-    </script>
     <script is:inline>
       (() => {
         const rotator = document.querySelector("[data-identity-rotator]");
@@ -243,45 +224,6 @@ const experience = [
 
         rotator.classList.add("is-revealing");
         window.setInterval(nextWord, 1350);
-      })();
-    </script>
-    <script is:inline>
-      (() => {
-        const turntable = document.querySelector(".about-turntable");
-        const hero = document.querySelector(".about-hero");
-        if (!turntable || !hero) return;
-
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-        let ticking = false;
-
-        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-        const update = () => {
-          ticking = false;
-
-          if (reduceMotion.matches) {
-            turntable.style.setProperty("--about-turntable-parallax", "0px");
-            return;
-          }
-
-          const scrollY = window.scrollY || window.pageYOffset || 0;
-          const scrollRange = Math.max(180, Math.min(420, hero.offsetHeight * 0.62));
-          const progress = clamp(scrollY / scrollRange, 0, 1);
-          const parallax = Math.round(progress * 190);
-
-          turntable.style.setProperty("--about-turntable-parallax", `${parallax}px`);
-        };
-
-        const requestUpdate = () => {
-          if (ticking) return;
-          ticking = true;
-          window.requestAnimationFrame(update);
-        };
-
-        update();
-        window.addEventListener("scroll", requestUpdate, { passive: true });
-        window.addEventListener("resize", requestUpdate);
-        reduceMotion.addEventListener?.("change", requestUpdate);
       })();
     </script>
   </body>

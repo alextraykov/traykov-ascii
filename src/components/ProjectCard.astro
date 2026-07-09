@@ -1,0 +1,45 @@
+---
+import ProjectMark from "./ProjectMark.astro";
+import type { CaseStudy } from "../lib/content";
+
+const {
+  study,
+  index = 0,
+  eyebrow = study.group,
+  action = "WIP"
+}: {
+  study: CaseStudy;
+  index?: number;
+  eyebrow?: string;
+  action?: string;
+} = Astro.props;
+
+const isSynapse = study.group.toLowerCase().includes("synapse");
+const meta = [eyebrow, study.status, study.readTime].filter(Boolean).join(" / ");
+const ariaAction = action.toLowerCase().includes("wip")
+  ? `${study.title} case study preview is WIP`
+  : `${action}: ${study.title}`;
+---
+
+<article
+  id={study.id}
+  class:list={[
+    "project-card",
+    "project-card--direct",
+    "project-card--construction",
+    isSynapse && "project-card--synapsis"
+  ]}
+  data-reveal="rise"
+  data-reveal-delay={String(Math.min(index, 6) * 60)}
+>
+  <a href={study.href} aria-label={ariaAction}>
+    <ProjectMark group={study.group} title={study.title} />
+    <div class="project-copy">
+      <span class="project-index" data-scramble data-scramble-trigger="hover">{String(index + 1).padStart(2, "0")} / {meta}</span>
+      <h3>{study.title}</h3>
+      {study.summary && <p>{study.summary}</p>}
+      {study.tags.length > 0 && <p class="project-card__tags">{study.tags.slice(0, 4).join(" / ")}</p>}
+      <span class="construction-status" data-scramble data-scramble-trigger="hover">{action}</span>
+    </div>
+  </a>
+</article>

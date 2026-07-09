@@ -41,6 +41,28 @@ Enumerate the alternatives that were on the table — not just the winner.
 
 Use `mermaid` fences for any flow/state/sequence diagrams. The site renderer converts these into RFC-style ASCII diagrams with monoline boxes and dot-matrix shadows automatically, so keep node labels short and use `<br/>` only where a deliberate line break helps scanning.
 
+Use `case-stat` for a full-bleed evidence band. Each body line is `value | label | note`.
+
+```case-stat title: Evidence snapshot
+42% | adoption lift | Replace with the real measured signal or remove the note.
+3 | launch risks closed | Keep claims specific and attributable.
+```
+
+Use `case-quote` for a designed pull quote. `attribution:` and `role:` are optional metadata lines.
+
+```case-quote
+attribution: Product principle
+role: Launch review
+The quote body can be one sentence or a short paragraph.
+```
+
+Use `case-timeline` only when the study needs a compact sequence. Each body line is `date | title | note`.
+
+```case-timeline title: Product arc
+Week 1 | Model defined | Core behavior and constraints documented.
+Week 4 | Prototype reviewed | Interaction contract stress-tested with the team.
+```
+
 ## Decision
 
 The chosen approach, in prose. What it looks like, how it behaves, and what it refuses to do. Be specific about the shape — not "we designed a panel" but "we chose a right-docked 320px inspector with three collapsible sections that persist across page nav".

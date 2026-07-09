@@ -14,8 +14,9 @@ const {
 } = Astro.props;
 
 const year = new Date().getFullYear();
+const currentPath = Astro.url.pathname;
 const siteLinks: FooterLink[] = [
-  { label: "Work", href: "/#work" },
+  { label: "Work", href: "/case-studies/" },
   { label: "About", href: "/about/" },
   { label: "Playground", href: "/playground" },
   { label: "Studio", href: "/svg-ascii-studio/" }
@@ -24,27 +25,23 @@ const socialLinks: FooterLink[] = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/alextraykov/", external: true },
   { label: "Twitter", href: "https://twitter.com/alextraykov", external: true }
 ];
-
-const renderLinkAttrs = (link: FooterLink) => (
-  link.external ? { target: "_blank", rel: "noreferrer" } : {}
-);
 ---
 
 <footer id="contact" class="site-footer">
   <div class="site-footer__inner section-shell">
-    <div class="site-footer__mast">
-      <a class="site-footer__mark" href="#top" aria-label="Back to top">
-        <span data-footer-scramble data-scramble-label="AT">AT</span>
+    <div class="site-footer__mast" data-reveal="fade">
+      <a class="site-footer__mark" href={`${currentPath}#top`} aria-label="Back to top">
+        <span data-scramble data-footer-scramble data-scramble-label="AT">AT</span>
       </a>
       <p>{statement}</p>
     </div>
 
-    <nav class="footer-links" aria-label="Footer">
+    <nav class="footer-links" aria-label="Footer" data-reveal-group>
       <div class="footer-links__group">
         <span>Site</span>
         {siteLinks.map((link) => (
           <a href={link.href} aria-label={link.label}>
-            <span data-footer-scramble data-scramble-label={link.label}>{link.label}</span>
+            <span data-scramble data-scramble-label={link.label}>{link.label}</span>
           </a>
         ))}
       </div>
@@ -52,8 +49,13 @@ const renderLinkAttrs = (link: FooterLink) => (
       <div class="footer-links__group">
         <span>Elsewhere</span>
         {socialLinks.map((link) => (
-          <a href={link.href} aria-label={link.label} {...renderLinkAttrs(link)}>
-            <span data-footer-scramble data-scramble-label={link.label}>{link.label}</span>
+          <a
+            href={link.href}
+            aria-label={link.label}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noreferrer" : undefined}
+          >
+            <span data-scramble data-scramble-label={link.label}>{link.label}</span>
           </a>
         ))}
       </div>
@@ -62,77 +64,30 @@ const renderLinkAttrs = (link: FooterLink) => (
         <div class="footer-links__group">
           <span>Current</span>
           {links.map((link) => (
-            <a href={link.href} aria-label={link.label} {...renderLinkAttrs(link)}>
-              <span data-footer-scramble data-scramble-label={link.label}>{link.label}</span>
+            <a
+              href={link.href}
+              aria-label={link.label}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noreferrer" : undefined}
+            >
+              <span data-scramble data-scramble-label={link.label}>{link.label}</span>
             </a>
           ))}
         </div>
       )}
     </nav>
 
-    <div class="site-footer__meta" aria-label="Footer details">
+    <div class="site-footer__meta" aria-label="Footer details" data-reveal-group>
       <span>Alexander Traykov</span>
       <span>Sofia, Bulgaria</span>
       <span>{year}</span>
-      <a href="#top" aria-label="Back to top">
-        <span data-footer-scramble data-scramble-label="Back to top">Back to top</span>
+      <a href={`${currentPath}#top`} aria-label="Back to top">
+        <span data-scramble data-scramble-label="Back to top">Back top</span>
       </a>
     </div>
   </div>
 </footer>
 
-<script is:inline>
-  (() => {
-    const ramp = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const states = new WeakMap();
-
-    const scramble = (element) => {
-      const label = element.dataset.scrambleLabel || element.textContent || "";
-      if (reduceMotion.matches) {
-        element.textContent = label;
-        return;
-      }
-
-      const currentFrame = (states.get(element) || 0) + 1;
-      states.set(element, currentFrame);
-
-      const start = performance.now();
-      const duration = 460;
-      const tick = (now) => {
-        if (states.get(element) !== currentFrame) return;
-
-        const progress = Math.min(1, (now - start) / duration);
-        const locked = Math.floor(label.length * progress);
-        element.textContent = Array.from(label, (character, index) => {
-          if (character === " ") return " ";
-          if (index < locked || progress === 1) return character;
-          return ramp[1 + Math.floor(Math.random() * (ramp.length - 1))];
-        }).join("");
-
-        if (progress < 1) {
-          requestAnimationFrame(tick);
-        } else {
-          element.textContent = label;
-        }
-      };
-
-      requestAnimationFrame(tick);
-    };
-
-    document.querySelectorAll("[data-footer-scramble]").forEach((element) => {
-      const label = element.dataset.scrambleLabel || element.textContent || "";
-      element.dataset.scrambleLabel = label;
-
-      const link = element.closest("a");
-      if (!link) return;
-
-      link.addEventListener("pointerenter", () => scramble(element));
-      link.addEventListener("focus", () => scramble(element));
-      link.addEventListener("pointerleave", () => {
-        states.set(element, (states.get(element) || 0) + 1);
-        element.textContent = label;
-      });
-    });
-  })();
+<script>
+  import "../scripts/motion/index.js";
 </script>

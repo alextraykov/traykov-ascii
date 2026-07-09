@@ -1,149 +1,77 @@
 ---
-title: "Connection Central"
-summary: "Redesigning Connection Central in Quickbase to give admins clearer pipeline visibility, better resource tracking, and faster troubleshooting."
+title: "Connection Central - resources-first integration control room"
+category: product case study
+status: shipped
+pubDate: 2026-07-04
+tags: [research, ia, integrations, platform, quickbase]
+heroImage: /case-studies/quickbase/cc-v2-ia-flow.webp
+readTime: 8 min
+summary: "How I redesigned Quickbase Connection Central v2 from a sprawling integrations surface into a resources-first control room, then cut my own scope to hit GA."
 role: "Lead Product Designer"
 year: 2024
 group: "Quickbase"
-order: 1
-coverBefore: "/images/connection-central-before.jpg"
-coverAfter: "/images/connection-central-after.jpg"
+order: -4
 ---
 
-import ImageComparisonSlider from '@/components/terminal/ImageComparisonSlider';
-import LivePreview from '@/components/terminal/LivePreview';
-import MidnightButton from '@/components/demos/MidnightButton';
-import MidnightButtonSource from '@/components/demos/MidnightButton.tsx?raw';
+## Summary
 
-# CONNECTION CENTRAL ENHANCEMENTS FOR PIPELINES
+Connection Central is where Quickbase admins understand what systems, connections, tables, and pipelines are touching company data.
 
-## Team
+One boundary matters: v1 was Johnny Lee's design, not mine. My case is v2: the 2024 research-led rebuild of the information architecture, interaction model, and launch scope.
 
-- **Product Manager** — [Stasha Markovska](https://linkedin.com/in/stasha-markovska)
-- **Product Designer** — [Alexander Traykov](https://linkedin.com/in/alexandertraykov)
-- **Content Designer** — [Eva Miranda](https://linkedin.com/in/evamiranda)
-- **Engineer** — [Dimitar Gradev](https://linkedin.com/in/dimitar-gradev), [Dessie Ivanova](https://linkedin.com/in/dessie-ivanova)
+The strongest thing on this project was not a screen. It was the set of good ideas I cut so the right structure could ship.
 
-## 1. INTRODUCTION/PROBLEM
+## Project frame
 
-### Making Pipeline Management Better for Quickbase Admins
+- Role: Lead Product Designer.
+- Scope: research, IA, interaction design, MVP definition, Pendo strategy.
+- Team: PM Stasha Markovska, engineering lead Dimitar Arnaudov, co-research with Lisa Sawyer.
+- Launch: GA on December 17, 2024.
 
-<ImageComparisonSlider
-  beforeImage="/images/connection-central-before.jpg"
-  afterImage="/images/connection-central-after.jpg"
-  client:visible
-/>
+## Problem
 
-### Live component sample
+Connection Central v1 was informative but sprawling. Builders could see things. They could not reliably reason about what was wired to what.
 
-A demo button from the same design language — click it, the state is real, the source below is the actual file.
+Before drawing a new structure, I ran a Structured Association survey with 13 Solution Architects. They were the closest proxy we had for power builders living inside integrations every day.
 
-<LivePreview
-  source={MidnightButtonSource}
-  language="tsx"
-  title="MidnightButton"
-  client:visible
->
-  <MidnightButton>Primary button</MidnightButton>
-</LivePreview>
+The finding was consistent: people think in terms of resources and impact, not internal object plumbing.
 
-As product designer, I led the Connection Central redesign in Quickbase because admins had big problems
+## IA decision: lead with resources
 
-> they couldn't see clearly what was happening with their pipelines.
+The core IA move was resources-first. The surface needed to show what a connected system exposes, where those resources appear, and which pipelines depend on them.
 
-Admins had hard time watching pipeline status, finding what resources were used, and fixing problems fast. The interface was too split up. I wanted to make simple, data-rich hub that makes pipeline management easier.
+![Connection Central v2 resources-first IA flow.](/case-studies/quickbase/cc-v2-ia-flow.webp)
 
-- Admins couldn't easily see pipeline status, errors, or how resources connect to each other.
-- Realm admins had no single view to see all pipeline activity across apps.
-- Old interface had no good filtering or detailed resource breakdowns, making decisions slower.
+The two-pane model kept context while letting admins inspect detail. A control room stops working when the user loses the map just to read one dial.
 
-## 2. ROLE AND GOALS
+![Two-pane resources detail model.](/case-studies/quickbase/cc-resources-detail-two-pane.webp)
 
-### Lead Product Designer
+## Scope decision: protect the launch shape
 
-As UX lead for this project, I worked with product managers, engineers, and Quickbase stakeholders to make useful, user-focused solution. I did user research, wireframes, prototypes, and made changes based on feedback. But also had to think about technical limits, tight schedule, and planning how to release Connection Central in phases.
+The survey generated more good ideas than one release could hold. Engineering had a hard GA date and limited UI capacity late in the chain.
 
-Goals
+I removed richer accordion and popover detail from the MVP on July 22, 2024. The idea was not wrong. It was not load-bearing enough for this launch.
 
-- Make pipeline activity easy to see and understand.
-- Create better resource tracking with easy filters and popups.
-- Let users quickly move through different parts of Quickbase.
-- Make good base for phase-by-phase launch.
+That cut preserved the part that would be expensive to change later: the resources-first IA and control-room shape.
 
-## 3. APPROACH/PROCESS
+![Pipelines tab in the Connection Central hub.](/case-studies/quickbase/cc-pipelines-list.webp)
 
-### Research
+## Measurement plan
 
-We made a survey for Solution Architects and main users who work with Connection Central every day. From June to July 2024, we got answers from 13 people with different jobs and experience. This helped us know how they use current version and what they want to improve.
+There was no beta. On November 6, 2024, I aligned with the PM to go straight to GA to hit the H2 date.
 
-![Research Finding 1](/images/connection-central/cc-research-01.png)
+That made post-launch measurement more important, so I authored the v2 Pendo strategy: new-feature guide, onboarding walkthrough, feedback poll, and help update.
 
-![Research Finding 2](/images/connection-central/cc-research-02.png)
+The archive confirms:
 
-![Research Finding 3](/images/connection-central/cc-research-03.png)
+- GA on December 17, 2024.
+- Research-led IA grounded in n=13 Solution Architect survey.
+- Follow-up backlog tied to deferred survey needs.
 
-![Research Finding 4](/images/connection-central/cc-research-04.png)
+The archive does not include Pendo adoption numbers for Connection Central v2. I would not claim adoption without that export.
 
-#### What We Found
+## What I would do differently
 
-- Pipeline control → Users need better ways to access and control pipelines, like on/off switches and managing who owns them.
-- Information access → Fast access to ownership details, activity logs, and pipeline status is important.
-- Error handling → Users want better error tracking with counts and history.
-- Visual tools → Many asked for better data visuals and pipeline diagrams beyond YAML format - we left this for later.
-- Data entry → Required fields should be clearly marked, with better field sorting options.
-- Design → Users wanted same language style, color codes for states, and better space use.
+I would still make the no-beta call for the date. I would fight harder for five moderated pre-GA sessions with the same Solution Architects who took the survey.
 
-These findings matched with older feedback, showing users wanted better pipeline control, clearer error reporting, and easier interface for long time.
-
-### Ideas
-
-The idea phase took long time. I tried many different designs - nested details for each connection that open/close, giving more control and insight, dashboard pages, overviews and more.
-
-![Design Iterations for Connection Central](/images/connection-central/cc-iterrations.png)
-
-> But this stopped suddenly because team resources moved to help with the big Quickbase AI project.
-
-With few resources and time pressure, the team and I had to make design that was technically possible and still met user needs.
-
-## 4. SOLUTION
-
-### Final Design
-
-![Connection Central Overview](/images/connection-central/cc-homepage-overview.png)
-
-The redesigned Connection Central represents a significant leap forward in pipeline management capabilities. While the introduction of essential features like pipeline linking, status tracking, and activity monitoring brought immediate improvements to admin workflows, the crown jewel of this redesign is the sophisticated resource management system. The granular resource breakdown, particularly through the innovative resource popover, transforms how admins navigate between interconnected tables, apps, and pipeline steps. This deep integration, combined with advanced filtering capabilities, creates a seamless experience for managing complex pipeline architectures, making it a game-changer for Quickbase administrators.
-
-#### Advanced Resource Filtering
-
-![Advanced Resource Filtering Interface](/images/cc-resources-popover-advanced-filtering.png)
-
-- Full type filtering → Users can filter by all 24 Quickbase resource types, from basic ones like Text, Number, Date to complex ones like Formula, User, Rich text.
-- Location filter → Easy switching between Current app and External app resources, helping admins see data flow across Quickbase.
-- Step analysis → Filter based on how resources are used - in one step or many steps - showing patterns and ways to improve.
-- Search with filters → Strong search tool that works with filters, helping admins find resources quickly in their filtered view.
-
-#### Resource Management and Navigation
-
-![Resource Popover Interface](/images/cc-resource-popover.jpg)
-
-- Interactive resource popup → Smart popup that shows when clicking resource counts, showing all connected fields.
-- Field info display → Each resource shows important info - field name, type, source table, and which pipeline steps use it.
-- Page system for many resources → Good page system for hundreds of resources across many tables and apps.
-- Quick navigation links → Direct links to related tables, apps, and pipeline steps, making movement across platform fast.
-
-## 5. RESULTS/IMPACT
-
-### Outcomes
-
-Because of NDA limits, I can only share rough results. The new design had good impact
-
-- User engagement → Users used it more than our goal, mainly because of better interface and filtering.
-- Troubleshooting → Admins fixed problems about 25% faster, making pipeline management more efficient.
-- Feedback → Scores were over 4 out of 5, with users liking the search and resource tools most.
-
-### General Metrics
-
-While exact numbers are secret, we saw
-
-- Adoption → Most target users started using new interface in first month.
-- Efficiency → Finding resources became about 20% faster.
-- Satisfaction → About 80-85% of users said they could see pipeline activities much better.
+Pendo can tell what happened after launch. It cannot tell why a builder hesitated on a resource filter or misread a status.

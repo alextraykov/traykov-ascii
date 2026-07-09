@@ -1,24 +1,70 @@
 ---
-import ProjectMark from "../../components/ProjectMark.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import { getCaseStudies } from "../../lib/content";
 import "../../styles/global.css";
 
 const caseStudies = getCaseStudies();
-const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"];
-const featuredCards = featuredIds
-  .map((id) => caseStudies.find((study) => study.id === id))
-  .filter((study): study is NonNullable<typeof study> => study !== undefined)
-  .map((study) => ({
-    ...study,
-    title:
-      study.id === "designing-pave"
-        ? "Designing Pave"
-        : study.id === "synapse-sys"
-          ? "Synapse-Sys"
-          : study.title
-  }));
-const oldWorkCards = caseStudies.filter((study) => study.group === "Old work");
+const previewOnly = (study: NonNullable<ReturnType<typeof caseStudies.find>>) => ({
+  ...study,
+  href: `/case-studies/#${study.id}`,
+  status: "WIP"
+});
+
+const paveIds = ["designing-pave", "building-pave-environment"];
+const aiProductIds = ["synapse-sys", "pointlearn"];
+const systemsIds = [
+  "pipelines",
+  "alm-environments",
+  "connection-central",
+  "design-systems-ai-practice",
+  "design-leadership-operations",
+  "foundations-2022-2024",
+  "ai-surfaces"
+];
+
+const byId = (id: string) => caseStudies.find((study) => study.id === id);
+const compact = (items: Array<ReturnType<typeof byId>>) =>
+  items.filter((study): study is NonNullable<typeof study> => Boolean(study));
+
+const paveCards = compact(paveIds.map(byId)).map(previewOnly);
+const aiProductCards = compact(aiProductIds.map(byId)).map(previewOnly);
+const systemsCards = compact(systemsIds.map(byId)).map(previewOnly);
+const oldWorkCards = caseStudies.filter((study) => study.group === "Old work").map(previewOnly);
+
+const sections = [
+  {
+    id: "pave",
+    kicker: "Pave case studies",
+    title: "WIP previews, not public reads.",
+    intro:
+      "The product and design-engineering stories stay preserved behind the gate. Deep evidence stays inside case studies until this pass is ready.",
+    cards: paveCards
+  },
+  {
+    id: "ai-product",
+    kicker: "AI product studies",
+    title: "AI product previews are WIP.",
+    intro:
+      "Recent AI product work is visible as a hiring preview only; full narratives remain gated while the Pave and PointLearn MP4 previews are prepared.",
+    cards: aiProductCards
+  },
+  {
+    id: "systems",
+    kicker: "Product systems leadership",
+    title: "Systems work is gated for now.",
+    intro:
+      "Enterprise systems, platform patterns, design operations, and AI-surface explorations stay listed without exposing unfinished writeups.",
+    cards: systemsCards
+  },
+  {
+    id: "archive",
+    kicker: "Archive",
+    title: "Older portfolio pieces stay preserved.",
+    intro: "Older work remains in the repository, but the public site treats it as WIP preview material instead of accessible case-study content.",
+    cards: oldWorkCards
+  }
+].filter((section) => section.cards.length > 0);
 ---
 
 <!doctype html>
@@ -26,10 +72,10 @@ const oldWorkCards = caseStudies.filter((study) => study.group === "Old work");
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Case Studies - Alexander Traykov</title>
+    <title>Work - Alexander Traykov</title>
     <meta
       name="description"
-      content="Separate product design case-study pages for Alexander Traykov's Quickbase and Pave work."
+      content="Product design case-study index for Alexander Traykov, organized by Pave case studies, AI product studies, systems leadership, and archived work."
     />
     <script src="/page-transitions.js" defer></script>
   </head>
@@ -37,12 +83,12 @@ const oldWorkCards = caseStudies.filter((study) => study.group === "Old work");
     <div class="noise" aria-hidden="true"></div>
 
     <header class="site-nav">
-      <a class="brand" href="/#top" aria-label="Alexander Traykov home">AT</a>
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
-        <a href="/#work">Work</a>
-        <a href="/about/">About</a>
-        <a href="/playground">Playground</a>
-        <a href="/svg-ascii-studio/">Studio</a>
+        <a href="/case-studies/" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/playground" data-scramble>Playground</a>
+        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
       </nav>
     </header>
 
@@ -52,117 +98,57 @@ const oldWorkCards = caseStudies.filter((study) => study.group === "Old work");
           <canvas aria-hidden="true"></canvas>
           <pre aria-hidden="true" lang="bg"></pre>
         </div>
+
         <div class="case-hero-copy section-shell">
-          <a class="case-back" href="/#work">Back to portfolio</a>
+          <nav class="case-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span>Work</span>
+          </nav>
           <p class="section-kicker">Work index</p>
-          <h1 id="cases-title">Case studies</h1>
-          <p>Selected product stories and archived projects rewritten as case studies.</p>
+          <h1 id="cases-title">Portfolio map</h1>
+          <p>
+            A hiring-manager preview path: strongest Pave work first, current AI product judgment second,
+            systems leadership after. Deep evidence stays inside case studies until the WIP gate opens.
+          </p>
         </div>
       </section>
 
-      <section class="work case-index-grid section-shell" aria-label="Case-study index">
-        <div class="section-heading">
-          <p class="section-kicker">Selected work</p>
-          <h2>Current portfolio pass.</h2>
-        </div>
-        <div class="project-grid">
-          {featuredCards.map((study, index) => (
-            <details class:list={["project-card", "project-card--expandable", "project-card--construction", study.id === "synapse-sys" && "project-card--synapse-sys", study.id === "synapse-sys" && "project-card--synapsis"]}>
-              <summary class="project-card__body" aria-label={`${study.title} case study preview`}>
-                <ProjectMark group={study.group} title={study.title} />
-                <div class="project-copy">
-                  <span class="project-index">{String(index + 1).padStart(2, "0")} / {study.group}</span>
-                  <h3>{study.title}</h3>
-                  {study.summary && <p>{study.summary}</p>}
-                  <span class="construction-status">Preview only</span>
-                  <span class="project-card__toggle" aria-hidden="true">Expand</span>
-                </div>
-              </summary>
-              <div class="project-card__expanded">
-                <dl class="project-card__meta">
-                  {study.role && (
-                    <div>
-                      <dt>Role</dt>
-                      <dd>{study.role}</dd>
-                    </div>
-                  )}
-                  {study.year && (
-                    <div>
-                      <dt>Year</dt>
-                      <dd>{study.year}</dd>
-                    </div>
-                  )}
-                  {study.readTime && (
-                    <div>
-                      <dt>Read</dt>
-                      <dd>{study.readTime}</dd>
-                    </div>
-                  )}
-                </dl>
-                {study.tags.length > 0 && (
-                  <p class="project-card__tags">{study.tags.join(" / ")}</p>
-                )}
-                <a class="project-card__link" href={study.href}>Open case study</a>
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
+      <nav class="work-directory section-shell" aria-label="Work sections" data-reveal-group>
+        {sections.map((section) => (
+          <a href={`#${section.id}`}>
+            <span>{section.kicker}</span>
+            <strong>{section.cards.length}</strong>
+          </a>
+        ))}
+      </nav>
 
-      <section class="work case-index-grid section-shell" aria-labelledby="old-work-title">
-        <div class="section-heading">
-          <p class="section-kicker">Old work</p>
-          <h2 id="old-work-title">Archived projects from the old projects page.</h2>
-        </div>
+      <div class="case-index-sections">
+        {sections.map((section) => (
+          <section
+            id={section.id}
+            class="work case-index-grid section-shell"
+            aria-labelledby={`${section.id}-title`}
+            data-reveal="rise"
+          >
+            <div class="section-heading" data-reveal="fade">
+              <p class="section-kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+              <p>{section.intro}</p>
+            </div>
 
-        <div class="project-grid">
-          {oldWorkCards.map((study, index) => (
-            <details class="project-card project-card--expandable project-card--construction">
-              <summary class="project-card__body" aria-label={`${study.title} archived case study preview`}>
-                <ProjectMark group={study.group} title={study.title} />
-                <div class="project-copy">
-                  <span class="project-index">{String(index + 1).padStart(2, "0")} / Old work</span>
-                  <h3>{study.title}</h3>
-                  {study.summary && <p>{study.summary}</p>}
-                  <span class="construction-status">Archived preview</span>
-                  <span class="project-card__toggle" aria-hidden="true">Expand</span>
-                </div>
-              </summary>
-              <div class="project-card__expanded">
-                <dl class="project-card__meta">
-                  {study.role && (
-                    <div>
-                      <dt>Role</dt>
-                      <dd>{study.role}</dd>
-                    </div>
-                  )}
-                  {study.year && (
-                    <div>
-                      <dt>Year</dt>
-                      <dd>{study.year}</dd>
-                    </div>
-                  )}
-                  {study.readTime && (
-                    <div>
-                      <dt>Read</dt>
-                      <dd>{study.readTime}</dd>
-                    </div>
-                  )}
-                </dl>
-                {study.tags.length > 0 && (
-                  <p class="project-card__tags">{study.tags.join(" / ")}</p>
-                )}
-                <a class="project-card__link" href={study.href}>Open case study</a>
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
+            <div class="project-grid" data-reveal-group>
+              {section.cards.map((study, index) => (
+                  <ProjectCard study={study} index={index} eyebrow={section.kicker} action="WIP / preview only" />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
     </main>
 
-    <SiteFooter links={[{ label: "Home", href: "/#top" }]} />
+    <SiteFooter links={[{ label: "Home", href: "/" }]} />
 
-    <script is:inline src="/ascii-shader.js?v=static-project-mark-2"></script>
+    <script is:inline src="/ascii-shader.js?v=static-project-mark-3"></script>
     <script>
       import "../../scripts/synapse-card-scramble.js";
 
@@ -170,6 +156,7 @@ const oldWorkCards = caseStudies.filter((study) => study.group === "Old work");
         import("../../scripts/pave-symbol-turntable.js");
         import("../../scripts/sasi-logo-turntable.js");
       };
+
       let turntablesQueued = false;
       const queueProjectTurntables = () => {
         if (turntablesQueued) return;
@@ -177,19 +164,13 @@ const oldWorkCards = caseStudies.filter((study) => study.group === "Old work");
         loadProjectTurntables();
       };
 
-      document.querySelector(".project-grid")?.addEventListener("pointerenter", queueProjectTurntables, {
+      document.querySelector(".case-index-sections")?.addEventListener("pointerenter", queueProjectTurntables, {
         once: true
       });
-      document.querySelector(".project-grid")?.addEventListener("focusin", queueProjectTurntables, {
+      document.querySelector(".case-index-sections")?.addEventListener("focusin", queueProjectTurntables, {
         once: true
       });
-      window.setTimeout(queueProjectTurntables, 4200);
-
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(() => {
-          if (window.scrollY > window.innerHeight * 0.35) queueProjectTurntables();
-        }, { timeout: 2600 });
-      }
+      window.setTimeout(queueProjectTurntables, 3200);
     </script>
   </body>
 </html>

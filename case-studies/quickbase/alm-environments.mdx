@@ -1,0 +1,81 @@
+---
+title: "ALM Environments - release governance for business builders"
+category: product case study
+status: shipped
+pubDate: 2026-07-04
+tags: [enterprise-software, governance, research, alm, quickbase]
+heroImage: /case-studies/quickbase/alm-approved-page-overview.webp
+readTime: 8 min
+summary: "How I framed Dev/Test/Prod release governance for Quickbase builders who do not think like software teams, then tied the design to measured adoption and honest target gaps."
+role: "Lead Product Designer / Research Lead"
+year: 2026
+group: "Quickbase"
+order: -6
+---
+
+## Summary
+
+Quickbase Environments brought Dev -> Test -> Prod release governance to a product used by business builders, not only developers.
+
+The design problem was not simply making a deployment flow usable. It was translation. People needed the safety of CI/CD without being forced to think in CI/CD language.
+
+My role covered research planning, terminology validation, workflow design, approval and lock-state modeling, QA, and the measurement frame used to judge the feature after launch.
+
+## Project frame
+
+- Role: Lead Product Designer and research lead for ALM / Solutions.
+- Timeframe: August 2025 through January 2026 design hubs and QA sign-off.
+- Partners: Product management, engineering, content design.
+- Evidence source: downloaded portfolio archive, Pendo outcome table, Jira and Figma evidence.
+
+## The hard part
+
+Ask a business builder to move work from "Dev" to "Prod" and some freeze. Those are not always their words.
+
+So I treated terminology as a product surface. The research plan split IT/admin personas from business builders and asked people to create an environment, submit changes for review, and explain what just happened in their own words.
+
+The useful signal was not preference. It was comprehension. If a builder reached for "editing" where the UI said "Dev," that was a design fact.
+
+![The environment flow map across creation, review gates, deploy paths, and version states.](/case-studies/quickbase/alm-approved-page-overview.webp)
+
+## Decisions
+
+### Name for the person using it
+
+The research plan measured whether builders understood environment purpose, creation, and promotion without hints. The point was to catch vocabulary mismatch early enough to change the model, not decorate a finished one.
+
+### Let governance scale with risk
+
+Not every promotion deserves the same ceremony. I designed per-environment deployment rules so a team could keep low-risk moves light while requiring stronger approval around production.
+
+The model supported separation of duties: environment admin, solution admin, reviewer, contributor, auditor. That matters in a governance feature because permission design is part of the product, not an admin appendix.
+
+![Copy production data flow with data-copy choices, approval gating, and plan-tiered environment behavior.](/case-studies/quickbase/alm-copy-production-data.webp)
+
+### Design locked state first
+
+Environments was partly an Enterprise capability, so plan-limited states were real product states. I framed those as legible upgrade and permission moments rather than dead ends.
+
+![Environment selection states: default and plan-limited variants.](/case-studies/quickbase/alm-environments-selection.webp)
+
+### Make deployments searchable and auditable
+
+For the deployments surface, I specified a token-aware search box instead of a stack of dropdowns: `status:`, `user:`, `from:`, `to:`, and date filters.
+
+The accessibility notes were not polish. Governance tools get audited by real people, sometimes on assistive tech. Status needed text and shape, not color alone.
+
+## Outcome
+
+Measured adoption, from Pendo trailing 12 months:
+
+- 134 accounts created environments.
+- 77 accounts published or deployed through the native environments UX.
+- Builders selected DEV -> TEST -> PROD over DEV -> PROD by roughly 3:1.
+- Version restore and review-changes flows were in real use, but at smaller counts.
+
+The scorecard I defined also included rate targets: environment creation completion, deploy success, failure investigation time, CES, and CSAT. Those stay labeled as targets because the Pendo usage table confirms adoption, not pass/fail success rates.
+
+## What I would tighten
+
+The measurement frame was right, but I would instrument success and failure event splits before GA. A benchmark that cannot be computed becomes a promise without teeth.
+

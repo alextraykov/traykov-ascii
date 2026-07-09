@@ -1,0 +1,482 @@
+# Portfolio Build Timeline: Blinq Builder to VibeDesign
+
+How the work evolved from the first Blinq Design Playground commit into the Pave/VibeDesign design-intent prototype, branch-preview environment, and portfolio-ready product surface.
+
+> Source repositories:
+> [QuickBase/vibe-design](https://github.com/QuickBase/vibe-design) and [alextraykov-quickbase/blinq-builder](https://github.com/alextraykov-quickbase/blinq-builder)
+>
+> Extracted: 2026-07-01
+>
+> Method: fetched/cloned GitHub remotes, read remote source branches, excluded `origin/gh-pages` deployment history, deduped identical commit SHAs across both repositories, and sorted by committer date.
+
+---
+
+## Executive Summary
+
+This work started as **Blinq Design Playground** on 2026-01-27: a runnable React/Vite design-intent prototype with a tightly controlled sidebar, navigation model, theme application flow, and token vocabulary. Over the next month it became a full product prototype: notifications, template editing, role-based home views, permissions/settings/account pages, login flows, dark mode, motion affordances, screenshot discipline, and early agent guardrails.
+
+In March 2026, the work shifted from a prototype to a **repeatable design delivery environment**. The repo became VibeDesign, added branch previews, preview banners, CI/deploy hardening, handoff templates, QA surfaces, and content/process rules. That turned the repository into a system for reviewing design through working URLs, not static mocks.
+
+In April 2026, the product became **Pave**. The Blinq to Pave rebrand happened through tokens, logo, docs, and typography. Around the same time, the product depth expanded: billing and credits, credit packs, plan mode, ClarifyCard, visual editor/inspector work, multi-select, connections, workflow vision, and dark-mode defaults.
+
+From late April through June 2026, the work matured into a coherent AI app-builder story: chat-driven workflow generation, diagram preview/revise, mobile responsiveness, connection setup, component-level direct edit, stage-aware suggestions, guided preview kit, marketplace publishing/review flows, onboarding funnels, template detail pages, app forking, Handoff Hub, component specs, and reliable deep links.
+
+The portfolio story is not just "I designed screens." It is:
+
+> I built a design-intent product prototype and the AI-assisted environment around it: token-governed, branch-previewed, documented, handoff-ready, and broad enough to express an entire AI app-builder product vision from onboarding to marketplace publishing.
+
+---
+
+## Source Baseline
+
+| Source | Remote source commits used | Notes |
+|---|---:|---|
+| `alextraykov-quickbase/blinq-builder` | 56 | Predecessor repo and early Blinq phase. |
+| `QuickBase/vibe-design` | 166 | Successor repo carrying shared history plus later VibeDesign/Pave work. |
+| Combined deduped chronology | 167 | 55 shared commits, 111 VibeDesign-only commits, 1 Blinq-only commit. |
+
+Scope notes:
+
+- The two repos share the early Blinq history. The combined chronology dedupes identical SHAs so the same work is not counted twice.
+- `origin/gh-pages` deployment commits were excluded. Source-branch commits that changed deploy workflows, preview banners, CI, or branch-preview behavior were kept because they describe the design delivery environment.
+- The raw baseline at the end preserves the chronological evidence trail, including low-signal trigger/test-merge commits. A few arrows and dash glyphs are ASCII-normalized for portable Markdown.
+
+Additional design evidence mined from the current workspace:
+
+| Evidence source | What it adds beyond commits |
+|---|---|
+| `docs/handoffs/visual-edit.md` and `docs/diagrams/visual-edit-flow.md` | Selection language, toolbar behavior, staged changes, focus rings, animation specs, dark-mode behavior, z-index, and accessibility details. |
+| `docs/prd-pm-pd/visual-edit-competitive-analysis.md` | Competitive basis for floating toolbar vs. side panel, staged vs. immediate edits, Design/Prompt mode, selection badge conventions, and market gaps. |
+| `docs/prd-pm-pd/editable-states-per-component-research.md` | Component-aware inspector taxonomy: text, containers, buttons, badges, metrics, forms, filters, details, tables, and the two-surface style/settings model. |
+| `docs/prd-pm-pd/form-search-detail-visual-edit-research.md` and `docs/prd-pm-pd/table-editing-ux-research.md` | Form inspector, filter-to-table connection model, detail panel model, auto-generated table-to-form wiring, validation builder, and table inspector architecture. |
+| `docs/prd-pm-pd/spacing-editor-ux-research.md` | Box-model spacing editor rationale, four-side inputs, color-coded margin/padding zones, keyboard increments, scrub inputs, gap controls, and token-aware spacing opportunity. |
+| `docs/handoffs/billing.md`, `docs/handoffs/billing-credit-packs.md`, `docs/prd-pm-pd/credit-popover-redesign.md` | Credit state machine, warning/low/depleted surfaces, credit popover IA, pricing/checkout behavior, credit pack selector, and unresolved payment-flow decisions. |
+| `docs/handoffs/rebrand-decision-log.md` and `docs/handoffs/rebrand-token-mapping.md` | Blinq to Pave token mapping, brand color decisions, accessibility-adjusted semantic colors, logo strategy, font strategy, and dark-mode gap filling. |
+| `docs/prd-pm-pd/ai-native-workflow-builder-vision.md` and `docs/prd-pm-pd/workflow-spec-living-artifact.md` | AI-native builder thesis: chat and canvas as one surface, diagram/spec as trust artifact, ClarifyCard, AI_TASK, cost visibility, version history in chat, and rollback model. |
+| `docs/content-guidelines/` | Content hierarchy: accuracy, accessibility, clarity, efficiency, warmth; CTA rules; risk-based copy decisions; "oriented, not trapped" product voice. |
+| `docs/proposals/selection-screen-visual-refresh.md` | Marketplace/home selection strategy: live preview cards, intent-first organization, device-toggleable detail view, outcome-named CTAs, and template language avoidance. |
+| Component `@handoff` / `@copy` annotations | Concrete implementation evidence for pricing, checkout, notification config, inspector panels, staged changes, project details, credit warnings, spacing editor, prompt mode, and selection overlay. |
+
+---
+
+## Portfolio Timeline - Expanded Design Context
+
+### 1. 2026-01-27 to 2026-01-30 - Establishing the Design Playground
+
+**What I built:** the first Blinq Design Playground, the main sidebar/navigation shell, logical nav groupings, the theme dropdown, and the first two-step "apply theme to realm" confirmation flow.
+
+**What I designed in detail:**
+
+- A precise app-chrome contract: `256px` expanded sidebar, `72px` collapsed rail, `40px` nav items, `16px` icons, `14px` nav type, `56px` header, `12px` gaps, and explicit sizing for app selector, chevrons, section toggles, and nav buttons.
+- A navigation IA that grouped the product into clearer zones instead of a flat list. The early refactor is important because it set up the later product surface expansion: Builder, projects, settings, permissions, themes, templates, and account pages all needed a coherent shell.
+- A theme-application interaction that treated "theme changes" as realm-level changes, not cosmetic toggles. The two-step confirmation flow made the risk visible: applying a theme affects more than the current page.
+- A warm visual direction with lighter menu hovers, moving the prototype away from raw default UI and toward a deliberate design system surface.
+
+**Portfolio angle:** this phase shows the prototype starting with layout discipline, not feature sprawl. The earliest commits are unusually specific about dimensions because the goal was to make the UI's structural grammar concrete and repeatable.
+
+**Evidence commits:** `d636a36`, `c1051e8`, `3ac99b6`, `07841bf`, `a077fb0`, `37581eb`, `ca21580`, `7daa65e`, `b1f4cb3`, `1e43124`.
+
+### 2. 2026-02-02 to 2026-02-10 - Core Surfaces, Tokens, and Motion Signals
+
+**What I built:** Notifications, Template Editor updates, dark-mode fixes, token renaming from `globals.css` to `variables.css`, preview-panel badge motion, and an animated `SubagentBubble`.
+
+**What I designed in detail:**
+
+- The first notification/template-editing relationship: notifications were not only rows in a table, but objects connected to editable content templates.
+- A stronger token vocabulary by renaming global CSS to `variables.css` and tightening the idea that visual choices should be routed through named variables.
+- Dark-mode corrections early in the product life, so the prototype did not treat dark mode as a late skin.
+- Preview-panel badge motion as an early example of state signaling through small animation, not decorative flourish.
+- The `SubagentBubble` as an AI activity affordance: animated step cycling communicates "an agent is doing work," while the robot-to-chevron hover gives a progressive disclosure cue instead of a static icon.
+
+**Portfolio angle:** this phase is the moment the prototype starts expressing the AI product, not just the shell. It also shows the early commitment to token naming and motion affordances.
+
+**Evidence commits:** `b4e0ea7`, `37164cd`, `1635a08`, `52de801`.
+
+### 3. 2026-02-13 to 2026-02-19 - Persona Framing, Login, Home, and Governance
+
+**What I built:** simplified nav personas, login page refinements, screenshot process docs, role-based home views for Builder/Admin, Trial, and User, plus WIP Account, Permissions, Settings, and Users pages.
+
+**What I designed in detail:**
+
+- A role-aware product frame: Builder/Admin, Trial, and User states each needed a different home experience and different product emphasis.
+- Login page content and layout refinement, including vertically stacked sign-in buttons and copy aligned to content guidelines rather than marketing overstatement.
+- Early screenshot process documentation so visual review became a repeatable practice, not an ad hoc "does it look okay?" pass.
+- The start of the admin/account surface area: permissions, settings, users, and account pages were sketched as part of the same product system rather than separate utility pages.
+- The first governance layer: AI agent guardrails, repo charter, and component definition of done. This was design work on the production process itself: defining what "good prototype output" means.
+
+**Portfolio angle:** this is where the prototype becomes an app ecosystem: roles, permissions, settings, onboarding/login, and documentation practices all start appearing together.
+
+**Evidence commits:** `fa47784`, `b3fbadc`, `49fc5c8`, `5ab587c`, `6171ed2`, `12216a7`, `4252269`, `4be6e4f`, `10ff0eb`, `c9d274b`, `8a2765b`, `24ab387`.
+
+### 4. 2026-02-23 to 2026-02-24 - Notification Builder and Design QA Pass
+
+**What I built:** Playwright E2E coverage, a notification config panel, notification page overhaul, template editor integration, separate content vs. configuration edit paths, preview dialogs, tooltips, flow diagrams, and a Design QA preview page.
+
+**What I designed in detail:**
+
+- A split editing model: notification **content** goes to the Template Editor, while notification **configuration** stays in the config panel. That distinction reduces the cognitive load of "am I editing the message or the rule that sends it?"
+- Better language and table semantics: "Email notifications" / "Email templates," `Recipients` to `Audience`, and two-part trigger display. These are content design decisions, not just labels.
+- A config panel model with meaningful sections: name/description, table, audience, permissions, trigger, and conditions. The panel creates a structured path through a complex notification object.
+- Trigger cards for record events and schedules, making the trigger type visible and scannable before users configure details.
+- Preview behavior for existing notifications, so users can inspect the rendered email/template before editing.
+- Action tooltips for dense table controls, avoiding unlabeled icon ambiguity.
+- A Design QA page that isolated fixed chrome components and animated interaction states: app switcher, role testing, viewport device strip, theme toggle, and preview-frame behavior.
+- A viewport device strip moved inside the preview frame, reinforcing that device selection belongs to the previewed surface, not the app shell.
+
+**Portfolio angle:** this phase is strong evidence of product-detail craft. It shows vocabulary, UI affordances, preview behavior, interaction states, and QA surfaces moving together.
+
+**Evidence commits:** `952d7c4`, `99474aa`, `f388173`, `52d730b`, `ba7d2d6`, `8c63081`, `3af6488`, `ed53c6e`, `45afa8b`, `2bb9ddd`, `9cf1c9b`, `64bab09`, `307f4a8`, `bda12cf`, `664bff2`, `cbbed94`, `384fa04`, `59a76bf`, `9c1a037`, `c8a4380`, `9df3332`, `27a8f5b`.
+
+### 5. 2026-02-25 to 2026-03-04 - Marketing Surface and VibeDesign Migration
+
+**What I built:** homepage gradient system, marketing landing page rewrite, bento grid, proven section, responsive mockups, marketing feedback revisions, repo rename documentation, GitHub Pages setup, multi-branch deploy/preview workflows, and unified notification builder.
+
+**What I designed in detail:**
+
+- A marketing landing page that translated the product into an external story: hero prompt, bento grid, "proven" section, responsive mockups, CTAs, and login modal flow.
+- A homepage gradient system with semantic palettes before later tightening the brand to Pave Green. This phase explored how ambient visual identity could respond to product language.
+- Responsive showcase mockups so the marketing surface could preview the actual product grammar rather than rely on generic illustrations.
+- The first branch-preview deployment system, turning design review into URL-based review instead of local-only review.
+- Multi-branch preview support and branch cleanup, which made parallel design exploration possible across notification, landing, QA, and gradient branches.
+- A unified notification builder pass that brought side-by-side editor/config behavior into one flow.
+
+**Portfolio angle:** this phase bridges product design and design-engineering infrastructure. It shows both the marketing narrative and the mechanism for reviewing it live.
+
+**Evidence commits:** `1c1b143`, `55dbbdc`, `14c519a`, `acfe41c`, `e2f57d4`, `3c6af32`, `baa54f5`, `eab816d`, `727292d`, `112de38`, `5219608`, `d455475`, `9b84841`, `e533219`, `ed9c421`, `eb587b8`, `e702d3c`, `0bbadb1`, `2d6d2a5`.
+
+### 6. 2026-03-09 to 2026-03-13 - Branch Preview System, Handoffs, and Product Polish
+
+**What I built:** branch-preview banner behavior, branch deploy workflow updates, `#login` route, scroll-aware preview banner, close behavior, notification polish docs, feature delivery checklist, alert variants, builder polish, projects table, settings/users tab layouts, and `ProjectDetailsModal`.
+
+**What I designed in detail:**
+
+- The branch-preview banner as a review affordance: it names the branch, links back, can close, moves to the bottom, hides on scroll down, shows on scroll up, and eventually compresses to a 2px strip that expands on hover. That is a design-review tool, not just CI decoration.
+- The feature delivery checklist: engineer handoff, PM/content preview brief, in-component `@handoff` blocks, `@copy` annotations, diagrams, and commit message structure. This made design intent extractable by engineers and PMs.
+- Alert component redesign with variants for loading/info/action/dismissible states, creating a reusable system message pattern.
+- Builder polish across header, chat, sidebar, and preview panel, making the core AI-builder workspace feel like one integrated surface.
+- Projects table with sorting and inline actions, plus a `ProjectDetailsModal` that replaced raw/developer-centric project data with user-focused stats, activity timeline, metadata, and clear actions.
+- Settings and Users tab layouts so admin surfaces followed the same product grammar as builder surfaces.
+
+**Portfolio angle:** this is one of the best "design ops as product" moments. The work turns design review into a durable system: each branch has a URL, a banner, a handoff, a preview brief, and a diagram.
+
+**Evidence commits:** `c2362da`, `ffb0256`, `89b3cad`, `f0036df`, `e0c58e7`, `4d08576`, `daadb1b`, `9717925`, `a47c9f7`, `759b861`, `0a710f1`, `2de5783`, `ecd47b6`, `1178e7c`, `5ba528f`, `676a17a`, `e705ee1`, `57d580b`, `de2a9da`, `2cc4ec7`, `122c373`, `0be2b22`, `b96fd30`, `02ddf94`, `d21307e`, `02fac73`, `cd6e8bf`, `0850b12`, `7a968bd`, `98bd88b`, `74299e5`, `6116a8c`.
+
+### 7. 2026-03-26 to 2026-04-09 - Billing, Credits, Rebrand, and Plan Mode
+
+**What I built:** credit warning cards, low/depleted credit states, pricing and upgrade modal, checkout, credit popover redesign, enterprise plan selection, Blinq to Pave rebrand, Pave logo, font/token docs, token hue ramps, visual-editor panels, credit pack tiles, handoff docs, state diagrams, plan mode, ClarifyCard, CreditUpgradeCard, and updated billing specs.
+
+**What I designed in detail:**
+
+- A credit state machine with `healthy`, `warning`, `low`, and `depleted` states, mapped across header pill, chat cards, pricing, checkout, and account billing surfaces.
+- Inline chat warning cards that appear where the user is working instead of forcing a global banner or modal. Warning/low states use a minimal accent-bar card; depleted state gets a compact single-row recovery card.
+- A credit popover information architecture: balance first, renewal anchor, usage-rate signal, credit source breakdown, recent activity, and one state-appropriate CTA.
+- A pricing and checkout system: four plan tiers, monthly/yearly toggle, credit packs, FAQ, full-page checkout, plan selector, payment form, billing address, submit/success simulation, URL-param preselection, and card-brand detection for Visa/Mastercard/Amex.
+- A credit-pack selector redesign: preset packs plus custom credit amount, shared data source, selected row accent, "best value" badge, collapsible chat card, staggered row entry, and explicit notes about payment-flow gaps.
+- The Blinq to Pave rebrand through semantic tokens instead of component rewrites: Pave Green accent, oatmeal surfaces, Polymath/Inter font stack, Pave logo variants, and WCAG-adjusted semantic colors.
+- Accessibility-minded brand decisions: raw Pave Yellow failed contrast, so warning text moved to amber; raw Pave Red was darkened for text use; dark-mode accent values were derived because no Figma dark-mode spec existed.
+- Plan Mode: a Plan/Build toggle, `PlanCard` lifecycle, `ClarifyCard`, approve/run execution state, and keyword-driven plan templates. This separated "planning the app" from "building the app" in the chat workflow.
+
+**Portfolio angle:** this phase is a dense portfolio chapter. It shows product strategy, monetization UX, design-system stewardship, accessibility-minded color decisions, and the ability to rebrand a whole prototype without rewriting components.
+
+**Evidence commits:** `1e25bda`, `3c2c707`, `58bbed5`, `6b558a9`, `81ce0f4`, `1610afd`, `f72248e`, `6775de4`, `1b1fa12`, `0d8ce05`, `074f8e2`, `d9b452d`, `e455947`, `3d0be24`, `c0ef86c`, `ffe9d63`, `7bd51b7`, `f4a7338`, `d9af2ca`, `7256be2`, `0fce92f`, `d194c75`, `ddd2fdc`, `8e1806f`, `36a4a0c`.
+
+### 8. 2026-04-14 to 2026-04-23 - Productionizing the Prototype Contract
+
+**What I built:** inspector production pass, token compliance cleanup, type refactor, plan extraction, consolidated visual-editor specs, multi-select state, multi-select rendering, connections page, workflow vision doc, rebrand merge, dark-mode default, and brand-green landing gradient lock.
+
+**What I designed in detail:**
+
+- A type-safe inspector model: `ElementStyles` split into base styles plus type-specific interfaces for text, container, chart, form, filter, detail, badge, metric, and related component types.
+- A two-surface visual editing architecture validated by research: floating toolbar for universal style controls, docked/right-side panel for component-specific settings and data configuration.
+- Multi-select state and rendering as the first step toward batch editing and shared-property surfaces.
+- Consolidated visual editor specs so selection, toolbar positioning, staged changes, dark mode, animation, accessibility, and file ownership lived in a small set of durable documents.
+- Connections page and workflow vision docs that began tying external systems, workflow setup, and builder trust into the same product strategy.
+- Dark mode as the default product posture and a locked brand-green landing gradient, moving away from earlier keyword-palette experimentation toward a stable Pave identity.
+
+**Portfolio angle:** this phase shows maturity: removing ambiguity, reducing token drift, consolidating docs, and turning prototype behavior into something production engineers can consume.
+
+**Evidence commits:** `d2c2aa3`, `0c0a25e`, `4ff05a2`, `c8984c7`, `b2032ea`, `b534ad4`, `53bc4d8`, `cb316a6`, `a37e0c3`.
+
+### 9. 2026-04-24 to 2026-04-28 - AI Workflow Builder and Mobile Readiness
+
+**What I built:** chat-driven workflow builder, diagram preview, revise flow, mobile responsive UI, hidden credit nudge near message input, connection setup as a first-class step, cleaner card system, wireframe workflow cards, table list view, hover pulse, cancellable clarify flow, neutral CTA copy, and polished suggestion chips.
+
+**What I designed in detail:**
+
+- The central AI-builder loop: user prompt -> clarify if needed -> workflow diagram preview -> revise through chat -> connect data source -> generate. This is a trust-building flow, not a one-shot generation demo.
+- A diagram-first mental model: the user sees trigger, condition, action nodes and edges before the dashboard/app output appears.
+- A revise flow where the diagram is staged and editable through conversation. Users can say "also include the deal owner" before committing to generation.
+- Connection setup as a first-class step inside the workflow path, avoiding the product smell of "go to settings before you can keep building."
+- Workflow cards and table-list views with wireframe treatment, hover pulse, preview drawer, action clusters, forked condition visualizations, and list density appropriate to workflow management.
+- Mobile-responsive UI and a cleaned-up message-input area so the builder could survive smaller viewports and not let credit nudges compete with core input.
+- Cancellable clarification and neutral CTA copy, reducing the feeling that the AI is forcing a path before the user has enough context.
+
+**Portfolio angle:** this is the cleanest product-design thesis in the repo: AI output should be reviewable as a mental model before it becomes a dashboard.
+
+**Evidence commits:** `6caddb2`, `460b521`, `db97bf0`, `6907fc7`, `577ac58`, `25fd38b`.
+
+### 10. 2026-04-29 to 2026-06-09 - Direct Edit and Stage-Aware Suggestions
+
+**What I built:** per-component direct-edit property controls, a research-matrix-aligned control model, stage-aware suggestions, audit pills, nudges, post-deploy surfaces, a `/suggestions` slash command, clickable steppers, animated Pave icon set, and a motion handoff for `qb-ai-studio`.
+
+**What I designed in detail:**
+
+- Component-aware Direct Edit controls for text, containers, buttons, charts, forms, filters, detail panels, badges, and metric cards. The controls reflect the selected element type instead of showing a generic CSS panel.
+- A dark floating toolbar that stays visually separate from the page theme, with a Pave Green Design/Prompt mode toggle, dirty dot, delete confirmation timer, font-size scrub, color picker, spacing editor, and staged save/discard model.
+- Selection language based on market-standard blue outlines and tag badges, plus dirty-state styling when a selected element has uncommitted changes.
+- Staged changes as psychological safety: visual edits can be saved or discarded, reducing anxiety about breaking AI-generated layouts.
+- Research-backed inspector principles: style and settings are separate; float for style, dock for settings; text edits can be inline; forms/tables/filters need first-class configuration panels.
+- Spacing editor research and roadmap: 4-side box model, amber margin/blue padding coding, spatial tab order, future scrub behavior, arrow-key increment, gap support, and token-aware spacing hints.
+- Stage-aware suggestions that changed by product moment: audit pills, nudges, post-deploy surfaces, and a `/suggestions` slash command that jumps into the relevant showcase.
+- Animated Pave icon set and motion handoff for `qb-ai-studio`, turning motion details into something portable beyond this prototype.
+
+**Portfolio angle:** this phase is ideal for showing interaction-design depth: direct manipulation, staged review, auditability, and motion handoff all in one arc.
+
+**Evidence commits:** `9be14c6`, `94752f6`, `82e3668`, `27e933d`, `4b3ed46`.
+
+### 11. 2026-06-11 to 2026-06-12 - Marketplace and Guided Preview Kit
+
+**What I built:** marketplace Phase 1 and 1.1 screens, wireframes/docs, realm review flow, policy-gated publishing, admin queue, guided preview kit, marketplace spacing pass, screenshot walkthrough, UI-driven Next/Back tour steps, guided-preview landing, build-mode tour step, review state, management scaffolding, full-page template detail, and two-level handoff launch/deep-link flow.
+
+**What I designed in detail:**
+
+- A marketplace governance model: templates/starting points are not just browsed, they can be policy-gated, reviewed by realm admins, queued, approved, and managed.
+- Guided preview kit: a focused preview mode where Next/Back steps actively open the relevant UI surface instead of presenting a passive checklist.
+- A review state and admin queue that make publishing safer in enterprise contexts.
+- A full-page template detail concept that moved away from "deploy this" toward "open in builder" and fork/copy semantics, matching the idea that users should inspect and adapt before committing.
+- A two-level handoff model: overview page first, then deep-linked tour states for reviewers who need exact surfaces.
+- Screenshot walkthrough and capture scripts so marketplace flows could be documented visually.
+
+**Portfolio angle:** this phase expands the product from "builder" to "ecosystem." It shows publishing, review, policy gates, preview education, and template distribution.
+
+**Evidence commits:** `53dd2dc`, `45d20c0`, `183c45b`, `0e98e3e`, `107283f`, `030eaf8`, `5c98d78`, `8c02cd0`.
+
+### 12. 2026-06-17 to 2026-06-18 - Onboarding Funnel and Forked App Canvas
+
+**What I built:** use-case home gallery, one-click start, marketing to email to builder flow, clean framed app thumbnails, realistic app previews, one guided tour, and forked-app builder canvas.
+
+**What I designed in detail:**
+
+- A use-case-first home gallery: users start from what they are trying to accomplish, not from a generic object called a template.
+- One-click start behavior so the path from idea to builder is short and low-friction.
+- A marketing -> email -> builder journey that shows how acquisition, invitation, and builder activation connect.
+- Clean framed app thumbnails using `TemplateThumb`, avoiding clipped or generic preview imagery.
+- Realistic app previews and a single guided tour, reducing the sense that onboarding is a pile of separate examples.
+- A forked-app builder canvas: when a user starts from a template/app idea, the builder reflects that starting point instead of dumping them into a blank state.
+
+**Portfolio angle:** this phase makes the AI builder feel like a product journey instead of a collection of surfaces.
+
+**Evidence commits:** `92a9496`, `c7f11d2`, `972c855`.
+
+### 13. 2026-06-22 to 2026-06-26 - Marketplace Polish, Specs, and Reliable Deep Links
+
+**What I built:** polished marketplace cards, detail/handoff flows, UI/token refinements, template-card blueprint, thumbnail preview logic, ComponentSpecs page, HandoffHub page, specs registry, Path A/B home, recent projects, Get app flow, storyboard, hover "Details" behavior, and reliable detail deep-links.
+
+**What I designed in detail:**
+
+- Marketplace card polish: refined spacing, card behavior, detail/handoff flows, and token usage so the marketplace could read as a premium product surface.
+- Template-card blueprint and thumbnail preview logic, connected to the later selection-screen proposal: cards should show the artifact, not just an icon and a sentence.
+- HandoffHub and ComponentSpecs pages as a review/translation layer between design prototype and implementation teams.
+- Path A/B home experience with recent projects, Get app flow, and storyboard language, making the home page support different user intents rather than one generic landing state.
+- Hover "Details" replacing "Preview," a subtle but important language/behavior correction: users need to inspect what something is before launching it.
+- Reliable detail deep links so portfolio reviewers, PMs, and engineers can land directly on the exact state being discussed.
+
+**Portfolio angle:** this is the latest visible end state: the product vision now has home, marketplace, detail, handoff/spec, and app-start flows connected.
+
+**Evidence commits:** `436e663`, `1f3a87f`, `34fa8d9`, `dace21b`, `3747e0e`.
+
+---
+
+## Portfolio Narrative Draft
+
+I started with a small design playground and turned it into a full design-intent prototype for an AI app builder. The first commits were not throwaway setup; they were the foundation of the product grammar: exact sidebar dimensions, nav grouping, theme application, token naming, dark-mode behavior, and a review process that made visual decisions traceable.
+
+The product then expanded surface by surface: notifications and template editing, role-based home states, permissions/settings/users, marketing pages, billing and credits, plan mode, workflow diagrams, direct edit controls, suggestions, onboarding, and marketplace publishing. The throughline was always the same: make AI-generated work understandable, reviewable, adjustable, and safe to hand off.
+
+The core product bet was that AI builders should not jump straight from prompt to finished app. Users need trust artifacts: plans, diagrams, specs, previews, staged changes, cost signals, and audit trails. That idea shows up everywhere: Plan Mode before Build Mode, workflow diagram preview before app generation, ClarifyCards before ambiguous execution, WorkflowSpecCards as living artifacts in chat, and Direct Edit with save/discard instead of accidental destructive edits.
+
+The deeper design work was not only visual. I defined editing models, state machines, component taxonomies, content rules, and handoff contracts. The Direct Edit research mapped the market and produced a two-surface model: floating toolbar for style, docked panel for component settings. The billing work turned credit consumption into a state machine with contextual recovery paths. The rebrand moved the product from Blinq to Pave through semantic tokens and accessibility-audited color choices. The marketplace and onboarding work shifted starting points from generic "templates" into live, inspectable, intent-first app previews.
+
+The bigger system I built around the product is just as important as the screens. VibeDesign became a working design delivery environment with branch previews, preview banners, content guidelines, handoff docs, Mermaid diagrams, component annotations, token rules, and feature checklists. The result is a portfolio artifact that shows both product design craft and the operating system that made the craft repeatable.
+
+Suggested portfolio framing:
+
+- **Role:** Product designer / design engineer building an AI app-builder prototype and the design-delivery system around it.
+- **Problem:** AI-generated apps are hard to trust unless users can inspect the plan, revise the logic, understand cost/risk, and safely edit the output.
+- **Approach:** Build a runnable prototype that expresses intent through code, tokens, diagrams, motion, content guidelines, research-backed interaction models, and handoff docs.
+- **Outcome:** A multi-surface product story covering onboarding, workflow generation, diagram/spec review, direct edit, billing/credits, marketplace governance, branch-preview review, and implementation handoff.
+- **Differentiator:** The work is not a static deck. It is a runnable, token-governed, branch-previewed design system and product prototype with the process infrastructure to keep design intent from getting lost.
+
+---
+
+## Chronological Commit Baseline
+
+```text
+2026-01-27 | Both repos     | d636a36 | Initial commit: Blinq Design Playground
+2026-01-27 | Both repos     | c1051e8 | fix: sidebar sizing - 256px/72px widths, 40px nav items, 16px icons, 14px font, 56px header - DO NOT REVERT
+2026-01-27 | Both repos     | 3ac99b6 | CRITICAL: Fix sidebar sizes - 40px buttons, 16px icons, 14px font, 12px gap - THESE VALUES ARE FINAL
+2026-01-27 | Both repos     | 07841bf | fix: remaining sidebar sizes - section toggle 40px/14px, app selector 36px/14px, chevron 14px
+2026-01-27 | Both repos     | a077fb0 | fix: sidebar widths 256px/72px - ALL VALUES NOW CORRECT
+2026-01-27 | Both repos     | 37581eb | refactor: reorganize sidebar nav with logical groupings
+2026-01-29 | Both repos     | ca21580 | feat(themes): add theme apply confirmation dialog with two-step realm flow
+2026-01-30 | Both repos     | 7daa65e | docs: add theme dropdown flow diagram
+2026-01-30 | Both repos     | b1f4cb3 | docs: update theme dropdown flow diagram
+2026-01-30 | Both repos     | 1e43124 | feat: warm theme with lighter menu hovers
+2026-02-02 | Both repos     | b4e0ea7 | feat: add Notifications page, Template Editor updates & dark mode fixes
+2026-02-02 | Both repos     | 37164cd | refactor: rename globals.css to variables.css and update token naming
+2026-02-03 | Both repos     | 1635a08 | style: add smooth transitions to preview panel badge
+2026-02-10 | Both repos     | 52de801 | feat: SubagentBubble component with animated step cycling and robot->chevron hover
+2026-02-13 | Both repos     | fa47784 | feat: simplify nav personas & update login page
+2026-02-13 | Both repos     | b3fbadc | docs: add nav screenshots for content review
+2026-02-13 | Both repos     | 49fc5c8 | docs: add screenshot process to main README
+2026-02-13 | Both repos     | 5ab587c | fix: align login page copy with content guidelines
+2026-02-13 | Both repos     | 6171ed2 | fix: stack sign in buttons vertically
+2026-02-13 | Both repos     | 12216a7 | fix: login page copy and styling refinements
+2026-02-16 | Both repos     | 4252269 | refactor: combine notifications tabs into single view
+2026-02-18 | Both repos     | 4be6e4f | feat: add HomePage with role-based views (Builder & Admin, Trial, User)
+2026-02-19 | Both repos     | 10ff0eb | Add WIP pages: Account, Permissions, Settings, Users
+2026-02-19 | Both repos     | c9d274b | fix: resolve TypeScript errors, remove unused imports, add docs and new components
+2026-02-19 | Both repos     | 8a2765b | Merge dev-branch into main: complete feature set
+2026-02-19 | Both repos     | 24ab387 | docs: add AI agent guardrails, repo charter, and component definition of done
+2026-02-23 | Both repos     | 952d7c4 | feat: add Playwright E2E test suite
+2026-02-23 | Both repos     | 99474aa | feat: notification config panel, notifications page overhaul, template editor integration
+2026-02-23 | Both repos     | f388173 | Merge branch 'feat/e2e-tests' into feat/notification-panel
+2026-02-24 | Both repos     | 52d730b | copy: rename to Email notifications / Email templates
+2026-02-24 | Both repos     | ba7d2d6 | refactor: template editor header cleanup and UI fixes
+2026-02-24 | Both repos     | 8c63081 | fix: align table columns with panel vocabulary - Recipients->Audience, Trigger two-part display
+2026-02-24 | Both repos     | 3af6488 | feat: split edit paths - content (template editor) vs configuration (config panel), rework preview dialog for existing notifications
+2026-02-24 | Both repos     | ed53c6e | feat: add tooltips to notification row action buttons (preview & more actions)
+2026-02-24 | Both repos     | 45afa8b | docs: rewrite notifications-page-flow diagram + add session context markdown
+2026-02-24 | Both repos     | 2bb9ddd | polish: card hover hygiene, publish button label, page polish prompt, diagram refs
+2026-02-24 | Both repos     | 9cf1c9b | feat: add Design QA preview page with 5 fixed chrome components
+2026-02-24 | Both repos     | 64bab09 | fix: toggle pill rounding, tooltips, app-switcher overflow, simpler New button
+2026-02-24 | Both repos     | 307f4a8 | fix: app switcher trigger button + test-as-role icons, no search
+2026-02-24 | Both repos     | bda12cf | fix: remove feedback buttons, severity labels, match viewport toggle, add source paths
+2026-02-24 | Both repos     | 664bff2 | fix: remove Split New Button section from Design QA page
+2026-02-24 | Both repos     | cbbed94 | feat: animate state interactions for all 4 QA components
+2026-02-24 | Both repos     | 384fa04 | feat: apply theme toggle + app dropdown animations to real sidebar
+2026-02-24 | Both repos     | 59a76bf | fix: theme toggle fill/collapsed states, add TestAsRole to PreviewPanel
+2026-02-24 | Both repos     | 9c1a037 | fix: remove labels from theme toggle, reorder footer (account then theme)
+2026-02-24 | Both repos     | c8a4380 | fix: add search input to sidebar app switcher dropdown, use design tokens
+2026-02-24 | Both repos     | 9df3332 | feat: add viewport device strip to PreviewPanel bottom
+2026-02-24 | Both repos     | 27a8f5b | fix: move viewport toggle inside preview frame, use segmented pill style
+2026-02-25 | Both repos     | 1c1b143 | feat: homepage gradient system - ambient orb background with semantic palettes
+2026-03-03 | Both repos     | 14c519a | update(marketing): revise bento grid content, layout, and CTAs per marketing feedback
+2026-03-03 | Both repos     | 55dbbdc | feat(marketing): rewrite landing page - hero, bento grid, proven section, responsive mockups
+2026-03-03 | Both repos     | acfe41c | docs: rename to Vibe Design for QuickBase/vibe-design repo
+2026-03-03 | VibeDesign     | e2f57d4 | Add GitHub Pages deployment workflow and base path
+2026-03-03 | VibeDesign     | 3c6af32 | Fix CI: fallback to npm install for cross-platform rollup deps
+2026-03-03 | VibeDesign     | baa54f5 | Regenerate package-lock.json for cross-platform CI
+2026-03-03 | VibeDesign     | eab816d | Fix base path: private Pages uses root domain, not subdirectory
+2026-03-03 | VibeDesign     | 727292d | Multi-branch deploy: per-branch previews with auto-cleanup
+2026-03-03 | VibeDesign     | f8767a9 | Trigger branch preview deploy
+2026-03-03 | VibeDesign     | d72a804 | Trigger branch preview deploy
+2026-03-03 | VibeDesign     | ba6d9d6 | Trigger branch preview deploy
+2026-03-03 | VibeDesign     | 2efd932 | Trigger branch preview deploy
+2026-03-03 | VibeDesign     | 112de38 | Add branch preview workflow
+2026-03-03 | VibeDesign     | 5219608 | Add branch preview workflow
+2026-03-03 | VibeDesign     | d455475 | Add branch preview workflow
+2026-03-03 | VibeDesign     | 9b84841 | Add branch preview workflow
+2026-03-03 | VibeDesign     | e533219 | Fix deploy: support branch names with slashes
+2026-03-03 | VibeDesign     | ed9c421 | Fix deploy: support branch names with slashes
+2026-03-03 | VibeDesign     | eb587b8 | Fix deploy: support branch names with slashes
+2026-03-03 | VibeDesign     | e702d3c | Fix deploy: support branch names with slashes
+2026-03-03 | VibeDesign     | 0bbadb1 | Fix deploy: support branch names with slashes
+2026-03-04 | Both repos     | 2d6d2a5 | feat(notifications): unified notification builder with side-by-side editor + config
+2026-03-09 | VibeDesign     | c2362da | Fix CI: fallback install for branches with old lock file
+2026-03-09 | VibeDesign     | ffb0256 | Fix CI: update workflow and lock file for cross-platform builds
+2026-03-09 | VibeDesign     | 89b3cad | Fix CI: update workflow and lock file for cross-platform builds
+2026-03-09 | VibeDesign     | f0036df | Fix CI: update workflow and lock file for cross-platform builds
+2026-03-09 | VibeDesign     | e0c58e7 | Fix CI: update workflow and lock file for cross-platform builds
+2026-03-09 | VibeDesign     | fd72462 | Trigger deploy
+2026-03-09 | VibeDesign     | 0ba2ff0 | Trigger deploy
+2026-03-09 | VibeDesign     | 8be99c5 | Trigger deploy
+2026-03-09 | VibeDesign     | 4d08576 | Add preview banner with branch name and back link
+2026-03-09 | VibeDesign     | daadb1b | Update workflow with preview banner + lock file
+2026-03-09 | VibeDesign     | 9717925 | Update workflow with preview banner + lock file
+2026-03-09 | VibeDesign     | a47c9f7 | Update workflow with preview banner + lock file
+2026-03-09 | VibeDesign     | 759b861 | Add deploy workflow with preview banner + lock file
+2026-03-09 | Both repos     | 0a710f1 | Add deploy workflow with preview banner + lock file
+2026-03-09 | VibeDesign     | 2de5783 | Add deploy workflow with preview banner + lock file
+2026-03-09 | VibeDesign     | ecd47b6 | Fix TS error: remove undefined setPreviewEmailNotification + add deploy workflow
+2026-03-09 | VibeDesign     | 1178e7c | Add #login hash route
+2026-03-09 | VibeDesign     | 5ba528f | Hide preview banner on scroll down, show on scroll up
+2026-03-09 | VibeDesign     | 676a17a | Add close button to preview banner
+2026-03-10 | Blinq Builder  | e705ee1 | chore(process): add feature delivery checklist and handoff templates
+2026-03-10 | Both repos     | 57d580b | polish(notifications): replace hardcoded values with design tokens
+2026-03-10 | VibeDesign     | de2a9da | feat(notifications): polish config panel + handoff docs
+2026-03-13 | VibeDesign     | 2cc4ec7 | fix(notifications): apply content feedback - copy updates, multiselect rebuild, publish gate
+2026-03-13 | VibeDesign     | 122c373 | chore: tokens, agent configs, and handoff templates
+2026-03-13 | VibeDesign     | 0be2b22 | feat(alert): redesign with animation, dismissible, action slot, info and loading variants
+2026-03-13 | VibeDesign     | b96fd30 | feat(builder): header, chat, sidebar, and preview panel UX polish
+2026-03-13 | VibeDesign     | 02ddf94 | feat(projects): table view with sorting and inline actions
+2026-03-13 | VibeDesign     | d21307e | feat(settings,users): tab layout, tables, roles, and notifications polish
+2026-03-13 | VibeDesign     | 02fac73 | docs: handoff, preview brief, and diagram updates for polish branch
+2026-03-13 | VibeDesign     | cd6e8bf | fix: remove spacer div from preview banner - pure floating overlay
+2026-03-13 | VibeDesign     | 0850b12 | fix: move preview banner to bottom of viewport
+2026-03-13 | VibeDesign     | 7a968bd | fix: add body padding-bottom so banner never overlaps content
+2026-03-13 | VibeDesign     | 98bd88b | fix: preview banner as 2px strip, expands on hover, close before label
+2026-03-13 | VibeDesign     | 74299e5 | feat(projects): add ProjectDetailsModal with stats, activity timeline, and metadata
+2026-03-13 | VibeDesign     | 6116a8c | fix(header): remove open-in-separate-window button, keep Preview primary
+2026-03-26 | VibeDesign     | 1e25bda | feat(billing): credit warning system - warning/low/depleted cards, pricing, upgrade modal
+2026-03-27 | VibeDesign     | 3c2c707 | fix: move preview banner to bottom hover, hide nudge on login
+2026-03-30 | VibeDesign     | 58bbed5 | feat(billing): checkout page, credit popover redesign, enterprise plan selection
+2026-04-02 | VibeDesign     | 6b558a9 | feat(rebrand): Blinq -> Pave - tokens, logo, components, docs, fonts
+2026-04-03 | VibeDesign     | 81ce0f4 | Test merge: feat/notification-panel (resolved deploy.yml -> ours)
+2026-04-03 | VibeDesign     | 1610afd | Test merge: feat/landing-page-tweaks (resolved conflicts)
+2026-04-03 | VibeDesign     | f72248e | Test merge: fix/design-qa-chrome-polish (resolved deploy.yml)
+2026-04-03 | VibeDesign     | 6775de4 | Test merge: feat/homepage-gradient-system (resolved deploy.yml)
+2026-04-03 | VibeDesign     | 1b1fa12 | Test merge: feat/marketing-landing-page-v2 (resolved deploy.yml)
+2026-04-03 | VibeDesign     | 0d8ce05 | Test merge: feat/notification-builder (resolved deploy.yml)
+2026-04-03 | VibeDesign     | 074f8e2 | Test merge: polish (resolved deploy.yml)
+2026-04-03 | VibeDesign     | d9b452d | Test merge: claude/suspicious-hellman (resolved deploy.yml)
+2026-04-03 | VibeDesign     | e455947 | chore(rebrand): rename Blinq UI to Pave in deploy index page
+2026-04-03 | VibeDesign     | 3d0be24 | feat(tokens): align text colors to oatmeal hue ramp
+2026-04-03 | VibeDesign     | c0ef86c | feat(tokens): merge Johnny v1.2.0 with our graduated ramp
+2026-04-06 | VibeDesign     | ffe9d63 | feat(visual-editor): inspector panels, chart controls, motion polish, PlanCard fix
+2026-04-08 | VibeDesign     | 7bd51b7 | feat(billing): credit pack tiles, button radius, CreditPackCard, inspector panels
+2026-04-08 | VibeDesign     | f4a7338 | docs: engineering handoff, PM preview brief, and flow diagrams for credit packs
+2026-04-08 | VibeDesign     | d9af2ca | docs: cross-link billing docs, add live preview URLs, update state diagram
+2026-04-08 | VibeDesign     | 7256be2 | docs: map all upgrade/checkout entry points, flag unresolved flows
+2026-04-09 | VibeDesign     | 0fce92f | feat(plan-mode): labeled mode toggle, Approve & Run, execution indicator, docs
+2026-04-09 | VibeDesign     | d194c75 | feat(billing): 5-option radio credit packs, $20 increment pricing
+2026-04-09 | VibeDesign     | ddd2fdc | feat(chat): ClarifyCard component for scoping questions
+2026-04-09 | VibeDesign     | 8e1806f | feat(billing): CreditUpgradeCard upsell, full-width chat cards, Solo pricing
+2026-04-09 | VibeDesign     | 36a4a0c | docs: update billing specs for radio packs, CreditUpgradeCard, $20 pricing
+2026-04-14 | VibeDesign     | d2c2aa3 | feat(inspector): production pass - token compliance, type refactor, plan extraction
+2026-04-14 | VibeDesign     | 0c0a25e | docs: consolidate visual editor specs into 3 docs, fix stale token values
+2026-04-14 | VibeDesign     | 4ff05a2 | fix: add multi-select state to inspector hook, fix CI build
+2026-04-14 | VibeDesign     | c8984c7 | feat: multi-select rendering, connections page, workflow vision doc
+2026-04-23 | VibeDesign     | b2032ea | Merge pull request #5 from QuickBase/rebrand/blinq-to-pave
+2026-04-23 | VibeDesign     | b534ad4 | chore(theme,home): default to dark mode, update hero headline
+2026-04-23 | VibeDesign     | 53bc4d8 | Merge pull request #6 from QuickBase/chore/dark-default-headline
+2026-04-23 | VibeDesign     | cb316a6 | feat(gradient): lock landing gradient to brand green, drop keyword palette system
+2026-04-23 | VibeDesign     | a37e0c3 | feat(gradient): lock landing gradient to brand green, drop keyword palette system
+2026-04-24 | VibeDesign     | 6caddb2 | feat(workflow): chat-driven workflow builder with diagram preview and revise flow
+2026-04-24 | VibeDesign     | 460b521 | feat(mobile): comprehensive mobile responsive UI
+2026-04-24 | VibeDesign     | db97bf0 | fix: hide credit nudge banner above message input
+2026-04-27 | VibeDesign     | 6907fc7 | feat(workflow): connection setup as first-class step + cleaner card system
+2026-04-27 | VibeDesign     | 577ac58 | feat(connections): wireframe workflow cards, table list view, hover pulse
+2026-04-28 | VibeDesign     | 25fd38b | feat(chat): cancellable clarify, neutral CTA copy, polished suggestion chips
+2026-04-29 | VibeDesign     | 9be14c6 | feat(direct-edit): per-component property controls matching research matrix
+2026-05-04 | VibeDesign     | 94752f6 | feat(suggestions): stage-aware showcase with audit pills, nudges, and post-deploy surfaces
+2026-05-05 | VibeDesign     | 82e3668 | fix(suggestions): make whole stepper item clickable, not just the dot
+2026-05-05 | VibeDesign     | 27e933d | feat(suggestions): /suggestions slash command jumps into the showcase
+2026-06-09 | VibeDesign     | 4b3ed46 | feat(direct-edit): animated Pave icon set + motion handoff for qb-ai-studio
+2026-06-11 | VibeDesign     | 53dd2dc | feat(marketplace): Phase 1+1.1 prototype screens + wireframes/docs
+2026-06-11 | VibeDesign     | 45d20c0 | feat(marketplace): realm review flow - policy-gated publishing + admin queue
+2026-06-11 | VibeDesign     | 183c45b | feat(preview-kit): focused, guided feature previews + marketplace spacing pass
+2026-06-11 | VibeDesign     | 0e98e3e | docs(marketplace): flow walkthrough with screenshots + capture script
+2026-06-11 | VibeDesign     | 107283f | feat(preview-kit): guided steps drive the UI - Next/Back open each surface
+2026-06-11 | VibeDesign     | 030eaf8 | feat(marketplace): guided-preview landing, build-mode tour step, review state + manage scaffolding
+2026-06-12 | VibeDesign     | 5c98d78 | feat(marketplace): full-page template detail - deploy retired for open-in-builder forking
+2026-06-12 | VibeDesign     | 8c02cd0 | feat(preview-kit): two-level handoff - gated overview page that launches and deep-links the tour
+2026-06-17 | VibeDesign     | 92a9496 | feat(onboarding): use-case home gallery, one-click start, marketing->email->builder
+2026-06-17 | VibeDesign     | c7f11d2 | fix(home,marketing): clean framed app thumbnails (TemplateThumb), no clipping
+2026-06-18 | VibeDesign     | 972c855 | feat(onboarding,builder): realistic app previews, one guided tour, forked-app builder canvas
+2026-06-22 | VibeDesign     | 436e663 | feat(marketplace): polish cards, detail/handoff flows, UI + token refinements
+2026-06-25 | VibeDesign     | 1f3a87f | feat(marketplace): template-card blueprint + thumbnail preview logic
+2026-06-25 | VibeDesign     | 34fa8d9 | fix(deploy): commit ComponentSpecs + HandoffHub pages + specs registry
+2026-06-25 | VibeDesign     | dace21b | feat(home): Path A/B home, recent projects, Get app flow + storyboard
+2026-06-26 | VibeDesign     | 3747e0e | feat(marketplace): hover "Details" replaces "Preview"; reliable detail deep-link
+```

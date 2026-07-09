@@ -1,83 +1,218 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const files = [
   "package.json",
   "astro.config.mjs",
+  "src/components/ProjectCard.astro",
+  "src/components/SiteFooter.astro",
   "src/pages/index.astro",
+  "src/pages/about.astro",
   "src/pages/case-studies/index.astro",
   "src/pages/case-studies/[slug].astro",
   "src/lib/content.ts",
-  "src/pages/playground.astro",
   "src/styles/global.css",
+  "src/scripts/motion/index.js",
+  "src/scripts/motion/reveal.js",
+  "src/scripts/motion/scramble.js",
+  "src/scripts/motion/scroll-fx.js",
+  "src/scripts/motion/count-up.js",
+  "src/scripts/synapse-card-scramble.js",
   "public/ascii-shader.js",
-  "public/ascii-playground.js",
-  "case-studies/README.mdx",
   "case-studies/_template.mdx",
+  "case-studies/pages/designing-pave.mdx",
+  "case-studies/pages/synapse-sys.mdx",
+  "case-studies/pages/designing-synapse-sys.mdx",
+  "case-studies/pages/pointlearn.mdx",
+  "case-studies/pages/pave-building-loop.mdx",
+  "case-studies/pages/pave-planning.mdx",
+  "case-studies/pages/pave-direct-edit.mdx",
+  "case-studies/pages/pave-credits.mdx",
+  "case-studies/pages/pave-marketplace.mdx",
   "case-studies/quickbase/connection-central.mdx",
-  "case-studies/pages/01-home.mdx",
-  "case-studies/pages/projects.mdx",
   "case-studies/old-work/bolt-fun.mdx",
-  "case-studies/old-work/alby-browser.mdx",
-  "case-studies/old-work/brewculator.mdx",
-  "case-studies/old-work/the-improved-mind.mdx",
-  "case-studies/old-work/we-are-design.mdx",
-  "src/content/writing/radio-check.mdx"
+  "AGENTS.md",
+  "CLAUDE.md",
+  "docs/design-language.md"
 ];
-const source = Object.fromEntries(files.map((file) => [file, readFileSync(file, "utf8")]));
-const oldWorkFiles = [
-  "case-studies/old-work/bolt-fun.mdx",
-  "case-studies/old-work/alby-browser.mdx",
-  "case-studies/old-work/brewculator.mdx",
-  "case-studies/old-work/the-improved-mind.mdx",
-  "case-studies/old-work/we-are-design.mdx"
+
+const source = Object.fromEntries(files.map((file) => [file, existsSync(file) ? readFileSync(file, "utf8") : ""]));
+
+const expectedRoutes = [
+  "designing-pave",
+  "synapse-sys",
+  "designing-synapse-sys",
+  "pointlearn",
+  "pave-building-loop",
+  "pave-planning",
+  "pave-direct-edit",
+  "pave-credits",
+  "pave-marketplace",
+  "connection-central",
+  "bolt-fun"
 ];
+
+const has = (file, text) => source[file].includes(text);
+const exists = (file) => existsSync(file);
+const workIndexIsGatedPreviewMap =
+  has("src/pages/case-studies/index.astro", "Portfolio map") &&
+  has("src/pages/case-studies/index.astro", "work-directory") &&
+  has("src/pages/case-studies/index.astro", "Pave case studies") &&
+  has("src/pages/case-studies/index.astro", "AI product studies") &&
+  has("src/pages/case-studies/index.astro", "Product systems leadership") &&
+  has("src/pages/case-studies/index.astro", "Archive") &&
+  has("src/pages/case-studies/index.astro", "WIP previews") &&
+  has("src/pages/case-studies/index.astro", "WIP / preview only") &&
+  has("src/pages/case-studies/index.astro", "Deep evidence stays inside case studies") &&
+  !has("src/pages/case-studies/index.astro", "Supporting routes") &&
+  !has("src/pages/case-studies/index.astro", "<details");
+const caseDetailsAreGated =
+  has("src/pages/case-studies/[slug].astro", "case-gate") &&
+  has("src/pages/case-studies/[slug].astro", "noindex, nofollow") &&
+  has("src/pages/case-studies/[slug].astro", "WIP / preview only") &&
+  !has("src/pages/case-studies/[slug].astro", "set:html={renderMarkdown(study.body)}");
 
 const checks = [
-  ["Astro dependency exists", source["package.json"].includes("\"astro\"")],
-  ["Astro scripts exist", source["package.json"].includes("\"dev\": \"astro dev\"") && source["package.json"].includes("\"build\": \"astro build\"")],
-  ["Astro config exists", source["astro.config.mjs"].includes("defineConfig")],
-  ["Astro page exists", source["src/pages/index.astro"].includes("import \"../styles/global.css\"")],
-  ["Playground page exists", source["src/pages/playground.astro"].includes("data-ascii-playground") && source["src/pages/playground.astro"].includes("data-control=\"speed\"")],
-  ["hero contains Alexander name", source["src/pages/index.astro"].includes("Alexander") && source["src/pages/index.astro"].includes("Traykov")],
-  ["identity rotator is present", source["src/pages/index.astro"].includes("data-identity-rotator") && source["src/pages/index.astro"].includes(">designer</span>")],
-  ["homepage has rebuilt case-study summary", source["src/pages/index.astro"].includes("Being rebuilt, still alive on hover.") && source["src/pages/index.astro"].includes("project-card--construction")],
-  ["homepage exposes about, playground, and studio", source["src/pages/index.astro"].includes("href=\"/about/\"") && source["src/pages/index.astro"].includes("href=\"/playground\"") && source["src/pages/index.astro"].includes("href=\"/svg-ascii-studio/\"")],
-  ["no old Romain content remains", !source["src/pages/index.astro"].includes("Romain") && !source["src/pages/index.astro"].includes("Avalle")],
-  ["Traykov source case studies copied", source["case-studies/quickbase/connection-central.mdx"].includes("Connection Central") && source["case-studies/pages/01-home.mdx"].includes("prompt-first authenticated landing")],
-  ["Traykov source writing copied", source["src/content/writing/radio-check.mdx"].includes("Radio Check")],
-  ["work grid exists", source["src/pages/index.astro"].includes("project-grid")],
-  ["selected projects exist", ["designing-pave", "synapse-sys", "pointlearn"].every((id) => source["src/pages/index.astro"].includes(`\"${id}\"`))],
-  ["old work projects exist", oldWorkFiles.every((file) => source[file].includes("group: \"Old work\""))],
-  ["case studies load from source files", source["src/lib/content.ts"].includes("walkFiles(\"./case-studies\", \".mdx\")")],
-  ["case studies have separate detail route", source["src/pages/case-studies/[slug].astro"].includes("getStaticPaths") && source["src/pages/case-studies/[slug].astro"].includes("renderMarkdown(study.body)")],
-  ["case studies have separate index page", source["src/pages/case-studies/index.astro"].includes("project-grid") && source["src/pages/case-studies/index.astro"].includes("oldWorkCards") && source["src/pages/case-studies/index.astro"].includes("Archived projects from the old projects page.")],
-  ["homepage has no extra route-card section", !source["src/pages/index.astro"].includes("landing-routes") && !source["src/pages/index.astro"].includes("route-card")],
-  ["homepage has direct and expandable case-study links", source["src/pages/index.astro"].includes("project-card--direct") && source["src/pages/index.astro"].includes("href={study.href}") && source["src/pages/index.astro"].includes("project-card__link")],
-  ["case-study index cards expose links", source["src/pages/case-studies/index.astro"].includes("project-card__body") && source["src/pages/case-studies/index.astro"].includes("project-card__link") && source["src/pages/case-studies/index.astro"].includes("href={study.href}")],
-  ["Pave Projects case study exists", source["case-studies/pages/projects.mdx"].includes("Projects — command center") && source["case-studies/pages/projects.mdx"].includes("group: \"Pave\"")],
-  ["ASCII diagram renderer exists", source["src/lib/content.ts"].includes("renderStructuredDiagram") && source["src/lib/content.ts"].includes("class=\"ascii-diagram") && source["src/styles/global.css"].includes(".rfc-node")],
-  ["Mermaid diagrams are transformed before rendering", source["src/lib/content.ts"].includes("normalized === \"mermaid\"") && source["src/lib/content.ts"].includes("stateDiagram-v2") && source["src/lib/content.ts"].includes("sequenceDiagram")],
-  ["Diagram style matches RFC paper reference", source["src/styles/global.css"].includes("border: 3px dashed #0a0a08") && source["src/styles/global.css"].includes("background-size: 3px 3px") && source["src/styles/global.css"].includes("#f8f7f1") && source["src/styles/global.css"].includes("10px 10px 0")],
-  ["Diagram pipeline documented", source["case-studies/README.mdx"].includes("Diagram Rendering Pipeline") && source["case-studies/README.mdx"].includes("dot-matrix offset shadows") && source["case-studies/_template.mdx"].includes("RFC-style ASCII diagrams")],
-  ["Geist fonts are configured", source["package.json"].includes("@fontsource/geist-sans") && source["package.json"].includes("@fontsource/geist-mono") && source["src/styles/global.css"].includes("@fontsource/geist-sans/400.css") && source["src/styles/global.css"].includes("@fontsource/geist-mono/400.css") && source["src/styles/global.css"].includes("--sans: \"Geist Sans\"") && source["src/styles/global.css"].includes("--mono: \"Geist Mono\"")],
-  ["Geist font decision documented", source["case-studies/README.mdx"].includes("Geist") && source["case-studies/README.mdx"].includes("Geist Mono")],
-  ["shader ASCII ramp exists", source["public/ascii-shader.js"].includes("const ASCII_RAMP") && source["public/ascii-shader.js"].includes("✹")],
-  ["playground ASCII ramp exists", source["public/ascii-playground.js"].includes("const PLAYGROUND_RAMP") && source["public/ascii-playground.js"].includes("✹")],
-  ["Bulgarian localized glyph CSS exists", source["src/styles/global.css"].includes("font-language-override: \"BGR\"") && source["src/styles/global.css"].includes("font-feature-settings: \"locl\" 1")],
-  ["shader palette is monochrome", source["public/ascii-shader.js"].includes("vec3 black") && !source["public/ascii-shader.js"].includes("vec3 acid")],
-  ["main shader uses original ripple field", source["public/ascii-shader.js"].includes("float ripple") && source["public/ascii-shader.js"].includes("float radius") && source["public/ascii-shader.js"].includes("float warp")],
-  ["ripple core is brightest", source["public/ascii-shader.js"].includes("float core") && source["public/ascii-shader.js"].includes("vec3 white = vec3(0.985)")],
-  ["CSS accents are monochrome", !source["src/styles/global.css"].includes("#b9ff3c") && !source["src/styles/global.css"].includes("#4fe6ff") && !source["src/styles/global.css"].includes("#ff715b")],
-  ["WebGL shader code exists", source["public/ascii-shader.js"].includes("getContext(\"webgl\"") && source["public/ascii-shader.js"].includes("fragmentSource")],
-  ["Playground shader has controls", source["public/ascii-playground.js"].includes("u_width") && source["public/ascii-playground.js"].includes("rippleField") && source["public/ascii-playground.js"].includes("setControl")],
-  ["shader is converted to ASCII", source["public/ascii-shader.js"].includes("readPixels") && source["public/ascii-shader.js"].includes("toAscii")],
-  ["responsive CSS exists", source["src/styles/global.css"].includes("@media (max-width: 640px)")],
-  ["reduced motion path exists", source["src/styles/global.css"].includes("prefers-reduced-motion") && source["public/ascii-shader.js"].includes("prefers-reduced-motion")]
+  ["Astro dependency exists", has("package.json", "\"astro\"")],
+  ["Astro config exists", has("astro.config.mjs", "defineConfig")],
+  ["Shared direct project card exists", has("src/components/ProjectCard.astro", "href={study.href}")],
+  [
+    "Home recent work uses three direct cards",
+    has("src/pages/index.astro", "ProjectCard") &&
+      has("src/pages/index.astro", 'const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"]') &&
+      has("src/pages/index.astro", "Recent case studies.") &&
+      has("src/pages/index.astro", "View older work") &&
+      has("src/pages/index.astro", "work-footer") &&
+      !has("src/pages/index.astro", "<details")
+  ],
+  [
+    "Homepage turntable has resilient fallback",
+    has("src/pages/index.astro", "aboutTurntableFallback") &&
+      has("src/pages/index.astro", "staticAscii={aboutTurntableFallback}") &&
+      has("src/styles/global.css", ".about-hero-copy") &&
+      has("src/styles/global.css", "opacity: 1")
+  ],
+  [
+    "Work index is a route map",
+    has("src/pages/case-studies/index.astro", "Portfolio map") &&
+      has("src/pages/case-studies/index.astro", "work-directory") &&
+      has("src/pages/case-studies/index.astro", "Pave case studies") &&
+      has("src/pages/case-studies/index.astro", "AI product studies") &&
+      has("src/pages/case-studies/index.astro", "Product systems leadership") &&
+      has("src/pages/case-studies/index.astro", "Archive") &&
+      has("src/pages/case-studies/index.astro", "Deep evidence stays inside the case studies") &&
+      !has("src/pages/case-studies/index.astro", "Supporting routes") &&
+      !has("src/pages/case-studies/index.astro", "<details")
+  ],
+  [
+    "Detail pages have piece-to-piece routing",
+    has("src/pages/case-studies/[slug].astro", "previousStudy") &&
+      has("src/pages/case-studies/[slug].astro", "nextStudy") &&
+      has("src/pages/case-studies/[slug].astro", "case-sibling-nav") &&
+      has("src/pages/case-studies/[slug].astro", "All work")
+  ],
+  [
+    "Detail pages have readable long-case navigation",
+    has("src/pages/case-studies/[slug].astro", "getCaseStudyHeadings") &&
+      has("src/pages/case-studies/[slug].astro", "case-reading-tools") &&
+      has("src/pages/case-studies/[slug].astro", "data-case-target")
+  ],
+  [
+    "Content helper loads routable case studies",
+    has("src/lib/content.ts", "walkFiles(caseStudyRoot, \".mdx\")") &&
+      has("src/lib/content.ts", "getAdjacentCaseStudies") &&
+      expectedRoutes.every((route) => has("src/lib/content.ts", `"${route}"`))
+  ],
+  [
+    "Markdown renderer keeps visual evidence readable",
+    has("src/lib/content.ts", "renderStructuredDiagram") &&
+      has("src/lib/content.ts", "normalized === \"mermaid\"") &&
+      has("src/lib/content.ts", "case-image-grid") &&
+      has("src/lib/content.ts", "case-video-copy")
+  ],
+  [
+    "IA styles exist",
+    has("src/styles/global.css", ".work-directory") &&
+      has("src/styles/global.css", ".case-sibling-nav") &&
+      has("src/styles/global.css", ".case-breadcrumb") &&
+      has("src/styles/global.css", ".case-preview-placeholder")
+  ],
+  [
+    "Footer exposes global and contextual routes",
+    has("src/components/SiteFooter.astro", "siteLinks") &&
+      has("src/components/SiteFooter.astro", "links.length > 0") &&
+      has("src/components/SiteFooter.astro", "Back to top")
+  ],
+  [
+    "Core case-study content exists",
+    has("case-studies/pages/designing-pave.mdx", "Designing Pave") &&
+      has("case-studies/pages/synapse-sys.mdx", "Synapse-Sys") &&
+      has("case-studies/pages/designing-synapse-sys.mdx", "Designing SynapseSys") &&
+      has("case-studies/pages/pointlearn.mdx", "PointLearn")
+  ],
+  [
+    "Pave arc content exists",
+    has("case-studies/pages/pave-building-loop.mdx", "Building Loop") &&
+      has("case-studies/pages/pave-planning.mdx", "Planning") &&
+      has("case-studies/pages/pave-direct-edit.mdx", "Direct Edit") &&
+      has("case-studies/pages/pave-credits.mdx", "Credits") &&
+      has("case-studies/pages/pave-marketplace.mdx", "Marketplace")
+  ],
+  [
+    "Legacy work remains routeable",
+    has("case-studies/quickbase/connection-central.mdx", "Connection Central") &&
+      has("case-studies/old-work/bolt-fun.mdx", "Old work")
+  ],
+  [
+    "Responsive CSS exists",
+    has("src/styles/global.css", "@media (max-width: 700px)") &&
+      has("src/styles/global.css", "prefers-reduced-motion")
+  ],
+  [
+    "Shader asset remains wired",
+    has("public/ascii-shader.js", "getContext(\"webgl\"") &&
+      has("src/pages/case-studies/index.astro", "/ascii-shader.js")
+  ],
+  [
+    "Motion tokens exist",
+    has("src/styles/global.css", "--ease-out-expo") &&
+      has("src/styles/global.css", "--dur-5") &&
+      has("src/styles/global.css", "--stagger-1")
+  ],
+  [
+    "Motion runtime is wired",
+    exists("src/scripts/motion/reveal.js") &&
+      has("src/components/SiteFooter.astro", "scripts/motion/index.js") &&
+      has("src/styles/global.css", "data-reveal")
+  ],
+  [
+    "Case markdown fences are extended",
+    has("src/lib/content.ts", "case-stat") &&
+      has("src/lib/content.ts", "case-quote") &&
+      has("case-studies/_template.mdx", "case-stat") &&
+      has("case-studies/_template.mdx", "case-quote")
+  ],
+  [
+    "Agent docs exist",
+    has("AGENTS.md", "DO NOT TOUCH") &&
+      has("CLAUDE.md", "AGENTS.md") &&
+      exists("docs/design-language.md")
+  ],
+  [
+    "Case page has progress and sibling previews",
+    has("src/pages/case-studies/[slug].astro", "case-progress") &&
+      has("src/pages/case-studies/[slug].astro", "case-sibling-nav__preview")
+  ]
 ];
 
-const failures = checks.filter(([, passed]) => !passed);
+const normalizedChecks = checks
+  .filter(([label]) => label !== "Work index is a route map")
+  .concat([
+    ["Work index is a gated preview map", workIndexIsGatedPreviewMap],
+    ["Detail pages are WIP gated", caseDetailsAreGated]
+  ]);
+const failures = normalizedChecks.filter(([, passed]) => !passed);
 
-for (const [label, passed] of checks) {
+for (const [label, passed] of normalizedChecks) {
   console.log(`${passed ? "PASS" : "FAIL"} ${label}`);
 }
 

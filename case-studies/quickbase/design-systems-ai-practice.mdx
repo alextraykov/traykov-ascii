@@ -1,0 +1,154 @@
+---
+title: "Design systems and AI-augmented practice"
+category: systems case study
+status: practice
+pubDate: 2026-07-04
+tags: [design-systems, ai, process, figma, quickbase]
+heroImage: /case-studies/pave-evidence/design-system-deck.webp
+readTime: 8 min
+summary: "How I turned design-system work into machine-readable practice: Bebop 2 component indexing, Pave token discipline, AI enablement, a human-gated Design Spine plugin, and early Figma-to-code pipeline work."
+role: "Lead Product Designer / UX Team Lead"
+year: 2026
+group: "Quickbase"
+order: -3
+---
+
+## Summary
+
+The design-system problem changed once AI entered the workflow.
+
+It was no longer enough for designers to know the component library. Agents, prototypes, and handoff tools needed a source of truth they could read without inventing UI.
+
+My work across Bebop 2, Pave, and internal AI process explored one operating principle:
+
+> AI owns toil. Humans hold judgment.
+
+## Authorship and scope
+
+This story needs clean attribution.
+
+- Bebop 2 was cross-functional.
+- The Bebop 2 Component Index was my authored contribution.
+- Foundations work was broader team work, with Chavdar owning key foundations material.
+- Blinq component analysis was authored by Nick Vanselow; my contribution was using it to de-risk rebrand and dark-theme/token decisions.
+- Mini-Hack was co-driven with Stasha.
+- Figma MCP / code work was a POC with a broader group, not a shipped platform capability.
+
+That boundary makes the case stronger. This is a leverage story, not a claim that I personally authored every system artifact.
+
+## Bebop 2 component index
+
+I authored the Bebop 2 Component Index: 23 production-spec'd components plus token and usage context.
+
+The useful part was not only the count. The index made component anatomy, variants, prop expectations, behavior, and spec links legible enough that AI-assisted work could respect the system instead of remixing screenshots.
+
+The component breakdown in the source:
+
+- Interactive: 3.
+- Form controls: 8.
+- Overlays: 4.
+- Navigation: 3.
+- Indicators and feedback: 3.
+- Layout and structure: 2.
+- Total: 23.
+
+The index tied names to React exports and Figma names, deep-linked to spec frames, pointed to code/spec references, and set quarterly maintenance expectations.
+
+![Bebop documentation capture from the archive.](/case-studies/quickbase/bebop-getting-started.webp)
+
+## Design foundations as machine-readable rules
+
+The foundations material matters because it turned taste into constraints that software and agents can follow.
+
+The source foundations include:
+
+- 2px spacing grid.
+- Radius scale.
+- 9 typography tokens.
+- 9 palettes with 8 shades each.
+- Semantic light/dark tokens.
+- 5 elevation levels.
+- 3 motion durations/easings.
+
+The non-negotiable rules read like a lint layer for design:
+
+- Never hardcode colors.
+- Use spacing only from the grid.
+- Define all interactive states.
+- Keep touch targets at 44x44.
+- Use fixed elevation and motion rules.
+
+That is the bridge from "design system as documentation" to "design system as execution constraint."
+
+## Pave and Blinq reuse evidence
+
+Pave's prototype environment forced work through semantic tokens instead of one-off values. That made the Blinq -> Pave rebrand safer: change token values, logo usage, fonts, and documentation before touching individual screens.
+
+The source component analysis gave useful reuse evidence:
+
+- Button appeared in 76 files.
+- Modal appeared in 30 files.
+- SearchInput appeared in 13 files.
+- Tooltip appeared in 8 files.
+- ConfirmDialog appeared in 7 files.
+- ColorPalette appeared in 7 files.
+- SegmentedControl appeared in 5 files.
+- FlyoutMenu appeared in 4 files.
+- Lucide appeared 257 times across 80 unique icons.
+
+Those numbers matter because they show where a rebrand or system cleanup can create leverage. They also keep the claim honest: Nick authored the analysis; I used the evidence to guide token and rebrand decisions.
+
+![Pave styleguide capture from the archive.](/case-studies/pave-evidence/pave-styleguide-top-light.webp)
+
+## AI enablement
+
+One early enablement doc helped designers personalize ChatGPT for Quickbase context inside the 1,500-character custom-instruction limit.
+
+The template asked for Confluence/Jira structure, risks, tradeoffs, open questions, and clarifying questions. This is modest, but it is concrete: it gave designers a way to ask for better structured support instead of treating AI as a magic text box.
+
+## Design Spine plugin
+
+The Design Spine was an internal Claude-skills process plugin with seven phases:
+
+- Intake.
+- Enrichment.
+- Diverge.
+- Converge.
+- Resolve.
+- Evaluate.
+- Document and close.
+
+The point was not to let AI run the design process. It was to gate the moments where human judgment matters and let tooling handle the repetitive translation work between brief, exploration, decision, and documentation.
+
+The source case supports Design Spine v0.4.1 and a drift gate, but broader adoption evidence remains thin. Keep this framed as internal process tooling, not proven organization-wide transformation.
+
+## Innovation register and Mini-Hack
+
+The Innovation Register itself is mostly a container, but the submission template is concrete. It asked for pattern type, user problem, novelty, two-way door, rollback path, blockers, evidence links, expected impact metric, effort, confidence, owner, and decision state.
+
+The Mini-Hack programme should be framed as a programme design with targets, not outcomes:
+
+- 2-week prep.
+- 3-day hack.
+- 1-week adoption review.
+- 4-week incubation.
+- Goals: 60% of teams producing working prototypes, 2 prototypes adopted/incubated per quarter, 1 production initiative per quarter.
+
+Those are targets from the source material, not measured results.
+
+## Figma MCP to code pipeline
+
+I also framed an early Bebop 2 -> Code via Figma MCP pipeline.
+
+The naive design-to-code path fails because it sees pixels but misses anatomy, variants, behavior specs, and composition rules. My proposal was layered: component documentation, token rules, usage constraints, and a designer review gate before code output could be treated as useful.
+
+This should stay labeled proposed / POC. It is not a shipped platform capability.
+
+## What this proves
+
+This is a principal-level systems story only if the reader sees it as leverage, not taste.
+
+The case is not "I made a component index." It is that design-system work became easier for other people and safer for AI-assisted workflows to use.
+
+The next proof point should be adoption by other designers: how often they used the index, how many design-to-code attempts passed review, whether review time dropped, and which teams shipped work through these systems.
+

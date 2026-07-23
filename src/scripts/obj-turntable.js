@@ -302,11 +302,16 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     ascii.style.lineHeight = `${height / rows}px`;
   };
 
-  const eventToGrid = (event) => {
+  const eventToGrid = (event, clampToBounds = true) => {
     const rect = root.getBoundingClientRect();
+    const point = {
+      x: ((event.clientX - rect.left) / rect.width) * (cols - 1),
+      y: ((event.clientY - rect.top) / rect.height) * (rows - 1)
+    };
+    if (!clampToBounds) return point;
     return {
-      x: Math.max(0, Math.min(cols - 1, ((event.clientX - rect.left) / rect.width) * (cols - 1))),
-      y: Math.max(0, Math.min(rows - 1, ((event.clientY - rect.top) / rect.height) * (rows - 1)))
+      x: clamp(point.x, 0, cols - 1),
+      y: clamp(point.y, 0, rows - 1)
     };
   };
 
@@ -335,11 +340,17 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     }
   };
 
+  const getTrailRadius = () => {
+    const radiusBase = useRepulsion
+      ? Math.max(6, Math.min(18, cols * 0.068))
+      : Math.max(4, Math.min(12, cols * 0.045));
+    return radiusBase * Math.max(0.2, controls.disperseRadius);
+  };
+
   const addTrail = (centerX, centerY, strength = 1) => {
     if (controls.hover <= 0) return;
     let didAddTrail = false;
-    const radiusBase = useRepulsion ? Math.max(6, Math.min(18, cols * 0.068)) : Math.max(4, Math.min(12, cols * 0.045));
-    const radius = radiusBase * Math.max(0.2, controls.disperseRadius);
+    const radius = getTrailRadius();
     const minX = Math.max(0, Math.floor(centerX - radius));
     const maxX = Math.min(cols - 1, Math.ceil(centerX + radius));
     const minY = Math.max(0, Math.floor(centerY - radius));
@@ -844,7 +855,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     addTrail(point.x, point.y);
   };
 
-  const handlePointerLeave = () => {
+  const handlePointerLeave = (event) => {
     if (!lastPointerPoint) return;
     stopPointerExit();
 
@@ -855,15 +866,28 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     }
 
     const start = { x: hoverPoint.x, y: hoverPoint.y };
+    const exitPoint = eventToGrid(event, false);
+    const exitX = exitPoint.x - start.x;
+    const exitY = exitPoint.y - start.y;
+    const exitLength = Math.hypot(exitX, exitY);
     const speed = Math.hypot(pointerVelocity.x, pointerVelocity.y);
     const fallbackX = start.x - (cols - 1) * 0.5;
     const fallbackY = start.y - (rows - 1) * 0.5;
     const fallbackLength = Math.max(0.001, Math.hypot(fallbackX, fallbackY));
     const direction =
-      speed > 0.01
-        ? { x: pointerVelocity.x / speed, y: pointerVelocity.y / speed }
-        : { x: fallbackX / fallbackLength, y: fallbackY / fallbackLength };
-    const distance = Math.max(cols, rows) * 0.38;
+      exitLength > 0.01
+        ? { x: exitX / exitLength, y: exitY / exitLength }
+        : speed > 0.01
+          ? { x: pointerVelocity.x / speed, y: pointerVelocity.y / speed }
+          : { x: fallbackX / fallbackLength, y: fallbackY / fallbackLength };
+    const padding = getTrailRadius() * 1.25;
+    const exitDistances = [];
+    if (direction.x > 0.001) exitDistances.push((cols - 1 + padding - start.x) / direction.x);
+    if (direction.x < -0.001) exitDistances.push((-padding - start.x) / direction.x);
+    if (direction.y > 0.001) exitDistances.push((rows - 1 + padding - start.y) / direction.y);
+    if (direction.y < -0.001) exitDistances.push((-padding - start.y) / direction.y);
+    const nearestExit = Math.min(...exitDistances.filter((value) => value > 0));
+    const distance = Number.isFinite(nearestExit) ? nearestExit : Math.max(cols, rows) * 0.5;
     const target = {
       x: start.x + direction.x * distance,
       y: start.y + direction.y * distance

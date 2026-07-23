@@ -13,13 +13,18 @@ import {
   WebGLRenderer
 } from "three";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
+import {
+  createStructuralGlyphField,
+  SURFACE_ASCII_RAMP
+} from "./structural-glyph-field.js";
 
-const LANDING_ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
+const LANDING_ASCII_RAMP = SURFACE_ASCII_RAMP;
 const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
 const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 
 export function initializePaveTurntable(root) {
   const ascii = root.querySelector("[data-pave-ascii]");
+  const skeleton = root.querySelector("[data-pave-skeleton]");
   if (!ascii) return;
   root.classList.add("is-turntable-loading");
 
@@ -93,7 +98,9 @@ export function initializePaveTurntable(root) {
   let pendingFrame = null;
   let geometryRebuildFrame = null;
   let lastAsciiOutput = ascii.textContent;
+  let lastSkeletonOutput = "";
   const asciiReveal = createTurntableAsciiReveal(root, { duration: isCard ? 720 : 1200 });
+  const glyphField = createStructuralGlyphField(root, { ramp });
 
   const makeRectShape = (x, y, width, height) => {
     const shape = new Shape();
@@ -212,6 +219,13 @@ export function initializePaveTurntable(root) {
     const size = width / (cols * 0.62);
     ascii.style.fontSize = `${isCard ? Math.max(6.5, Math.min(9, size)) : Math.max(7, size)}px`;
     ascii.style.lineHeight = `${height / rows}px`;
+    if (skeleton) {
+      skeleton.style.fontSize = ascii.style.fontSize;
+      skeleton.style.lineHeight = ascii.style.lineHeight;
+      skeleton.textContent = "";
+      lastSkeletonOutput = "";
+    }
+    glyphField.resize(cols, rows);
   };
 
   const eventToGrid = (event) => {
@@ -264,30 +278,44 @@ export function initializePaveTurntable(root) {
     if (!sampleContext) return;
     sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
-    const lines = [];
+    const baseGlyphs = new Array(cols * rows).fill(" ");
+    const objectMask = new Uint8Array(cols * rows);
+    const sourceScores = new Float32Array(cols * rows);
     const maxRampIndex = isCard
       ? ramp.length - 1
       : Math.min(ramp.length - 1, Math.max(2, Math.round(controls.glyphDetail)));
 
     for (let y = 0; y < rows; y++) {
-      let line = "";
       for (let x = 0; x < cols; x++) {
         const index = (y * cols + x) * 4;
         const luma = (pixels[index] * 0.2126 + pixels[index + 1] * 0.7152 + pixels[index + 2] * 0.0722) / 255;
-        if (luma > 0.965) {
-          line += " ";
-          continue;
-        }
+        const cellIndex = y * cols + x;
+        objectMask[cellIndex] = luma < 0.94 ? 1 : 0;
+        if (luma > 0.965 || !objectMask[cellIndex]) continue;
 
         const darkness = 1 - luma;
-        const trail = trailBuffer[y * cols + x] || 0;
+        const trail = trailBuffer[cellIndex] || 0;
         const tone = Math.min(
           1,
           Math.max(0.08, (darkness + controls.brightness - 0.5) * controls.contrast + 0.5 + trail * controls.hover)
         );
-        line += ramp[Math.min(maxRampIndex, Math.max(1, Math.floor(tone * maxRampIndex)))];
+        baseGlyphs[cellIndex] = ramp[Math.min(maxRampIndex, Math.max(1, Math.floor(tone * maxRampIndex)))];
+        sourceScores[cellIndex] = tone;
       }
-      lines.push(line);
+    }
+
+    glyphField.setSource(baseGlyphs, objectMask, sourceScores);
+    const composed = glyphField.compose(baseGlyphs, sourceScores);
+    const lines = [];
+    for (let y = 0; y < rows; y += 1) {
+      lines.push(composed.slice(y * cols, (y + 1) * cols).join(""));
+    }
+    if (skeleton) {
+      const skeletonOutput = glyphField.skeletonLines().join("\n");
+      if (skeletonOutput !== lastSkeletonOutput) {
+        skeleton.textContent = skeletonOutput;
+        lastSkeletonOutput = skeletonOutput;
+      }
     }
 
     const output = asciiReveal.render(lines, time);
@@ -316,6 +344,7 @@ export function initializePaveTurntable(root) {
     mark.rotation.z = (isCard ? -0.04 : -0.08) + Math.sin(time * 0.00055) * (isCard ? 0.012 : 0.018);
     renderer.render(scene, camera);
     updateTrail(time);
+    glyphField.update(time);
 
     if (time - lastAscii > frameInterval || reduceMotion.matches) {
       lastAscii = time;
@@ -452,6 +481,7 @@ export function initializePaveTurntable(root) {
       if (geometryRebuildFrame !== null) cancelAnimationFrame(geometryRebuildFrame);
       resizeObserver.disconnect();
       root.removeEventListener("turntable-eligibility", onEligibility);
+      glyphField.destroy();
       if (activeGroup) disposeGroup(activeGroup);
       frontMaterial.dispose();
       sideMaterial.dispose();

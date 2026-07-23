@@ -1,0 +1,27 @@
+---
+import { identityEntries } from "../lib/identity";
+
+type Props = {
+  class?: string;
+  prefixClass?: string;
+  rotatorClass?: string;
+};
+
+const {
+  class: className = "",
+  prefixClass = "about-title__prefix",
+  rotatorClass = "identity-rotator"
+} = Astro.props;
+
+const initial = identityEntries[0];
+---
+
+<span class:list={["identity-phrase", className]} data-identity-phrase>
+  <span class={prefixClass} data-identity-prefix lang="en">Alexander is {initial.article}</span>
+  <span
+    class={rotatorClass}
+    data-identity-rotator
+    data-identities={JSON.stringify(identityEntries)}
+    lang="en"
+  >{initial.english}</span>
+</span>

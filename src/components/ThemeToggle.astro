@@ -13,6 +13,8 @@
 </button>
 
 <script>
+  import "../scripts/ascii-control-effects.js";
+
   const nextPreference = (state) => {
     if (state.preference === "auto") return state.resolved === "dark" ? "light" : "dark";
     if (state.preference === "light") return "dark";

@@ -27,7 +27,7 @@ const siteLinks: FooterLink[] = [
 ];
 const socialLinks: FooterLink[] = [
   { label: "Email hi@traykov.cc", href: "mailto:hi@traykov.cc" },
-  { label: "Contact on LinkedIn", href: "https://www.linkedin.com/in/alextraykov/", external: true }
+  { label: "Book a call", href: bookingUrl, external: true }
 ];
 
 const bookingPageUrl = (() => {
@@ -57,8 +57,8 @@ const bookingEmbedUrl = (() => {
   <div class="site-footer__inner section-shell">
     <section class="site-footer__booking" aria-labelledby="footer-booking-title" data-reveal="rise">
       <div class="site-footer__booking-copy">
-        <h2 id="footer-booking-title">Have a messy product problem?</h2>
-        <p>Book 30 focused minutes.</p>
+        <h2 id="footer-booking-title">Book a call</h2>
+        <p>Thirty minutes. No pitch, no pressure.</p>
       </div>
 
       {bookingEmbedUrl ? (
@@ -69,21 +69,26 @@ const bookingEmbedUrl = (() => {
             type="button"
             aria-haspopup="dialog"
             data-footer-booking-open
+            data-booking-modal-open
+            data-ascii-action="primary"
+            data-ascii-stream
+            data-ascii-burst
           >
-            <span data-scramble data-scramble-label="Book a 30 minute call">Book a 30 minute call</span>
+            <span data-scramble data-scramble-label="Book a call">Book a call</span>
             <span class="footer-booking__icon" aria-hidden="true">+</span>
           </button>
           <dialog class="footer-booking-modal" aria-labelledby="footer-booking-modal-title" data-footer-booking-modal>
             <div class="footer-booking-modal__header">
               <div>
                 <span>30 focused minutes</span>
-                <h2 id="footer-booking-modal-title">Show me what’s not working.</h2>
+                <h2 id="footer-booking-modal-title">Pick a time that works.</h2>
               </div>
               <button
                 type="button"
                 class="footer-booking-modal__close"
-                aria-label="Close booking calendar"
-                data-footer-booking-close
+              aria-label="Close booking calendar"
+              data-footer-booking-close
+              data-ascii-burst
               >
                 <span aria-hidden="true">×</span>
               </button>
@@ -177,16 +182,22 @@ const bookingEmbedUrl = (() => {
   document.querySelectorAll("[data-footer-booking-modal]").forEach((modal) => {
     if (!(modal instanceof HTMLDialogElement) || modal.dataset.bookingReady === "true") return;
 
-    const trigger = document.querySelector(`[data-footer-booking-open][aria-haspopup="dialog"]`);
     const closeButton = modal.querySelector("[data-footer-booking-close]");
-    if (!(trigger instanceof HTMLButtonElement) || !(closeButton instanceof HTMLButtonElement)) return;
+    if (!(closeButton instanceof HTMLButtonElement)) return;
 
     modal.dataset.bookingReady = "true";
-    trigger.addEventListener("click", () => modal.showModal());
+    let activeTrigger: HTMLElement | null = null;
+    document.querySelectorAll<HTMLElement>("[data-booking-modal-open]").forEach((trigger) => {
+      trigger.addEventListener("click", (event) => {
+        event.preventDefault();
+        activeTrigger = trigger;
+        modal.showModal();
+      });
+    });
     closeButton.addEventListener("click", () => modal.close());
     modal.addEventListener("click", (event) => {
       if (event.target === modal) modal.close();
     });
-    modal.addEventListener("close", () => trigger.focus());
+    modal.addEventListener("close", () => activeTrigger?.focus());
   });
 </script>

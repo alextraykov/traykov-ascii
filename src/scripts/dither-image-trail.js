@@ -1,19 +1,22 @@
 import {
   createDitherPixelDisperser,
   DITHER_DISPERSAL_DURATION,
-  sampleDitherTremor
+  sampleDitherTremor,
+  setDitherGlyphField
 } from "./dither-pixel-dispersal.js";
 
-const ASCII_RAMP = " .:+*#%@";
+import { SURFACE_ASCII_RAMP } from "./structural-glyph-field.js";
+
+const ASCII_RAMP = SURFACE_ASCII_RAMP;
 const ASCII_CELL_WIDTH = 3;
 const ASCII_CELL_HEIGHT = 6;
 const INITIAL_RENDER_COUNT = 6;
-const MOBILE_INITIAL_RENDER_COUNT = 3;
-const MOBILE_RENDER_COUNT = 7;
-const MOBILE_VISIBLE_LIMIT = 5;
+const MOBILE_INITIAL_RENDER_COUNT = 2;
+const MOBILE_RENDER_COUNT = 5;
+const MOBILE_VISIBLE_LIMIT = 3;
 const MIN_RENDER_EDGE = 320;
 const MAX_RENDER_EDGE = 720;
-const MOBILE_MAX_RENDER_EDGE = 460;
+const MOBILE_MAX_RENDER_EDGE = 360;
 const TRAIL_PARALLAX_RATE = 0.34;
 const COPY_PARALLAX_RATE = 0.16;
 const TAP_MOVE_TOLERANCE = 12;
@@ -98,6 +101,7 @@ const renderAscii = async (item, tones, mobileMode) => {
   context.fillStyle = tones.dark;
   context.font = `700 ${ASCII_CELL_HEIGHT}px "Geist Mono", monospace`;
   context.textBaseline = "top";
+  const glyphs = new Array(columns * rows).fill(" ");
 
   for (let y = 0; y < rows; y += 1) {
     for (let x = 0; x < columns; x += 1) {
@@ -115,6 +119,7 @@ const renderAscii = async (item, tones, mobileMode) => {
         ASCII_RAMP.length - 1
       );
       const glyph = ASCII_RAMP[rampIndex];
+      glyphs[y * columns + x] = glyph;
       if (glyph === " ") continue;
 
       context.globalAlpha = 0.76 + density * 0.24;
@@ -123,6 +128,13 @@ const renderAscii = async (item, tones, mobileMode) => {
   }
 
   context.globalAlpha = 1;
+  setDitherGlyphField(item, {
+    columns,
+    rows,
+    cellWidth: ASCII_CELL_WIDTH,
+    cellHeight: ASCII_CELL_HEIGHT,
+    glyphs
+  });
 
   item.classList.add("is-ascii-rendered");
   return true;

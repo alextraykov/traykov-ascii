@@ -22,6 +22,10 @@ Use `:root` in `src/styles/global.css` for color, spacing, timing, shadows, z-in
 - Rise-stagger: grouped child reveal using `data-reveal-group`.
 - Blink: caret and terminal-state emphasis with `steps(2)`.
 
+The portfolio's expressive interaction language is **structural dispersal**: source structure becomes glyph structure, proximity applies pressure, velocity can detach real glyphs, energy loss steps down an ordered character ramp, a faint underprint preserves memory, and recovery restores the original structure. The homepage portrait is the canonical reference. See [`turntable-ascii-interaction-language.md`](./turntable-ascii-interaction-language.md).
+
+Use structural dispersal in levels. Text decode is appropriate for navigation and labels; erosion and trail are appropriate for selected cards and media; full sampled-field dispersal is reserved for hero objects and other high-value surfaces. Do not make every component explode.
+
 Timeline: page enter starts at 0ms, nav enters around 520ms, reveal gate activates after setup, and scroll effects write `--scroll-progress` plus `--hero-exit`.
 
 ## Components

@@ -60,5 +60,6 @@ const classes = [className, hoverOnly ? "has-hover-turntable" : ""].filter(Boole
   aria-hidden={ariaLabel ? undefined : "true"}
 >
   {staticAscii && <pre class="project-turntable__static" aria-hidden="true">{staticAscii}</pre>}
+  <pre class:list={[asciiClass || undefined, "turntable-skeleton"]} data-sasi-skeleton aria-hidden="true"></pre>
   <pre class={staticAscii ? "project-turntable__ascii" : asciiClass || undefined} data-sasi-ascii aria-hidden="true">{staticAscii}</pre>
 </div>

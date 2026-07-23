@@ -210,7 +210,18 @@ const writingAndInterviews = [
               </div>
               <div>
                 <p>{item.body}</p>
-                {item.href && <a href={item.href} target="_blank" rel="noreferrer">Visit</a>}
+                  {item.href && (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-ascii-action="secondary"
+                      data-ascii-stream
+                      data-ascii-burst
+                    >
+                      Visit
+                    </a>
+                  )}
               </div>
             </article>
           ))}
@@ -229,7 +240,14 @@ const writingAndInterviews = [
               <p class="published-item__eyebrow">{item.eyebrow}</p>
               <h3>{item.title}</h3>
               <p class="published-item__body">{item.body}</p>
-              <a href={item.href} target="_blank" rel="noreferrer">
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-ascii-action="secondary"
+                  data-ascii-stream
+                  data-ascii-burst
+                >
                 <span data-scramble data-scramble-label={item.cta}>{item.cta}</span>
                 <span aria-hidden="true">↗</span>
               </a>

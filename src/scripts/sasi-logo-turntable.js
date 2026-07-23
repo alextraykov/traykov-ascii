@@ -3,6 +3,7 @@ import {
   AmbientLight,
   Box3,
   DirectionalLight,
+  DoubleSide,
   EqualStencilFunc,
   ExtrudeGeometry,
   Group,
@@ -13,19 +14,25 @@ import {
   PerspectiveCamera,
   ReplaceStencilOp,
   Scene,
+  Shape,
   ShapeGeometry,
   Vector3,
   WebGLRenderer
 } from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
+import {
+  createStructuralGlyphField,
+  SURFACE_ASCII_RAMP
+} from "./structural-glyph-field.js";
 
-const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
+const ASCII_RAMP = SURFACE_ASCII_RAMP;
 const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
 const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 
 export function initializeSasiLogoTurntable(root) {
   const ascii = root.querySelector("[data-sasi-ascii]");
+  const skeleton = root.querySelector("[data-sasi-skeleton]");
   if (!ascii) return;
   root.classList.add("is-turntable-loading");
 
@@ -76,7 +83,25 @@ export function initializeSasiLogoTurntable(root) {
     metalness: 0.03,
     roughness: 0.42
   });
-  const sharedMaterials = new Set([frontMaterial, sideMaterial, detailMaterial]);
+  const inverseBackingMaterial = new MeshStandardMaterial({
+    color: 0x080808,
+    metalness: 0.03,
+    roughness: 0.42,
+    side: DoubleSide
+  });
+  const inverseDetailMaterial = new MeshStandardMaterial({
+    color: 0xfbfbf8,
+    metalness: 0.02,
+    roughness: 0.48,
+    side: DoubleSide
+  });
+  const sharedMaterials = new Set([
+    frontMaterial,
+    sideMaterial,
+    detailMaterial,
+    inverseBackingMaterial,
+    inverseDetailMaterial
+  ]);
 
   const key = new DirectionalLight(0xffffff, 4.8);
   key.position.set(2.7, 3.2, 4.4);
@@ -107,8 +132,10 @@ export function initializeSasiLogoTurntable(root) {
   let geometryRebuildFrame = null;
   let destroyed = false;
   let lastAsciiOutput = ascii.textContent;
+  let lastSkeletonOutput = "";
   let sourceDataPromise;
   const asciiReveal = createTurntableAsciiReveal(root, { duration: isCard ? 760 : 1240 });
+  const glyphField = createStructuralGlyphField(root, { ramp: ASCII_RAMP });
 
   const disposeGroup = (group) => {
     group.traverse((node) => {
@@ -170,7 +197,10 @@ export function initializeSasiLogoTurntable(root) {
   };
 
   const buildSourceGroup = async () => {
-    sourceDataPromise ??= fetch(root.dataset.svgSrc || "/sasi2.svg")
+    const svgSource = root.dataset.svgSrc || "/sasi2.svg";
+    const isPersonalInverse = svgSource.endsWith("/sasi2.svg");
+
+    sourceDataPromise ??= fetch(svgSource)
       .then((response) => {
         if (!response.ok) throw new Error(`SVG load failed: ${response.status}`);
         return response.text();
@@ -181,6 +211,31 @@ export function initializeSasiLogoTurntable(root) {
     const maskShapes = new Map();
     const maskedPaths = [];
     const maskRefs = new Map();
+    const rearBackingZ = -controls.bevel - 0.8;
+    const rearDetailZ = rearBackingZ - 0.7;
+
+    const addRearShapes = (shapes) => {
+      for (const shape of shapes) {
+        const rearGeometry = new ShapeGeometry(shape, 48);
+        const rearMesh = new Mesh(rearGeometry, inverseDetailMaterial);
+        rearMesh.position.z = rearDetailZ;
+        rearMesh.renderOrder = 4;
+        group.add(rearMesh);
+      }
+    };
+
+    if (isPersonalInverse) {
+      const headBacking = new Shape();
+      headBacking.absellipse(341.46, 365.19, 341.46, 365.19, 0, Math.PI * 2, false, 0);
+      const earBacking = new Shape();
+      earBacking.absellipse(709.5, 324, 112, 112, 0, Math.PI * 2, false, 0);
+      for (const backingShape of [headBacking, earBacking]) {
+        const backing = new Mesh(new ShapeGeometry(backingShape, 96), inverseBackingMaterial);
+        backing.position.z = rearBackingZ;
+        backing.renderOrder = 3;
+        group.add(backing);
+      }
+    }
 
     for (const path of data.paths) {
       const node = path.userData?.node;
@@ -203,10 +258,11 @@ export function initializeSasiLogoTurntable(root) {
       const fillOpacity = Number(style.fillOpacity ?? style.opacity ?? 1);
 
       if (fill && fill !== "none" && fillOpacity > 0.01 && !colorIsWhite(fill)) {
+        const shapes = SVGLoader.createShapes(path);
+        if (isPersonalInverse) addRearShapes(shapes);
         if (appliedMaskId && maskShapes.has(appliedMaskId)) {
           maskedPaths.push(path);
         } else {
-          const shapes = SVGLoader.createShapes(path);
           for (const shape of shapes) {
             const geometry = new ExtrudeGeometry(shape, makeExtrude());
             group.add(new Mesh(geometry, [frontMaterial, sideMaterial]));
@@ -232,6 +288,12 @@ export function initializeSasiLogoTurntable(root) {
           const mesh = new Mesh(geometry, detailMaterial);
           mesh.position.z = controls.depth + controls.bevel + 0.6;
           group.add(mesh);
+          if (isPersonalInverse) {
+            const rearMesh = new Mesh(geometry.clone(), inverseDetailMaterial);
+            rearMesh.position.z = rearDetailZ;
+            rearMesh.renderOrder = 5;
+            group.add(rearMesh);
+          }
         }
       }
     }
@@ -355,6 +417,13 @@ export function initializeSasiLogoTurntable(root) {
 
     ascii.style.fontSize = `${isCard ? Math.max(6.5, Math.min(9, width / (cols * 0.62))) : Math.max(7, width / (cols * 0.62))}px`;
     ascii.style.lineHeight = `${height / rows}px`;
+    if (skeleton) {
+      skeleton.style.fontSize = ascii.style.fontSize;
+      skeleton.style.lineHeight = ascii.style.lineHeight;
+      skeleton.textContent = "";
+      lastSkeletonOutput = "";
+    }
+    glyphField.resize(cols, rows);
   };
 
   const eventToGrid = (event) => {
@@ -404,27 +473,42 @@ export function initializeSasiLogoTurntable(root) {
     if (!sampleContext) return;
     sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
-    const lines = [];
+    const baseGlyphs = new Array(cols * rows).fill(" ");
+    const objectMask = new Uint8Array(cols * rows);
+    const sourceScores = new Float32Array(cols * rows);
     const maxRampIndex = Math.min(ASCII_RAMP.length - 1, Math.max(2, Math.round(controls.glyphDetail)));
 
     for (let y = 0; y < rows; y++) {
-      let line = "";
       for (let x = 0; x < cols; x++) {
         const index = (y * cols + x) * 4;
         const luma = (pixels[index] * 0.2126 + pixels[index + 1] * 0.7152 + pixels[index + 2] * 0.0722) / 255;
-        if (luma > 0.965) {
-          line += " ";
-          continue;
-        }
+        const cellIndex = y * cols + x;
+        objectMask[cellIndex] = luma < 0.94 ? 1 : 0;
+        if (luma > 0.965 || !objectMask[cellIndex]) continue;
         const darkness = 1 - luma;
-        const trail = trailBuffer[y * cols + x] || 0;
+        const trail = trailBuffer[cellIndex] || 0;
         const tone = Math.min(
           1,
           Math.max(0.08, (darkness + controls.brightness - 0.5) * controls.contrast + 0.5 + trail * controls.hover)
         );
-        line += ASCII_RAMP[Math.min(maxRampIndex, Math.max(1, Math.floor(tone * maxRampIndex)))];
+        baseGlyphs[cellIndex] =
+          ASCII_RAMP[Math.min(maxRampIndex, Math.max(1, Math.floor(tone * maxRampIndex)))];
+        sourceScores[cellIndex] = tone;
       }
-      lines.push(line);
+    }
+
+    glyphField.setSource(baseGlyphs, objectMask, sourceScores);
+    const composed = glyphField.compose(baseGlyphs, sourceScores);
+    const lines = [];
+    for (let y = 0; y < rows; y += 1) {
+      lines.push(composed.slice(y * cols, (y + 1) * cols).join(""));
+    }
+    if (skeleton) {
+      const skeletonOutput = glyphField.skeletonLines().join("\n");
+      if (skeletonOutput !== lastSkeletonOutput) {
+        skeleton.textContent = skeletonOutput;
+        lastSkeletonOutput = skeletonOutput;
+      }
     }
 
     const output = asciiReveal.render(lines, time);
@@ -548,6 +632,7 @@ export function initializeSasiLogoTurntable(root) {
     mark.rotation.z = -0.06 + Math.sin(time * 0.00055) * 0.016;
     renderer.render(scene, camera);
     updateTrail(time);
+    glyphField.update(time);
 
     if (time - lastAscii > frameInterval || reduceMotion.matches) {
       lastAscii = time;
@@ -593,10 +678,13 @@ export function initializeSasiLogoTurntable(root) {
       if (geometryRebuildFrame !== null) cancelAnimationFrame(geometryRebuildFrame);
       resizeObserver.disconnect();
       root.removeEventListener("turntable-eligibility", onEligibility);
+      glyphField.destroy();
       disposeGroup(mark);
       frontMaterial.dispose();
       sideMaterial.dispose();
       detailMaterial.dispose();
+      inverseBackingMaterial.dispose();
+      inverseDetailMaterial.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     }

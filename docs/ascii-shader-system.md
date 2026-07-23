@@ -2,6 +2,8 @@
 
 Reusable notes for the ASCII shader work in this repo. Source page: `/shader-explainer/`. Current implementation: `public/ascii-shader.js`.
 
+This document covers the older general pixel-to-ASCII renderer. The approved homepage portrait interaction, including velocity-driven glyph lifting, density decay, structural underprint, click dispersal, and regeneration, is documented separately in [`turntable-ascii-interaction-language.md`](./turntable-ascii-interaction-language.md).
+
 ## Mental Model
 
 The shader is a two-stage renderer:

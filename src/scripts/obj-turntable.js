@@ -18,7 +18,13 @@ import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
 const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
 const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
-const MOBILE_ASCII_FRAME_INTERVAL = 1000 / 24;
+const MOBILE_ASCII_FRAME_INTERVAL = 1000 / 30;
+const CLICK_DECAY_MS = 420;
+const HOVER_SLOW_FIELD_WIDTH = 0.26;
+const HOVER_SLOW_FIELD_DRAG_MS = 145;
+const HOVER_SOURCE_RECOVERY_MS = 260;
+const HOVER_PARTICLE_MAX_AGE_MS = 1380;
+const HOVER_PARTICLE_MIN_DRIFT = 0.055;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/gltf/");
@@ -28,6 +34,7 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 export function initializeObjTurntable(root) {
   const ascii = root.querySelector("[data-obj-ascii]");
+  const skeleton = root.querySelector("[data-obj-skeleton]");
   if (!ascii) return;
   root.classList.add("is-turntable-loading");
 
@@ -150,9 +157,16 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   let waveNext = new Float32Array(cols * rows);
   let objectMask = new Uint8Array(cols * rows);
   let sourceGlyphs = new Array(cols * rows).fill(" ");
+  let silhouetteGlyphs = new Array(cols * rows).fill(" ");
   let outputGlyphs = new Array(cols * rows).fill(" ");
   let sourceScores = new Float32Array(cols * rows);
   let targetScores = new Float32Array(cols * rows);
+  let smearParticles = [];
+  let smearSourceLift = new Float32Array(cols * rows);
+  let smearSourceLiftMode = new Uint8Array(cols * rows);
+  let hasSmear = false;
+  let isSmearing = false;
+  let smearSequence = 0;
   let hasTrail = false;
   let hasRipple = false;
   let turntableAngle = 0;
@@ -182,6 +196,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   let lastPointerPoint = null;
   let lastPointerTime = 0;
   let pointerVelocity = { x: 0, y: 0 };
+  let lastSilhouetteValue = "";
   const asciiReveal = createTurntableAsciiReveal(root, {
     duration: controls.revealDuration,
     mode: isMeTurntable ? "reload" : "characters",
@@ -271,11 +286,11 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
-    const minCols = isCard ? 24 : 56;
-    const maxCols = isCard ? 44 : 210;
-    const minRows = isCard ? 10 : 30;
-    const maxRows = isCard ? 18 : 120;
-    const effectiveDensity = coarsePointer ? Math.max(6, controls.density) : controls.density;
+    const minCols = isCard ? 24 : coarsePointer ? 42 : 56;
+    const maxCols = isCard ? 44 : coarsePointer ? 96 : 210;
+    const minRows = isCard ? 10 : coarsePointer ? 24 : 30;
+    const maxRows = isCard ? 18 : coarsePointer ? 54 : 120;
+    const effectiveDensity = coarsePointer ? Math.max(9, controls.density) : controls.density;
     cols = Math.max(minCols, Math.min(maxCols, Math.floor(width / effectiveDensity)));
     rows = Math.max(minRows, Math.min(maxRows, Math.floor(height / (effectiveDensity * 1.55))));
 
@@ -292,14 +307,26 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     waveNext = new Float32Array(cols * rows);
     objectMask = new Uint8Array(cols * rows);
     sourceGlyphs = new Array(cols * rows).fill(" ");
+    silhouetteGlyphs = new Array(cols * rows).fill(" ");
     outputGlyphs = new Array(cols * rows).fill(" ");
     sourceScores = new Float32Array(cols * rows);
     targetScores = new Float32Array(cols * rows);
+    smearParticles = [];
+    smearSourceLift = new Float32Array(cols * rows);
+    smearSourceLiftMode = new Uint8Array(cols * rows);
+    hasSmear = false;
+    isSmearing = false;
     hasTrail = false;
     hasRipple = false;
 
     ascii.style.fontSize = `${isCard ? Math.max(6.5, Math.min(9, width / (cols * 0.62))) : Math.max(7, width / (cols * 0.62))}px`;
     ascii.style.lineHeight = `${height / rows}px`;
+    if (skeleton) {
+      skeleton.style.fontSize = ascii.style.fontSize;
+      skeleton.style.lineHeight = ascii.style.lineHeight;
+      skeleton.textContent = "";
+      lastSilhouetteValue = "";
+    }
   };
 
   const eventToGrid = (event, clampToBounds = true) => {
@@ -338,6 +365,273 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         objectMask[y * cols + x] = luma < 0.94 ? 1 : 0;
       }
     }
+  };
+
+  const clearSmear = () => {
+    smearParticles = [];
+    smearSourceLift.fill(0);
+    smearSourceLiftMode.fill(0);
+    hasSmear = false;
+    isSmearing = false;
+  };
+
+  const emitSmearParticles = (point, velocity) => {
+    const speed = Math.hypot(velocity.x, velocity.y);
+    const intensity = clamp((speed - 0.008) / 0.22, 0, 1);
+    if (intensity <= 0.01) return false;
+
+    const radius = 2 + intensity * 3.5;
+    const candidates = [];
+    const minX = Math.max(0, Math.floor(point.x - radius));
+    const maxX = Math.min(cols - 1, Math.ceil(point.x + radius));
+    const minY = Math.max(0, Math.floor(point.y - radius));
+    const maxY = Math.min(rows - 1, Math.ceil(point.y + radius));
+
+    for (let y = minY; y <= maxY; y++) {
+      for (let x = minX; x <= maxX; x++) {
+        const index = y * cols + x;
+        const glyph = sourceGlyphs[index];
+        const distance = Math.hypot(x - point.x, (y - point.y) * 1.35);
+        if (distance <= radius && objectMask[index] && glyph && glyph !== " ") {
+          candidates.push({ x, y, index, glyph });
+        }
+      }
+    }
+
+    if (!candidates.length) return false;
+    const particleCount = Math.min(candidates.length, Math.round(4 + intensity * 18));
+    const sampleStep = candidates.length / particleCount;
+    const frameVelocityX = clamp(velocity.x * 16, -4.5, 4.5);
+    const frameVelocityY = clamp(velocity.y * 16, -3.5, 3.5);
+
+    for (let particleIndex = 0; particleIndex < particleCount; particleIndex++) {
+      const candidate = candidates[Math.min(candidates.length - 1, Math.floor(particleIndex * sampleStep))];
+      const variance = Math.sin((smearSequence + particleIndex) * 2.17);
+      const velocityScale = 0.48 + intensity * 0.72;
+      smearParticles.push({
+        x: candidate.x,
+        y: candidate.y,
+        vx: frameVelocityX * velocityScale - frameVelocityY * variance * 0.08,
+        vy: frameVelocityY * velocityScale + frameVelocityX * variance * 0.055,
+        directionX: Math.sign(frameVelocityX || velocity.x || 1),
+        spread:
+          Math.sign(candidate.y - point.y || variance || 1) *
+          (0.35 + Math.abs(variance) * 0.65),
+        glyph: candidate.glyph,
+        mode: "hover",
+        life: 1,
+        lifetime: 460 + intensity * 360,
+        age: 0
+      });
+      smearSourceLift[candidate.index] = Math.max(smearSourceLift[candidate.index], 0.72 + intensity * 0.28);
+      if (smearSourceLiftMode[candidate.index] !== 2) {
+        smearSourceLiftMode[candidate.index] = 1;
+      }
+    }
+
+    if (smearParticles.length > 220) {
+      const overflow = smearParticles.length - 220;
+      for (let index = 0; index < overflow; index++) {
+        smearParticles[index].life = Math.min(smearParticles[index].life, 0.18);
+        smearParticles[index].lifetime = Math.min(smearParticles[index].lifetime, 120);
+      }
+    }
+    if (smearParticles.length > 280) smearParticles.splice(0, smearParticles.length - 280);
+    smearSequence += particleCount;
+    hasSmear = true;
+    isSmearing = true;
+    return true;
+  };
+
+  const emitClickBurst = (point) => {
+    const radius = Math.max(7, Math.min(11, cols * 0.08));
+    const candidates = [];
+    const minX = Math.max(0, Math.floor(point.x - radius));
+    const maxX = Math.min(cols - 1, Math.ceil(point.x + radius));
+    const minY = Math.max(0, Math.floor(point.y - radius));
+    const maxY = Math.min(rows - 1, Math.ceil(point.y + radius));
+
+    for (let y = minY; y <= maxY; y++) {
+      for (let x = minX; x <= maxX; x++) {
+        const index = y * cols + x;
+        const distance = Math.hypot(x - point.x, (y - point.y) * 1.25);
+        const glyph = sourceGlyphs[index];
+        if (distance <= radius && objectMask[index] && glyph && glyph !== " ") {
+          candidates.push({ x, y, index, glyph, distance });
+        }
+      }
+    }
+    if (!candidates.length) return;
+
+    const particleCount = Math.min(candidates.length, 68);
+    const sampleStep = candidates.length / particleCount;
+    for (let particleIndex = 0; particleIndex < particleCount; particleIndex++) {
+      const candidate = candidates[Math.min(candidates.length - 1, Math.floor(particleIndex * sampleStep))];
+      const variance = Math.sin((smearSequence + particleIndex) * 1.91);
+      const side = particleIndex % 2 ? 1 : -1;
+      const centerPressure = 1 - candidate.distance / radius;
+      smearParticles.push({
+        x: candidate.x,
+        y: candidate.y,
+        vx: side * (1.8 + centerPressure * 4.2 + Math.abs(variance) * 0.65),
+        vy: (candidate.y - point.y) * 0.055 + variance * 0.48,
+        glyph: candidate.glyph,
+        mode: "click",
+        life: 1,
+        lifetime: CLICK_DECAY_MS
+      });
+      smearSourceLift[candidate.index] = 1;
+      smearSourceLiftMode[candidate.index] = 2;
+    }
+
+    if (smearParticles.length > 280) smearParticles.splice(0, smearParticles.length - 280);
+    smearSequence += particleCount;
+    hasSmear = true;
+    isSmearing = true;
+  };
+
+  const dragSmearParticles = (movement, velocity) => {
+    if (!smearParticles.length) return;
+    const speed = Math.hypot(velocity.x, velocity.y);
+    const influence = 0.18 + clamp(speed / 0.3, 0, 1) * 0.3;
+    const movementDistance = Math.hypot(movement.x, movement.y);
+    const movementScale = movementDistance > 6 ? 6 / movementDistance : 1;
+    for (const particle of smearParticles) {
+      if (particle.mode !== "hover") continue;
+      const velocityLength = Math.hypot(particle.vx, particle.vy);
+      if (velocityLength <= 0.001) continue;
+      const headingX = particle.vx / velocityLength;
+      const headingY = particle.vy / velocityLength;
+      const projectedMovement =
+        movement.x * movementScale * headingX +
+        movement.y * movementScale * headingY;
+      if (projectedMovement <= 0) continue;
+      const freshness = Math.pow(particle.life, 1.7);
+      particle.vx += headingX * projectedMovement * influence * freshness;
+      particle.vy += headingY * projectedMovement * influence * freshness;
+    }
+  };
+
+  const getHoverSlowFieldStrength = (particle) => {
+    if (particle.mode !== "hover") return 0;
+    const normalizedX = particle.x / Math.max(1, cols - 1);
+    if (particle.vx < 0 && normalizedX < HOVER_SLOW_FIELD_WIDTH) {
+      return clamp((HOVER_SLOW_FIELD_WIDTH - normalizedX) / HOVER_SLOW_FIELD_WIDTH, 0, 1);
+    }
+    const rightFieldStart = 1 - HOVER_SLOW_FIELD_WIDTH;
+    if (particle.vx > 0 && normalizedX > rightFieldStart) {
+      return clamp((normalizedX - rightFieldStart) / HOVER_SLOW_FIELD_WIDTH, 0, 1);
+    }
+    return 0;
+  };
+
+  const updateSmear = (delta) => {
+    const frameScale = delta / (1000 / 60);
+    const hoverDrag = Math.exp(-delta / 230);
+    const clickDecay = Math.exp(-delta / CLICK_DECAY_MS);
+    const padding = Math.max(cols, rows) * 0.12;
+    const nextParticles = [];
+
+    for (const particle of smearParticles) {
+      particle.age = (particle.age || 0) + delta;
+      particle.x += particle.vx * frameScale;
+      particle.y += particle.vy * frameScale;
+      const slowFieldStrength = getHoverSlowFieldStrength(particle);
+      const particleDrag = particle.mode === "click" ? clickDecay : hoverDrag;
+      const slowFieldDrag =
+        slowFieldStrength > 0
+          ? Math.exp(
+              (-delta / HOVER_SLOW_FIELD_DRAG_MS) *
+              Math.pow(slowFieldStrength, 1.35)
+            )
+          : 1;
+      particle.vx *= particleDrag * slowFieldDrag;
+      particle.vy *= particleDrag;
+      if (
+        particle.mode === "hover" &&
+        slowFieldStrength > 0 &&
+        Math.abs(particle.vx) < HOVER_PARTICLE_MIN_DRIFT
+      ) {
+        particle.vx =
+          (particle.directionX || Math.sign(particle.vx) || 1) *
+          HOVER_PARTICLE_MIN_DRIFT;
+      }
+      if (slowFieldStrength > 0) {
+        particle.vy +=
+          (particle.spread || 0) *
+          slowFieldStrength *
+          0.035 *
+          frameScale;
+      }
+      const hoverLifeScale = 1 - slowFieldStrength * 0.52;
+      particle.life =
+        particle.mode === "click"
+          ? particle.life * clickDecay
+          : particle.life - (delta / particle.lifetime) * hoverLifeScale;
+      const lifeThreshold = particle.mode === "click" ? 0.012 : 0.025;
+      if (
+        particle.life > lifeThreshold &&
+        (particle.mode !== "hover" ||
+          particle.age < HOVER_PARTICLE_MAX_AGE_MS) &&
+        particle.x > -padding &&
+        particle.x < cols - 1 + padding &&
+        particle.y > -padding &&
+        particle.y < rows - 1 + padding
+      ) {
+        nextParticles.push(particle);
+      }
+    }
+    smearParticles = nextParticles;
+
+    let hasLift = false;
+    for (let index = 0; index < smearSourceLift.length; index++) {
+      const liftDecay = Math.exp(
+        -delta /
+          (smearSourceLiftMode[index] === 2
+            ? CLICK_DECAY_MS
+            : HOVER_SOURCE_RECOVERY_MS)
+      );
+      const next = smearSourceLift[index] * liftDecay;
+      if (next > 0.025) {
+        smearSourceLift[index] = next;
+        hasLift = true;
+      } else {
+        smearSourceLift[index] = 0;
+        smearSourceLiftMode[index] = 0;
+      }
+    }
+    hasSmear = smearParticles.length > 0 || hasLift;
+    isSmearing = smearParticles.some((particle) => particle.life > 0.2);
+  };
+
+  const overlaySmearGlyphs = (output) => {
+    const target = output === sourceGlyphs ? outputGlyphs : output;
+    if (target !== output) {
+      for (let index = 0; index < sourceGlyphs.length; index++) target[index] = sourceGlyphs[index];
+    }
+
+    for (const particle of smearParticles) {
+      const x = Math.round(particle.x);
+      const y = Math.round(particle.y);
+      if (x < 0 || x >= cols || y < 0 || y >= rows) continue;
+      const index = y * cols + x;
+      const velocityLength = Math.hypot(particle.vx, particle.vy);
+      if (velocityLength > 0.12 && particle.life > 0.22) {
+        const wakeLength = particle.life > 0.58 ? 2 : 1;
+        for (let step = 1; step <= wakeLength; step++) {
+          const wakeX = Math.round(x - (particle.vx / velocityLength) * step);
+          const wakeY = Math.round(y - (particle.vy / velocityLength) * step);
+          if (wakeX >= 0 && wakeX < cols && wakeY >= 0 && wakeY < rows) {
+            if (!objectMask[wakeY * cols + wakeX]) {
+              target[wakeY * cols + wakeX] = " ";
+            }
+          }
+        }
+      }
+      const fadeIndex = Math.max(1, Math.min(ASCII_RAMP.length - 1, Math.round(particle.life * (ASCII_RAMP.length - 1))));
+      target[index] = particle.life > 0.36 ? particle.glyph : ASCII_RAMP[fadeIndex];
+    }
+    return target;
   };
 
   const getTrailRadius = () => {
@@ -381,8 +675,9 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     const delta = Math.min(140, Math.max(0, time - lastTrailTime));
     const decay = Math.exp(-delta / ((useRepulsion ? 980 : 520) * Math.max(0.18, controls.trailDecay)));
     lastTrailTime = time;
+    updateSmear(delta);
     hoverPoint.heat = hoverPoint.heat * decay > 0.01 ? hoverPoint.heat * decay : 0;
-    const explosionDecay = Math.exp(-delta / 420);
+    const explosionDecay = Math.exp(-delta / CLICK_DECAY_MS);
     explosionPoint.heat = explosionPoint.heat * explosionDecay > 0.012 ? explosionPoint.heat * explosionDecay : 0;
     const clickTint =
       controls.enableColorClick > 0
@@ -590,7 +885,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const hasActiveDisplacement = () => {
-    if (hasTrail || hasRipple) return true;
+    if (hasTrail || hasRipple || hasSmear) return true;
     const heat =
       controls.enableDisperse > 0 ? hoverPoint.heat * Math.max(0, controls.hover) * Math.max(0, controls.disperse) : 0;
     const explosionHeat =
@@ -609,6 +904,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
     updateObjectMask(pixels);
     sourceGlyphs.fill(" ");
+    silhouetteGlyphs.fill(" ");
     sourceScores.fill(0);
     const maxRampIndex = Math.min(ASCII_RAMP.length - 1, Math.max(2, Math.round(controls.glyphDetail)));
 
@@ -639,17 +935,34 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
               motionTone
           )
         );
-        sourceGlyphs[cellIndex] = ASCII_RAMP[Math.min(maxRampIndex, Math.max(1, Math.floor(tone * maxRampIndex)))];
-        sourceScores[cellIndex] = tone + trail * 0.2 + ripple * 0.08;
+        silhouetteGlyphs[cellIndex] = "-";
+        const sourceLift = smearSourceLift[cellIndex] || 0;
+        const liftedTone = tone * (1 - sourceLift * 0.72);
+        if (liftedTone < 0.08) continue;
+        sourceGlyphs[cellIndex] =
+          ASCII_RAMP[Math.min(maxRampIndex, Math.max(1, Math.floor(liftedTone * maxRampIndex)))];
+        sourceScores[cellIndex] = liftedTone + trail * 0.2 + ripple * 0.08;
       }
     }
 
-    const output = shouldDisplace() && hasActiveDisplacement() ? displaceGlyphs(sourceGlyphs, sourceScores) : sourceGlyphs;
+    let output = shouldDisplace() && hasActiveDisplacement() ? displaceGlyphs(sourceGlyphs, sourceScores) : sourceGlyphs;
+    if (hasSmear) output = overlaySmearGlyphs(output);
     const lines = [];
+    const silhouetteLines = [];
     for (let y = 0; y < rows; y++) {
       let line = "";
+      let silhouetteLine = "";
       for (let x = 0; x < cols; x++) line += output[y * cols + x];
+      for (let x = 0; x < cols; x++) silhouetteLine += silhouetteGlyphs[y * cols + x];
       lines.push(line);
+      silhouetteLines.push(silhouetteLine);
+    }
+    if (skeleton) {
+      const silhouetteValue = silhouetteLines.join("\n");
+      if (silhouetteValue !== lastSilhouetteValue) {
+        skeleton.textContent = silhouetteValue;
+        lastSilhouetteValue = silhouetteValue;
+      }
     }
 
     asciiReveal.renderInto(ascii, lines, time);
@@ -841,18 +1154,32 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     stopPointerExit();
     const point = eventToGrid(event);
     const now = performance.now();
+    const previousPoint = lastPointerPoint;
     if (lastPointerPoint && lastPointerTime) {
       const delta = Math.max(1, now - lastPointerTime);
-      pointerVelocity = {
+      const nextVelocity = {
         x: (point.x - lastPointerPoint.x) / delta,
         y: (point.y - lastPointerPoint.y) / delta
+      };
+      const smoothing = clamp(delta / 42, 0.2, 0.48);
+      pointerVelocity = {
+        x: pointerVelocity.x + (nextVelocity.x - pointerVelocity.x) * smoothing,
+        y: pointerVelocity.y + (nextVelocity.y - pointerVelocity.y) * smoothing
       };
     }
     lastPointerPoint = point;
     lastPointerTime = now;
-    if (!hasObjectAt(point.x, point.y)) return;
-    markHoverPoint(point);
-    addTrail(point.x, point.y);
+    const touchesObject = hasObjectAt(point.x, point.y);
+    const movement = previousPoint
+      ? { x: point.x - previousPoint.x, y: point.y - previousPoint.y }
+      : { x: 0, y: 0 };
+    if (touchesObject) {
+      markHoverPoint(point);
+      addTrail(point.x, point.y);
+      if (controls.hover > 0) emitSmearParticles(point, pointerVelocity);
+      return;
+    }
+    if (isSmearing) dragSmearParticles(movement, pointerVelocity);
   };
 
   const handlePointerLeave = (event) => {
@@ -862,10 +1189,12 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     if (reduceMotion.matches) {
       hoverPoint.heat = 0;
       lastPointerPoint = null;
+      clearSmear();
       return;
     }
 
-    const start = { x: hoverPoint.x, y: hoverPoint.y };
+    hoverPoint.heat = 0;
+    const start = { x: lastPointerPoint.x, y: lastPointerPoint.y };
     const exitPoint = eventToGrid(event, false);
     const exitX = exitPoint.x - start.x;
     const exitY = exitPoint.y - start.y;
@@ -894,6 +1223,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     };
     const startedAt = performance.now();
     const duration = 240;
+    let previousExitPoint = start;
 
     const moveOutside = (time) => {
       const progress = clamp((time - startedAt) / duration, 0, 1);
@@ -902,12 +1232,11 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         x: start.x + (target.x - start.x) * eased,
         y: start.y + (target.y - start.y) * eased
       };
-      hoverPoint = {
-        x: point.x,
-        y: point.y,
-        heat: Math.max(hoverPoint.heat, 1 - progress)
-      };
-      addTrail(point.x, point.y, 1 - progress);
+      dragSmearParticles(
+        { x: point.x - previousExitPoint.x, y: point.y - previousExitPoint.y },
+        pointerVelocity
+      );
+      previousExitPoint = point;
 
       if (progress < 1) {
         pointerExitFrame = requestAnimationFrame(moveOutside);
@@ -918,6 +1247,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
       lastPointerPoint = null;
       lastPointerTime = 0;
       pointerVelocity = { x: 0, y: 0 };
+      isSmearing = false;
     };
 
     pointerExitFrame = requestAnimationFrame(moveOutside);
@@ -927,6 +1257,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     requestDeviceMotion(true);
     const point = eventToGrid(event);
     if (!hasObjectAt(point.x, point.y)) return;
+    if (!reduceMotion.matches) emitClickBurst(point);
     markHoverPoint(point, 1.2);
     markExplosionPoint(point, 1);
     addTrail(point.x, point.y, 1.15);

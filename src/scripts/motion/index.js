@@ -1,4 +1,4 @@
-import { initScramble } from "./scramble.js";
+import { SCRAMBLE_RAMP, initScramble } from "./scramble.js";
 import "./reveal.js";
 import "./scroll-fx.js";
 import "./count-up.js";
@@ -16,41 +16,146 @@ function stopIdentityRotator(rotator) {
   if (!state) return;
   window.clearInterval(state.interval);
   window.clearTimeout(state.reverseTimer);
+  window.cancelAnimationFrame(state.frame);
   rotatorTimers.delete(rotator);
+}
+
+function getMotionDuration(token, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(token);
+  return Number.parseFloat(value) || fallback;
+}
+
+function identityScrambleGlyph(index, progress) {
+  const frame = Math.floor(progress * 12);
+  return SCRAMBLE_RAMP[1 + ((index * 3 + frame) % (SCRAMBLE_RAMP.length - 1))];
+}
+
+function renderIdentityPhase(label, progress, reveal) {
+  const characters = Array.from(label);
+  const resolved = Math.floor(characters.length * progress);
+  return characters
+    .map((character, index) => {
+      if (character === " ") return " ";
+      if (reveal ? index < resolved : index >= resolved) return character;
+      return identityScrambleGlyph(index, progress);
+    })
+    .join("");
+}
+
+function getIdentityPrefix(rotator) {
+  return rotator.closest("[data-identity-phrase]")?.querySelector("[data-identity-prefix]");
+}
+
+function englishIdentityPrefix(entry) {
+  return entry.article ? `Alexander is ${entry.article}` : "Alexander is";
+}
+
+function setIdentityLanguage(rotator, entry, language) {
+  const prefix = getIdentityPrefix(rotator);
+  const isBulgarian = language === "bg";
+  rotator.lang = language;
+  if (!prefix) return;
+  const label = isBulgarian ? "Александър е" : englishIdentityPrefix(entry);
+  prefix.lang = language;
+  if (prefix.textContent !== label) prefix.textContent = label;
+}
+
+function animateIdentitySwap(rotator, state, outgoing, incoming) {
+  const reverseDuration = getMotionDuration("--dur-2", 180);
+  const translationDuration = getMotionDuration("--dur-3", 260);
+  const translationHold = translationDuration * 0.72;
+  const revealDuration = getMotionDuration("--dur-4", 340);
+  const translationReverseDuration = reverseDuration;
+  const totalDuration =
+    reverseDuration +
+    translationDuration +
+    translationHold +
+    translationReverseDuration +
+    revealDuration;
+  state.animating = true;
+  rotator.classList.add("is-scanning");
+  const startedAt = performance.now();
+
+  const render = (time) => {
+    const elapsed = Math.min(totalDuration, time - startedAt);
+    const translationStart = reverseDuration;
+    const translationHoldStart = translationStart + translationDuration;
+    const translationReverseStart = translationHoldStart + translationHold;
+    const revealStart = translationReverseStart + translationReverseDuration;
+
+    if (elapsed < translationStart) {
+      setIdentityLanguage(rotator, outgoing, "en");
+      rotator.textContent = renderIdentityPhase(outgoing.english, elapsed / reverseDuration, false);
+    } else if (elapsed < translationHoldStart) {
+      setIdentityLanguage(rotator, incoming, "bg");
+      rotator.textContent = renderIdentityPhase(
+        incoming.bulgarian,
+        (elapsed - translationStart) / translationDuration,
+        true
+      );
+    } else if (elapsed < translationReverseStart) {
+      setIdentityLanguage(rotator, incoming, "bg");
+      rotator.textContent = incoming.bulgarian;
+    } else if (elapsed < revealStart) {
+      setIdentityLanguage(rotator, incoming, "bg");
+      rotator.textContent = renderIdentityPhase(
+        incoming.bulgarian,
+        (elapsed - translationReverseStart) / translationReverseDuration,
+        false
+      );
+    } else {
+      setIdentityLanguage(rotator, incoming, "en");
+      rotator.textContent = renderIdentityPhase(
+        incoming.english,
+        (elapsed - revealStart) / revealDuration,
+        true
+      );
+    }
+
+    if (elapsed < totalDuration) {
+      state.frame = window.requestAnimationFrame(render);
+      return;
+    }
+    setIdentityLanguage(rotator, incoming, "en");
+    rotator.textContent = incoming.english;
+    rotator.classList.remove("is-scanning");
+    state.animating = false;
+  };
+
+  state.frame = window.requestAnimationFrame(render);
 }
 
 function startIdentityRotator(rotator) {
   if (rotatorTimers.has(rotator) || reducedMotion.matches) return;
 
-  const words = JSON.parse(rotator.getAttribute("data-words") || "[]");
-  if (words.length < 2) return;
+  const identities = JSON.parse(rotator.getAttribute("data-identities") || "[]");
+  if (identities.length < 2) return;
 
-  const initialLabel = rotator.textContent?.trim() || words[0];
+  const initialLabel = rotator.textContent?.trim() || identities[0].english;
   rotator.dataset.motionStaticLabel = initialLabel;
-  let index = Math.max(0, words.indexOf(initialLabel));
-  const state = { interval: 0, reverseTimer: 0 };
+  let index = Math.max(0, identities.findIndex(({ english }) => english === initialLabel));
+  const state = { interval: 0, reverseTimer: 0, frame: 0, revealStartedAt: 0, animating: false };
 
   const rotate = () => {
-    rotator.classList.remove("is-revealing");
-    rotator.classList.add("is-reversing");
-    state.reverseTimer = window.setTimeout(() => {
-      index = (index + 1) % words.length;
-      rotator.textContent = words[index];
-      rotator.classList.remove("is-reversing");
-      rotator.classList.add("is-revealing");
-    }, 260);
+    if (state.animating || rotator.dataset.identityPreviewLock === "true") return;
+    const outgoing = identities[index];
+    index = (index + 1) % identities.length;
+    const incoming = identities[index];
+    animateIdentitySwap(rotator, state, outgoing, incoming);
   };
 
-  rotator.classList.add("is-revealing");
-  state.interval = window.setInterval(rotate, 1800);
+  state.interval = window.setInterval(rotate, 1900);
   rotatorTimers.set(rotator, state);
 }
 
 function freezeIdentityRotator(rotator) {
   stopIdentityRotator(rotator);
   const label = rotator.dataset.motionStaticLabel || rotator.textContent?.trim() || "";
+  const identities = JSON.parse(rotator.getAttribute("data-identities") || "[]");
+  const entry = identities.find(({ english }) => english === label) || identities[0];
   rotator.dataset.motionStaticLabel = label;
-  rotator.classList.remove("is-revealing", "is-reversing");
+  if (entry) setIdentityLanguage(rotator, entry, "en");
+  rotator.classList.remove("is-revealing", "is-reversing", "is-scanning");
   if (rotator.textContent !== label) rotator.textContent = label;
 
   if (rotatorObservers.has(rotator)) return;

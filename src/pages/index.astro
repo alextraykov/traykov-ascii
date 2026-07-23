@@ -5,8 +5,8 @@ import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { getCaseStudies } from "../lib/content";
-import { identityWords } from "../lib/identity";
 import { getFeaturedCaseStudies } from "../lib/public-case-studies";
+import IdentityRotator from "../components/IdentityRotator.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/global.css";
 
@@ -103,12 +103,7 @@ structuredData={structuredData}
 
 <div class="about-hero-copy" data-transition-copy>
 <h1 id="hero-title" class="about-title about-title--carousel">
-<span class="about-title__prefix">Alexander is a</span>
-<span
-  class="identity-rotator"
-  data-identity-rotator
-  data-words={JSON.stringify(identityWords)}
->designer</span>
+<IdentityRotator />
 </h1>
 <p class="about-hero-lede">
 I design AI and enterprise software from early product questions through shipped interaction detail.

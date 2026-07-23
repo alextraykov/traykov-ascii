@@ -71,6 +71,8 @@ const {
 
 const classes = [className, hoverOnly ? "has-hover-turntable" : ""].filter(Boolean).join(" ");
 const asciiClasses = [staticAscii ? "project-turntable__ascii" : "", asciiClass].filter(Boolean).join(" ") || undefined;
+const showSkeleton = asciiClass.split(/\s+/).includes("about-turntable__ascii");
+const skeletonClasses = [asciiClasses, "obj-turntable__skeleton"].filter(Boolean).join(" ");
 ---
 
 <div
@@ -109,5 +111,6 @@ const asciiClasses = [staticAscii ? "project-turntable__ascii" : "", asciiClass]
   aria-hidden={ariaLabel ? undefined : "true"}
 >
   {staticAscii && <pre class="project-turntable__static" aria-hidden="true">{staticAscii}</pre>}
+  {showSkeleton && <pre class={skeletonClasses} data-obj-skeleton aria-hidden="true"></pre>}
   <pre class={asciiClasses} data-obj-ascii aria-hidden="true">{staticAscii}</pre>
 </div>

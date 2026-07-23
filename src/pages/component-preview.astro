@@ -1,0 +1,484 @@
+---
+import CaseContactPrompt from "../components/CaseContactPrompt.astro";
+import DitherImageTrail from "../components/DitherImageTrail.astro";
+import IdentityRotator from "../components/IdentityRotator.astro";
+import ObjTurntable from "../components/ObjTurntable.astro";
+import PaveTurntable from "../components/PaveTurntable.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import ProjectMark from "../components/ProjectMark.astro";
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
+import SvgLogoTurntable from "../components/SvgLogoTurntable.astro";
+import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { getCaseStudies } from "../lib/content";
+import { imageTrailImages } from "../lib/image-trail";
+import { getFeaturedCaseStudies } from "../lib/public-case-studies";
+import "../styles/global.css";
+
+if (import.meta.env.PROD) {
+  return Astro.redirect("/", 302);
+}
+
+const featuredStudies = getFeaturedCaseStudies(getCaseStudies());
+const paveStudy = featuredStudies.find((study) => study.id === "designing-pave") ?? featuredStudies[0];
+const synapseStudy = featuredStudies.find((study) => study.id === "synapse-sys") ?? featuredStudies[1] ?? featuredStudies[0];
+
+const catalogue = [
+  ["theme-toggle", "ThemeToggle", "ThemeToggle.astro", "1"],
+  ["identity-rotator", "IdentityRotator", "IdentityRotator.astro", "1"],
+  ["case-contact-prompt", "CaseContactPrompt", "CaseContactPrompt.astro", "2"],
+  ["project-card", "ProjectCard", "ProjectCard.astro", "2"],
+  ["project-mark", "ProjectMark", "ProjectMark.astro", "3"],
+  ["obj-turntable", "ObjTurntable", "ObjTurntable.astro", "4"],
+  ["pave-turntable", "PaveTurntable", "PaveTurntable.astro", "4"],
+  ["svg-logo-turntable", "SvgLogoTurntable", "SvgLogoTurntable.astro", "4"],
+  ["synapse-turntable", "SynapseSysTurntable", "SynapseSysTurntable.astro", "4"],
+  ["dither-image-trail", "DitherImageTrail", "DitherImageTrail.astro", "3"],
+  ["site-footer", "SiteFooter", "SiteFooter.astro", "2"],
+  ["infrastructure", "Nonvisual infrastructure", "SiteHead.astro / SiteAnalytics.astro", "0"]
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Component Preview - Alexander Traykov"
+      description="Production component catalogue for the portfolio ASCII interaction language."
+      path="/component-preview/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="component-preview-page" data-component-preview-width="fluid">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="component-preview-shell">
+      <section class="component-preview-hero">
+        <p class="section-kicker">ASCII material system / live state generator</p>
+        <h1>Push the source.<br />Read the fallout.</h1>
+        <p>
+          Every control below drives a production component through pressure, lift, momentum, decay, and recovery. The source stays legible; the material is what moves.
+        </p>
+
+        <label class="component-preview-width-control">
+          <span>Preview width</span>
+          <select data-component-preview-width-control>
+            <option value="fluid">Fluid</option>
+            <option value="1180">1180</option>
+            <option value="900">900</option>
+            <option value="820">820</option>
+            <option value="700">700</option>
+            <option value="640">640</option>
+          </select>
+        </label>
+      </section>
+
+      <div class="component-preview-layout">
+        <aside class="component-preview-index" aria-label="Component index">
+          <span>Catalogue / {catalogue.length}</span>
+          <nav>
+            {catalogue.map(([id, name, , level], index) => (
+              <a href={`#${id}`}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <span>{name}</span>
+                <span>L{level}</span>
+              </a>
+            ))}
+          </nav>
+        </aside>
+
+        <div class="component-preview-catalogue">
+          <article id="theme-toggle" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>01 / Input</p>
+                <h2>ThemeToggle</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/ThemeToggle.astro</code>
+                <span>Live / Level 1 / decode</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+            Production theme controller. State changes stay compact; each click adds a tiny glyph splash.
+            </p>
+            <div class="component-preview__stage component-preview__stage--compact">
+              <div class="component-preview__stage-inner component-preview__control-fixture">
+                <ThemeToggle />
+              </div>
+            </div>
+          </article>
+
+          <article id="identity-rotator" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>02 / Language</p>
+                <h2>IdentityRotator</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/IdentityRotator.astro</code>
+                <span>Live / Level 1 / bilingual decode</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              The production homepage phrase with all 18 English/Bulgarian identities, dynamic grammar, and the canonical ASCII decode ramp.
+            </p>
+            <div class="component-preview__stage component-preview__stage--identity">
+              <div class="component-preview__stage-inner component-preview__identity-fixture">
+                <h3 class="about-title about-title--carousel">
+                  <IdentityRotator />
+                </h3>
+              </div>
+            </div>
+          </article>
+
+          <article id="case-contact-prompt" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>03 / Conversion</p>
+                <h2>CaseContactPrompt</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/CaseContactPrompt.astro</code>
+                <span>Live / Level 2 / bounded action</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              Hover the primary action to decode its label and stream ASCII material. Click either action for a compact glyph splash.
+            </p>
+            <div class="component-preview__stage">
+              <div class="component-preview__stage-inner">
+                <CaseContactPrompt
+                  caseTitle="Structural dispersal"
+                  eyebrow="After the interaction"
+                  title="Want to pull this system apart together?"
+                  body="Thirty focused minutes on motion, implementation, or the awkward bit between the two."
+                />
+              </div>
+            </div>
+          </article>
+
+          {paveStudy && (
+            <article id="project-card" class="component-preview-entry">
+              <header class="component-preview-entry__header">
+                <div>
+                  <p>04 / Work index</p>
+                  <h2>ProjectCard</h2>
+                </div>
+                <div class="component-preview-entry__meta">
+                  <code>src/components/ProjectCard.astro</code>
+                  <span>Live / Level 2 / card field</span>
+                </div>
+              </header>
+              <p class="component-preview-entry__intent">
+                Production case-study card with its real PAVE identity, media, metadata decode, and route behavior.
+              </p>
+              <div class="component-preview__stage">
+                <div class="component-preview__stage-inner">
+                  <ProjectCard
+                    study={paveStudy}
+                    index={0}
+                    eyebrow="Component fixture"
+                    action="Open case study"
+                    href={paveStudy.href}
+                  />
+                </div>
+              </div>
+            </article>
+          )}
+
+          <article id="project-mark" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>05 / Identity</p>
+                <h2>ProjectMark</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/ProjectMark.astro</code>
+                <span>Live / Level 3 / scoped media</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              One production component, several case identities. Shared motion rules should reinforce these differences rather than flatten them.
+            </p>
+            <div class="component-preview__stage">
+              <div class="component-preview__stage-inner component-preview__mark-grid">
+                {paveStudy && (
+                  <div class="component-preview__mark-fixture">
+                    <span>PAVE / video field</span>
+                    <ProjectMark group={paveStudy.group} title={paveStudy.title} image={paveStudy.image} />
+                  </div>
+                )}
+                {synapseStudy && (
+                  <div class="component-preview__mark-fixture">
+                    <span>Synapse / system field</span>
+                    <ProjectMark group={synapseStudy.group} title={synapseStudy.title} image={synapseStudy.image} />
+                  </div>
+                )}
+                <div class="component-preview__mark-fixture">
+                  <span>Personal / ASCII turntable</span>
+                  <ProjectMark group="Personal experiments" title="ASCII systems" />
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article id="obj-turntable" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>06 / Canonical reference</p>
+                <h2>ObjTurntable</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/ObjTurntable.astro</code>
+                <span>Reference / Level 4 / structural dispersal</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              The approved reference. Hover pressure, velocity-driven glyph lifting, large-to-small decay, canvas-exit continuation, structural memory, click burst, and regeneration all live here.
+            </p>
+            <div class="component-preview__stage component-preview__stage--hero">
+              <div class="component-preview__stage-inner component-preview__hero-fixture">
+                <ObjTurntable
+                  class="about-turntable"
+                  asciiClass="about-turntable__ascii"
+                  name="me"
+                  objSrc="/models/me.glb"
+                  renderSize={1.06}
+                  density={5}
+                  glyphDetail={9}
+                  brightness={-0.02}
+                  contrast={1.42}
+                  hover={0.28}
+                  click={0.46}
+                  glow={0.18}
+                  enableReveal={1}
+                  revealDuration={1280}
+                  revealScatter={0.55}
+                  enableDisperse={1}
+                  disperse={1}
+                  magnetism={1}
+                  disperseRadius={1}
+                  trailDecay={1}
+                  enableExplosion={1}
+                  explosion={1}
+                  explosionRadius={1}
+                  ripple={1}
+                  enableColorClick={0}
+                  colorClick={1}
+                  enableColorDisperse={0}
+                  colorDisperse={1}
+                  ariaLabel="Interactive portrait rendered as an ASCII turntable"
+                />
+              </div>
+            </div>
+          </article>
+
+          <article id="pave-turntable" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>07 / Rendered mark</p>
+                <h2>PaveTurntable</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/PaveTurntable.astro</code>
+                <span>Live / Level 4 hover / structural dispersal</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              SVG-derived Three.js source with the homepage pressure, source-glyph lifting, preserved momentum, edge slowdown, skeleton, and regeneration.
+            </p>
+            <div class="component-preview__stage component-preview__stage--turntable">
+              <div
+                class="component-preview__stage-inner component-preview__turntable-fixture playground-ascii is-turntable-example"
+                data-active-turntable="pave"
+              >
+                <PaveTurntable
+                  class="playground-turntable"
+                  playgroundKey="pave"
+                  renderSize={0.72}
+                  ariaLabel="PAVE symbol component preview"
+                />
+              </div>
+            </div>
+          </article>
+
+          <article id="svg-logo-turntable" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>08 / Generic rendered mark</p>
+                <h2>SvgLogoTurntable</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/SvgLogoTurntable.astro</code>
+                <span>Live / Level 4 hover / inverse turntable</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              The reusable SVG-to-ASCII primitive with homepage structural dispersal and a two-sided personal mark: familiar front, inverse rear, hair and eye on both faces.
+            </p>
+            <div class="component-preview__stage component-preview__stage--turntable">
+              <div
+                class="component-preview__stage-inner component-preview__turntable-fixture playground-ascii is-turntable-example"
+                data-active-turntable="sasi"
+              >
+                <SvgLogoTurntable
+                  class="playground-turntable"
+                  name="component-personal"
+                  svgSrc="/sasi2.svg"
+                  playgroundKey="sasi"
+                  renderSize={0.7}
+                  depth={54}
+                  bevel={3.2}
+                  density={5}
+                  glyphDetail={8}
+                  ariaLabel="Personal logo ASCII turntable component preview"
+                />
+              </div>
+            </div>
+          </article>
+
+          <article id="synapse-turntable" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>09 / Scoped identity</p>
+                <h2>SynapseSysTurntable</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/SynapseSysTurntable.astro</code>
+                <span>Live / Level 4 hover / structural dispersal</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              A configured SVG turntable using the complete homepage hover system while preserving the Synapse geometry.
+            </p>
+            <div class="component-preview__stage component-preview__stage--turntable">
+              <div
+                class="component-preview__stage-inner component-preview__turntable-fixture playground-ascii is-turntable-example"
+                data-active-turntable="synapse"
+              >
+                <SynapseSysTurntable
+                  class="playground-turntable"
+                  playgroundKey="synapse"
+                  renderSize={0.74}
+                  ariaLabel="SynapseSys ASCII turntable component preview"
+                />
+              </div>
+            </div>
+          </article>
+
+          <article id="dither-image-trail" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>10 / Image material</p>
+                <h2>DitherImageTrail</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/DitherImageTrail.astro</code>
+                <span>Live / Level 3 / glyph dispersal</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              Images render through the surface glyph ramp, then click or tap ejects real source characters with homepage drag, edge slowdown, and large-to-small decay.
+            </p>
+            <div class="component-preview__stage component-preview__stage--dither">
+              <div class="component-preview__stage-inner component-preview__dither-fixture">
+                <DitherImageTrail images={imageTrailImages.slice(0, 8)} label="Dither image trail component preview" />
+              </div>
+            </div>
+          </article>
+
+          <article id="site-footer" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>11 / Global surface</p>
+                <h2>SiteFooter</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/SiteFooter.astro</code>
+                <span>Live / Level 2 / decode + booking</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              Full production footer including booking, dialog behavior, navigation decode, and back-to-top state.
+            </p>
+            <div class="component-preview__stage component-preview__stage--flush">
+              <div class="component-preview__stage-inner">
+                <SiteFooter links={[{ label: "Component language", href: "#top" }]} />
+              </div>
+            </div>
+          </article>
+
+          <article id="infrastructure" class="component-preview-entry">
+            <header class="component-preview-entry__header">
+              <div>
+                <p>12 / Infrastructure</p>
+                <h2>SiteHead + SiteAnalytics</h2>
+              </div>
+              <div class="component-preview-entry__meta">
+                <code>src/components/SiteHead.astro</code>
+                <code>src/components/SiteAnalytics.astro</code>
+                <span>Level 0 / nonvisual</span>
+              </div>
+            </header>
+            <p class="component-preview-entry__intent">
+              Both production components are active on this route. They are catalogue entries rather than visual fixtures: one owns metadata and theme bootstrap; the other owns analytics.
+            </p>
+            <div class="component-preview__stage component-preview__stage--compact">
+              <div class="component-preview__stage-inner component-preview__infrastructure">
+                <span>HEAD</span>
+                <p>Canonical URL, social metadata, icons, theme bootstrap, and motion-ready setup.</p>
+                <span>ANALYTICS</span>
+                <p>Production analytics integration. No decorative preview required.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </main>
+
+    <script>
+    import { registerTurntables } from "../scripts/turntable-loader.js";
+    import "../scripts/component-preview-ascii.js";
+      import "../scripts/pave-card-gradient.js";
+      import "../scripts/synapse-card-scramble.js";
+
+      registerTurntables(
+        "[data-obj-turntable]",
+        () => import("../scripts/obj-turntable.js"),
+        (module, root) => module.initializeObjTurntable(root)
+      );
+      registerTurntables(
+        "[data-pave-turntable]",
+        () => import("../scripts/pave-symbol-turntable.js"),
+        (module, root) => module.initializePaveTurntable(root)
+      );
+      registerTurntables(
+        "[data-sasi-logo-turntable]",
+        () => import("../scripts/sasi-logo-turntable.js"),
+        (module, root) => module.initializeSasiLogoTurntable(root)
+      );
+    </script>
+
+    <script is:inline>
+      (() => {
+        const control = document.querySelector("[data-component-preview-width-control]");
+        if (!(control instanceof HTMLSelectElement)) return;
+        control.addEventListener("change", () => {
+          document.body.dataset.componentPreviewWidth = control.value;
+        });
+      })();
+    </script>
+    <SiteAnalytics />
+  </body>
+</html>

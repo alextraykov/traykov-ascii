@@ -5,45 +5,6 @@ import SiteHead from "../components/SiteHead.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/global.css";
 
-const bookingUrl =
-  import.meta.env.PUBLIC_CAL_BOOKING_URL ??
-  import.meta.env.PUBLIC_BOOKING_URL ??
-  "https://cal.com/alexander-cqn5aq/30min";
-
-type ContactOption = {
-  index: string;
-  label: string;
-  title: string;
-  body: string;
-  href: string;
-  external?: boolean;
-};
-
-const contactOptions: ContactOption[] = [
-  {
-    index: "01",
-    label: "Email",
-    title: "hi@traykov.cc",
-    body: "Best for a project, role, or product question that needs a little context.",
-    href: "mailto:hi@traykov.cc"
-  },
-  {
-    index: "02",
-    label: "Call",
-    title: "Book 30 minutes",
-    body: "Bring the product problem, the awkward constraint, and whatever is already known.",
-    href: bookingUrl,
-    external: true
-  },
-  {
-    index: "03",
-    label: "LinkedIn",
-    title: "Send a message",
-    body: "Useful for a quick introduction or keeping in touch.",
-    href: "https://www.linkedin.com/in/alextraykov/",
-    external: true
-  }
-];
 ---
 
 <!doctype html>
@@ -51,7 +12,7 @@ const contactOptions: ContactOption[] = [
   <head>
     <SiteHead
       title="Contact Alexander Traykov"
-      description="Email Alexander Traykov, book a 30-minute product conversation, or connect on LinkedIn."
+      description="Send Alexander Traykov a message or book a call."
       path="/contact/"
     />
     <script src="/page-transitions.js" defer></script>
@@ -71,31 +32,96 @@ const contactOptions: ContactOption[] = [
       <section class="contact-hero section-shell" aria-labelledby="contact-title">
         <div class="contact-hero__copy" data-reveal="rise">
           <p class="section-kicker">Contact</p>
-          <h1 id="contact-title">Show me what’s not working.</h1>
+          <h1 id="contact-title">Start with a message.</h1>
           <p>
-            I’m most useful when the product is real, the constraints are awkward, and the answer is not another generic workshop.
+            It goes to <a href="mailto:hi@traykov.cc">hi@traykov.cc</a>. I usually reply in
+            half a day or less.
           </p>
         </div>
 
-        <div class="contact-options" data-reveal-group>
-          {contactOptions.map((option) => (
-            <a
-              class="contact-option"
-              href={option.href}
-              target={option.external ? "_blank" : undefined}
-              rel={option.external ? "noreferrer" : undefined}
+        <div class="contact-layout" data-reveal-group>
+          <form
+            class="contact-form"
+            action="mailto:hi@traykov.cc"
+            method="get"
+            enctype="text/plain"
+            data-contact-form
+          >
+            <div class="contact-form__heading">
+              <span>01 / Write</span>
+              <h2>Tell me what you’re working on.</h2>
+            </div>
+
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" autocomplete="name" required />
+            </label>
+
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+
+            <label>
+              <span>Message</span>
+              <textarea name="message" rows="7" required></textarea>
+            </label>
+
+            <div class="contact-form__submit">
+              <p>Opens your email app with the message ready.</p>
+              <button
+                type="submit"
+                data-ascii-action="primary"
+                data-ascii-stream
+                data-ascii-burst
+              >
+                <span data-scramble data-scramble-label="Write email">Write email</span>
+                <span aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </form>
+
+          <aside class="contact-call" aria-labelledby="contact-call-title">
+            <span>02 / Talk</span>
+            <div>
+              <h2 id="contact-call-title">Book a call</h2>
+              <p>Thirty minutes. No pitch, no pressure.</p>
+            </div>
+            <button
+              type="button"
+              data-booking-modal-open
+              data-ascii-action="inverse"
+              data-ascii-stream
+              data-ascii-burst
             >
-              <span>{option.index} / {option.label}</span>
-              <h2>{option.title}</h2>
-              <p>{option.body}</p>
-              <strong aria-hidden="true">Open ↗</strong>
-            </a>
-          ))}
+              <span data-scramble data-scramble-label="Book a call">Book a call</span>
+              <span aria-hidden="true">+</span>
+            </button>
+          </aside>
         </div>
       </section>
     </main>
 
     <SiteFooter />
+
+    <script>
+      document.querySelectorAll("[data-contact-form]").forEach((form) => {
+        if (!(form instanceof HTMLFormElement)) return;
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const data = new FormData(form);
+          const name = String(data.get("name") ?? "").trim();
+          const email = String(data.get("email") ?? "").trim();
+          const message = String(data.get("message") ?? "").trim();
+          const subject = `Website note from ${name}`;
+          const body = [`Name: ${name}`, `Email: ${email}`, "", message].join("\n");
+
+          window.location.href = `mailto:hi@traykov.cc?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        });
+      });
+    </script>
     <SiteAnalytics />
   </body>
 </html>

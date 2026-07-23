@@ -1,21 +1,32 @@
-import * as THREE from "three";
+import {
+  AmbientLight,
+  Box3,
+  DirectionalLight,
+  DoubleSide,
+  Group,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  Scene,
+  Vector2,
+  Vector3,
+  WebGLRenderer
+} from "three";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 
 const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
 const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
 const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
+const MOBILE_ASCII_FRAME_INTERVAL = 1000 / 24;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/gltf/");
 dracoLoader.setDecoderConfig({ type: "wasm" });
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
-const objLoader = new OBJLoader();
 
-document.querySelectorAll("[data-obj-turntable]").forEach((root) => {
+export function initializeObjTurntable(root) {
   const ascii = root.querySelector("[data-obj-ascii]");
   if (!ascii) return;
   root.classList.add("is-turntable-loading");
@@ -24,7 +35,8 @@ document.querySelectorAll("[data-obj-turntable]").forEach((root) => {
   const isAboutTurntable = root.classList.contains("about-turntable");
   const isMeTurntable = (root.dataset.turntableName || "").toLowerCase() === "me";
   const useRepulsion = isAboutTurntable || root.classList.contains("pave-turntable-stage");
-  const useDeviceMotion = isAboutTurntable;
+  const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  const useDeviceMotion = isAboutTurntable && coarsePointer;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const controls = {
     speed: isCard ? 0.2 : 0.24,
@@ -54,52 +66,53 @@ document.querySelectorAll("[data-obj-turntable]").forEach((root) => {
     colorDisperse: Number(root.dataset.cardColorDisperse || 1)
   };
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(32, 1, 0.1, 100);
   camera.position.set(0, 0.18, 8.2);
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = new WebGLRenderer({
     alpha: false,
-    antialias: true,
+    antialias: !coarsePointer,
     preserveDrawingBuffer: false
   });
   renderer.setClearColor(0xfbfbf8, 1);
   renderer.setPixelRatio(1);
   root.append(renderer.domElement);
 
-  const model = new THREE.Group();
+  const model = new Group();
   model.rotation.x = -0.2;
   model.rotation.z = -0.05;
   scene.add(model);
 
   const motionShaderUniforms = {
-    uMotionTilt: { value: new THREE.Vector2(0, 0) },
+    uMotionTilt: { value: new Vector2(0, 0) },
     uMotionShake: { value: 0 },
     uMotionPhase: { value: 0 }
   };
-  const surfaceMaterial = new THREE.MeshStandardMaterial({
+  const surfaceMaterial = new MeshStandardMaterial({
     color: 0x1a1a1a,
     metalness: 0,
     roughness: 0.56,
-    side: THREE.DoubleSide
+    side: DoubleSide
   });
-  surfaceMaterial.onBeforeCompile = (shader) => {
-    shader.uniforms.uMotionTilt = motionShaderUniforms.uMotionTilt;
-    shader.uniforms.uMotionShake = motionShaderUniforms.uMotionShake;
-    shader.uniforms.uMotionPhase = motionShaderUniforms.uMotionPhase;
-    shader.vertexShader = shader.vertexShader
-      .replace(
-        "#include <common>",
-        `
+  if (useDeviceMotion) {
+    surfaceMaterial.onBeforeCompile = (shader) => {
+      shader.uniforms.uMotionTilt = motionShaderUniforms.uMotionTilt;
+      shader.uniforms.uMotionShake = motionShaderUniforms.uMotionShake;
+      shader.uniforms.uMotionPhase = motionShaderUniforms.uMotionPhase;
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          "#include <common>",
+          `
 #include <common>
 uniform vec2 uMotionTilt;
 uniform float uMotionShake;
 uniform float uMotionPhase;
 `
-      )
-      .replace(
-        "#include <begin_vertex>",
-        `
+        )
+        .replace(
+          "#include <begin_vertex>",
+          `
 #include <begin_vertex>
 float objMotionWave = sin(position.x * 3.4 + position.y * 1.7 + uMotionPhase * 3.1) *
   cos(position.z * 2.9 - uMotionPhase * 2.2);
@@ -108,24 +121,25 @@ transformed += normal * objMotionWave * uMotionShake * (0.34 + objMotionEdge);
 transformed.x += uMotionTilt.x * (0.28 + abs(position.y) * 0.055) + objMotionWave * uMotionShake * 0.085;
 transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
 `
-      );
-  };
+        );
+    };
+  }
 
-  const key = new THREE.DirectionalLight(0xffffff, 5.4);
+  const key = new DirectionalLight(0xffffff, 5.4);
   key.position.set(2.4, 3.4, 4.6);
   scene.add(key);
 
-  const rim = new THREE.DirectionalLight(0xffffff, 3.8);
+  const rim = new DirectionalLight(0xffffff, 3.8);
   rim.position.set(-3.4, 1.4, -4.2);
   scene.add(rim);
 
-  const fill = new THREE.DirectionalLight(0xffffff, 2.4);
+  const fill = new DirectionalLight(0xffffff, 2.4);
   fill.position.set(-3.2, -1.2, 2.8);
   scene.add(fill);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.82));
+  scene.add(new AmbientLight(0xffffff, 0.82));
 
   const sampleCanvas = document.createElement("canvas");
-  const sampleContext = sampleCanvas.getContext("2d", { willReadFrequently: true });
+  const sampleContext = sampleCanvas.getContext("2d", { alpha: false, willReadFrequently: true });
   let cols = 120;
   let rows = 70;
   let lastAscii = 0;
@@ -162,8 +176,12 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     permissionRequested: false,
     listening: false
   };
-  let isVisible = !root.hasAttribute("data-playground-turntable") && !root.hasAttribute("data-hover-turntable");
+  let isVisible = true;
   let pendingFrame = null;
+  let pointerExitFrame = null;
+  let lastPointerPoint = null;
+  let lastPointerTime = 0;
+  let pointerVelocity = { x: 0, y: 0 };
   const asciiReveal = createTurntableAsciiReveal(root, {
     duration: controls.revealDuration,
     mode: isMeTurntable ? "reload" : "characters",
@@ -188,6 +206,8 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   const normalizeObject = (object) => {
     object.traverse((node) => {
       if (!node.isMesh) return;
+      node.geometry.deleteAttribute("uv");
+      node.geometry.deleteAttribute("uv1");
       node.geometry.computeBoundingBox();
       if (!node.geometry.attributes.normal) node.geometry.computeVertexNormals();
       node.material = surfaceMaterial;
@@ -195,9 +215,9 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
       node.receiveShadow = false;
     });
 
-    const bounds = new THREE.Box3().setFromObject(object);
-    const center = bounds.getCenter(new THREE.Vector3());
-    const size = bounds.getSize(new THREE.Vector3());
+    const bounds = new Box3().setFromObject(object);
+    const center = bounds.getCenter(new Vector3());
+    const size = bounds.getSize(new Vector3());
     const scale = 4.6 / Math.max(size.x, size.y, size.z);
     object.scale.setScalar(scale);
     object.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
@@ -206,10 +226,10 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   const loadModel = async () => {
     const source = root.dataset.objSrc || "/models/me.glb";
     const extension = source.split("?")[0].split("#")[0].split(".").pop()?.toLowerCase();
-    const object =
-      extension === "glb" || extension === "gltf"
-        ? (await gltfLoader.loadAsync(source)).scene
-        : await objLoader.loadAsync(source);
+    if (extension !== "glb" && extension !== "gltf") {
+      throw new Error(`Unsupported model format: ${extension || "unknown"}`);
+    }
+    const object = (await gltfLoader.loadAsync(source)).scene;
     normalizeObject(object);
     model.clear();
     model.add(object);
@@ -255,8 +275,9 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     const maxCols = isCard ? 44 : 210;
     const minRows = isCard ? 10 : 30;
     const maxRows = isCard ? 18 : 120;
-    cols = Math.max(minCols, Math.min(maxCols, Math.floor(width / controls.density)));
-    rows = Math.max(minRows, Math.min(maxRows, Math.floor(height / (controls.density * 1.55))));
+    const effectiveDensity = coarsePointer ? Math.max(6, controls.density) : controls.density;
+    cols = Math.max(minCols, Math.min(maxCols, Math.floor(width / effectiveDensity)));
+    rows = Math.max(minRows, Math.min(maxRows, Math.floor(height / (effectiveDensity * 1.55))));
 
     const sourceScale = isCard ? 2 : 1.15;
     const renderWidth = Math.max(1, Math.min(width, Math.floor(cols * sourceScale)));
@@ -290,12 +311,6 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const hasObjectAt = (centerX, centerY, radius = 2) => {
-    if (!sampleContext || !renderer.domElement.width || !renderer.domElement.height) return false;
-    sampleContext.clearRect(0, 0, cols, rows);
-    sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
-    const framePixels = sampleContext.getImageData(0, 0, cols, rows).data;
-    updateObjectMask(framePixels);
-
     const minX = Math.max(0, Math.floor(centerX - radius));
     const maxX = Math.min(cols - 1, Math.ceil(centerX + radius));
     const minY = Math.max(0, Math.floor(centerY - radius));
@@ -311,8 +326,6 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const updateObjectMask = (pixels) => {
-    objectMask.fill(0);
-
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const index = (y * cols + x) * 4;
@@ -581,11 +594,9 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
 
   const toAscii = (time = performance.now()) => {
     if (!sampleContext) return;
-    sampleContext.clearRect(0, 0, cols, rows);
     sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
     updateObjectMask(pixels);
-    const totalCells = cols * rows;
     sourceGlyphs.fill(" ");
     sourceScores.fill(0);
     const maxRampIndex = Math.min(ASCII_RAMP.length - 1, Math.max(2, Math.round(controls.glyphDetail)));
@@ -772,13 +783,13 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
 
   const tabButtons = document.querySelectorAll("[data-obj-tab]");
   const tabPanels = document.querySelectorAll("[data-obj-panel]");
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+  const activateTab = (button) => {
       const activeTab = button.dataset.objTab;
       tabButtons.forEach((tabButton) => {
         const isActive = tabButton.dataset.objTab === activeTab;
         tabButton.classList.toggle("is-active", isActive);
         tabButton.setAttribute("aria-selected", String(isActive));
+        tabButton.tabIndex = isActive ? 0 : -1;
       });
       tabPanels.forEach((panel) => {
         const isActive = panel.dataset.objPanel === activeTab;
@@ -791,17 +802,104 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         window.setTimeout(() => controlsPanel.classList.remove("is-flipping-back"), 260);
       }
       controlsPanel?.classList.toggle("is-flipped", activeTab === "how");
+  };
+
+  tabButtons.forEach((button, index) => {
+    button.addEventListener("click", () => activateTab(button));
+    button.addEventListener("keydown", (event) => {
+      const tabs = [...tabButtons];
+      let nextIndex;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex === undefined) return;
+      event.preventDefault();
+      tabs[nextIndex].focus();
+      activateTab(tabs[nextIndex]);
     });
   });
 
-  root.addEventListener("pointermove", (event) => {
+  const stopPointerExit = () => {
+    if (pointerExitFrame === null) return;
+    cancelAnimationFrame(pointerExitFrame);
+    pointerExitFrame = null;
+  };
+
+  const handlePointerMove = (event) => {
+    stopPointerExit();
     const point = eventToGrid(event);
+    const now = performance.now();
+    if (lastPointerPoint && lastPointerTime) {
+      const delta = Math.max(1, now - lastPointerTime);
+      pointerVelocity = {
+        x: (point.x - lastPointerPoint.x) / delta,
+        y: (point.y - lastPointerPoint.y) / delta
+      };
+    }
+    lastPointerPoint = point;
+    lastPointerTime = now;
     if (!hasObjectAt(point.x, point.y)) return;
     markHoverPoint(point);
     addTrail(point.x, point.y);
-  }, { passive: true });
+  };
 
-  root.addEventListener("pointerdown", (event) => {
+  const handlePointerLeave = () => {
+    if (!lastPointerPoint) return;
+    stopPointerExit();
+
+    if (reduceMotion.matches) {
+      hoverPoint.heat = 0;
+      lastPointerPoint = null;
+      return;
+    }
+
+    const start = { x: hoverPoint.x, y: hoverPoint.y };
+    const speed = Math.hypot(pointerVelocity.x, pointerVelocity.y);
+    const fallbackX = start.x - (cols - 1) * 0.5;
+    const fallbackY = start.y - (rows - 1) * 0.5;
+    const fallbackLength = Math.max(0.001, Math.hypot(fallbackX, fallbackY));
+    const direction =
+      speed > 0.01
+        ? { x: pointerVelocity.x / speed, y: pointerVelocity.y / speed }
+        : { x: fallbackX / fallbackLength, y: fallbackY / fallbackLength };
+    const distance = Math.max(cols, rows) * 0.38;
+    const target = {
+      x: start.x + direction.x * distance,
+      y: start.y + direction.y * distance
+    };
+    const startedAt = performance.now();
+    const duration = 240;
+
+    const moveOutside = (time) => {
+      const progress = clamp((time - startedAt) / duration, 0, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const point = {
+        x: start.x + (target.x - start.x) * eased,
+        y: start.y + (target.y - start.y) * eased
+      };
+      hoverPoint = {
+        x: point.x,
+        y: point.y,
+        heat: Math.max(hoverPoint.heat, 1 - progress)
+      };
+      addTrail(point.x, point.y, 1 - progress);
+
+      if (progress < 1) {
+        pointerExitFrame = requestAnimationFrame(moveOutside);
+        return;
+      }
+
+      pointerExitFrame = null;
+      lastPointerPoint = null;
+      lastPointerTime = 0;
+      pointerVelocity = { x: 0, y: 0 };
+    };
+
+    pointerExitFrame = requestAnimationFrame(moveOutside);
+  };
+
+  const handlePointerDown = (event) => {
     requestDeviceMotion(true);
     const point = eventToGrid(event);
     if (!hasObjectAt(point.x, point.y)) return;
@@ -809,31 +907,15 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     markExplosionPoint(point, 1);
     addTrail(point.x, point.y, 1.15);
     injectRipple(point.x, point.y);
-  }, { passive: true });
+  };
+
+  root.addEventListener("pointermove", handlePointerMove, { passive: true });
+  root.addEventListener("pointerleave", handlePointerLeave, { passive: true });
+  root.addEventListener("pointerdown", handlePointerDown, { passive: true });
 
   const motionGestureTarget = useDeviceMotion ? root.closest(".about-hero") || root : root;
   motionGestureTarget.addEventListener("pointerdown", () => requestDeviceMotion(true), { passive: true });
   motionGestureTarget.addEventListener("touchstart", () => requestDeviceMotion(true), { passive: true });
-
-  if (root.hasAttribute("data-hover-turntable")) {
-    const card = root.closest(".project-card");
-    card?.addEventListener("pointerenter", () => {
-      isVisible = true;
-      lastRenderTime = 0;
-      asciiReveal.start();
-    });
-    card?.addEventListener("pointerleave", () => {
-      isVisible = false;
-    });
-    card?.addEventListener("focusin", () => {
-      isVisible = true;
-      lastRenderTime = 0;
-      asciiReveal.start();
-    });
-    card?.addEventListener("focusout", () => {
-      isVisible = false;
-    });
-  }
 
   root.addEventListener("turntable-controls:update", (event) => {
     const wasVisible = isVisible;
@@ -845,42 +927,16 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     });
   });
 
-  if (root.hasAttribute("data-playground-turntable")) {
-    const playgroundRoot = root.closest("[data-ascii-playground]");
-    const isActivePlaygroundTurntable = () => playgroundRoot?.dataset.activeTurntable === root.dataset.playgroundTurntable;
-    const observer = new MutationObserver(() => {
-      const wasVisible = isVisible;
-      isVisible = isActivePlaygroundTurntable();
-      if (isVisible) {
-        lastRenderTime = 0;
-        if (!wasVisible) asciiReveal.start();
-      }
-    });
-    if (playgroundRoot) observer.observe(playgroundRoot, { attributes: true, attributeFilter: ["data-active-turntable"] });
-    isVisible = isActivePlaygroundTurntable();
-    playgroundRoot?.addEventListener("pointermove", (event) => {
-      if (!isActivePlaygroundTurntable()) return;
-      requestDeviceMotion(true);
-      const point = eventToGrid(event);
-      if (!hasObjectAt(point.x, point.y)) return;
-      markHoverPoint(point);
-      addTrail(point.x, point.y);
-    }, { passive: true });
-    playgroundRoot?.addEventListener("pointerdown", (event) => {
-      if (!isActivePlaygroundTurntable()) return;
-      const point = eventToGrid(event);
-      if (!hasObjectAt(point.x, point.y)) return;
-      markHoverPoint(point, 1.2);
-      addTrail(point.x, point.y, 1.15);
-      injectRipple(point.x, point.y);
-    }, { passive: true });
-  }
-
   const render = (time = 0) => {
-    if (!isVisible) {
-      window.setTimeout(() => {
-        pendingFrame = requestAnimationFrame(render);
-      }, 160);
+    pendingFrame = null;
+    if (!isVisible || document.hidden) return;
+    const frameInterval = isCard
+      ? CARD_ASCII_FRAME_INTERVAL
+      : coarsePointer
+        ? MOBILE_ASCII_FRAME_INTERVAL
+        : STAGE_ASCII_FRAME_INTERVAL;
+    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+      pendingFrame = requestAnimationFrame(render);
       return;
     }
     if (!lastRenderTime) lastRenderTime = time;
@@ -902,7 +958,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     stepRipple();
     updateTrail(time);
 
-    if (time - lastAscii > (isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL) || reduceMotion.matches) {
+    if (time - lastAscii > frameInterval || reduceMotion.matches) {
       lastAscii = time;
       toAscii(time);
     }
@@ -910,7 +966,22 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     if (!reduceMotion.matches) pendingFrame = requestAnimationFrame(render);
   };
 
-  new ResizeObserver(resize).observe(root);
+  const onEligibility = (event) => {
+    const wasVisible = isVisible;
+    isVisible = Boolean(event.detail?.active);
+    if (!isVisible) {
+      if (pendingFrame) cancelAnimationFrame(pendingFrame);
+      pendingFrame = null;
+      return;
+    }
+    lastRenderTime = 0;
+    if (!wasVisible) asciiReveal.start();
+    if (!pendingFrame) pendingFrame = requestAnimationFrame(render);
+  };
+  root.addEventListener("turntable-eligibility", onEligibility);
+
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(root);
   root.style.setProperty("--pave-ascii-glow", controls.glow);
   resize();
   loadModel()
@@ -925,12 +996,23 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
       ascii.textContent = `obj.turntable.offline\n${String(error.message || error)}`;
     });
 
-  window.addEventListener("pagehide", () => {
-    if (pendingFrame) cancelAnimationFrame(pendingFrame);
-    window.removeEventListener("deviceorientation", handleDeviceOrientation);
-    window.removeEventListener("devicemotion", handleDeviceMotion);
-    disposeGroup(model);
-    surfaceMaterial.dispose();
-    renderer.dispose();
-  }, { once: true });
-});
+  return {
+    destroy() {
+      isVisible = false;
+      if (pendingFrame) cancelAnimationFrame(pendingFrame);
+      stopPointerExit();
+      resizeObserver.disconnect();
+      root.removeEventListener("turntable-eligibility", onEligibility);
+      root.removeEventListener("pointermove", handlePointerMove);
+      root.removeEventListener("pointerleave", handlePointerLeave);
+      root.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("deviceorientation", handleDeviceOrientation);
+      window.removeEventListener("devicemotion", handleDeviceMotion);
+      disposeGroup(model);
+      surfaceMaterial.dispose();
+      dracoLoader.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    }
+  };
+}

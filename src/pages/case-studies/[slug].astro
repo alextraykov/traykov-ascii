@@ -1,30 +1,51 @@
 ---
+import CaseContactPrompt from "../../components/CaseContactPrompt.astro";
 import PaveTurntable from "../../components/PaveTurntable.astro";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteHead from "../../components/SiteHead.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SynapseSysTurntable from "../../components/SynapseSysTurntable.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
 import { getCaseStudies, getCaseStudyHeadings, renderMarkdown } from "../../lib/content";
+import { getPublicCaseStudies, isPublicCaseStudy } from "../../lib/public-case-studies";
 import "../../styles/global.css";
 
 export function getStaticPaths() {
   const studies = getCaseStudies();
+  const publicStudies = getPublicCaseStudies(studies);
 
-  return studies.map((study, index) => ({
-    params: { slug: study.id },
-    props: {
-      study,
-      previousStudy: studies[index - 1],
-      nextStudy: studies[index + 1]
-    }
-  }));
+  return studies.map((study) => {
+    const publicIndex = publicStudies.findIndex((item) => item.id === study.id);
+
+    return {
+      params: { slug: study.id },
+      props: {
+        study,
+        previousStudy: publicIndex > 0 ? publicStudies[publicIndex - 1] : undefined,
+        nextStudy: publicIndex >= 0 ? publicStudies[publicIndex + 1] : undefined
+      }
+    };
+  });
 }
 
 const { study, previousStudy, nextStudy } = Astro.props;
+const isPublicStudy = isPublicCaseStudy(study.id);
+if (!import.meta.env.DEV && !isPublicStudy) return Astro.redirect("/#work", 302);
+
 const usePaveTurntable = study.id === "designing-pave";
 const useSynapseTurntable = study.id === "synapse-sys";
 const hasTurntable = usePaveTurntable || useSynapseTurntable;
-const caseTheme = ["synapse-sys", "designing-synapse-sys"].includes(study.id) ? "synapse" : undefined;
-const caseMeta = [study.group, study.category ?? "case study", "WIP", study.readTime]
+const transitionPoster = usePaveTurntable
+  ? study.image
+  : useSynapseTurntable
+    ? "/case-studies/media/synapse-sys-card-turntable-poster.jpg"
+    : undefined;
+const caseTheme = study.id === "designing-pave"
+  ? "pave"
+  : ["synapse-sys", "designing-synapse-sys"].includes(study.id)
+    ? "synapse"
+    : undefined;
+const caseMeta = [study.group, study.category ?? "case study", study.status, study.readTime]
   .filter(Boolean)
   .join(" / ");
 const tagMeta = study.tags.length > 0 ? study.tags.join(" / ") : "";
@@ -33,13 +54,30 @@ const hasReadingTools = caseHeadings.length > 1 || Boolean(study.walkthroughVide
 const walkthroughPoster = study.walkthroughPoster ?? study.image;
 const walkthroughLabel = study.walkthroughLabel ?? "Watch walkthrough";
 const caseHref = (item: { id: string }) => `/case-studies/${item.id}/`;
-const pageTitle = `${study.title} WIP - Alexander Traykov`;
-const metaDescription = `${study.title} case-study preview by Alexander Traykov.`;
+const pageTitle = `${study.title} - Alexander Traykov`;
+const metaDescription = study.summary || `${study.title} case study by Alexander Traykov.`;
 const footerLinks = [
-  { label: "All work", href: "/case-studies/" },
+  { label: "All work", href: "/#work" },
   previousStudy ? { label: `Previous: ${previousStudy.title}`, href: caseHref(previousStudy) } : undefined,
   nextStudy ? { label: `Next: ${nextStudy.title}`, href: caseHref(nextStudy) } : undefined
 ].filter(Boolean);
+const contactPromptByStudy: Record<string, { eyebrow: string; title: string; body: string }> = {
+  "designing-pave": {
+    eyebrow: "AI product work",
+    title: "Building an AI product that has to survive the demo?",
+    body: "Bring me the interaction, workflow, or trust knot. We can unpack it together in 30 focused minutes."
+  },
+  "synapse-sys": {
+    eyebrow: "Complex interaction",
+    title: "Making a complicated AI system feel dependable?",
+    body: "Bring me the product model, graph, or failure state. We can unpack it together in 30 focused minutes."
+  }
+};
+const contactPrompt = contactPromptByStudy[study.id] ?? {
+  eyebrow: "Product design",
+  title: "Working through a similarly messy product problem?",
+  body: "Bring me the context and the awkward part. We can unpack it together in 30 focused minutes."
+};
 ---
 
 <!doctype html>
@@ -50,27 +88,30 @@ const footerLinks = [
       description={metaDescription}
       path={`/case-studies/${study.id}/`}
       image={study.image ?? "/og-image.png"}
-      noindex
+      noindex={!isPublicStudy}
     />
     <script src="/page-transitions.js" defer></script>
   </head>
-  <body data-case-theme={caseTheme}>
-    <div class="noise" aria-hidden="true"></div>
+  <body data-page-type="case" data-case-id={study.id} data-case-theme={caseTheme}>
 
-    <header class="site-nav">
+    <header class="site-nav site-nav--case">
       <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
-        <a href="/case-studies/" data-scramble>Work</a>
+        <a href="/#work" aria-current="page" data-scramble>Work</a>
         <a href="/about/" data-scramble>About</a>
-        <a href="/playground" data-scramble>Playground</a>
-        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
+        <a href="/contact/" data-scramble>Contact</a>
       </nav>
+      <ThemeToggle />
+      <div class="case-progress" aria-hidden="true"><span></span></div>
     </header>
-
-    <div class="case-progress" aria-hidden="true"><span></span></div>
 
     <main id="top" class="case-page">
       <section class:list={["case-hero", hasTurntable && "case-hero--turntable"]} aria-labelledby="case-title">
+        {transitionPoster && (
+          <div class="case-transition-poster" data-case-transition-media aria-hidden="true">
+            <img src={transitionPoster} alt="" decoding="async" />
+          </div>
+        )}
         {usePaveTurntable ? (
           <PaveTurntable
             class="case-hero-turntable"
@@ -92,9 +133,9 @@ const footerLinks = [
           </div>
         )}
 
-        <div class="case-hero-copy section-shell" data-reveal="rise">
+        <div class="case-hero-copy section-shell" data-reveal="rise" data-transition-copy>
           <nav class="case-breadcrumb" aria-label="Breadcrumb">
-            <a href="/case-studies/">Work</a>
+            <a href="/#work">Work</a>
             <span>{study.group}</span>
           </nav>
           <p class="section-kicker">{caseMeta}</p>
@@ -104,42 +145,10 @@ const footerLinks = [
         </div>
       </section>
 
-      <nav class="case-sibling-nav section-shell" aria-label="Case study sequence" data-reveal="rise" data-reveal-delay="120">
-        {previousStudy ? (
-          <a href={caseHref(previousStudy)}>
-            <span data-scramble data-scramble-label="Previous">Previous</span>
-            <strong>{previousStudy.title}</strong>
-            {previousStudy.image && (
-              <span class="case-sibling-nav__preview" aria-hidden="true">
-                <img src={previousStudy.image} alt="" loading="lazy" />
-                <span>{previousStudy.summary}</span>
-              </span>
-            )}
-          </a>
-        ) : (
-          <span class="case-sibling-nav__empty" aria-hidden="true"></span>
-        )}
-        <a class="case-sibling-nav__all" href="/case-studies/" data-scramble>All work</a>
-        {nextStudy ? (
-          <a href={caseHref(nextStudy)}>
-            <span data-scramble data-scramble-label="Next">Next</span>
-            <strong>{nextStudy.title}</strong>
-            {nextStudy.image && (
-              <span class="case-sibling-nav__preview" aria-hidden="true">
-                <img src={nextStudy.image} alt="" loading="lazy" />
-                <span>{nextStudy.summary}</span>
-              </span>
-            )}
-          </a>
-        ) : (
-          <span class="case-sibling-nav__empty" aria-hidden="true"></span>
-        )}
-      </nav>
-
       <article class="case-study case-detail section-shell">
         <div class:list={["case-reader-layout", hasReadingTools && "case-reader-layout--with-tools"]}>
           <div class="case-body">
-            {study.image && (
+            {study.image && !usePaveTurntable && (
               <figure class="case-cover">
                 <img src={study.image} alt="" loading="eager" />
               </figure>
@@ -161,8 +170,14 @@ const footerLinks = [
               </button>
 
               {study.walkthroughVideo && (
-                <details class="case-walkthrough" data-case-walkthrough>
-                  <summary>
+                <div class="case-walkthrough">
+                  <button
+                    class="case-walkthrough__trigger"
+                    type="button"
+                    data-case-walkthrough-open
+                    aria-haspopup="dialog"
+                    aria-label={`Play ${walkthroughLabel}`}
+                  >
                     <span class="case-walkthrough__avatar" aria-hidden="true">
                       <video
                         src={study.walkthroughVideo}
@@ -178,11 +193,8 @@ const footerLinks = [
                       <span>Skip read</span>
                       <strong>{walkthroughLabel}</strong>
                     </span>
-                  </summary>
-                  <div class="case-walkthrough__panel">
-                    <video src={study.walkthroughVideo} controls playsinline preload="metadata" poster={walkthroughPoster}></video>
-                  </div>
-                </details>
+                  </button>
+                </div>
               )}
 
               {caseHeadings.length > 1 && (
@@ -202,31 +214,70 @@ const footerLinks = [
             </aside>
           )}
         </div>
+
+        {study.walkthroughVideo && (
+          <dialog class="case-walkthrough-modal" aria-labelledby="case-walkthrough-modal-title" data-case-walkthrough-modal>
+            <div class="case-walkthrough-modal__header">
+              <h2 id="case-walkthrough-modal-title">{walkthroughLabel}</h2>
+              <button class="case-walkthrough-modal__close" type="button" data-case-walkthrough-close aria-label="Close video">
+                x
+              </button>
+            </div>
+            <video
+              src={study.walkthroughVideo}
+              controls
+              playsinline
+              preload="metadata"
+              poster={walkthroughPoster}
+              data-case-walkthrough-video
+            ></video>
+          </dialog>
+        )}
+
+        <CaseContactPrompt
+          caseTitle={study.title}
+          eyebrow={contactPrompt.eyebrow}
+          title={contactPrompt.title}
+          body={contactPrompt.body}
+        />
       </article>
 
       <nav class="case-sibling-nav case-sibling-nav--bottom section-shell" aria-label="More case studies" data-reveal="rise">
         {previousStudy && (
-          <a href={caseHref(previousStudy)}>
+          <a href={caseHref(previousStudy)} data-case-direction="previous">
             <span data-scramble data-scramble-label="Previous case">Previous case</span>
             <strong>{previousStudy.title}</strong>
           </a>
         )}
         {nextStudy && (
-          <a href={caseHref(nextStudy)}>
+          <a href={caseHref(nextStudy)} data-case-direction="next">
             <span data-scramble data-scramble-label="Next case">Next case</span>
             <strong>{nextStudy.title}</strong>
           </a>
+        )}
+        {(!previousStudy || !nextStudy) && (
+          <span class="case-sibling-nav__empty">More case studies coming soon</span>
         )}
       </nav>
     </main>
 
     <SiteFooter links={footerLinks} />
 
-    <script is:inline src="/ascii-shader.js?v=case-pages-3"></script>
+    <script is:inline src="/ascii-shader.js?v=case-pages-4"></script>
     {useSynapseTurntable && <script src="/synapse-mini-canvas.js" defer></script>}
     <script>
-      import "../../scripts/pave-symbol-turntable.js";
-      import "../../scripts/sasi-logo-turntable.js";
+      import { registerTurntables } from "../../scripts/turntable-loader.js";
+
+      registerTurntables(
+        "[data-pave-turntable]",
+        () => import("../../scripts/pave-symbol-turntable.js"),
+        (module, root) => module.initializePaveTurntable(root)
+      );
+      registerTurntables(
+        "[data-sasi-logo-turntable]",
+        () => import("../../scripts/sasi-logo-turntable.js"),
+        (module, root) => module.initializeSasiLogoTurntable(root)
+      );
     </script>
     <script is:inline>
       (() => {
@@ -236,8 +287,11 @@ const footerLinks = [
         const sections = links
           .map((link) => document.getElementById(link.dataset.caseTarget || ""))
           .filter(Boolean);
-        const walkthrough = document.querySelector("[data-case-walkthrough]");
-        const panelVideo = walkthrough?.querySelector(".case-walkthrough__panel video");
+        const bottomSiblingNav = document.querySelector(".case-sibling-nav--bottom");
+        const walkthroughTrigger = document.querySelector("[data-case-walkthrough-open]");
+        const walkthroughModal = document.querySelector("[data-case-walkthrough-modal]");
+        const walkthroughClose = document.querySelector("[data-case-walkthrough-close]");
+        const walkthroughVideo = walkthroughModal?.querySelector("[data-case-walkthrough-video]");
         const compactReadingTools = window.matchMedia("(max-width: 1180px)");
 
         const setReadingToolsVisible = (visible) => {
@@ -253,6 +307,15 @@ const footerLinks = [
 
         const showWhileScrolling = () => {
           if (!readingTools || readingTools.dataset.dismissed === "true") return;
+          if (
+            compactReadingTools.matches &&
+            bottomSiblingNav &&
+            bottomSiblingNav.getBoundingClientRect().top <= window.innerHeight
+          ) {
+            window.clearTimeout(hideTimer);
+            setReadingToolsVisible(false);
+            return;
+          }
           setReadingToolsVisible(true);
           scheduleHide();
         };
@@ -310,26 +373,31 @@ const footerLinks = [
         closeReadingTools?.addEventListener("click", () => {
           readingTools.dataset.dismissed = "true";
           setReadingToolsVisible(false);
-          if (walkthrough) walkthrough.open = false;
-          panelVideo?.pause();
         });
 
-        walkthrough?.addEventListener("toggle", () => {
-          if (walkthrough.open) {
-            setReadingToolsVisible(true);
-            panelVideo?.play().catch(() => {});
-          } else {
-            panelVideo?.pause();
-            scheduleHide();
+        walkthroughTrigger?.addEventListener("click", () => {
+          if (!(walkthroughModal instanceof HTMLDialogElement)) return;
+          walkthroughModal.showModal();
+          walkthroughVideo?.play().catch(() => {});
+        });
+
+        walkthroughClose?.addEventListener("click", () => {
+          if (walkthroughModal instanceof HTMLDialogElement) walkthroughModal.close();
+        });
+
+        walkthroughModal?.addEventListener("click", (event) => {
+          if (event.target === walkthroughModal && walkthroughModal instanceof HTMLDialogElement) {
+            walkthroughModal.close();
           }
         });
 
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && walkthrough?.open) {
-            walkthrough.open = false;
-          }
+        walkthroughModal?.addEventListener("close", () => {
+          walkthroughVideo?.pause();
+          walkthroughTrigger?.focus();
+          scheduleHide();
         });
       })();
     </script>
+    <SiteAnalytics />
   </body>
 </html>

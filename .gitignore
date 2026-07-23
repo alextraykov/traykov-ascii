@@ -7,3 +7,7 @@ audit-artifacts/
 *.zip
 /02.obj
 .vercel
+.env
+.env.local
+.env.*.local
+.env*

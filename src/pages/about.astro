@@ -1,30 +1,11 @@
 ---
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import DitherImageTrail from "../components/DitherImageTrail.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { imageTrailImages } from "../lib/image-trail";
 import "../styles/global.css";
-
-const identities = [
-  "designer",
-  "father",
-  "husband",
-  "son",
-  "grandchild",
-  "grappler",
-  "pourover enjoyer",
-  "walker",
-  "writer",
-  "yapper",
-  "notebook hoarder",
-  "coffee tinkerer",
-  "mat philosopher",
-  "Sofia dad",
-  "question asker",
-  "systems gardener",
-  "slow runner",
-  "early riser",
-  "deadline negotiator",
-  "friendly menace"
-];
 
 const experience = [
   {
@@ -32,21 +13,21 @@ const experience = [
     company: "Quickbase",
     period: "July 2023 - Current",
     body:
-      "Leading UX work at Quickbase across product surfaces, team rituals, and design execution. The role sits between hands-on product design, management, and helping designers grow through sharper critique and clearer product thinking."
+      "I lead UX work at Quickbase while staying involved in product design. I also run critiques, help set priorities, and support designers as they learn a domain or take on harder work."
   },
   {
     role: "Senior Product Designer",
     company: "Quickbase",
     period: "July 2022 - July 2023",
     body:
-      "Worked on Quickbase's Solution Hub and led design for one of the company's largest 2022 initiatives. Partnered across product, engineering, and stakeholder groups to move complex platform work from ambiguity into shippable product decisions."
+      "I worked on Quickbase’s Solution Hub and led design for one of the company’s largest projects in 2022, working closely with product and engineering from early research through delivery."
   },
   {
     role: "Senior Product Designer",
     company: "PeakShift",
     period: "January 2022 - June 2022",
     body:
-      "Helped establish hiring, design research, and design marketing foundations while working across products including bolt.fun, Alby, and BTC Payer."
+      "I helped with hiring, research, and design marketing while working on bolt.fun, Alby, and BTC Payer."
   },
   {
     role: "Product Designer",
@@ -60,21 +41,21 @@ const experience = [
     company: "MarketVision Consulting Group",
     period: "August 2018 - April 2019",
     body:
-      "Created mobile design systems for iOS and Android, redesigned desktop component systems, and worked on UX research, analytics, usability, user-centered product improvements, and web/UI copy."
+      "Created mobile design systems for iOS and Android, redesigned desktop component systems, and worked across research, analytics, usability, product improvements, and UI copy."
   },
   {
     role: "Product Designer",
     company: "eAssist",
     period: "January 2018 - August 2018",
     body:
-      "Worked across a broad range of digital projects for a business process outsourcing company, including data analytics products, dashboards, and marketing-driven websites."
+      "Worked across data analytics products, dashboards, and marketing websites for a business process outsourcing company."
   },
   {
     role: "Product Designer",
     company: "Pruvit",
     period: "May 2017 - January 2018",
     body:
-      "Focused on designing and maintaining component systems for mobile applications across iOS and Android in an iteration-heavy product process."
+      "Designed and maintained component systems for iOS and Android applications in an iteration-heavy product process."
   },
   {
     role: "UI/UX Designer",
@@ -89,7 +70,7 @@ const experience = [
     company: "Noxious.one",
     period: "July 2016 - November 2016",
     body:
-      "Worked on CMS-oriented design, mobile app design, wireframing, prototyping, and ideation.",
+      "Worked on CMS products, mobile app design, wireframing, prototyping, and early product ideation.",
     href: "https://noxious.one/"
   },
   {
@@ -97,7 +78,7 @@ const experience = [
     company: "Kickflip",
     period: "August 2015 - December 2015",
     body:
-      "Designed graphic design materials for HealthXL and worked on a website for Obecto, one of Bulgaria's largest software development companies.",
+      "Designed graphic material for HealthXL and worked on a website for Obecto, one of Bulgaria’s largest software development companies.",
     href: "https://kickflip.digital"
   },
   {
@@ -110,75 +91,114 @@ const experience = [
   }
 ];
 
+const metrics = [
+  {
+    value: "150K+",
+    label: "Product reach across work"
+  },
+  {
+    value: "20+",
+    label: "Products"
+  },
+  {
+    value: "10",
+    label: "Orgs and product teams"
+  },
+  {
+    value: "13",
+    label: "Years doing design"
+  }
+];
+
+const writingAndInterviews = [
+  {
+    eyebrow: "Interview / Mode Remote",
+    title: "A conversation with Mode Remote",
+    body: "An interview about my path into product design, the work behind the work, and what I have learned along the way.",
+    href: "https://moderemote.com/interviews/alexander-traykov",
+    cta: "Read the interview"
+  },
+  {
+    eyebrow: "Writing / Substack",
+    title: "Notes from Alexander Traykov",
+    body: "Essays and working notes on product design, teams, craft, and the ideas I keep returning to.",
+    href: "https://alexandertraykov.substack.com/",
+    cta: "Read my writing"
+  }
+];
+
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <SiteHead
-      title="About - Alexander Traykov"
-      description="About Alexander Traykov, product designer, UX team lead, father, husband, and design practitioner based in Sofia."
+      title="Alexander Traykov"
+      description="Alexander Traykov is a human building things with the help of machines."
       path="/about/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>
-  <body>
-    <div class="noise" aria-hidden="true"></div>
+  <body data-page-type="about">
 
     <header class="site-nav">
       <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
-        <a href="/about/" data-scramble>About</a>
-        <a href="/playground" data-scramble>Playground</a>
-        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/about/" aria-current="page" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
       </nav>
+      <ThemeToggle />
     </header>
 
     <main id="top" class="about-page">
-      <section class="about-hero section-shell" aria-labelledby="about-title">
+      <section class="about-hero about-hero--trail" aria-labelledby="about-title">
+        <DitherImageTrail
+          images={imageTrailImages}
+          label="Interactive ASCII gallery from Alexander's life and work"
+        />
         <div class="about-hero-copy">
-          <p class="section-kicker">About</p>
-          <h1 id="about-title" class="about-title">
-            <span class="about-title__prefix">Alexander is a</span>
-            <span
-              class="identity-rotator"
-              data-identity-rotator
-              data-words={JSON.stringify(identities)}
-            >designer</span>
+          <h1 id="about-title" class="about-title about-title--trail">
+            <span>A human building things</span>
+            <span>with the help of machines</span>
           </h1>
         </div>
       </section>
 
-      <section class="about-grid section-shell" aria-label="About Alexander" data-reveal="rise">
+      <section id="metrics" class="about-metrics" aria-label="Selected career and product metrics" data-reveal="rise">
+        <div class="about-metrics__inner section-shell" data-reveal-group>
+          {metrics.map((metric) => (
+            <article class="about-metric">
+              <strong>{metric.value}</strong>
+              <p>{metric.label}</p>
+            </article>
+          ))}
+        </div>
+        <span class="about-metrics__roughly">Roughly*</span>
+      </section>
+
+      <section class="about-grid section-shell" aria-labelledby="story-title" data-reveal="rise">
         <div class="about-copy">
-          <span class="about-caption">Alexander Traykov</span>
+          <h2 id="story-title">Greetings, friends.</h2>
           <p>
-            Greetings, friend. I'm Alexander, a full-time father, husband, and designer.
+            I’m Alexander and I am a human. I take care of my three kids, do my best to be a good husband, and for the past 13 years I’ve been doing a lot of design.
           </p>
           <p>
-            My design journey began at 17, sparked by an opportunity from my graphic design teacher.
-            I designed a poster for the Sofia Philharmonic Orchestra that was shown all around my hometown, igniting my passion for deisgn. Since that moment, design has felt like a calling,
-            and I have kept following it.
+            Right now at Quickbase I do tons of things: leadership, management, and high-quality IC work. I’m <span class="about-nerd-burst" tabindex="0"><span class="about-nerd-burst__text">absolutely geeking tf out</span><span class="about-nerd-burst__emoji" aria-hidden="true">🤓</span><span class="about-nerd-burst__emoji" aria-hidden="true">🧠</span><span class="about-nerd-burst__emoji" aria-hidden="true">⚡</span><span class="about-nerd-burst__emoji" aria-hidden="true">🤖</span><span class="about-nerd-burst__emoji" aria-hidden="true">💻</span><span class="about-nerd-burst__emoji" aria-hidden="true">🧪</span><span class="about-nerd-burst__emoji" aria-hidden="true">👾</span><span class="about-nerd-burst__emoji" aria-hidden="true">🫠</span></span> when a discussion about AI starts.
           </p>
           <p>
-            Years later, I find myself thriving as a Product Lead at Quickbase, juggling the realms of leadership, management and IC work. 
+            At 17, my teacher trusted me with a Sofia Philharmonic poster. Seeing it around the city made design feel like a real job. I’ve followed that thread from eCommerce and mobile to automation and AI.
           </p>
           <p>
-            A short summary of who am I as a person - extroverted, occasionally long-winded dude with
-            a strong interest in building things, combat sports, coffee and nature.
-          </p>
-          <p>
-            In my personal life, I proudly wear the badge of being a father of 3 beautiful kids, who became one of the
-            clearest reasons for me to exist. Their presence is a testament to the love I share with
-            my equally remarkable wife, who's been beside me for more than 10 years.
+            Outside work, I’m an energetic, underslept father. I hike, bike, fight under controlled conditions (martial arts), drink too much coffee, and try to make my wife and kids laugh.
           </p>
         </div>
       </section>
 
-      <section class="about-experience section-shell" aria-labelledby="experience-title" data-reveal="rise">
+      <section id="experience" class="about-experience section-shell" aria-labelledby="experience-title" data-reveal="rise">
         <div class="section-heading">
           <p class="section-kicker">Work experience</p>
-          <h2 id="experience-title">A path through products, systems, and teams.</h2>
+          <h2 id="experience-title">The whole path, not just the recent bit.</h2>
         </div>
 
         <div class="experience-list" data-reveal-group>
@@ -196,33 +216,30 @@ const experience = [
           ))}
         </div>
       </section>
+
+      <section id="writing" class="about-published section-shell" aria-labelledby="published-title" data-reveal="rise">
+        <div class="section-heading">
+          <p class="section-kicker">Writing &amp; interviews</p>
+          <h2 id="published-title">Things I’ve written and talked about.</h2>
+        </div>
+
+        <div class="published-list" data-reveal-group>
+          {writingAndInterviews.map((item) => (
+            <article class="published-item">
+              <p class="published-item__eyebrow">{item.eyebrow}</p>
+              <h3>{item.title}</h3>
+              <p class="published-item__body">{item.body}</p>
+              <a href={item.href} target="_blank" rel="noreferrer">
+                <span data-scramble data-scramble-label={item.cta}>{item.cta}</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
     </main>
 
     <SiteFooter />
-    <script is:inline>
-      (() => {
-        const rotator = document.querySelector("[data-identity-rotator]");
-        if (!rotator) return;
-
-        const words = JSON.parse(rotator.getAttribute("data-words") || "[]");
-        if (!words.length) return;
-
-        let index = 0;
-        const nextWord = () => {
-          rotator.classList.remove("is-revealing");
-          rotator.classList.add("is-reversing");
-
-          window.setTimeout(() => {
-            index = (index + 1) % words.length;
-            rotator.textContent = words[index];
-            rotator.classList.remove("is-reversing");
-            rotator.classList.add("is-revealing");
-          }, 260);
-        };
-
-        rotator.classList.add("is-revealing");
-        window.setInterval(nextWord, 1350);
-      })();
-    </script>
+    <SiteAnalytics />
   </body>
 </html>

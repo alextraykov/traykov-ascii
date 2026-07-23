@@ -1,0 +1,46 @@
+---
+import DitherImageTrail from "../components/DitherImageTrail.astro";
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { imageTrailImages } from "../lib/image-trail";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Dither image trail prototype — Alexander Traykov"
+      description="A large-format, two-ink dither image trail interaction prototype."
+      path="/image-trail/"
+      noindex
+    />
+  </head>
+  <body class="dither-trail-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main>
+      <section class="dither-trail-prototype" aria-labelledby="trail-title">
+        <div class="dither-trail-prototype__copy">
+          <p class="section-kicker">Interaction study / 01</p>
+          <h1 id="trail-title">Big images.<br />Two inks.<br />One trail.</h1>
+          <p>
+            A slower, poster-scale cursor trail for the portfolio. Move to reveal; click to disperse.
+          </p>
+        </div>
+
+        <DitherImageTrail images={imageTrailImages} />
+      </section>
+    </main>
+    <SiteAnalytics />
+  </body>
+</html>

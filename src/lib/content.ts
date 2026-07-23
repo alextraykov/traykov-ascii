@@ -375,7 +375,9 @@ function renderCaseVideo(source: string): string {
   const caption = body || attrs.note || "";
 
   return `<figure class="case-video-copy">${
-    file ? `<video src="${esc(file)}" controls playsinline preload="metadata"></video>` : ""
+    file
+      ? `<video src="${esc(file)}" controls muted loop playsinline preload="metadata" data-case-video-autoplay></video>`
+      : ""
   }<figcaption><strong>${inlineMarkdown(title)}</strong>${
     caption ? `<em>${inlineMarkdown(caption)}</em>` : ""
   }</figcaption></figure>`;
@@ -386,6 +388,7 @@ function renderCaseImageGrid(source: string): string {
   const title = attrs.title ?? "Image gallery";
   const note = attrs.note ?? "";
   const columns = attrs.columns ?? "2";
+  const fitClass = attrs.fit?.toLowerCase() === "contain" ? " case-image-grid--fit-contain" : "";
   const items = body
     .split("\n")
     .map((line) => line.trim())
@@ -400,7 +403,7 @@ function renderCaseImageGrid(source: string): string {
     })
     .join("");
 
-  return `<figure class="case-image-grid case-image-grid--cols-${esc(columns)}"><figcaption><strong>${inlineMarkdown(
+  return `<figure class="case-image-grid case-image-grid--cols-${esc(columns)}${fitClass}"><figcaption><strong>${inlineMarkdown(
     title
   )}</strong>${note ? `<em>${inlineMarkdown(note)}</em>` : ""}</figcaption><div class="case-image-grid__items">${items}</div></figure>`;
 }

@@ -1,29 +1,200 @@
 ---
 type Props = {
-  title?: string;
-  description?: string;
-  path?: string;
-  image?: string;
-  noindex?: boolean;
-  refresh?: string;
+title?: string;
+description?: string;
+path?: string;
+image?: string;
+noindex?: boolean;
+refresh?: string;
+structuredData?: Record<string, unknown> | Record<string, unknown>[];
 };
 
 const {
-  title = "Alexander Traykov - Product Design Portfolio",
-  description = "Product design portfolio of Alexander Traykov, focused on AI product surfaces, design systems, and complex software.",
-  path = Astro.url.pathname,
-  image = "/og-image.png",
-  noindex = false,
-  refresh
+title = "Alexander Traykov - Product Designer",
+description = "Product design work by Alexander Traykov across AI tools, enterprise software, and design systems.",
+path = Astro.url.pathname,
+image = "/og-image.png",
+noindex = false,
+refresh,
+structuredData
 }: Props = Astro.props;
 
 const siteUrl = "https://traykov.cc";
 const canonicalUrl = new URL(path, siteUrl).toString();
 const imageUrl = new URL(image, siteUrl).toString();
+const structuredDataItems = structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : [];
 ---
 
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbfbf8" />
+<script is:inline>
+  (() => {
+    const storageKey = "traykov-color-theme";
+    const allowed = new Set(["auto", "light", "dark"]);
+    const dayStartsAt = 7;
+    const nightStartsAt = 19;
+    let preference = "auto";
+    let boundaryTimer;
+
+    try {
+      const stored = window.localStorage.getItem(storageKey);
+      const migrated = stored === "system" ? "auto" : stored;
+      if (migrated && allowed.has(migrated)) preference = migrated;
+    } catch {
+      // Storage can be unavailable in private browsing; automatic local-time mode still works.
+    }
+
+    const getAutoState = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      const resolved = hour >= dayStartsAt && hour < nightStartsAt ? "light" : "dark";
+      const nextBoundary = new Date(now);
+
+      if (hour < dayStartsAt) {
+        nextBoundary.setHours(dayStartsAt, 0, 0, 0);
+      } else if (hour < nightStartsAt) {
+        nextBoundary.setHours(nightStartsAt, 0, 0, 0);
+      } else {
+        nextBoundary.setDate(nextBoundary.getDate() + 1);
+        nextBoundary.setHours(dayStartsAt, 0, 0, 0);
+      }
+
+      return { resolved, nextBoundary };
+    };
+
+    const scheduleBoundary = () => {
+      window.clearTimeout(boundaryTimer);
+      if (preference !== "auto") return;
+      const { nextBoundary } = getAutoState();
+      const delay = Math.max(1000, nextBoundary.getTime() - Date.now() + 1000);
+      boundaryTimer = window.setTimeout(() => applyTheme("auto"), delay);
+    };
+
+    const applyTheme = (nextPreference = preference) => {
+      preference = allowed.has(nextPreference) ? nextPreference : "auto";
+      const autoState = getAutoState();
+      const resolved = preference === "auto" ? autoState.resolved : preference;
+      document.documentElement.dataset.themePreference = preference;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.style.colorScheme = resolved;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute(
+        "content",
+        resolved === "dark" ? "#0c0c0b" : "#fbfbf8"
+      );
+      scheduleBoundary();
+      window.dispatchEvent(new CustomEvent("themechange", {
+        detail: {
+          preference,
+          resolved,
+          nextBoundary: preference === "auto" ? autoState.nextBoundary.toISOString() : null
+        }
+      }));
+    };
+
+    window.__traykovTheme = {
+      get preference() {
+        return preference;
+      },
+      get state() {
+        const autoState = getAutoState();
+        return {
+          preference,
+          resolved: preference === "auto" ? autoState.resolved : preference,
+          nextBoundary: preference === "auto" ? autoState.nextBoundary : null
+        };
+      },
+      set(nextPreference) {
+        try {
+          window.localStorage.setItem(storageKey, nextPreference);
+        } catch {
+          // The selected theme still applies for this page view.
+        }
+        applyTheme(nextPreference);
+      }
+    };
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === storageKey) applyTheme(event.newValue || "auto");
+    });
+    applyTheme();
+  })();
+
+  (() => {
+    const storageKey = "traykov-page-transition";
+    let context;
+
+    try {
+      const stored = window.sessionStorage.getItem(storageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const currentPath = window.location.pathname.replace(/\/index\.html$/, "/") || "/";
+        const normalizedPath = currentPath.endsWith("/") ? currentPath : `${currentPath}/`;
+        const isCurrentDestination = parsed?.toPath === normalizedPath;
+        const isFresh = Date.now() - Number(parsed?.createdAt || 0) < 15000;
+        if (isCurrentDestination && isFresh) context = parsed;
+      }
+      window.sessionStorage.removeItem(storageKey);
+    } catch {
+      // Page transitions remain an enhancement when storage is unavailable.
+    }
+
+    if (!context) {
+      const navigationEntry = window.performance.getEntriesByType("navigation")[0];
+      const returnTransition = window.history.state?.traykovReturnTransition;
+      const currentPath = window.location.pathname.replace(/\/index\.html$/, "/") || "/";
+      const normalizedPath = currentPath.endsWith("/") ? currentPath : `${currentPath}/`;
+      const isFresh = Date.now() - Number(returnTransition?.createdAt || 0) < 300000;
+      const supportsNativeTransitions =
+        "onpageswap" in window &&
+        "onpagereveal" in window &&
+        typeof document.startViewTransition === "function";
+
+      if (
+        supportsNativeTransitions &&
+        navigationEntry?.type === "back_forward" &&
+        normalizedPath === "/" &&
+        returnTransition?.caseId &&
+        isFresh
+      ) {
+        context = {
+          kind: "case-home",
+          direction: "back",
+          transport: "native",
+          fromPath: returnTransition.fromCasePath,
+          toPath: "/",
+          fromType: "case",
+          toType: "home",
+          fromHash: "",
+          toHash: "",
+          caseId: returnTransition.caseId,
+          sharedMedia: false,
+          sharedCopy: false,
+          createdAt: Date.now()
+        };
+      }
+    }
+
+    window.__traykovTransitionContext = context;
+    if (!context) return;
+
+    document.documentElement.dataset.transitionIncoming = "true";
+    document.documentElement.dataset.transitionKind = context.kind;
+    document.documentElement.dataset.transitionDirection = context.direction;
+    document.documentElement.dataset.transitionTransport = context.transport;
+    if (context.transport === "native") {
+      document.documentElement.dataset.pageTransitionActive = "true";
+    }
+    if (context.caseId) document.documentElement.dataset.transitionCase = context.caseId;
+  })();
+
+  document.documentElement.dataset.pageTransitions = "ready";
+  window.setTimeout(() => {
+    if (document.body && document.body.dataset.pageReady !== "true") {
+      document.body.dataset.pageReady = "true";
+    }
+  }, 1200);
+</script>
 <title>{title}</title>
 <meta name="description" content={description} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -33,7 +204,6 @@ const imageUrl = new URL(image, siteUrl).toString();
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
-<meta name="theme-color" content="#080808" />
 <meta property="og:site_name" content="Alexander Traykov" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content={title} />
@@ -48,3 +218,6 @@ const imageUrl = new URL(image, siteUrl).toString();
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl} />
 <meta name="twitter:image:alt" content="Product Designer Alexander Traykov — ai-first design / systems / 0-> 1" />
+{structuredDataItems.map((item) => (
+  <script type="application/ld+json" set:html={JSON.stringify(item)} />
+))}

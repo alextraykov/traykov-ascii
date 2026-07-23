@@ -49,6 +49,8 @@ export function createTurntableAsciiReveal(root, options = {}) {
   };
   let startedAt = 0;
   let active = false;
+  let lastRenderedValue;
+  let lastRenderedAsHtml = false;
 
   const setInk = (value) => {
     const ink = clamp01(value);
@@ -189,11 +191,14 @@ export function createTurntableAsciiReveal(root, options = {}) {
 
   const renderInto = (element, lines, time = performance.now()) => {
     const frame = renderFrame(lines, time);
+    if (frame.value === lastRenderedValue && frame.html === lastRenderedAsHtml) return frame.value;
     if (frame.html) {
       element.innerHTML = frame.value;
     } else {
       element.textContent = frame.value;
     }
+    lastRenderedValue = frame.value;
+    lastRenderedAsHtml = frame.html;
     return frame.value;
   };
 

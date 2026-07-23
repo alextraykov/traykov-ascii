@@ -8,18 +8,32 @@ const files = [
   "src/components/ProjectMark.astro",
   "src/components/SiteFooter.astro",
   "src/components/SiteHead.astro",
+  "src/components/ThemeToggle.astro",
+  "src/components/PaveTurntable.astro",
+  "src/components/ObjTurntable.astro",
+  "src/components/SvgLogoTurntable.astro",
   "src/pages/index.astro",
   "src/pages/about.astro",
+  "src/pages/playground.astro",
+  "src/pages/pave-turntable.astro",
+  "src/pages/obj-turntable.astro",
+  "src/pages/sasi-turntable.astro",
+  "src/pages/synapse-turntable.astro",
   "src/pages/case-studies/index.astro",
   "src/pages/case-studies/[slug].astro",
   "src/lib/content.ts",
+  "src/lib/public-case-studies.ts",
   "src/styles/global.css",
   "src/scripts/motion/index.js",
   "src/scripts/motion/reveal.js",
   "src/scripts/motion/scramble.js",
   "src/scripts/motion/scroll-fx.js",
   "src/scripts/motion/count-up.js",
+  "src/scripts/pave-symbol-turntable.js",
+  "src/scripts/obj-turntable.js",
+  "src/scripts/sasi-logo-turntable.js",
   "src/scripts/synapse-card-scramble.js",
+  "public/page-transitions.js",
   "public/ascii-shader.js",
   "public/favicon.svg",
   "public/favicon-32.png",
@@ -30,15 +44,15 @@ const files = [
   "case-studies/_template.mdx",
   "case-studies/pages/designing-pave.mdx",
   "case-studies/pages/synapse-sys.mdx",
-  "case-studies/pages/designing-synapse-sys.mdx",
-  "case-studies/pages/pointlearn.mdx",
-  "case-studies/pages/pave-building-loop.mdx",
-  "case-studies/pages/pave-planning.mdx",
-  "case-studies/pages/pave-direct-edit.mdx",
-  "case-studies/pages/pave-credits.mdx",
-  "case-studies/pages/pave-marketplace.mdx",
+  "case-studies/pages/building-pave-environment.mdx",
+  "case-studies/quickbase/alm-environments.mdx",
   "case-studies/quickbase/connection-central.mdx",
-  "case-studies/old-work/bolt-fun.mdx",
+  "case-studies/quickbase/design-leadership-operations.mdx",
+  "case-studies/quickbase/design-systems-ai-practice.mdx",
+  "case-studies/quickbase/pipelines.mdx",
+  "case-studies/_archive/pages/pave-building-loop.mdx",
+  "case-studies/_archive/pages/pointlearn.mdx",
+  "case-studies/_archive/old-work/bolt-fun.mdx",
   "AGENTS.md",
   "CLAUDE.md",
   "docs/design-language.md"
@@ -50,46 +64,29 @@ const exists = (file) => existsSync(file);
 
 const expectedRoutes = [
   "designing-pave",
-  "synapse-sys",
-  "designing-synapse-sys",
-  "pointlearn",
-  "pave-building-loop",
-  "pave-planning",
-  "pave-direct-edit",
-  "pave-credits",
-  "pave-marketplace",
-  "connection-central",
-  "bolt-fun"
+  "synapse-sys"
 ];
 
-const publicUiFiles = [
-  "src/components/ProjectCard.astro",
-  "src/components/SiteFooter.astro",
-  "src/pages/index.astro",
-  "src/pages/about.astro"
-];
+const homepageCardsAreOpen =
+  has("src/components/ProjectCard.astro", "href?: string") &&
+  has("src/components/ProjectCard.astro", "case study preview. Coming soon.") &&
+  has("src/pages/index.astro", 'action="Open case study"') &&
+  has("src/pages/index.astro", "href={study.href}") &&
+  !has("src/pages/index.astro", 'action="Coming soon"');
 
-const noPublicCaseStudyLinks = publicUiFiles.every(
-  (file) =>
-    !has(file, 'href="/case-studies/"') &&
-    !has(file, "href={study.href}") &&
-    !has(file, "/case-studies/#") &&
-    !has(file, 'label: "Work"')
-);
-
-const caseIndexRouteIsHidden =
+const caseIndexAnchorsHome =
   has("src/pages/case-studies/index.astro", "SiteHead") &&
-  has("src/pages/case-studies/index.astro", "noindex") &&
-  has("src/pages/case-studies/index.astro", 'refresh="0;url=/"') &&
-  has("src/pages/case-studies/index.astro", 'href="/">Return home</a>') &&
-  !has("src/pages/case-studies/index.astro", "work-directory") &&
-  !has("src/pages/case-studies/index.astro", "case-reading-tools") &&
-  has("src/components/SiteHead.astro", '<meta name="robots" content="noindex, nofollow"') &&
-  has("src/components/SiteHead.astro", '<meta http-equiv="refresh" content={refresh}');
+  has("src/pages/case-studies/index.astro", 'noindex={true}') &&
+  has("src/pages/case-studies/index.astro", 'refresh="0;url=/#work"') &&
+  has("src/pages/case-studies/index.astro", 'href="/#work"') &&
+  has("vercel.json", '"source": "/case-studies/"') &&
+  has("vercel.json", '"destination": "/#work"');
 
-const caseDetailShellIsRecovered =
+const caseDetailSourceIsPreservedBehindRedirect =
   has("src/pages/case-studies/[slug].astro", "SiteHead") &&
-  has("src/pages/case-studies/[slug].astro", "noindex") &&
+  has("src/pages/case-studies/[slug].astro", 'Astro.redirect("/#work", 302)') &&
+  has("src/pages/case-studies/[slug].astro", "noindex={!isPublicStudy}") &&
+  has("src/pages/case-studies/[slug].astro", "isPublicCaseStudy") &&
   !has("src/pages/case-studies/[slug].astro", 'refresh="0;url=/"') &&
   has("src/pages/case-studies/[slug].astro", "renderMarkdown(study.body)") &&
   has("src/pages/case-studies/[slug].astro", "getCaseStudyHeadings") &&
@@ -100,12 +97,22 @@ const caseDetailShellIsRecovered =
   has("src/pages/case-studies/[slug].astro", "case-progress") &&
   !has("src/pages/case-studies/[slug].astro", "case-gate");
 
-const vercelHidesCaseRoutes =
-  has("vercel.json", '"source": "/case-studies"') &&
-  has("vercel.json", '"source": "/case-studies/"') &&
-  has("vercel.json", '"source": "/case-studies/:path((?!media/).*)"') &&
-  !has("vercel.json", '"source": "/case-studies/:path*"') &&
-  has("vercel.json", '"destination": "/"');
+const vercelPreservesConsolidatedRoutes =
+  has("vercel.json", '"source": "/case-studies/designing-synapse-sys/"') &&
+  has("vercel.json", '"destination": "/case-studies/synapse-sys/"') &&
+  has("vercel.json", '"destination": "/case-studies/designing-pave/"') &&
+  has("vercel.json", '"destination": "/case-studies/pipelines/"');
+
+const themedRoutes = [
+  "src/pages/index.astro",
+  "src/pages/about.astro",
+  "src/pages/case-studies/[slug].astro",
+  "src/pages/playground.astro",
+  "src/pages/pave-turntable.astro",
+  "src/pages/obj-turntable.astro",
+  "src/pages/sasi-turntable.astro",
+  "src/pages/synapse-turntable.astro"
+];
 
 const checks = [
   ["Astro dependency exists", has("package.json", '"astro"')],
@@ -122,39 +129,122 @@ const checks = [
       exists("public/og-image.svg") &&
       exists("public/site.webmanifest")
   ],
-  ["Shared project card is preview-only", has("src/components/ProjectCard.astro", "project-card__body") && noPublicCaseStudyLinks],
   [
-    "Home recent work uses three preview cards",
+    "Color theme follows local time and persists explicit overrides",
+    has("src/components/SiteHead.astro", '"traykov-color-theme"') &&
+      has("src/components/SiteHead.astro", "dayStartsAt = 7") &&
+      has("src/components/SiteHead.astro", "nightStartsAt = 19") &&
+      has("src/components/SiteHead.astro", "scheduleBoundary") &&
+      has("src/components/SiteHead.astro", "themePreference") &&
+      has("src/components/SiteHead.astro", "themechange") &&
+      has("src/components/ThemeToggle.astro", "data-theme-toggle") &&
+      has("src/components/ThemeToggle.astro", 'class="hn hn-sun"') &&
+      has("src/components/ThemeToggle.astro", 'class="hn hn-moon"') &&
+      has("src/components/ThemeToggle.astro", 'aria-live="polite"') &&
+      has("src/styles/global.css", 'html:not([data-theme])') &&
+      themedRoutes.every((route) => has(route, "ThemeToggle"))
+  ],
+  [
+    "Global CRT scanlines are removed",
+    !has("src/styles/global.css", "repeating-linear-gradient") &&
+      !themedRoutes.some((route) => has(route, 'class="noise"'))
+  ],
+  [
+    "Navigation stays visible while scrolling",
+    has("src/styles/global.css", "position: sticky") &&
+      has("src/styles/global.css", "z-index: var(--z-nav)") &&
+      has("src/components/SiteHead.astro", "viewport-fit=cover") &&
+      has("src/styles/global.css", "max-width: 100svw") &&
+      has("src/styles/global.css", "env(safe-area-inset-top)") &&
+      has("src/styles/global.css", ".site-nav::before") &&
+      has("src/styles/global.css", "height: 100svh") &&
+      !has("src/styles/global.css", "body.is-nav-scrolling .site-nav") &&
+      !has("public/page-transitions.js", "hideNavWhileScrolling") &&
+      !has("public/page-transitions.js", '"is-nav-scrolling"')
+  ],
+  [
+    "Footer booking uses Cal.com",
+    has("src/components/SiteFooter.astro", "PUBLIC_CAL_BOOKING_URL") &&
+      has("src/components/SiteFooter.astro", "https://cal.com/alexander-cqn5aq/30min") &&
+      has("src/components/SiteFooter.astro", 'url.searchParams.set("embed", "true")') &&
+      has("src/components/SiteFooter.astro", "Book a 30-minute call with Alexander Traykov") &&
+      !has("src/components/SiteFooter.astro", "PUBLIC_GOOGLE_CALENDAR_BOOKING_URL") &&
+      !has("src/components/SiteFooter.astro", "calendar.google.com")
+  ],
+  [
+    "Dark case-study components use readable semantic surfaces",
+      has("src/styles/global.css", 'html[data-theme="dark"]') &&
+      has("src/styles/global.css", "--surface-raised") &&
+      has("src/styles/global.css", "--card-surface") &&
+      has("src/styles/global.css", "--card-media-filter") &&
+      has("src/styles/global.css", "--ascii-stage-background") &&
+      has("src/styles/global.css", "--ascii-stage-blend") &&
+      has("src/styles/global.css", ".about-turntable__ascii") &&
+      has("src/styles/global.css", "var(--turntable-ascii)") &&
+      has("src/styles/global.css", "--case-hero-turntable-opacity") &&
+      has("public/ascii-shader.js", 'const ASCII_RAMP = " .:+*#%@"') &&
+      has("src/styles/global.css", "--text-caption") &&
+      has("src/styles/global.css", ".case-toc") &&
+      has("src/styles/global.css", ".case-video-copy") &&
+      has("src/styles/global.css", ".case-stat p") &&
+      has("src/styles/global.css", ".case-study-body .case-bluf-note")
+  ],
+  [
+    "3D turntables expose one accessible image and theme-aware controls",
+    ["src/components/PaveTurntable.astro", "src/components/ObjTurntable.astro", "src/components/SvgLogoTurntable.astro"].every(
+      (component) => has(component, 'role={ariaLabel ? "img" : undefined}') && has(component, 'aria-hidden="true"')
+    ) &&
+      has("src/styles/global.css", "--turntable-stage-background") &&
+      has("src/styles/global.css", "--turntable-ascii-faint") &&
+      has("src/styles/global.css", ".pave-turntable-controls") &&
+      has("src/styles/global.css", ".turntable-process rect") &&
+      ["src/scripts/pave-symbol-turntable.js", "src/scripts/obj-turntable.js", "src/scripts/sasi-logo-turntable.js"].every(
+        (script) => has(script, 'event.key === "ArrowRight"') && has(script, "tabButton.tabIndex")
+      ) &&
+      ["src/pages/pave-turntable.astro", "src/pages/obj-turntable.astro", "src/pages/sasi-turntable.astro", "src/pages/synapse-turntable.astro"].every(
+        (route) => has(route, 'role="tabpanel"') && has(route, 'aria-controls=')
+      )
+  ],
+  [
+    "Homepage case studies are clickable",
+    has("src/components/ProjectCard.astro", "project-card__body") &&
+      homepageCardsAreOpen
+  ],
+  [
+    "Home recent work uses two case-study cards",
     has("src/pages/index.astro", "ProjectCard") &&
-      has("src/pages/index.astro", 'const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"]') &&
-      has("src/pages/index.astro", "Recent case studies.") &&
-      has("src/pages/index.astro", "WIP / preview only") &&
-      !has("src/pages/index.astro", "View older work") &&
+      has("src/lib/public-case-studies.ts", '"designing-pave", "synapse-sys"') &&
+      has("src/pages/index.astro", "getFeaturedCaseStudies(getCaseStudies())") &&
+      has("src/pages/index.astro", "Two selected case studies.") &&
+      has("src/pages/index.astro", "Open case study") &&
+      !has("src/pages/index.astro", "View all selected work") &&
       !has("src/pages/index.astro", "work-footer") &&
       !has("src/pages/index.astro", "<details")
   ],
   [
-    "Homepage turntable has resilient fallback",
-    has("src/pages/index.astro", "aboutTurntableFallback") &&
-      has("src/pages/index.astro", "staticAscii={aboutTurntableFallback}") &&
+    "Homepage turntable avoids the static ASCII fallback",
+    !has("src/pages/index.astro", "aboutTurntableFallback") &&
+      !has("src/pages/index.astro", "staticAscii=") &&
+      has("src/pages/index.astro", 'objSrc="/models/me.glb"') &&
       has("src/styles/global.css", ".about-hero-copy") &&
       has("src/styles/global.css", "opacity: 1")
   ],
-  ["Work index route remains hidden", caseIndexRouteIsHidden],
+  ["Selected work index anchors home", caseIndexAnchorsHome],
 
-  ["Case detail reader shell is recovered", caseDetailShellIsRecovered],
+  ["Case detail source is preserved behind redirects", caseDetailSourceIsPreservedBehindRedirect],
 
-  ["Vercel still hides case-study routes", vercelHidesCaseRoutes],
+  ["Vercel preserves consolidated case-study URLs", vercelPreservesConsolidatedRoutes],
   [
     "Case-study preview media remains routable",
-    has("src/components/ProjectMark.astro", 'src="/case-studies/media/synapse-sys-card-turntable.mp4"') &&
-      has("vercel.json", "(?!media/)")
+    has("src/components/ProjectMark.astro", 'data-src="/case-studies/media/synapse-sys-card-turntable-card.mp4"') &&
+      exists("public/case-studies/media/synapse-sys-card-turntable-card.mp4") &&
+      !has("vercel.json", '"source": "/case-studies/media/')
   ],
   [
     "Content helper preserves case-study source",
     has("src/lib/content.ts", 'walkFiles(caseStudyRoot, ".mdx")') &&
       has("src/lib/content.ts", "getAdjacentCaseStudies") &&
-      expectedRoutes.every((route) => has("src/lib/content.ts", `"${route}"`))
+      expectedRoutes.every((route) => has("src/lib/public-case-studies.ts", `"${route}"`))
   ],
   [
     "Markdown renderer keeps visual evidence readable",
@@ -175,27 +265,27 @@ const checks = [
     has("src/components/SiteFooter.astro", "siteLinks") &&
       has("src/components/SiteFooter.astro", "links.length > 0") &&
       has("src/components/SiteFooter.astro", "Back to top") &&
-      !has("src/components/SiteFooter.astro", 'href: "/case-studies/"')
+      has("src/components/SiteFooter.astro", 'href: "/#work"')
   ],
   [
     "Core case-study content exists",
     has("case-studies/pages/designing-pave.mdx", "Designing Pave") &&
       has("case-studies/pages/synapse-sys.mdx", "Synapse-Sys") &&
-      has("case-studies/pages/designing-synapse-sys.mdx", "Designing SynapseSys") &&
-      has("case-studies/pages/pointlearn.mdx", "PointLearn")
+      has("case-studies/pages/building-pave-environment.mdx", "Building Pave") &&
+      has("case-studies/quickbase/pipelines.mdx", "Pipelines")
   ],
   [
-    "Pave arc content exists",
-    has("case-studies/pages/pave-building-loop.mdx", "Building Loop") &&
-      has("case-studies/pages/pave-planning.mdx", "Planning") &&
-      has("case-studies/pages/pave-direct-edit.mdx", "Direct Edit") &&
-      has("case-studies/pages/pave-credits.mdx", "Credits") &&
-      has("case-studies/pages/pave-marketplace.mdx", "Marketplace")
+    "Supporting portfolio content exists",
+    has("case-studies/quickbase/alm-environments.mdx", "ALM Environments") &&
+      has("case-studies/quickbase/design-leadership-operations.mdx", "Design leadership") &&
+      has("case-studies/quickbase/design-systems-ai-practice.mdx", "Design systems") &&
+      has("case-studies/quickbase/connection-central.mdx", "Connection Central")
   ],
   [
-    "Legacy work source remains preserved",
-    has("case-studies/quickbase/connection-central.mdx", "Connection Central") &&
-      has("case-studies/old-work/bolt-fun.mdx", "Old work")
+    "Consolidated source remains in the non-routable archive",
+    has("case-studies/_archive/pages/pave-building-loop.mdx", "Building Loop") &&
+      has("case-studies/_archive/pages/pointlearn.mdx", "PointLearn") &&
+      has("case-studies/_archive/old-work/bolt-fun.mdx", "Old work")
   ],
   [
     "Responsive CSS exists",

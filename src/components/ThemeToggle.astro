@@ -1,0 +1,56 @@
+<button
+  class="theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-label="Automatic color theme. Activate to switch theme."
+  title="Automatic theme"
+>
+  <i class="hn hn-sun"></i>
+  <i class="hn hn-moon"></i>
+  <span class="theme-toggle__status" data-theme-status aria-live="polite">
+    Automatic color theme
+  </span>
+</button>
+
+<script>
+  const nextPreference = (state) => {
+    if (state.preference === "auto") return state.resolved === "dark" ? "light" : "dark";
+    if (state.preference === "light") return "dark";
+    return "auto";
+  };
+
+  const syncThemeToggle = () => {
+    const themeController = (window as any).__traykovTheme;
+    const state = themeController?.state || { preference: "auto", resolved: "light", nextBoundary: null };
+    const next = nextPreference(state);
+
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      const status = button.querySelector("[data-theme-status]");
+      const mode = state.preference === "auto" ? `automatic ${state.resolved}` : state.resolved;
+      const nextLabel = next === "auto" ? "automatic" : next;
+      button.setAttribute("aria-label", `Color theme: ${mode}. Activate to switch to ${nextLabel}.`);
+      button.setAttribute("title", `Theme: ${mode}`);
+
+      if (!status) return;
+      if (state.preference === "auto" && state.nextBoundary) {
+        const nextTime = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" })
+          .format(state.nextBoundary);
+        status.textContent = `Automatic ${state.resolved} color theme. Next change at ${nextTime}.`;
+      } else {
+        status.textContent = `${state.resolved} color theme selected.`;
+      }
+    });
+  };
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest?.("[data-theme-toggle]");
+    if (!button) return;
+    const themeController = (window as any).__traykovTheme;
+    const state = themeController?.state || { preference: "auto", resolved: "light" };
+    themeController?.set(nextPreference(state));
+  });
+
+  window.addEventListener("themechange", syncThemeToggle);
+  document.addEventListener("astro:page-load", syncThemeToggle);
+  syncThemeToggle();
+</script>

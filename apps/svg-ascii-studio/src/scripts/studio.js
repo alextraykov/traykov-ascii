@@ -326,9 +326,11 @@ if (root) {
   let cols = 96;
   let rows = 48;
   let trailBuffer = new Float32Array(cols * rows);
+  let hasTrail = false;
   let lastTrailTime = 0;
   let lastRenderTime = 0;
   let lastAsciiTime = 0;
+  let lastAsciiOutput = ascii?.textContent || "";
   let turntableAngle = 0;
   let rebuildToken = 0;
   let geometryRebuildTimer = 0;
@@ -340,6 +342,11 @@ if (root) {
   let sourceState = "empty";
   let isRestoringWorkspace = false;
   let storageWarningShown = false;
+  let pendingRenderFrame = 0;
+  let stageVisible = true;
+  let destroyed = false;
+  let resizeObserver;
+  let stageObserver;
   let persistStudioState = () => {};
   let clearStoredWorkspace = () => {};
 
@@ -350,7 +357,7 @@ if (root) {
   const renderer = new THREE.WebGLRenderer({
     alpha: false,
     antialias: true,
-    preserveDrawingBuffer: true,
+    preserveDrawingBuffer: false,
     stencil: true
   });
   renderer.setPixelRatio(1);
@@ -391,7 +398,7 @@ if (root) {
   scene.add(ambientLight, keyLight, rimLight, fillLight);
 
   const sampleCanvas = document.createElement("canvas");
-  const sampleContext = sampleCanvas.getContext("2d", { willReadFrequently: true });
+  const sampleContext = sampleCanvas.getContext("2d", { alpha: false, willReadFrequently: true });
   const loader = new SVGLoader();
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -680,6 +687,7 @@ if (root) {
       updateDiagnostics();
       setSampleButtonState();
       persistStudioState();
+      scheduleRender();
       return true;
     } catch (error) {
       const hasPreviousRender = Boolean(activeGroup);
@@ -693,6 +701,7 @@ if (root) {
       updateExportAvailability();
       updateStageEmpty();
       updateDiagnostics();
+      scheduleRender();
       return false;
     }
   };
@@ -747,17 +756,27 @@ if (root) {
     const height = Math.max(1, Math.floor(rect.height));
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setSize(width, height, false);
     stage.style.setProperty("--stage-aspect", `${width} / ${height}`);
 
     cols = clamp(Math.floor(width / state.density), 34, 240);
     rows = clamp(Math.floor(height / (state.density * state.rowScale)), 18, 150);
+    const solidVisible = root.dataset.view !== "ascii";
+    const solidRect = solidVisible ? renderHost?.getBoundingClientRect() : null;
+    const renderWidth = solidVisible
+      ? Math.max(1, Math.floor(solidRect?.width || width))
+      : Math.max(1, Math.min(width, Math.floor(cols * 1.5)));
+    const renderHeight = solidVisible
+      ? Math.max(1, Math.floor(solidRect?.height || height))
+      : Math.max(1, Math.min(height, Math.floor(renderWidth * (height / width))));
+    renderer.setSize(renderWidth, renderHeight, false);
     sampleCanvas.width = cols;
     sampleCanvas.height = rows;
     trailBuffer = new Float32Array(cols * rows);
+    hasTrail = false;
 
     ascii.style.fontSize = `${Math.max(5.5, width / (cols * 0.62))}px`;
     ascii.style.lineHeight = `${height / rows}px`;
+    scheduleRender();
   };
 
   const eventToGrid = (event) => {
@@ -770,6 +789,7 @@ if (root) {
 
   const addTrail = (centerX, centerY, strength = 1) => {
     if (state.hover <= 0) return;
+    let added = false;
     const radius = clamp(cols * 0.046, 4, 14);
     const minX = Math.max(0, Math.floor(centerX - radius));
     const maxX = Math.min(cols - 1, Math.ceil(centerX + radius));
@@ -783,11 +803,15 @@ if (root) {
         if (distance > 1) continue;
         const index = y * cols + x;
         trailBuffer[index] = Math.max(trailBuffer[index], Math.pow(1 - distance, 1.65) * strength);
+        added = true;
       }
     }
+    hasTrail ||= added;
+    scheduleRender();
   };
 
   const updateTrail = (time) => {
+    if (!hasTrail) return;
     if (!lastTrailTime) {
       lastTrailTime = time;
       return;
@@ -795,10 +819,17 @@ if (root) {
     const delta = Math.min(180, Math.max(0, time - lastTrailTime));
     const decay = Math.exp(-delta / Math.max(80, state.trailDecay));
     lastTrailTime = time;
+    let nextHasTrail = false;
     for (let index = 0; index < trailBuffer.length; index += 1) {
       const next = trailBuffer[index] * decay;
-      trailBuffer[index] = next > 0.01 ? next : 0;
+      if (next > 0.01) {
+        trailBuffer[index] = next;
+        nextHasTrail = true;
+      } else {
+        trailBuffer[index] = 0;
+      }
     }
+    hasTrail = nextHasTrail;
   };
 
   const noise = (x, y, time) => {
@@ -815,7 +846,6 @@ if (root) {
 
   const toAscii = (time) => {
     if (!sampleContext || !ascii) return;
-    sampleContext.clearRect(0, 0, cols, rows);
     sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
     const ramp = RAMP_OPTIONS[state.ramp] || RAMP_OPTIONS.classic;
@@ -848,7 +878,11 @@ if (root) {
       }
       lines.push(line);
     }
-    ascii.textContent = lines.join("\n");
+    const output = lines.join("\n");
+    if (output !== lastAsciiOutput) {
+      ascii.textContent = output;
+      lastAsciiOutput = output;
+    }
   };
 
   const readControlValue = (control) => {
@@ -1087,6 +1121,7 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
   const applyControlChange = (name, value, { fromPreset = false } = {}) => {
     state[name] = value;
     syncOutput(name);
+    scheduleRender();
     if (!fromPreset) markPresetModified();
 
     if (GEOMETRY_CONTROLS.has(name)) {
@@ -1342,7 +1377,19 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
     window.open(url.toString(), "_blank", "noopener,noreferrer");
   };
 
+  const scheduleRender = () => {
+    if (pendingRenderFrame || destroyed || document.hidden || !stageVisible) return;
+    pendingRenderFrame = requestAnimationFrame(render);
+  };
+
   const render = (time = 0) => {
+    pendingRenderFrame = 0;
+    if (destroyed || document.hidden || !stageVisible) return;
+    const frameInterval = root.dataset.view === "ascii" ? 1000 / 30 : 1000 / 60;
+    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+      scheduleRender();
+      return;
+    }
     if (!lastRenderTime) lastRenderTime = time;
     const delta = Math.min(80, Math.max(0, time - lastRenderTime)) / 1000;
     lastRenderTime = time;
@@ -1358,7 +1405,7 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
       lastAsciiTime = time;
       toAscii(time);
     }
-    requestAnimationFrame(render);
+    if (!reduceMotion.matches && (!isPaused || hasTrail)) scheduleRender();
   };
 
   const readStoredWorkspace = () => {
@@ -1730,7 +1777,32 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
     isPaused = !isPaused;
     pauseButton.textContent = isPaused ? "Resume" : "Pause";
     pauseButton.setAttribute("aria-pressed", String(isPaused));
+    scheduleRender();
   });
+
+  const onVisibilityChange = () => scheduleRender();
+  document.addEventListener("visibilitychange", onVisibilityChange);
+  reduceMotion.addEventListener("change", onVisibilityChange);
+
+  const destroy = () => {
+    if (destroyed) return;
+    destroyed = true;
+    window.clearTimeout(geometryRebuildTimer);
+    if (pendingRenderFrame) cancelAnimationFrame(pendingRenderFrame);
+    pendingRenderFrame = 0;
+    resizeObserver?.disconnect();
+    stageObserver?.disconnect();
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+    reduceMotion.removeEventListener("change", onVisibilityChange);
+    if (activeGroup) disposeGroup(activeGroup);
+    frontMaterial.dispose();
+    sideMaterial.dispose();
+    detailMaterial.dispose();
+    renderer.dispose();
+    renderer.forceContextLoss();
+    renderer.domElement.remove();
+  };
+  window.addEventListener("pagehide", destroy, { once: true });
 
   setPresetState("clean", false);
   updateMaterials();
@@ -1743,6 +1815,23 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
   if (!restoreStoredWorkspace()) {
     clearSource({ clearStorage: false });
   }
-  if (stage) new ResizeObserver(resize).observe(stage);
-  requestAnimationFrame(render);
+  if (stage) {
+    resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(stage);
+    stageObserver = new IntersectionObserver(
+      ([entry]) => {
+        stageVisible = entry?.isIntersecting ?? false;
+        if (stageVisible) {
+          lastRenderTime = 0;
+          scheduleRender();
+        } else if (pendingRenderFrame) {
+          cancelAnimationFrame(pendingRenderFrame);
+          pendingRenderFrame = 0;
+        }
+      },
+      { rootMargin: "120px 0px", threshold: 0.01 }
+    );
+    stageObserver.observe(stage);
+  }
+  scheduleRender();
 }

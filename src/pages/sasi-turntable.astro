@@ -1,5 +1,7 @@
 ---
+import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import SvgLogoTurntable from "../components/SvgLogoTurntable.astro";
 import "../styles/global.css";
 ---
@@ -16,13 +18,13 @@ import "../styles/global.css";
   </head>
   <body class="pave-turntable-page">
     <header class="site-nav">
-      <a class="brand" href="/" aria-label="Back to portfolio">AT</a>
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
-        <a href="/" data-scramble>Portfolio</a>
-        <a href="/pave-turntable/" data-scramble>PAVE</a>
-        <a href="/playground" data-scramble>Playground</a>
-        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
       </nav>
+      <ThemeToggle />
     </header>
 
     <SvgLogoTurntable
@@ -48,15 +50,15 @@ import "../styles/global.css";
 
       <div class="pave-turntable-panel">
         <div class="pave-turntable-tabs" role="tablist" aria-label="Turntable panel">
-          <button type="button" class="is-active" role="tab" aria-selected="true" data-sasi-tab="settings">
+          <button type="button" class="is-active" id="sasi-tab-settings" role="tab" aria-selected="true" aria-controls="sasi-panel-settings" tabindex="0" data-sasi-tab="settings">
             Copy
           </button>
-          <button type="button" role="tab" aria-selected="false" data-sasi-tab="how">
+          <button type="button" id="sasi-tab-how" role="tab" aria-selected="false" aria-controls="sasi-panel-how" tabindex="-1" data-sasi-tab="how">
             How
           </button>
         </div>
 
-        <div class="pave-turntable-panel-face is-active" data-sasi-panel="settings">
+        <div class="pave-turntable-panel-face is-active" id="sasi-panel-settings" role="tabpanel" aria-labelledby="sasi-tab-settings" data-sasi-panel="settings">
           <div class="pave-turntable-settings">
             <span>Settings JSON</span>
             <textarea data-sasi-settings readonly spellcheck="false"></textarea>
@@ -64,7 +66,7 @@ import "../styles/global.css";
           </div>
         </div>
 
-        <div class="pave-turntable-panel-face" data-sasi-panel="how" hidden>
+        <div class="pave-turntable-panel-face" id="sasi-panel-how" role="tabpanel" aria-labelledby="sasi-tab-how" data-sasi-panel="how" hidden>
           <div class="turntable-process" aria-label="SVG to 3D ASCII turntable pipeline">
             <p>SVG to 3D ASCII</p>
             <svg viewBox="0 0 360 520" role="img" aria-label="Sasi turntable rendering pipeline">
@@ -144,8 +146,15 @@ import "../styles/global.css";
     </aside>
 
     <script>
-      import "../scripts/sasi-logo-turntable.js";
+      import { registerTurntables } from "../scripts/turntable-loader.js";
       import "../scripts/turntable-preview-select.js";
+
+      registerTurntables(
+        "[data-sasi-logo-turntable]",
+        () => import("../scripts/sasi-logo-turntable.js"),
+        (module, root) => module.initializeSasiLogoTurntable(root)
+      );
     </script>
+    <SiteAnalytics />
   </body>
 </html>

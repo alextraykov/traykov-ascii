@@ -1,32 +1,32 @@
 ---
-title: Building Pave — the design environment
+title: Building Pave - the design environment
 category: systems case study
 status: prototype
 pubDate: 2026-05-13
 tags: [ai, design-systems, agents, ci, handoff]
 heroImage: /case-studies/screenshots/pages/pave-styleguide-light.png
 readTime: 9 min
-summary: "How I built the environment behind Pave: a token-governed design-intent prototype, specialist agent lanes, branch previews, and a handoff workflow for executable product specs."
+summary: "The prototype repo, token rules, branch previews, agent lanes, and behaviour-first handoffs used while designing Pave."
 group: "Pave"
 order: -1
 ---
 
-## The one-liner
+## I got tired of narrating the missing behaviour
 
-Pave was not only a product prototype. It was also a design environment: a repo where designers could express product intent through runnable code, review working branch previews, and hand off behavior instead of static screens.
+In static design files I kept explaining motion, loading, dark mode, responsive behaviour, and the exact moment a state changed *beside* the screen. The annotations were becoming a parallel product - one that only worked while I was presenting it.
 
-The companion case study, [Designing Pave](/case-studies/designing-pave/), covers the product surfaces. This one covers the operating system behind them.
+So I built a shared prototype repo and put the behaviour in the browser. This solved the narration problem and immediately created another one: AI could make the prototype grow fast enough that hardcoded colours, invented spacing, undocumented states, and broad “helpful” edits multiplied before review. Some screens looked far more certain than the thinking behind them. Mine included.
 
-## Why the environment mattered
+The companion case study, [Designing Pave](/case-studies/designing-pave/), covers the product itself. This one is about how I made and shared the work.
 
-AI-assisted design work can move quickly, but speed creates its own failure modes: hardcoded colors, inconsistent spacing, undocumented state, overbroad edits, unclear ownership, and prototypes that look more production-ready than they are.
+## The repo needed brakes as much as speed
 
-For Pave, the environment had to support two jobs at once:
+The repo had to do two jobs that did not naturally arrive together:
 
-- Let designers and agents produce high-fidelity, runnable product intent.
-- Keep that work constrained enough that engineering, PM, content, and design QA could trust what they were reviewing.
+- Let designers make detailed, runnable prototypes.
+- Keep the output constrained enough that product, engineering, content, and design could review the same thing.
 
-That is the difference between a one-off prototype and a repeatable design workflow.
+Without the second job, I had simply built a faster way to make disposable UI slop.
 
 ```mermaid
 flowchart LR
@@ -36,19 +36,7 @@ flowchart LR
     Review --> Handoff[Implementation handoff]
 ```
 
-## Evidence boundary
-
-This public portfolio repo includes the exported case-study surfaces, screenshots, and preview components. Some source-repo artifacts behind the workflow, including private handoff docs, internal branch history, workflow logs, and agent definitions, are not published here.
-
-So this case study is careful about claim strength:
-
-- I make hard claims where the public case-study material can show the artifact.
-- I describe private operational material as workflow design unless it can be shown safely in a redacted form.
-- I treat the prototype repo as a design-intent environment, not a production architecture reference.
-
-That boundary matters. A hiring reviewer should be able to trust the story without needing access to confidential repositories.
-
-## The loop I wanted
+## A URL somebody else could argue with
 
 The intended loop was simple:
 
@@ -59,39 +47,39 @@ The intended loop was simple:
 5. Push the branch.
 6. Share a browser preview and handoff artifact for review.
 
-The value was not that an agent could write code. The value was that a designer could turn intent into a reviewable product object without asking engineering to translate every intermediate idea.
+An agent writing React only mattered because it shortened the distance between an idea and something the team could disagree with in a real browser, without asking an engineer to translate every intermediate design thought.
 
-In the strongest version of the workflow, the review artifact is a URL, not a screenshot. Reviewers can inspect hover, focus, motion, dark mode, responsive behavior, and state transitions directly.
+The review link was a URL, not a screenshot. Anyone could inspect hover, focus, motion, dark mode, responsive behaviour, and state changes directly.
 
-## Design-intent prototype, not production architecture
+## What the prototype was allowed to pretend
 
-The repo was meant to express what to build: behavior, states, motion, copy, tokens, flows, and handoff intent. Production concerns such as auth, persistence, API contracts, observability, and backend architecture belonged elsewhere.
+The repo expressed behaviour, states, motion, copy, tokens, flows, and handoff intent. It did not get to pretend it had solved authentication, persistence, API contracts, observability, or backend architecture.
 
-That constraint was useful. I did not need to build a durable data layer to prove the workflow builder. I needed a working surface that made the intended product behavior legible to engineers and stakeholders.
+I had to repeat that limit because runnable code has a strange authority. I did not need a durable data layer to explore the workflow builder; I needed the intended behaviour to be clear when an engineer or product manager opened the page. The distinction is obvious in writing and remarkably easy to blur in a polished demo.
 
 The environment optimized for three things:
 
 - Runnable demos that reviewers could use, not just inspect
 - Token consistency that made visual decisions systematic
-- Extractable intent that production engineers could implement without reconstructing the design from screenshots
+- Enough written context that engineers did not have to reconstruct the behaviour from screenshots
 
-## Token-governed UI
+## Generated UI loves inventing one more grey
 
 The prototype UI was governed by a semantic token system. Components asked for purpose, not raw values: surface, text, border, spacing, radius, motion duration, and accent roles.
 
-That decision turned tokens from a theme file into a governance surface. The useful rule was not merely "use CSS variables." It was:
+I treated tokens as rules, not a decorative theme file. The most useful one was:
 
 > If a required style value does not exist as a token, stop and name the missing token instead of improvising one.
 
-That rule reduces the drift pattern that usually appears in generated UI: one component introduces a slightly different color, another adds a one-off radius, a third creates a bespoke duration, and the system slowly loses its shape.
+This stopped the slow drift I kept seeing: one component introduced a slightly different grey, another added a one-off radius, and a third invented an animation duration because apparently 180ms had offended it.
 
 Light and dark mode used the same semantic contract. Components were designed to ask for roles rather than hardcoded theme values, which made dark-mode review and later brand changes less expensive.
 
-The Blinq-to-Pave rebrand was the useful proof point. A brand migration could be expressed through token values, logo usage, font decisions, and documentation rather than through isolated per-screen restyling.
+The Blinq-to-Pave rebrand tested the system properly. I changed token values, logos, fonts, and documentation instead of restyling every screen.
 
-## Specialist agent lanes
+## The generalist agent was a menace
 
-The workflow was organized around narrow agent responsibilities. The important principle was not the exact tool name. It was the boundary:
+I split AI work into narrow responsibilities:
 
 - Product/design strategy work should not casually rewrite implementation details.
 - Frontend implementation should not casually invent product copy.
@@ -100,11 +88,11 @@ The workflow was organized around narrow agent responsibilities. The important p
 - Handoff work should capture state, props, behavior, tokens, and gaps.
 - Design QA should check tokens, dark mode, accessibility, and interaction quality.
 
-Narrow lanes reduce the failure mode where a generalist agent changes layout, copy, state, dependencies, and docs in one broad pass.
+The generalist version was eager and dangerous. Ask for a loading state and it might also improve the copy, reorganise the component, add a dependency, and tidy documentation nobody had asked it to touch. Narrow lanes reduced the blast radius.
 
-The source repo used named agent roles and routing conventions for this work. I keep exact agent count and routing claims out of the public prose unless I can pair them with a redacted excerpt of those definitions.
+The names and routing changed as I worked, but the division of responsibility stayed useful.
 
-## Guardrails and review gates
+## Adding checks before review
 
 The environment treated design-system compliance as part of quality, not as cleanup.
 
@@ -117,27 +105,23 @@ The intended guardrail stack included:
 - Content guidelines for UI strings and review language
 - Build and review checks that made violations visible before handoff
 
-Some of those artifacts are referenced by the case-study system but are not included in this public snapshot. That means the public prose should not overclaim exact automation unless the workflow YAML, scripts, or logs can be shown.
+Not every check was automated. The contract still mattered because “please be careful” is not a system, however beautifully prompted.
 
-The safer claim is still strong: the environment was designed so that agents worked inside an explicit contract instead of free-form prompt improvisation.
-
-## Branch previews as the review surface
+## Screenshots kept hiding the failures
 
 Static screenshots are useful, but they hide the parts of product design that usually matter in AI tools: hover states, focus behavior, loading motion, review gates, dark mode, and responsive friction.
 
-The branch-preview model made the working URL the review artifact. A branch could become a browser surface that a designer, PM, content partner, engineer, or design QA reviewer could open and inspect.
+Each branch could become a working page that a designer, product manager, writer, or engineer could open and inspect.
 
-In the source workflow, branch previews were designed to answer a practical question:
+The preview answered one practical question:
 
 > Can this design intent be reviewed without local setup?
 
-For public proof, the strongest artifacts are a redacted workflow excerpt, a preview index screenshot, a preview banner screenshot, and one safe example of the branch URL pattern.
-
-## Handoff grammar
+## The screen was the wrong handoff unit
 
 The production handoff needed to survive without me narrating every decision live.
 
-The useful handoff unit was not a screen. It was a behavior package:
+A behavior package became the useful handoff unit:
 
 - User goal
 - State model
@@ -158,11 +142,11 @@ flowchart LR
     Gaps --> Build[Engineering translation]
 ```
 
-This is where spec-driven development became useful. The prototype was an executable product spec: reviewers could use the behavior in a browser, then read the handoff to understand the state and implementation intent behind it.
+The prototype showed what happened in the browser; the handoff explained the state, tokens, edge cases, and gaps behind it.
 
-The clearest proof was Plan Mode.
+Plan Mode was the clearest example.
 
-Plan Mode did not live on a neat one-feature branch. It was built incrementally on the `rebrand/blinq-to-pave` branch, where brand migration, builder behavior, and planning interactions were moving together. That made the handoff system more important, not less: the feature needed a way to separate product intent from branch noise.
+Plan Mode grew on `rebrand/blinq-to-pave` alongside brand migration, builder behaviour, and planning interactions. The branch was noisy. The handoff had to separate product intent from that noise instead of pretending the implementation history had been tidy.
 
 The defining delivery package had three parts:
 
@@ -170,26 +154,24 @@ The defining delivery package had three parts:
 - PM/content preview brief: copy inventory, review prompts, and design-review feedback
 - Flow diagram: the Plan Mode sequence from generation through approval and execution
 
-The handoff's load-bearing artifact was the `PlanStatus` state model:
+The load-bearing part of the handoff was the `PlanStatus` model:
 
-| State | What it clarified |
-|---|---|
-| `generating-plan` | The system is drafting the plan before the user can approve it. |
-| `plan-ready` | The plan can be reviewed, but execution has not started. |
-| `generating-steps` | The system is expanding the approved plan into executable steps. |
-| `draft` | The plan exists as a reviewable object. |
-| `executing` | Work is actively running and progress indicators remain visible. |
-| `paused` | Execution stops, including motion states that should no longer imply progress. |
-| `completed` | The plan has resolved and the footer/action model changes. |
-| `cancelled` | The plan exits without pretending work completed. |
+- `generating-plan`: Pave is drafting the plan; there is nothing to approve yet.
+- `plan-ready`: the plan can be reviewed, but execution has not started.
+- `generating-steps`: Pave is turning the approved plan into steps.
+- `draft`: the plan exists as an object the person can review.
+- `executing`: work is running and progress remains visible.
+- `paused`: execution and progress motion both stop.
+- `completed`: the work has resolved and the available actions change.
+- `cancelled`: the plan exits without pretending that it completed.
 
-That table replaced ambiguity. Without it, an engineer would have had to reverse-engineer behavior from the prototype animation alone: which header text appears, which footer buttons are available, when shimmer is active, when dot pulse is allowed, and why paused should not look like executing.
+Without the list, an engineer would have had to reverse-engineer product state from animation: which heading appears, which buttons exist, when shimmer runs, and why `paused` must not sit there cosplaying as `executing`.
 
-The same package separated reviewer needs. Engineers used the repo, handoff doc, and diagram to understand implementation behavior. PM and content reviewers used the preview URL and preview brief to inspect the live branch without running the app locally. The preview brief also captured design-review feedback from April 9, 2026 and tracked each item to a resolution, turning review comments into part of the delivery artifact instead of side-channel memory.
+Engineers used the repo, handoff, and diagram. Product and content used the preview and a shorter review brief. That brief also recorded feedback from April 9, 2026 and what happened to each comment, so decisions did not disappear into chat.
 
-SubagentBubble was a nested pattern inside this Plan Mode work, not a separate case-study feature. It made AI activity feel granular and observable inside plan steps without turning the interface into a log stream. It mattered because the environment was trying to preserve fidelity that screenshots usually lose: small progress states, hover behavior, motion, and the feeling of work unfolding inside the builder.
+`SubagentBubble` sat inside the Plan Mode work. It showed small pieces of progress without turning the interface into a log. This was exactly the kind of detail that disappeared in a static handoff.
 
-## Designer onboarding
+## Helping another designer use it
 
 The workflow only mattered if non-engineers could use it.
 
@@ -202,7 +184,7 @@ The onboarding path was designed around a small repeatable unit:
 5. Push the branch.
 6. Share the preview and handoff notes for review.
 
-The starter prompt was the load-bearing artifact. It taught the shape of a good request:
+The starter prompt showed the shape of a good request:
 
 ```bash
 Use the frontend lane.
@@ -212,48 +194,17 @@ Verify light and dark mode.
 Do not add dependencies or change route structure.
 ```
 
-I frame onboarding results as an internal pilot unless there is a redacted PR, timestamp, or participant note that can safely support a stronger validation claim.
+I only ran this as an internal pilot. I did not measure onboarding time or validate it with a wider group of non-coding designers.
 
-## Private walkthrough appendix
+## Limits of the pilot
 
-Some proof is better suited to a hiring walkthrough than a public page.
+The environment made Pave easier to build and discuss. Tokens constrained the visual language, narrow agent lanes limited accidental edits, branch previews exposed actual behaviour, and the handoffs recorded what the browser could not explain. Engineers used the repo and the Plan Mode package; product and content could review a shorter preview brief.
 
-The strongest appendix includes:
+I only ran the non-coding-designer workflow as an internal pilot. I did not measure onboarding time or prove that another designer could use it without me hovering nearby, which is awkward for a system partly designed to remove me as interpreter.
 
-- Branch preview index and preview banner screenshots
-- A redacted branch workflow excerpt
-- A token-check failure and corrected diff
-- A starter prompt from the designer quickstart
-- A redacted handoff page showing state, props, tokens, motion, edge cases, and open questions
-- A before/after rebrand token or logo excerpt
+The next version needs boring numbers: time from idea to review, token violations, review rounds, and completion without author support. Until then it is a useful working environment, not evidence that I reinvented design delivery.
 
-Those artifacts make the tooling story concrete without exposing internal strategy, customers, metrics, or unreleased roadmap work.
-
-## Claims I keep bounded
-
-The original version of this story made some operational claims too hard for a public portfolio page unless the supporting artifacts were shown.
-
-I keep these claims soft unless I can show proof:
-
-- Exact deploy timing
-- Exact agent count and routing behavior
-- CI and pre-commit implementation details
-- Claims that every branch deployed automatically
-- Claims that onboarding was validated by non-coder designers
-
-The story does not need those claims to be impressive. The stronger point is that the environment turned AI-assisted design from a one-off trick into a governed workflow with reviewable outputs.
-
-## What this shows
-
-The Pave environment turned the design system into a workflow.
-
-Tokens defined the visual vocabulary. Agent lanes constrained the work. Branch previews made behavior reviewable. Handoffs preserved implementation intent. The prototype made product decisions executable without pretending to be the production architecture.
-
-The result was not simply that AI wrote code faster. The result was that AI-assisted design work happened inside a system that could keep saying what counted as good.
-
-## Evidence links
+## Related work
 
 - [Designing Pave](/case-studies/designing-pave/) - the product surfaces this environment made possible.
-- [Pave - Building Loop](/case-studies/pave-building-loop/) - supporting artifact for the flagship AI app builder surface.
-- [Pave - Direct Edit](/case-studies/pave-direct-edit/) - supporting artifact for direct-edit behavior.
-- [Pave billing](/case-studies/pave-billing/) - supporting artifact for credits, pricing, and checkout.
+- [Design systems and AI-augmented practice](/case-studies/design-systems-ai-practice/) - the broader machine-readable design-system and human review model.

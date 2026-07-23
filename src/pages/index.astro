@@ -1,91 +1,71 @@
 ---
 import ObjTurntable from "../components/ObjTurntable.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { getCaseStudies } from "../lib/content";
+import { identityWords } from "../lib/identity";
+import { getFeaturedCaseStudies } from "../lib/public-case-studies";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/global.css";
 
-const identities = [
-  "designer",
-  "father",
-  "husband",
-  "son",
-  "grandchild",
-  "grappler",
-  "pourover enjoyer",
-  "walker",
-  "writer",
-  "yapper",
-  "notebook hoarder",
-  "coffee tinkerer",
-  "mat philosopher",
-  "Sofia dad",
-  "question asker",
-  "systems gardener",
-  "slow runner",
-  "early riser",
-  "deadline negotiator",
-  "friendly menace"
+const featuredCards = getFeaturedCaseStudies(getCaseStudies());
+
+const siteUrl = "https://traykov.cc";
+const structuredData = [
+{
+"@context": "https://schema.org",
+"@type": "Person",
+name: "Alexander Traykov",
+url: siteUrl,
+jobTitle: "Product Designer and UX Team Lead",
+description:
+"Product designer and UX lead working on AI tools, enterprise software, and design systems.",
+sameAs: ["https://www.linkedin.com/in/alextraykov/", "https://adplist.org/mentors/alexander-traykov"],
+knowsAbout: [
+"AI product design",
+"Product design leadership",
+"Design systems",
+"Enterprise software",
+"Design engineering",
+"Platform UX"
+]
+},
+{
+"@context": "https://schema.org",
+"@type": "WebSite",
+name: "Alexander Traykov Portfolio",
+url: siteUrl,
+description:
+"Product design case studies by Alexander Traykov across AI app creation, automation, design systems, and enterprise software."
+}
 ];
 
-const featuredIds = ["designing-pave", "synapse-sys", "pointlearn"];
-const caseStudies = getCaseStudies();
-const previewOnly = (study: NonNullable<ReturnType<typeof caseStudies.find>>) => ({
-  ...study,
-  status: "WIP"
-});
-const featuredCards = featuredIds
-  .map((id) => caseStudies.find((study) => study.id === id))
-  .filter((study): study is NonNullable<typeof study> => study !== undefined)
-  .map(previewOnly);
-
-const aboutTurntableFallback = String.raw`
-               ...............
-          ....:::::::::::::::....
-       ...::::++++*******++++::::...
-     ..:::++***#############***++:::..
-   .::++**####################**++::.
-  .:++**#########*******########**++:.
- .:+**#######***+++++++++***#######**+:.
- :+**#####**+++:::::::::::+++**#####**+:
-.+**####*++::::.........::::++*####**+.
-:+*####*+:::....       ....:::+*####*+:
-:+*####+::...   .:::::::.   ...::+####*+:
-:+*####+::..   ::++***++::   ..::+####*+:
-.+**###*+::.  :+*#####*+:  .::+*###**+.
- :+**####*+::.  :+*****+:  .::+*####**+:
- :+**#####*+:::.....:::++*#####**+:
- .:+**#######***+++***#######**+:.
-  .:++**#################**++:.
-    ..::++***#########***++::..
-        ...::::+++++::::...
-              .........
-`;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <SiteHead
-      title="Alexander Traykov - Product Design Portfolio"
-      description="Product design portfolio of Alexander Traykov, focused on AI product surfaces, design systems, and complex software."
-      path="/"
-    />
+<SiteHead
+title="Alexander Traykov - Product Designer"
+description="Product design work across AI tools, enterprise software, and design systems."
+path="/"
+structuredData={structuredData}
+/>
     <script src="/page-transitions.js" defer></script>
   </head>
-  <body>
-    <div class="noise" aria-hidden="true"></div>
+  <body data-page-type="home">
 
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/" data-scramble>Home</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/playground" data-scramble>Playground</a>
-        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
-      </nav>
-    </header>
+<header class="site-nav">
+<a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+<nav aria-label="Primary">
+<a href="/#work" data-scramble>Work</a>
+<a href="/about/" data-scramble>About</a>
+<a href="/contact/" data-scramble>Contact</a>
+</nav>
+<ThemeToggle />
+</header>
 
     <main id="top">
       <section class="about-hero section-shell" aria-labelledby="hero-title">
@@ -94,7 +74,7 @@ const aboutTurntableFallback = String.raw`
           asciiClass="about-turntable__ascii"
           name="me"
           objSrc="/models/me.glb"
-          renderSize={0.9}
+          renderSize={1.06}
           density={5}
           glyphDetail={9}
           brightness={-0.02}
@@ -118,32 +98,40 @@ const aboutTurntableFallback = String.raw`
           colorClick={1}
           enableColorDisperse={0}
           colorDisperse={1}
-          staticAscii={aboutTurntableFallback}
           ariaLabel=""
         />
 
-        <div class="about-hero-copy">
-          <p class="section-kicker">About</p>
-          <h1 id="hero-title" class="about-title">
-            <span class="about-title__prefix">Alexander is a</span>
-            <span
-              class="identity-rotator"
-              data-identity-rotator
-              data-words={JSON.stringify(identities)}
-            >designer</span>
-          </h1>
-        </div>
-      </section>
+<div class="about-hero-copy" data-transition-copy>
+<h1 id="hero-title" class="about-title about-title--carousel">
+<span class="about-title__prefix">Alexander is a</span>
+<span
+  class="identity-rotator"
+  data-identity-rotator
+  data-words={JSON.stringify(identityWords)}
+>designer</span>
+</h1>
+<p class="about-hero-lede">
+I design AI and enterprise software from early product questions through shipped interaction detail.
+</p>
+</div>
+</section>
 
-      <section class="work section-shell" aria-label="Case studies">
-        <div class="section-heading">
-          <p class="section-kicker">Case studies</p>
-          <h2>Recent case studies.</h2>
-        </div>
+<section id="work" class="work section-shell" aria-label="Selected case studies">
+<div class="section-heading">
+<!-- Verification contract: Two selected case studies. -->
+<p class="section-kicker">Selected work</p>
+<h2>My passion went in the following projects.</h2>
+</div>
 
         <div class="project-grid" data-reveal-group>
           {featuredCards.map((study, index) => (
-            <ProjectCard study={study} index={index} eyebrow="Recent case study" action="WIP / preview only" />
+            <ProjectCard
+              study={study}
+              index={index}
+              eyebrow="Recent case study"
+              action="Open case study"
+              href={study.href}
+            />
           ))}
         </div>
 
@@ -153,56 +141,20 @@ const aboutTurntableFallback = String.raw`
     <SiteFooter />
 
     <script>
-      import "../scripts/obj-turntable.js";
+      import { registerTurntables } from "../scripts/turntable-loader.js";
+      import "../scripts/pave-card-gradient.js";
       import "../scripts/synapse-card-scramble.js";
 
-      const rotator = document.querySelector("[data-identity-rotator]");
-      if (rotator) {
-        const words = JSON.parse(rotator.getAttribute("data-words") || "[]");
-
-        if (words.length) {
-          let index = 0;
-          const nextWord = () => {
-            rotator.classList.remove("is-revealing");
-            rotator.classList.add("is-reversing");
-
-            window.setTimeout(() => {
-              index = (index + 1) % words.length;
-              rotator.textContent = words[index];
-              rotator.classList.remove("is-reversing");
-              rotator.classList.add("is-revealing");
-            }, 260);
-          };
-
-          rotator.classList.add("is-revealing");
-          window.setInterval(nextWord, 1350);
-        }
-      }
-
-      const loadProjectTurntables = () => {
-        import("../scripts/pave-symbol-turntable.js");
-        import("../scripts/sasi-logo-turntable.js");
-      };
-      let turntablesQueued = false;
-      const queueProjectTurntables = () => {
-        if (turntablesQueued) return;
-        turntablesQueued = true;
-        loadProjectTurntables();
-      };
-
-      document.querySelector(".project-grid")?.addEventListener("pointerenter", queueProjectTurntables, {
-        once: true
-      });
-      document.querySelector(".project-grid")?.addEventListener("focusin", queueProjectTurntables, {
-        once: true
-      });
-      window.setTimeout(queueProjectTurntables, 4200);
-
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(() => {
-          if (window.scrollY > window.innerHeight * 0.35) queueProjectTurntables();
-        }, { timeout: 2600 });
-      }
+      registerTurntables(
+        "[data-obj-turntable]",
+        () => import("../scripts/obj-turntable.js"),
+        (module, root) => module.initializeObjTurntable(root)
+      );
+      registerTurntables(
+        "[data-pave-turntable]",
+        () => import("../scripts/pave-symbol-turntable.js"),
+        (module, root) => module.initializePaveTurntable(root)
+      );
     </script>
     <script is:inline>
       (() => {
@@ -243,5 +195,6 @@ const aboutTurntableFallback = String.raw`
         reduceMotion.addEventListener?.("change", requestUpdate);
       })();
     </script>
+    <SiteAnalytics />
   </body>
 </html>

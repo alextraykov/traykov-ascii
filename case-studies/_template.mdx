@@ -1,103 +1,119 @@
 ---
-title: {Feature Name}
-category: {page | composite}
-status: {shipped | prototype | exploration}
-route: {#hash-route or n/a}
-related_docs:
-  - docs/handoffs/{...}.md
-  - docs/previews/{...}.md
-  - docs/prd-pm-pd/{...}.md
-  - docs/diagrams/{...}.md
+title: "{Plain, specific title}"
+category: {product case study | systems case study | leadership case study}
+status: {shipped | launched | prototype | exploration | practice}
+pubDate: {YYYY-MM-DD}
+tags: [{specific}, {searchable}, {tags}]
+heroImage: /case-studies/{path-to-real-evidence}.{webp|png}
+readTime: {honest estimate}
+summary: "{What the study covers, without a thesis or marketing claim.}"
+role: "{Your actual role}"
+year: {YYYY}
+group: "{Project or company}"
+order: {integer when route order matters}
 ---
 
-## TL;DR
+<!--
+CASE-STUDY DRAFTING CONTRACT
 
-Two sentences max: what this feature is, why it matters, who it serves.
+Do not publish these notes. Use them to decide whether the story exists before polishing it.
 
-## Problem
+1. What actually happened?
+2. What did I initially believe, miss, over-design, or explain badly?
+3. Which dated decision, broken state, artifact, quote-safe detail, or implementation constraint makes this my story?
+4. What changed my interpretation?
+5. What did I change in the product, system, or way of working?
+6. Who else contributed, and what were they reasonably protecting?
+7. What shipped, what remained a prototype, and what cannot be measured?
+8. Which sentence is a little uncomfortable to admit?
 
-Who hits this surface? What are they trying to accomplish? What was broken, missing, or unclear before this design existed? Ground this in real user behavior or documented research when possible — cite `docs/prd-pm-pd/` or `docs/previews/` if they exist.
+If the source material cannot answer the first four questions, gather evidence instead of manufacturing a narrative arc.
+-->
 
-## Constraints
+## {Begin with the incident, decision, or admission}
 
-The rules every option had to satisfy:
+Start inside the work. Use a date, broken behaviour, scope cut, research moment, implementation failure, or honest admission when the evidence supports it. Do not open with a universal lesson or a polished product thesis.
 
-- **Design tokens only** — no hardcoded values. See `src/tokens/tokens.css`.
-- **Dark mode parity** — `.dark` class on `<html>` auto-updates all tokens.
-- **Motion tokens** — durations and easings from `--motion-duration-*` / `--motion-ease-*`. Every enter has an exit. Respect `prefers-reduced-motion`.
-- **No Tailwind** — pure CSS with BEM naming.
-- **React 19 + Framer Motion + pure CSS** — the stack is fixed.
-- **Content guidelines** — see `docs/content-guidelines/principles.md`.
+Develop the paragraph. Let the first interpretation be incomplete. Alexander should be implicated before the study criticises a process, stakeholder, inherited system, user, engineer, or tool.
 
-Feature-specific constraints go here too.
+## The project
 
-## Options Considered
+- Role: {precise ownership}
+- Timeframe: {real dates or duration}
+- Team: {contributors and partners}
+- Status: {what shipped, what did not, and whether images are production or prototype}
 
-Enumerate the alternatives that were on the table — not just the winner.
+Attribute shared work. Remove confidential names and details; do not blur somebody else's contribution into “I led”.
 
-- **A — {name}**: description. Why it was appealing. Why it was rejected.
-- **B — {name}**: description. Why it was appealing. Why it was rejected.
-- **C — {name}** (chosen): description. Why it won.
+## {What looked true at first}
 
-Use `mermaid` fences for any flow/state/sequence diagrams. The site renderer converts these into RFC-style ASCII diagrams with monoline boxes and dot-matrix shadows automatically, so keep node labels short and use `<br/>` only where a deliberate line break helps scanning.
+Explain the attractive first model. Why did it seem reasonable? What did the initial demo, research, artifact, or plan hide?
 
-Use `case-stat` for a full-bleed evidence band. Each body line is `value | label | note`.
+Keep the concrete mechanism close: an exact UI state, flow, branch, component, event, constraint, or awkward conversation. Tool names belong only when they explain the product consequence.
 
-```case-stat title: Evidence snapshot
-42% | adoption lift | Replace with the real measured signal or remove the note.
-3 | launch risks closed | Keep claims specific and attributable.
+## {Where reality disagreed}
+
+Show the failure or contradiction before announcing the correction. Name what broke, what the first explanation blamed, and which detail changed the interpretation.
+
+Use a diagram only when the relationship or sequence is materially clearer than prose:
+
+```mermaid
+flowchart LR
+    Assumption[First model] --> Failure[Concrete failure]
+    Failure --> Change[Product change]
 ```
 
-Use `case-quote` for a designed pull quote. `attribution:` and `role:` are optional metadata lines.
+Use `case-stat` only for real, attributable measurements. Targets must be labelled as targets; usage is not proof of causation.
+
+```case-stat title: Measured evidence
+{real value} | {plain label} | {source, period, and limitation}
+```
+
+Use `case-quote` only for a real quote or a genuinely used project rule, not a sentence invented to make the page quotable.
 
 ```case-quote
-attribution: Product principle
-role: Launch review
-The quote body can be one sentence or a short paragraph.
+attribution: {real source}
+role: {context}
+{Quote or rule used during the work.}
 ```
 
-Use `case-timeline` only when the study needs a compact sequence. Each body line is `date | title | note`.
+## {What changed}
 
-```case-timeline title: Product arc
-Week 1 | Model defined | Core behavior and constraints documented.
-Week 4 | Prototype reviewed | Interaction contract stress-tested with the team.
-```
+Explain the chosen behaviour, state model, scope cut, architecture boundary, or operating rule. Include alternatives only when they were genuinely considered. Say why the rejected version was attractive before explaining why it lost.
 
-## Decision
+![{Evidence caption}](/case-studies/{real-evidence-path}.{webp|png})
 
-The chosen approach, in prose. What it looks like, how it behaves, and what it refuses to do. Be specific about the shape — not "we designed a panel" but "we chose a right-docked 320px inspector with three collapsible sections that persist across page nav".
+## {The ugly or boring part that mattered}
 
-## Screenshots
+Include edge cases, permissions, recovery, measurement, accessibility, maintenance, rollout, handoff, or organisational friction when they changed the result. Do not let the case study stop where the demo stops.
 
-<Screenshot src="../screenshots/{category}/{feature}-light.png" caption="Light mode — default state" />
-<Screenshot src="../screenshots/{category}/{feature}-dark.png" caption="Dark mode — default state" />
+## What exists now
 
-For composites, include state shots: hover, focus, open, error, empty, loading — whatever's non-obvious.
+Separate facts cleanly:
 
-## Interaction & Motion Notes
+- Shipped: {verifiable behaviour and date}
+- Prototype: {working but unshipped behaviour}
+- Measured: {real signal with source and period}
+- Unknown: {missing evidence or inaccessible data}
 
-- Enter/exit pairs and their timing tokens.
-- Interruptible transitions (rapid toggling behavior).
-- `prefers-reduced-motion` fallback.
-- Focus management on mount/unmount.
-- Keyboard affordances.
+Remove categories that do not apply. Do not convert internal targets into outcomes.
 
-## Implementation Notes
+## {What remains unresolved}
 
-- **Entry file**: `src/.../Feature.tsx:NN`
-- **Styles**: `src/.../Feature.css`
-- **State**: local React state / Zustand slice / context / URL hash
-- **Notable hooks or patterns**: e.g. `useHashNavigation`, `useDarkMode`, `AnimatePresence` composition.
-- **Related composites**: what this reuses, what reuses it.
+End with the limitation, open question, measurement hole, or decision you would change. Keep the conclusion proportional to the evidence. No universal maxim, quote-card reversal, or engagement question.
 
-Reference file paths with line numbers so future contributors can jump straight in.
+<!--
+FINAL ANTI-SLOP PASS
 
-## Tradeoffs
+Rewrite when three or more are true:
+- The opening already knows the conclusion.
+- The turn arrives before a specific incident.
+- Adjacent paragraphs are isolated for artificial weight.
+- The prose leans on tidy symmetry or three-part rhetoric.
+- I am wiser than everyone from line one.
+- The details could fit any company.
+- The ending sounds good on a quote card.
+- Nothing costs me any pride.
 
-What we gave up to get what we got. Performance vs. expressiveness, simplicity vs. flexibility, surface area vs. legibility.
-
-## Open Questions / Future Work
-
-- Known sharp edges.
-- Things punted intentionally.
-- Ideas we'd explore next.
+Renderer note: this is a line-based custom MDX dialect. Do not rely on nested lists, tables, imports, or arbitrary HTML passthrough.
+-->

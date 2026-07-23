@@ -1,6 +1,8 @@
 ---
 import ObjTurntable from "../components/ObjTurntable.astro";
+import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/global.css";
 ---
 
@@ -16,13 +18,13 @@ import "../styles/global.css";
   </head>
   <body class="pave-turntable-page">
     <header class="site-nav">
-      <a class="brand" href="/" aria-label="Back to portfolio">AT</a>
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
-        <a href="/" data-scramble>Portfolio</a>
-        <a href="/pave-turntable/" data-scramble>PAVE</a>
-        <a href="/playground" data-scramble>Playground</a>
-        <a href="/svg-ascii-studio/" data-scramble>Studio</a>
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
       </nav>
+      <ThemeToggle />
     </header>
 
     <ObjTurntable
@@ -54,15 +56,15 @@ import "../styles/global.css";
 
       <div class="pave-turntable-panel">
         <div class="pave-turntable-tabs" role="tablist" aria-label="Turntable panel">
-          <button type="button" class="is-active" role="tab" aria-selected="true" data-obj-tab="settings">
+          <button type="button" class="is-active" id="obj-tab-settings" role="tab" aria-selected="true" aria-controls="obj-panel-settings" tabindex="0" data-obj-tab="settings">
             Copy
           </button>
-          <button type="button" role="tab" aria-selected="false" data-obj-tab="how">
+          <button type="button" id="obj-tab-how" role="tab" aria-selected="false" aria-controls="obj-panel-how" tabindex="-1" data-obj-tab="how">
             How
           </button>
         </div>
 
-        <div class="pave-turntable-panel-face is-active" data-obj-panel="settings">
+        <div class="pave-turntable-panel-face is-active" id="obj-panel-settings" role="tabpanel" aria-labelledby="obj-tab-settings" data-obj-panel="settings">
           <div class="pave-turntable-settings">
             <span>Settings JSON</span>
             <textarea data-obj-settings readonly spellcheck="false"></textarea>
@@ -70,7 +72,7 @@ import "../styles/global.css";
           </div>
         </div>
 
-        <div class="pave-turntable-panel-face" data-obj-panel="how" hidden>
+        <div class="pave-turntable-panel-face" id="obj-panel-how" role="tabpanel" aria-labelledby="obj-tab-how" data-obj-panel="how" hidden>
           <div class="turntable-process" aria-label="GLB to 3D ASCII turntable pipeline">
             <p>GLB to 3D ASCII</p>
             <svg viewBox="0 0 360 520" role="img" aria-label="GLB turntable rendering pipeline">
@@ -146,8 +148,15 @@ import "../styles/global.css";
     </aside>
 
     <script>
-      import "../scripts/obj-turntable.js";
+      import { registerTurntables } from "../scripts/turntable-loader.js";
       import "../scripts/turntable-preview-select.js";
+
+      registerTurntables(
+        "[data-obj-turntable]",
+        () => import("../scripts/obj-turntable.js"),
+        (module, root) => module.initializeObjTurntable(root)
+      );
     </script>
+    <SiteAnalytics />
   </body>
 </html>

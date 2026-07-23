@@ -1,0 +1,43 @@
+---
+type Props = {
+  images: string[];
+  label?: string;
+};
+
+const { images, label = "Interactive ASCII image trail" }: Props = Astro.props;
+---
+
+<div class="dither-trail" data-dither-trail aria-label={label}>
+  <div class="dither-trail__field" data-dither-trail-field aria-hidden="true">
+    {images.map((src, index) => (
+      <figure
+        class="dither-trail__item"
+        data-dither-trail-item
+        data-dither-prompt={index < 2 ? true : undefined}
+        data-dither-source-url={src}
+        style={`--trail-static-x: ${8 + index * 8}vw; --trail-static-y: ${26 + (index % 3) * 9}svh; --trail-mobile-x: ${index * 12}vw; --trail-mobile-y: ${(index % 2) * 10}svh`}
+      >
+        <canvas data-dither-canvas></canvas>
+      </figure>
+    ))}
+    <canvas class="dither-trail__disperse" data-dither-disperse></canvas>
+    <span class="dither-trail__tap-burst" data-dither-tap-burst aria-hidden="true">✹</span>
+  </div>
+  <button
+    class="dither-trail__gyro-toggle"
+    type="button"
+    data-dither-gyro-toggle
+    aria-label="Enable tilt-controlled image trail"
+    aria-pressed="false"
+    hidden
+  >
+    <span aria-hidden="true">⌁</span>
+    <span data-dither-gyro-label>Tilt trail</span>
+  </button>
+</div>
+
+<script>
+  import { initializeDitherImageTrails } from "../scripts/dither-image-trail.js";
+
+  initializeDitherImageTrails();
+</script>

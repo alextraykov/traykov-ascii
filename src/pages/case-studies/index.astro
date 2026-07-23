@@ -1,4 +1,5 @@
 ---
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteHead from "../../components/SiteHead.astro";
 import "../../styles/global.css";
 ---
@@ -7,16 +8,17 @@ import "../../styles/global.css";
 <html lang="en">
   <head>
     <SiteHead
-      title="Hidden - Alexander Traykov"
-      description="This work route is hidden while the portfolio case studies remain in progress."
-      path="/case-studies/"
-      noindex
-      refresh="0;url=/"
+      title="Selected Product Design Work - Alexander Traykov"
+      description="Selected product design work by Alexander Traykov."
+      path="/"
+      noindex={true}
+      refresh="0;url=/#work"
     />
   </head>
   <body>
-    <main class="hidden-route" aria-label="Hidden route">
-      <a href="/">Return home</a>
+    <main id="top" class="section-shell">
+      <p><a href="/#work">View selected work on the homepage</a></p>
     </main>
+    <SiteAnalytics />
   </body>
 </html>

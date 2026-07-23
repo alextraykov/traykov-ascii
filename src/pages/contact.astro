@@ -1,0 +1,101 @@
+---
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import "../styles/global.css";
+
+const bookingUrl =
+  import.meta.env.PUBLIC_CAL_BOOKING_URL ??
+  import.meta.env.PUBLIC_BOOKING_URL ??
+  "https://cal.com/alexander-cqn5aq/30min";
+
+type ContactOption = {
+  index: string;
+  label: string;
+  title: string;
+  body: string;
+  href: string;
+  external?: boolean;
+};
+
+const contactOptions: ContactOption[] = [
+  {
+    index: "01",
+    label: "Email",
+    title: "hi@traykov.cc",
+    body: "Best for a project, role, or product question that needs a little context.",
+    href: "mailto:hi@traykov.cc"
+  },
+  {
+    index: "02",
+    label: "Call",
+    title: "Book 30 minutes",
+    body: "Bring the product problem, the awkward constraint, and whatever is already known.",
+    href: bookingUrl,
+    external: true
+  },
+  {
+    index: "03",
+    label: "LinkedIn",
+    title: "Send a message",
+    body: "Useful for a quick introduction or keeping in touch.",
+    href: "https://www.linkedin.com/in/alextraykov/",
+    external: true
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Contact Alexander Traykov"
+      description="Email Alexander Traykov, book a 30-minute product conversation, or connect on LinkedIn."
+      path="/contact/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="contact">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" aria-current="page" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="contact-page">
+      <section class="contact-hero section-shell" aria-labelledby="contact-title">
+        <div class="contact-hero__copy" data-reveal="rise">
+          <p class="section-kicker">Contact</p>
+          <h1 id="contact-title">Show me what’s not working.</h1>
+          <p>
+            I’m most useful when the product is real, the constraints are awkward, and the answer is not another generic workshop.
+          </p>
+        </div>
+
+        <div class="contact-options" data-reveal-group>
+          {contactOptions.map((option) => (
+            <a
+              class="contact-option"
+              href={option.href}
+              target={option.external ? "_blank" : undefined}
+              rel={option.external ? "noreferrer" : undefined}
+            >
+              <span>{option.index} / {option.label}</span>
+              <h2>{option.title}</h2>
+              <p>{option.body}</p>
+              <strong aria-hidden="true">Open ↗</strong>
+            </a>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+  </body>
+</html>

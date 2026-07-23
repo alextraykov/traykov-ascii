@@ -104,9 +104,10 @@ const asciiClasses = [staticAscii ? "project-turntable__ascii" : "", asciiClass]
   data-card-color-click={colorClick}
   data-card-enable-color-disperse={enableColorDisperse}
   data-card-color-disperse={colorDisperse}
+  role={ariaLabel ? "img" : undefined}
   aria-label={ariaLabel}
   aria-hidden={ariaLabel ? undefined : "true"}
 >
-  {staticAscii && <pre class="project-turntable__static">{staticAscii}</pre>}
-  <pre class={asciiClasses} data-obj-ascii>{staticAscii}</pre>
+  {staticAscii && <pre class="project-turntable__static" aria-hidden="true">{staticAscii}</pre>}
+  <pre class={asciiClasses} data-obj-ascii aria-hidden="true">{staticAscii}</pre>
 </div>

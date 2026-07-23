@@ -6,40 +6,73 @@ const {
   study,
   index = 0,
   eyebrow = study.group,
-  action = "WIP"
+  action = "WIP",
+  href
 }: {
   study: CaseStudy;
   index?: number;
   eyebrow?: string;
   action?: string;
+  href?: string;
 } = Astro.props;
 
 const isSynapse = study.group.toLowerCase().includes("synapse");
+const isPave = `${study.group} ${study.title}`.toLowerCase().includes("pave");
 const meta = [eyebrow, study.status, study.readTime].filter(Boolean).join(" / ");
-const ariaAction = action.toLowerCase().includes("wip")
-  ? `${study.title} case study preview is WIP and not linked`
-  : `${action}: ${study.title}`;
+const ariaAction = href ? `Open ${study.title} case study` : `${study.title} case study preview. Coming soon.`;
 ---
 
 <article
   id={study.id}
   class:list={[
     "project-card",
-    "project-card--direct",
+    href && "project-card--direct",
     "project-card--construction",
+    isPave && "project-card--pave",
     isSynapse && "project-card--synapsis"
   ]}
   data-reveal="rise"
   data-reveal-delay={String(Math.min(index, 6) * 60)}
+  data-case-id={study.id}
 >
-  <div class="project-card__body" aria-label={ariaAction}>
-    <ProjectMark group={study.group} title={study.title} />
-    <div class="project-copy">
-      <span class="project-index" data-scramble data-scramble-trigger="hover">{String(index + 1).padStart(2, "0")} / {meta}</span>
-      <h3>{study.title}</h3>
-      {study.summary && <p>{study.summary}</p>}
-      {study.tags.length > 0 && <p class="project-card__tags">{study.tags.slice(0, 4).join(" / ")}</p>}
-      <span class="construction-status" data-scramble data-scramble-trigger="hover">{action}</span>
+  {isPave && (
+    <div
+      class="pave-card-gradient"
+      data-pave-card-gradient
+      aria-hidden="true"
+    >
+      <div class="pave-card-gradient__field">
+        <span class="pave-card-gradient__orb pave-card-gradient__orb--horizon"></span>
+        <span class="pave-card-gradient__bloom"></span>
+        <span class="pave-card-gradient__orb pave-card-gradient__orb--left"></span>
+        <span class="pave-card-gradient__orb pave-card-gradient__orb--center"></span>
+        <span class="pave-card-gradient__orb pave-card-gradient__orb--left-center"></span>
+        <span class="pave-card-gradient__orb pave-card-gradient__orb--right-center"></span>
+        <span class="pave-card-gradient__interactive-orb"></span>
+      </div>
     </div>
-  </div>
+  )}
+  {href ? (
+    <a class="project-card__body" href={href} aria-label={ariaAction}>
+      <ProjectMark group={study.group} title={study.title} image={study.image} />
+      <div class="project-copy">
+        <span class="project-index" data-scramble data-scramble-trigger="hover">{String(index + 1).padStart(2, "0")} / {meta}</span>
+        <h3>{study.title}</h3>
+        {study.summary && <p>{study.summary}</p>}
+        {study.tags.length > 0 && <p class="project-card__tags">{study.tags.slice(0, 4).join(" / ")}</p>}
+        <span class="construction-status" data-scramble data-scramble-trigger="hover">{action}</span>
+      </div>
+    </a>
+  ) : (
+    <div class="project-card__body" aria-label={ariaAction}>
+      <ProjectMark group={study.group} title={study.title} image={study.image} />
+      <div class="project-copy">
+        <span class="project-index" data-scramble data-scramble-trigger="hover">{String(index + 1).padStart(2, "0")} / {meta}</span>
+        <h3>{study.title}</h3>
+        {study.summary && <p>{study.summary}</p>}
+        {study.tags.length > 0 && <p class="project-card__tags">{study.tags.slice(0, 4).join(" / ")}</p>}
+        <span class="construction-status" data-scramble data-scramble-trigger="hover">{action}</span>
+      </div>
+    </div>
+  )}
 </article>

@@ -5,19 +5,104 @@
   "outputDirectory": "dist",
   "redirects": [
     {
-      "source": "/case-studies",
-      "destination": "/",
-      "permanent": false
-    },
-    {
       "source": "/case-studies/",
-      "destination": "/",
+      "destination": "/#work",
       "permanent": false
     },
     {
-      "source": "/case-studies/:path((?!media/).*)",
-      "destination": "/",
-      "permanent": false
+      "source": "/case-studies/designing-synapse-sys/",
+      "destination": "/case-studies/synapse-sys/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/blinq-pave-rebrand/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-building-loop/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-planning/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-direct-edit/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-credits/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-marketplace/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-home/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-builder/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-landing/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-email-templates/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-notifications/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-billing/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-projects/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-chat-window/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-inspector-canvas/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-billing-plg/",
+      "destination": "/case-studies/designing-pave/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/ai-surfaces/",
+      "destination": "/case-studies/pipelines/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/foundations-2022-2024/",
+      "destination": "/case-studies/alm-environments/",
+      "permanent": true
     }
   ]
 }

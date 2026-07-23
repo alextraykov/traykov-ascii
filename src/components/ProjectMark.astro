@@ -1,44 +1,56 @@
 ---
-import PaveTurntable from "./PaveTurntable.astro";
 import SvgLogoTurntable from "./SvgLogoTurntable.astro";
 
 type Props = {
   group: string;
   title?: string;
+  image?: string;
 };
 
-const { group, title = "" } = Astro.props;
+const { group, title = "", image } = Astro.props;
 const normalized = `${group} ${title}`.toLowerCase();
 const mark = normalized.includes("pave")
   ? "pave"
   : normalized.includes("pointlearn")
     ? "pointlearn"
-  : normalized.includes("quickbase") || normalized.includes("synapse")
+  : normalized.includes("synapse")
     ? "synapse"
+    : normalized.includes("quickbase") || normalized.includes("pipeline")
+      ? "quickbase"
     : "personal";
 ---
 
 <div class={`project-mark project-mark--${mark}`} aria-hidden="true">
   {
     mark === "pave" ? (
-      <PaveTurntable
-        class="project-turntable is-pave"
-        asciiClass="project-turntable__ascii"
-        mode="card"
-        renderSize={0.82}
-        ariaLabel=""
-      />
+      <div class="project-video-turntable is-pave">
+        <video
+          class="project-video-turntable__media"
+          data-motion-media
+          data-src="/case-studies/media/pave-portfolio-loop.mp4"
+          poster={image}
+          muted
+          loop
+          playsinline
+          preload="none"
+        ></video>
+      </div>
     ) : mark === "synapse" ? (
       <div class="project-video-turntable is-synapse">
         <video
           class="project-video-turntable__media"
-          src="/case-studies/media/synapse-sys-card-turntable.mp4"
-          autoplay
+          data-motion-media
+          data-src="/case-studies/media/synapse-sys-card-turntable-card.mp4"
+          poster="/case-studies/media/synapse-sys-card-turntable-poster.jpg"
           muted
           loop
           playsinline
-          preload="metadata"
+          preload="none"
         ></video>
+      </div>
+    ) : mark === "quickbase" && image ? (
+      <div class="project-evidence-mark">
+        <img src={image} alt="" loading="lazy" decoding="async" />
       </div>
     ) : mark === "pointlearn" ? (
       <SvgLogoTurntable
@@ -46,6 +58,7 @@ const mark = normalized.includes("pave")
         asciiClass="project-turntable__ascii"
         name="pointlearn"
         svgSrc="/pointlearn-fox.svg"
+        hoverOnly
         renderSize={1.08}
         depth={44}
         bevel={2.8}
@@ -59,6 +72,7 @@ const mark = normalized.includes("pave")
         asciiClass="project-turntable__ascii"
         name="personal"
         svgSrc="/sasi2.svg"
+        hoverOnly
         renderSize={1.26}
         depth={54}
         bevel={3.2}

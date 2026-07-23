@@ -1,11 +1,24 @@
-import * as THREE from "three";
+import {
+  AmbientLight,
+  Box3,
+  DirectionalLight,
+  ExtrudeGeometry,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  Scene,
+  Shape,
+  Vector3,
+  WebGLRenderer
+} from "three";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 
 const LANDING_ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
 const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
 const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 
-document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
+export function initializePaveTurntable(root) {
   const ascii = root.querySelector("[data-pave-ascii]");
   if (!ascii) return;
   root.classList.add("is-turntable-loading");
@@ -25,11 +38,11 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     hover: isCard ? 0 : 0.34
   };
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(isCard ? 31 : 34, 1, 0.1, 100);
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(isCard ? 31 : 34, 1, 0.1, 100);
   camera.position.set(0, 0, isCard ? 8.8 : 8.2);
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = new WebGLRenderer({
     alpha: false,
     antialias: true,
     preserveDrawingBuffer: false
@@ -38,38 +51,36 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
   renderer.setPixelRatio(1);
   root.append(renderer.domElement);
 
-  const mark = new THREE.Group();
+  const mark = new Group();
   mark.rotation.x = isCard ? -0.22 : -0.16;
   scene.add(mark);
 
-  const frontMaterial = new THREE.MeshStandardMaterial({
+  const frontMaterial = new MeshStandardMaterial({
     color: 0x080808,
     metalness: 0.1,
-    roughness: 0.28,
-    side: THREE.DoubleSide
+    roughness: 0.28
   });
-  const sideMaterial = new THREE.MeshStandardMaterial({
+  const sideMaterial = new MeshStandardMaterial({
     color: 0x898578,
     metalness: 0.08,
-    roughness: 0.5,
-    side: THREE.DoubleSide
+    roughness: 0.5
   });
 
-  const key = new THREE.DirectionalLight(0xffffff, isCard ? 4.9 : 4.6);
+  const key = new DirectionalLight(0xffffff, isCard ? 4.9 : 4.6);
   key.position.set(2.8, 3.4, 4.2);
   scene.add(key);
 
-  const rim = new THREE.DirectionalLight(0xffffff, isCard ? 3.8 : 3.2);
+  const rim = new DirectionalLight(0xffffff, isCard ? 3.8 : 3.2);
   rim.position.set(-2.4, 1.6, -4.8);
   scene.add(rim);
 
-  const fill = new THREE.DirectionalLight(0xd7d2bd, isCard ? 2.4 : 2.0);
+  const fill = new DirectionalLight(0xd7d2bd, isCard ? 2.4 : 2.0);
   fill.position.set(-3.2, -0.8, 2.6);
   scene.add(fill);
-  scene.add(new THREE.AmbientLight(0xffffff, isCard ? 0.96 : 0.86));
+  scene.add(new AmbientLight(0xffffff, isCard ? 0.96 : 0.86));
 
   const sampleCanvas = document.createElement("canvas");
-  const sampleContext = sampleCanvas.getContext("2d", { willReadFrequently: true });
+  const sampleContext = sampleCanvas.getContext("2d", { alpha: false, willReadFrequently: true });
   let cols = isCard ? 28 : 120;
   let rows = isCard ? 11 : 70;
   let lastAscii = 0;
@@ -78,12 +89,14 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
   let trailBuffer = new Float32Array(cols * rows);
   let turntableAngle = 0;
   let lastRenderTime = 0;
-  let isVisible = !root.hasAttribute("data-playground-turntable") && !root.hasAttribute("data-hover-turntable");
+  let isVisible = true;
   let pendingFrame = null;
+  let geometryRebuildFrame = null;
+  let lastAsciiOutput = ascii.textContent;
   const asciiReveal = createTurntableAsciiReveal(root, { duration: isCard ? 720 : 1200 });
 
   const makeRectShape = (x, y, width, height) => {
-    const shape = new THREE.Shape();
+    const shape = new Shape();
     shape.moveTo(x, y);
     shape.lineTo(x + width, y);
     shape.lineTo(x + width, y + height);
@@ -93,7 +106,7 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
   };
 
   const makeMainShape = () => {
-    const shape = new THREE.Shape();
+    const shape = new Shape();
     shape.moveTo(307.88, 156.97);
     shape.lineTo(307.88, 131.72);
     shape.bezierCurveTo(309.89, 46.64, 230.11, 49.48, 192.63, 49.48);
@@ -121,7 +134,7 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
       disposeGroup(activeGroup);
     }
 
-    const rawGroup = new THREE.Group();
+    const rawGroup = new Group();
     const depth = controls.depth;
     const bevelSize = Math.min(controls.bevel, Math.max(0, depth * 0.22));
     const extrude = {
@@ -134,13 +147,13 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     };
 
     for (const shape of [makeMainShape(), makeRectShape(117.66, 239.21, 74.96, 74.9)]) {
-      const geometry = new THREE.ExtrudeGeometry(shape, extrude);
-      rawGroup.add(new THREE.Mesh(geometry, [frontMaterial, sideMaterial]));
+      const geometry = new ExtrudeGeometry(shape, extrude);
+      rawGroup.add(new Mesh(geometry, [frontMaterial, sideMaterial]));
     }
 
-    const bounds = new THREE.Box3().setFromObject(rawGroup);
-    const center = bounds.getCenter(new THREE.Vector3());
-    const size = bounds.getSize(new THREE.Vector3());
+    const bounds = new Box3().setFromObject(rawGroup);
+    const center = bounds.getCenter(new Vector3());
+    const size = bounds.getSize(new Vector3());
     const scale = (isCard ? 4.35 : 4.05) / Math.max(size.x, size.y);
 
     rawGroup.scale.set(scale, -scale, scale);
@@ -155,11 +168,19 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     mark.scale.setScalar(controls.renderSize);
   };
 
+  const scheduleGeometryRebuild = () => {
+    if (geometryRebuildFrame !== null) return;
+    geometryRebuildFrame = requestAnimationFrame(() => {
+      geometryRebuildFrame = null;
+      rebuildGeometry();
+    });
+  };
+
   const applyControlValue = (name, value) => {
     if (controls[name] === value) return;
     controls[name] = value;
     if (name === "renderSize") updateRenderSize();
-    if (name === "depth" || name === "bevel") rebuildGeometry();
+    if (name === "depth" || name === "bevel") scheduleGeometryRebuild();
     if (name === "density") resize();
     if (name === "glow") root.style.setProperty("--pave-ascii-glow", value);
     updateSettingsPayload();
@@ -241,7 +262,6 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
 
   const toAscii = (time = performance.now()) => {
     if (!sampleContext) return;
-    sampleContext.clearRect(0, 0, cols, rows);
     sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
     const lines = [];
@@ -270,16 +290,21 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
       lines.push(line);
     }
 
-    ascii.textContent = asciiReveal.render(lines, time);
+    const output = asciiReveal.render(lines, time);
+    if (output !== lastAsciiOutput) {
+      ascii.textContent = output;
+      lastAsciiOutput = output;
+    }
   };
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const render = (time = 0) => {
-    if (!isVisible) {
-      window.setTimeout(() => {
-        pendingFrame = requestAnimationFrame(render);
-      }, 160);
+    pendingFrame = null;
+    if (!isVisible || document.hidden) return;
+    const frameInterval = isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL;
+    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+      pendingFrame = requestAnimationFrame(render);
       return;
     }
     if (!lastRenderTime) lastRenderTime = time;
@@ -292,7 +317,7 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     renderer.render(scene, camera);
     updateTrail(time);
 
-    if (time - lastAscii > (isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL) || reduceMotion.matches) {
+    if (time - lastAscii > frameInterval || reduceMotion.matches) {
       lastAscii = time;
       toAscii(time);
     }
@@ -345,13 +370,13 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
 
   const tabButtons = root.hasAttribute("data-pave-controls") ? document.querySelectorAll("[data-pave-tab]") : [];
   const tabPanels = root.hasAttribute("data-pave-controls") ? document.querySelectorAll("[data-pave-panel]") : [];
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+  const activateTab = (button) => {
       const activeTab = button.dataset.paveTab;
       tabButtons.forEach((tabButton) => {
         const isActive = tabButton.dataset.paveTab === activeTab;
         tabButton.classList.toggle("is-active", isActive);
         tabButton.setAttribute("aria-selected", String(isActive));
+        tabButton.tabIndex = isActive ? 0 : -1;
       });
       tabPanels.forEach((panel) => {
         const isActive = panel.dataset.pavePanel === activeTab;
@@ -364,6 +389,21 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
         window.setTimeout(() => controlsPanel.classList.remove("is-flipping-back"), 260);
       }
       controlsPanel?.classList.toggle("is-flipped", activeTab === "how");
+  };
+
+  tabButtons.forEach((button, index) => {
+    button.addEventListener("click", () => activateTab(button));
+    button.addEventListener("keydown", (event) => {
+      const tabs = [...tabButtons];
+      let nextIndex;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex === undefined) return;
+      event.preventDefault();
+      tabs[nextIndex].focus();
+      activateTab(tabs[nextIndex]);
     });
   });
 
@@ -371,26 +411,6 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     const point = eventToGrid(event);
     addTrail(point.x, point.y);
   }, { passive: true });
-
-  if (root.hasAttribute("data-hover-turntable")) {
-    const card = root.closest(".project-card");
-    card?.addEventListener("pointerenter", () => {
-      isVisible = true;
-      lastRenderTime = 0;
-      asciiReveal.start();
-    });
-    card?.addEventListener("pointerleave", () => {
-      isVisible = false;
-    });
-    card?.addEventListener("focusin", () => {
-      isVisible = true;
-      lastRenderTime = 0;
-      asciiReveal.start();
-    });
-    card?.addEventListener("focusout", () => {
-      isVisible = false;
-    });
-  }
 
   root.addEventListener("turntable-controls:update", (event) => {
     const wasVisible = isVisible;
@@ -402,25 +422,41 @@ document.querySelectorAll("[data-pave-turntable]").forEach((root) => {
     });
   });
 
-  if (root.hasAttribute("data-playground-turntable")) {
-    const observer = new MutationObserver(() => {
-      const wasVisible = isVisible;
-      isVisible = root.closest("[data-ascii-playground]")?.dataset.activeTurntable === root.dataset.playgroundTurntable;
-      if (isVisible) {
-        lastRenderTime = 0;
-        if (!wasVisible) asciiReveal.start();
-      }
-    });
-    const playgroundRoot = root.closest("[data-ascii-playground]");
-    if (playgroundRoot) observer.observe(playgroundRoot, { attributes: true, attributeFilter: ["data-active-turntable"] });
-    isVisible = playgroundRoot?.dataset.activeTurntable === root.dataset.playgroundTurntable;
-  }
+  const onEligibility = (event) => {
+    const wasVisible = isVisible;
+    isVisible = Boolean(event.detail?.active);
+    if (!isVisible) {
+      if (pendingFrame) cancelAnimationFrame(pendingFrame);
+      pendingFrame = null;
+      return;
+    }
+    lastRenderTime = 0;
+    if (!wasVisible) asciiReveal.start();
+    if (!pendingFrame) pendingFrame = requestAnimationFrame(render);
+  };
+  root.addEventListener("turntable-eligibility", onEligibility);
 
-  new ResizeObserver(resize).observe(root);
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(root);
   root.style.setProperty("--pave-ascii-glow", controls.glow);
   rebuildGeometry();
   resize();
   updateSettingsPayload();
   if (isVisible) asciiReveal.start();
   pendingFrame = requestAnimationFrame(render);
-});
+
+  return {
+    destroy() {
+      isVisible = false;
+      if (pendingFrame) cancelAnimationFrame(pendingFrame);
+      if (geometryRebuildFrame !== null) cancelAnimationFrame(geometryRebuildFrame);
+      resizeObserver.disconnect();
+      root.removeEventListener("turntable-eligibility", onEligibility);
+      if (activeGroup) disposeGroup(activeGroup);
+      frontMaterial.dispose();
+      sideMaterial.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    }
+  };
+}

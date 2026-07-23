@@ -1,0 +1,39 @@
+---
+interface Props {
+  caseTitle: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+}
+
+const { caseTitle, eyebrow, title, body } = Astro.props;
+const emailHref = `mailto:hi@traykov.cc?subject=${encodeURIComponent(`Product question after reading ${caseTitle}`)}`;
+---
+
+<aside class="case-contact-prompt" aria-labelledby="case-contact-title" data-reveal="rise">
+  <div class="case-contact-prompt__copy">
+    <p>{eyebrow}</p>
+    <h2 id="case-contact-title">{title}</h2>
+    <p>{body}</p>
+  </div>
+
+  <div class="case-contact-prompt__actions">
+    <a href="#book-a-call" data-case-contact-booking>
+      <span data-scramble data-scramble-label="Book 30 minutes">Book 30 minutes</span>
+    </a>
+    <a href={emailHref}>Email instead</a>
+  </div>
+</aside>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("[data-case-contact-booking]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const booking = document.querySelector<HTMLDetailsElement>("#book-a-call");
+      if (!booking) return;
+
+      event.preventDefault();
+      booking.open = true;
+      booking.scrollIntoView({ block: "start" });
+    });
+  });
+</script>

@@ -1,4 +1,4 @@
-const ASCII_RAMP = " ·•+*✦✶✷✸✹";
+const ASCII_RAMP = " .:+*#%@";
 
 const fragmentSource = `
 precision highp float;
@@ -116,6 +116,7 @@ class AsciiShader {
     this.interactionTarget = this.root.closest(".hero") || this.root;
 
     if (!this.gl) {
+      this.root.classList.add("is-ascii-fallback");
       this.pre.textContent = this.fallback();
       return;
     }
@@ -343,9 +344,11 @@ class AsciiShader {
         const wave = Math.abs(this.waveCurrent[displayY * this.cols + x] || 0);
         const trail = this.trailBuffer[displayY * this.cols + x] || 0;
         const adjustedBrightness = Math.min(1, brightness + wave * 0.22 + (trail > 0.08 ? 0.16 : 0));
+        const dither = (BAYER_4[(x % 4) + (displayY % 4) * 4] - 0.5) * 0.08;
+        const glyphBrightness = Math.min(1, Math.max(0, (adjustedBrightness + dither - 0.18) / 0.82));
         const rampIndex = Math.min(
           ASCII_RAMP.length - 1,
-          Math.max(0, Math.floor(adjustedBrightness * (ASCII_RAMP.length - 1)))
+          Math.max(0, Math.floor(glyphBrightness * (ASCII_RAMP.length - 1)))
         );
         line += ASCII_RAMP[rampIndex];
       }
@@ -363,6 +366,10 @@ class AsciiShader {
     const rect = this.root.getBoundingClientRect();
     ctx.clearRect(0, 0, rect.width, rect.height);
     const preStyle = getComputedStyle(this.pre);
+    const rootStyle = getComputedStyle(this.root);
+    const baseColor = rootStyle.getPropertyValue("--ascii-stage-base-color").trim() || "rgb(86, 86, 80)";
+    const hoverColor = rootStyle.getPropertyValue("--ascii-stage-hover-color").trim() || "#282824";
+    const activeColor = rootStyle.getPropertyValue("--ascii-stage-active-color").trim() || "#080808";
     const scaleX = Number.parseFloat(preStyle.getPropertyValue("--ascii-scale-x")) || 1;
     const charWidth = (rect.width / Math.max(1, this.cols)) * scaleX;
     ctx.font = `700 ${this.fontSize}px ${preStyle.fontFamily}`;
@@ -382,14 +389,14 @@ class AsciiShader {
         const waveOn = energy > 0.04;
 
         if (waveOn) {
-          ctx.fillStyle = "#f4f4f4";
+          ctx.fillStyle = activeColor;
           ctx.globalAlpha = Math.min(0.9, 0.45 + energy * 0.45);
         } else if (hoverOn) {
-          ctx.fillStyle = "#f4f4ee";
+          ctx.fillStyle = hoverColor;
           ctx.globalAlpha = 0.92;
         } else {
-          ctx.fillStyle = "rgb(118 118 112)";
-          ctx.globalAlpha = 0.38;
+          ctx.fillStyle = baseColor;
+          ctx.globalAlpha = 0.46;
         }
 
         ctx.fillText(char, x * charWidth, y * this.lineHeight);
@@ -410,6 +417,7 @@ document.querySelectorAll("[data-ascii-shader]").forEach((stage) => {
   try {
     new AsciiShader(stage);
   } catch (error) {
+    stage.classList.add("is-ascii-fallback");
     stage.querySelector("pre").textContent = "shader.offline\n" + String(error.message || error);
   }
 });
@@ -496,7 +504,7 @@ class ProjectAsciiMark {
 
     if (time - this.lastAscii > 70 || this.reducedMotion) {
       this.lastAscii = time;
-      this.pre.textContent = this.toAscii();
+      this.pre.textContent = this.toAscii(seconds);
     }
 
     if (!this.reducedMotion) {
@@ -504,7 +512,7 @@ class ProjectAsciiMark {
     }
   }
 
-  toAscii() {
+  toAscii(seconds) {
     this.gl.readPixels(0, 0, this.cols, this.rows, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this.pixelBuffer);
     const lines = [];
 

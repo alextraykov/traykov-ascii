@@ -1,4 +1,22 @@
-import * as THREE from "three";
+import {
+  AlwaysStencilFunc,
+  AmbientLight,
+  Box3,
+  DirectionalLight,
+  EqualStencilFunc,
+  ExtrudeGeometry,
+  Group,
+  KeepStencilOp,
+  Mesh,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  ReplaceStencilOp,
+  Scene,
+  ShapeGeometry,
+  Vector3,
+  WebGLRenderer
+} from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { createTurntableAsciiReveal } from "./turntable-ascii-reveal.js";
 
@@ -6,7 +24,7 @@ const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹
 const STAGE_ASCII_FRAME_INTERVAL = 1000 / 60;
 const CARD_ASCII_FRAME_INTERVAL = 1000 / 30;
 
-document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
+export function initializeSasiLogoTurntable(root) {
   const ascii = root.querySelector("[data-sasi-ascii]");
   if (!ascii) return;
   root.classList.add("is-turntable-loading");
@@ -25,11 +43,11 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     glow: Number(root.dataset.cardGlow || 0.18)
   };
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(34, 1, 0.1, 100);
   camera.position.set(0, 0, 8.4);
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = new WebGLRenderer({
     alpha: false,
     antialias: true,
     stencil: true,
@@ -39,44 +57,42 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
   renderer.setPixelRatio(1);
   root.append(renderer.domElement);
 
-  const mark = new THREE.Group();
+  const mark = new Group();
   mark.rotation.x = -0.18;
   scene.add(mark);
 
-  const frontMaterial = new THREE.MeshStandardMaterial({
+  const frontMaterial = new MeshStandardMaterial({
     color: 0x080808,
     metalness: 0.08,
-    roughness: 0.34,
-    side: THREE.DoubleSide
+    roughness: 0.34
   });
-  const sideMaterial = new THREE.MeshStandardMaterial({
+  const sideMaterial = new MeshStandardMaterial({
     color: 0x747064,
     metalness: 0.06,
-    roughness: 0.62,
-    side: THREE.DoubleSide
+    roughness: 0.62
   });
-  const detailMaterial = new THREE.MeshStandardMaterial({
+  const detailMaterial = new MeshStandardMaterial({
     color: 0x080808,
     metalness: 0.03,
-    roughness: 0.42,
-    side: THREE.DoubleSide
+    roughness: 0.42
   });
+  const sharedMaterials = new Set([frontMaterial, sideMaterial, detailMaterial]);
 
-  const key = new THREE.DirectionalLight(0xffffff, 4.8);
+  const key = new DirectionalLight(0xffffff, 4.8);
   key.position.set(2.7, 3.2, 4.4);
   scene.add(key);
 
-  const rim = new THREE.DirectionalLight(0xffffff, 3.2);
+  const rim = new DirectionalLight(0xffffff, 3.2);
   rim.position.set(-2.6, 1.5, -4.6);
   scene.add(rim);
 
-  const fill = new THREE.DirectionalLight(0xd7d2bd, 2.1);
+  const fill = new DirectionalLight(0xd7d2bd, 2.1);
   fill.position.set(-3.1, -0.9, 2.6);
   scene.add(fill);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.88));
+  scene.add(new AmbientLight(0xffffff, 0.88));
 
   const sampleCanvas = document.createElement("canvas");
-  const sampleContext = sampleCanvas.getContext("2d", { willReadFrequently: true });
+  const sampleContext = sampleCanvas.getContext("2d", { alpha: false, willReadFrequently: true });
   let cols = 120;
   let rows = 70;
   let lastAscii = 0;
@@ -86,14 +102,22 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
   let trailBuffer = new Float32Array(cols * rows);
   let turntableAngle = 0;
   let lastRenderTime = 0;
-  let isVisible = !root.hasAttribute("data-playground-turntable") && !root.hasAttribute("data-hover-turntable");
+  let isVisible = true;
   let pendingFrame = null;
+  let geometryRebuildFrame = null;
+  let destroyed = false;
+  let lastAsciiOutput = ascii.textContent;
+  let sourceDataPromise;
   const asciiReveal = createTurntableAsciiReveal(root, { duration: isCard ? 760 : 1240 });
 
   const disposeGroup = (group) => {
     group.traverse((node) => {
       if (!node.isMesh) return;
       node.geometry?.dispose();
+      const materials = Array.isArray(node.material) ? node.material : [node.material];
+      materials.forEach((material) => {
+        if (material && !sharedMaterials.has(material)) material.dispose();
+      });
     });
   };
 
@@ -120,18 +144,17 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
   };
 
   const makeStencilMaterial = (ref) => {
-    const material = new THREE.MeshBasicMaterial({
+    const material = new MeshBasicMaterial({
       colorWrite: false,
       depthWrite: false,
-      depthTest: false,
-      side: THREE.DoubleSide
+      depthTest: false
     });
     material.stencilWrite = true;
     material.stencilRef = ref;
-    material.stencilFunc = THREE.AlwaysStencilFunc;
-    material.stencilFail = THREE.ReplaceStencilOp;
-    material.stencilZFail = THREE.ReplaceStencilOp;
-    material.stencilZPass = THREE.ReplaceStencilOp;
+    material.stencilFunc = AlwaysStencilFunc;
+    material.stencilFail = ReplaceStencilOp;
+    material.stencilZFail = ReplaceStencilOp;
+    material.stencilZPass = ReplaceStencilOp;
     return material;
   };
 
@@ -139,21 +162,22 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     const clone = material.clone();
     clone.stencilWrite = true;
     clone.stencilRef = ref;
-    clone.stencilFunc = THREE.EqualStencilFunc;
-    clone.stencilFail = THREE.KeepStencilOp;
-    clone.stencilZFail = THREE.KeepStencilOp;
-    clone.stencilZPass = THREE.KeepStencilOp;
+    clone.stencilFunc = EqualStencilFunc;
+    clone.stencilFail = KeepStencilOp;
+    clone.stencilZFail = KeepStencilOp;
+    clone.stencilZPass = KeepStencilOp;
     return clone;
   };
 
   const buildSourceGroup = async () => {
-    const svgText = await fetch(root.dataset.svgSrc || "/sasi2.svg").then((response) => {
-      if (!response.ok) throw new Error(`SVG load failed: ${response.status}`);
-      return response.text();
-    });
-    const loader = new SVGLoader();
-    const data = loader.parse(svgText);
-    const group = new THREE.Group();
+    sourceDataPromise ??= fetch(root.dataset.svgSrc || "/sasi2.svg")
+      .then((response) => {
+        if (!response.ok) throw new Error(`SVG load failed: ${response.status}`);
+        return response.text();
+      })
+      .then((svgText) => new SVGLoader().parse(svgText));
+    const data = await sourceDataPromise;
+    const group = new Group();
     const maskShapes = new Map();
     const maskedPaths = [];
     const maskRefs = new Map();
@@ -184,8 +208,8 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
         } else {
           const shapes = SVGLoader.createShapes(path);
           for (const shape of shapes) {
-            const geometry = new THREE.ExtrudeGeometry(shape, makeExtrude());
-            group.add(new THREE.Mesh(geometry, [frontMaterial, sideMaterial]));
+            const geometry = new ExtrudeGeometry(shape, makeExtrude());
+            group.add(new Mesh(geometry, [frontMaterial, sideMaterial]));
           }
         }
       }
@@ -205,7 +229,7 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
           });
           if (!geometry) continue;
           geometry.computeVertexNormals();
-          const mesh = new THREE.Mesh(geometry, detailMaterial);
+          const mesh = new Mesh(geometry, detailMaterial);
           mesh.position.z = controls.depth + controls.bevel + 0.6;
           group.add(mesh);
         }
@@ -221,7 +245,7 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
       const renderOrder = 10 + index * 2;
 
       for (const shape of maskShapes.get(maskId)) {
-        const maskMesh = new THREE.Mesh(new THREE.ShapeGeometry(shape, 36), makeStencilMaterial(stencilRef));
+        const maskMesh = new Mesh(new ShapeGeometry(shape, 36), makeStencilMaterial(stencilRef));
         maskMesh.position.z = controls.depth + controls.bevel + 4;
         maskMesh.renderOrder = renderOrder;
         group.add(maskMesh);
@@ -233,8 +257,8 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
         cloneStencilMaterial(sideMaterial, stencilRef)
       ];
       for (const shape of shapes) {
-        const geometry = new THREE.ExtrudeGeometry(shape, makeExtrude());
-        const mesh = new THREE.Mesh(geometry, maskedMaterials);
+        const geometry = new ExtrudeGeometry(shape, makeExtrude());
+        const mesh = new Mesh(geometry, maskedMaterials);
         mesh.renderOrder = renderOrder + 1;
         group.add(mesh);
       }
@@ -257,10 +281,14 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
 
   const rebuildGeometry = async () => {
     const nextGroup = await buildSourceGroup();
+    if (destroyed) {
+      disposeGroup(nextGroup);
+      return;
+    }
 
-    const bounds = new THREE.Box3().setFromObject(nextGroup);
-    const center = bounds.getCenter(new THREE.Vector3());
-    const size = bounds.getSize(new THREE.Vector3());
+    const bounds = new Box3().setFromObject(nextGroup);
+    const center = bounds.getCenter(new Vector3());
+    const size = bounds.getSize(new Vector3());
     const scale = 4.25 / Math.max(size.x, size.y);
 
     nextGroup.scale.set(scale, -scale, scale);
@@ -282,11 +310,21 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     mark.scale.setScalar(controls.renderSize);
   };
 
-  const applyControlValue = async (name, value) => {
+  const scheduleGeometryRebuild = () => {
+    if (geometryRebuildFrame !== null) return;
+    geometryRebuildFrame = requestAnimationFrame(() => {
+      geometryRebuildFrame = null;
+      rebuildGeometry().catch((error) => {
+        ascii.textContent = `sasi.logo.offline\n${String(error.message || error)}`;
+      });
+    });
+  };
+
+  const applyControlValue = (name, value) => {
     if (controls[name] === value) return;
     controls[name] = value;
     if (name === "renderSize") updateRenderSize();
-    if ((name === "depth" || name === "bevel") && activeGroup) await rebuildGeometry();
+    if ((name === "depth" || name === "bevel") && activeGroup) scheduleGeometryRebuild();
     if (name === "density") resize();
     if (name === "glow") root.style.setProperty("--pave-ascii-glow", value);
     updateSettingsPayload();
@@ -364,7 +402,6 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
 
   const toAscii = (time = performance.now()) => {
     if (!sampleContext) return;
-    sampleContext.clearRect(0, 0, cols, rows);
     sampleContext.drawImage(renderer.domElement, 0, 0, cols, rows);
     const pixels = sampleContext.getImageData(0, 0, cols, rows).data;
     const lines = [];
@@ -390,7 +427,11 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
       lines.push(line);
     }
 
-    ascii.textContent = asciiReveal.render(lines, time);
+    const output = asciiReveal.render(lines, time);
+    if (output !== lastAsciiOutput) {
+      ascii.textContent = output;
+      lastAsciiOutput = output;
+    }
   };
 
   const settingsOutput = document.querySelector("[data-sasi-settings]");
@@ -437,13 +478,13 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
 
   const tabButtons = document.querySelectorAll("[data-sasi-tab]");
   const tabPanels = document.querySelectorAll("[data-sasi-panel]");
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+  const activateTab = (button) => {
       const activeTab = button.dataset.sasiTab;
       tabButtons.forEach((tabButton) => {
         const isActive = tabButton.dataset.sasiTab === activeTab;
         tabButton.classList.toggle("is-active", isActive);
         tabButton.setAttribute("aria-selected", String(isActive));
+        tabButton.tabIndex = isActive ? 0 : -1;
       });
       tabPanels.forEach((panel) => {
         const isActive = panel.dataset.sasiPanel === activeTab;
@@ -456,6 +497,21 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
         window.setTimeout(() => controlsPanel.classList.remove("is-flipping-back"), 260);
       }
       controlsPanel?.classList.toggle("is-flipped", activeTab === "how");
+  };
+
+  tabButtons.forEach((button, index) => {
+    button.addEventListener("click", () => activateTab(button));
+    button.addEventListener("keydown", (event) => {
+      const tabs = [...tabButtons];
+      let nextIndex;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex === undefined) return;
+      event.preventDefault();
+      tabs[nextIndex].focus();
+      activateTab(tabs[nextIndex]);
     });
   });
 
@@ -463,26 +519,6 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     const point = eventToGrid(event);
     addTrail(point.x, point.y);
   }, { passive: true });
-
-  if (root.hasAttribute("data-hover-turntable")) {
-    const card = root.closest(".project-card");
-    card?.addEventListener("pointerenter", () => {
-      isVisible = true;
-      lastRenderTime = 0;
-      asciiReveal.start();
-    });
-    card?.addEventListener("pointerleave", () => {
-      isVisible = false;
-    });
-    card?.addEventListener("focusin", () => {
-      isVisible = true;
-      lastRenderTime = 0;
-      asciiReveal.start();
-    });
-    card?.addEventListener("focusout", () => {
-      isVisible = false;
-    });
-  }
 
   root.addEventListener("turntable-controls:update", (event) => {
     const wasVisible = isVisible;
@@ -494,26 +530,13 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     });
   });
 
-  if (root.hasAttribute("data-playground-turntable")) {
-    const playgroundRoot = root.closest("[data-ascii-playground]");
-    const observer = new MutationObserver(() => {
-      const wasVisible = isVisible;
-      isVisible = playgroundRoot?.dataset.activeTurntable === root.dataset.playgroundTurntable;
-      if (isVisible) {
-        lastRenderTime = 0;
-        if (!wasVisible) asciiReveal.start();
-      }
-    });
-    if (playgroundRoot) observer.observe(playgroundRoot, { attributes: true, attributeFilter: ["data-active-turntable"] });
-    isVisible = playgroundRoot?.dataset.activeTurntable === root.dataset.playgroundTurntable;
-  }
-
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const render = (time = 0) => {
-    if (!isVisible) {
-      window.setTimeout(() => {
-        pendingFrame = requestAnimationFrame(render);
-      }, 160);
+    pendingFrame = null;
+    if (!isVisible || document.hidden) return;
+    const frameInterval = isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL;
+    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+      pendingFrame = requestAnimationFrame(render);
       return;
     }
     if (!lastRenderTime) lastRenderTime = time;
@@ -526,7 +549,7 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     renderer.render(scene, camera);
     updateTrail(time);
 
-    if (time - lastAscii > (isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL) || reduceMotion.matches) {
+    if (time - lastAscii > frameInterval || reduceMotion.matches) {
       lastAscii = time;
       toAscii(time);
     }
@@ -534,7 +557,22 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     if (!reduceMotion.matches) pendingFrame = requestAnimationFrame(render);
   };
 
-  new ResizeObserver(resize).observe(root);
+  const onEligibility = (event) => {
+    const wasVisible = isVisible;
+    isVisible = Boolean(event.detail?.active);
+    if (!isVisible) {
+      if (pendingFrame) cancelAnimationFrame(pendingFrame);
+      pendingFrame = null;
+      return;
+    }
+    lastRenderTime = 0;
+    if (!wasVisible) asciiReveal.start();
+    if (!pendingFrame) pendingFrame = requestAnimationFrame(render);
+  };
+  root.addEventListener("turntable-eligibility", onEligibility);
+
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(root);
   root.style.setProperty("--pave-ascii-glow", controls.glow);
   resize();
   rebuildGeometry()
@@ -546,4 +584,21 @@ document.querySelectorAll("[data-sasi-logo-turntable]").forEach((root) => {
     .catch((error) => {
       ascii.textContent = `sasi.logo.offline\n${String(error.message || error)}`;
     });
-});
+
+  return {
+    destroy() {
+      destroyed = true;
+      isVisible = false;
+      if (pendingFrame) cancelAnimationFrame(pendingFrame);
+      if (geometryRebuildFrame !== null) cancelAnimationFrame(geometryRebuildFrame);
+      resizeObserver.disconnect();
+      root.removeEventListener("turntable-eligibility", onEligibility);
+      disposeGroup(mark);
+      frontMaterial.dispose();
+      sideMaterial.dispose();
+      detailMaterial.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    }
+  };
+}

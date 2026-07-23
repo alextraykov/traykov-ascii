@@ -1,311 +1,271 @@
 ---
-title: "Designing Pave's MVP: making AI app creation coherent enough ship"
+title: "Designing Pave"
 category: product case study
 status: launched
-pubDate: 2026-05-19
-tags: [ai, product-design, enterprise-software, mvp, launch]
-heroImage: /case-studies/screenshots/pages/builder-light.png
-readTime: 13 min
-summary: "How I shaped the first six months of Pave's MVP: builder loop, planning, direct edit, credit states, launch scope, and the product foundation behind Quickbase's AI app builder."
+pubDate: 2026-07-20
+tags: [ai, product-design, design-engineering, enterprise-software, launch]
+heroImage: /case-studies/pave-nav/manage-mode-builder-view.webp
+readTime: 14 min
+summary: "From an engineering concept to an enterprise AI app builder"
+role: "Design Manager + hands-on IC"
+year: 2026
 group: "Pave"
 order: -2
 ---
 
-## Summary
+## BLUF
 
-Pave was Quickbase's bet that AI-assisted app building could move beyond prompt-to-prototype and become a practical way for enterprise teams to create usable software.
+I joined an early AI app builder made by engineers. I helped turn it into Pave, a public product with a clear builder experience, version control, planning mode, direct editing and a new navigation system.
 
-I was the sole product designer through the first six months of the MVP push. My work shaped the product foundation across the builder, chat loop, build activity, preview, authentication flow, navigation, theme selection, direct-edit exploration, planning artifacts, and credit-state patterns.
+- **Role** Founding product designer for Pave's first seven months; Interim Design Manager and full-time IC
+- **Timeline** December 2025 - today
+- **Scope** Research, product structure, coded prototypes, interaction models, design QA and engineering handoff
+- **Result** [Pave launched publicly](https://www.quickbase.com/news/press-releases/quickbase-announces-pave). [Plan Mode](https://www.quickbase.com/blog/pave/planning-mode-in-pave), [Direct Edit](https://www.quickbase.com/blog/pave/introducing-direct-edit-in-pave) and [email notifications](https://www.quickbase.com/pave/how-it-works) are publicly documented. Navigation Phase 1 shipped internally. I do not have a public adoption or retention number.
 
-Pave [launched publicly on April 28, 2026](https://www.quickbase.com/news/press-releases/quickbase-announces-pave). Quickbase positioned it as a full-stack AI app builder for enterprise teams: people describe what they need, shape the generated app, and put it to work with roles, publishing, hosted infrastructure, and governance around it.
+```case-video-copy
+title: Pave in 26 seconds
+file: public/case-studies/media/pave-portfolio-loop.mp4
 
-The design challenge was:
-
-> Make AI app creation feel fast without making it feel reckless.
-
-That meant the generated app could not be the only important moment. Users also needed to understand what was happening, stay connected to the output, recover from mistakes, and trust the product as more than a disposable demo.
-
-```case-stat title: Launch shape
-6 mo | MVP push | Product foundation moved from broad exploration into public-launch scope.
-4 | connected surfaces | Builder, chat, preview, and build activity stayed connected as one loop.
-Apr 28 | public launch | Pave shipped with a coherent first-run creation model.
+A quick look at the builder, Plan Mode, versioning and Direct Edit, plus an early workflow idea. The chapters below show what shipped and what stayed as a prototype.
 ```
 
-```case-quote
-attribution: Design rule
-role: Pave MVP
-Show enough system activity to keep users oriented, but not so much that the interface becomes backend theater.
+```case-image-grid
+title: The transformation at a glance
+note: Scroll sideways to compare the starting point, product system and navigation direction.
+columns: 3
+/case-studies/pave-evidence/scaffold-jan-2026-blinq.webp | 01 / Starting point | The first Blinq shell kept chat, build activity and the app preview in one workspace.
+/case-studies/pave-evidence/plancard-light.webp | 02 / Product system | Plans, clear states and approval made the AI's intent easier to review.
+/case-studies/pave-nav/manage-mode-builder-view.webp | 03 / Navigation direction | The Build/Manage header organized the product Pave had become. More Manage screens came later.
 ```
 
-## Project frame
+## From working alpha to an actual product
 
-- Role: sole product designer for the first six months of the MVP effort
-- Timeline: six-month MVP push leading to public launch on April 28, 2026
-- Team: fewer than ten people across senior product leadership, principal engineering, software architecture, executive stakeholders, marketing, branding, and content
-- Status: publicly launched product direction, with some public portfolio examples shown as design-intent prototypes
-- Confidentiality boundary: no internal metrics, customer details, roadmap dates, Jira or Confluence references, unreleased screenshots, or production architecture details
+I joined an engineer-built alpha that could turn a prompt into software using Quickbase's backend. The main loop worked: chat sent a request, the LLM generated the code and an iframe showed the result. The rest of the product was still unclear. Back then, Vibe UI had screens, but no clear entry point, navigation, role model, build states or recovery behavior.
 
-This case study covers the product-design story. The companion case study, [Building Pave](/case-studies/building-pave-environment/), covers the code-based design environment, branch previews, token guardrails, and handoff workflow behind the work.
+[Matthew Schweers](https://www.linkedin.com/in/schweers/) was the engineering brain behind all of this (shoutout). Ryan Murray led the product direction. I was the first designer on the product, later joined by [Johnny Lee](https://www.johnny-lee.com/), who led the visual and brand direction.
 
-## Why hard
+## One workspace for chat, building and preview
 
-Most AI app builders make first generation feel impressive. The user types a prompt, the system produces an app-shaped artifact, and the demo works.
+As the product became Blinq, the sidebar, chat and app preview still did not feel like one builder.
 
-The harder product problem starts one step later.
+```case-video-copy
+title: Blinq builder clickthrough
+file: public/case-studies/media/pave/blinq-builder-clickthrough.mp4
 
-Business users still need to understand what was created, edit the output, preserve what is already working, invite collaborators, publish changes, and trust the product path toward real operational use. If chat disappears after generation, the product feels like an intake form. If canvas takes over completely, AI feels like an onboarding trick. If AI keeps regenerating everything, users lose confidence making small changes.
+This coded clickthrough shows the first complete Blinq surface: entry, builder, themes, projects, notifications and the chat-and-preview relationship. The app names and data are prototype content.
+```
 
-Pave's MVP had to hold three tensions at once:
+I moved the main design work from Figma Make into a more robust repository on GitHub. I did not want to pay the same extra token costs in Claude, and I wanted more freedom, robustness and power in the prototypes.
 
-- Speed vs. control: generation should feel fast, but users still need to see where they can intervene.
-- Simplicity vs. enterprise reality: first-run experience needed to stay light while pointing toward roles, publishing, infrastructure, and governance.
-- Exploration vs. launch: early product exploration was broader than what the first public MVP could responsibly ship.
+Back to the building experience: we wanted more of the building process to happen inside chat. We even imagined all of it happening there, at least in theory. That made it useful to keep chat beside the builder after the first app appeared. The preview stayed as the visual anchor and the feedback loop for the conversation: ask for something, see the app change, correct it and repeat.
 
-## My role
+The sidebar could expand and collapse, which gave people more building space and less noise when they needed to focus. Chat and the builder used resizable columns. Their boundaries and the top bar stayed fixed, so dragging the split or changing modes did not make the whole app jump around. Themes were a big deal then, so we gave them more space instead of hiding them in settings. 2026 update: enterprise customers still ask for them often.
 
-I worked closely with a small senior team across product, engineering, architecture, executive stakeholders, marketing, brand, and content. My contribution centered on four areas:
+The top bar became a product-status area. Preview, Publish, Refresh and Live App had to stay clear without getting in the way of building. You can judge how well that worked in [the navigation rework](#rebuild-navigation-around-the-product-pave-had-become). It really did not.
 
-- Foundational product model: how app creation, builder, chat, preview, navigation, and project state connected
-- Core launch surfaces: authentication, builder, chat input, project builder layout, navigation, theme selector, and build-state components
-- Product clarity: diagrams, state maps, behavior specs, edge cases, accessibility notes, and design QA
-- Future-state exploration: planning, editing, configuration, billing, marketplace, and operational workflows that clarified where Pave could go after launch
+I also tested three role-based home views internally. That gave us a clear observation: a builder, an admin and an end user had different jobs. Giving them the same interface because they shared a login or homepage did not work.
 
-[Johnny Lee](https://www.johnny-lee.com/) joined later and helped elevate the visual expression and ongoing product polish. Marketing, branding, and content shaped the final public-facing launch expression. My role was to establish the product foundation early enough that the team could converge, cut scope, and ship.
+That first role model was incomplete, but it gave us something real to improve.
 
-## What I show
+## Component preview for engineers to refer to
 
-For the public version, I am intentionally separating the product story from confidential implementation details.
+A spinner could show that Pave was busy. It could not show what was happening, whether progress was real or when a person could safely step in.
 
-Shown here:
+```case-video-copy
+title: Build status and component-state preview
+file: public/case-studies/media/pave/blinq-build-status-preview.mp4
 
-- Builder, chat, preview, planning, direct-edit, and credit-state interaction models
-- Publicly safe screenshots and prototype surfaces
-- How design-intent prototypes became executable product specs
-- The kinds of product decisions those prototypes made explicit
+I built the component preview so engineering had one place to check each new Blinq component: its states, visual design and intended motion. This was my first attempt to close the gap between a polished prototype and something engineers could inspect and rebuild in the product repository. The content is mocked because this is a handoff artifact.
+```
 
-Not shown here:
+The build experience needed a few clear signals:
 
-- Internal metrics, customer details, roadmap dates, or launch targets
-- Private product strategy, Jira or Confluence material, or unreleased screenshots
-- Production architecture details that belong to the engineering codebase
+- The request was understood.
+- Work had started and had steps.
+- The generated app was changing in the preview.
+- The person could take control again when execution finished.
 
-Where I show prototype surfaces, the point is not that the prototype was production architecture. The point is that it made product behavior, state, motion, copy, and implementation intent concrete enough to review.
+I explored top-bar status, inline build steps, message queues and `SubagentBubble` components. Active work expanded. Completed work collapsed. The preview kept every signal tied to the app.
 
-## Product strategy
+The environment had reusable components, design tokens, dark mode, accessibility checks, motion rules and handoff notes based on states. I started to confuse the size of the repository with how easy it was for the team to use. [Direct Edit](#direct-edit-introducing-granular-change) exposed that gap.
 
-I used four principles to keep the MVP coherent.
+## Sense of safety when building
 
-### Start with intent
+Version history and reverting were already in the alpha. They were becoming common in AI builders, and enterprise users reasonably expected them.
 
-The first interaction needed to begin with what the user wanted to build, not with a configuration sequence.
+I explored two ways to go back. The first stayed inside chat and tied recovery to the prompt that created each version. The second used a timeline where people could browse old versions, preview one in the builder and then revert to it. Together, these gave people two ways to find the same powerful feature.
 
-The desired posture was:
+```case-video-copy
+title: Blinq version-history exploration
+file: public/case-studies/media/pave/blinq-version-history.mp4
 
-> Tell Pave what you need.
+This prototype explores restore entry points in chat and a version timeline inside the builder. People could preview an older app before reverting to it.
+```
 
-Not:
+People needed to see which version they were choosing and what would disappear. The conversation dimmed every message after that version. The builder preview showed the older app in place.
 
-> Create a workspace, choose settings, configure an app, then begin.
+“Go back” sounds harmless until the interface shows how much work “back” contains.
 
-That principle shaped the authenticated entry experience and the way the builder treated chat as a core product surface rather than a separate onboarding step.
+The alpha supported history and reverting. These interactions were early explorations. They did not make it into the product because priorities changed and versioning is hard to build well. I know that from working on Quickbase's core CI/CD and ALM systems.
 
-### Keep chat and builder connected
+The prototypes made one rule clear: show the effect before asking somebody to commit.
 
-The builder answered the most important interaction question in the MVP:
+## Give email notifications an actual editor
 
-> Where does AI live once the user starts building?
+Email notifications needed more than a subject line and textarea. In one day, I built an editor prototype with Markdown, slash commands, schema-aware variables and a Build with AI mode. The message stayed visible while people managed its audience, triggers, schedule, permissions and rules.
 
-I wanted the conversation and the app being created to feel like two views of the same object. The builder brought together chat input, app context, build activity, preview, theme selection, publish-oriented actions, and navigation back into the broader app shell.
+```case-video-copy
+title: Variables inside the notification editor
+file: public/case-studies/media/pave/pave-notification-variables.mp4
 
-The important design detail was not only that the page used a split layout. It was that neither side could dominate. Users needed enough room to talk to AI, but the app being created had to remain the anchor.
+The prototype treated variables as part of the document instead of loose merge tags. This recording shows part of that variable flow. The full authoring model did not reach production.
+```
 
-![January 2026 builder scaffold from the archive.](/case-studies/pave-evidence/scaffold-jan-2026-blinq.webp)
+```case-video-copy
+title: Building an email notification
+file: public/case-studies/media/pave/pave-notifications-builder.mp4
 
-The split-pane model became the structural expression of the product thesis: AI should remain present as a collaborator, but the generated app should not disappear behind the conversation.
+The prototype moves through the editor, variables, commands, AI-assisted writing and the related settings. Most of the richer editor and automation model did not reach the product.
+```
 
-### Make AI activity visible
+The scope grew because the problem was large. Record events and recurring schedules could both run. Changing the source table reset the recipients, trigger fields and conditions linked to it. Conditions became a nested AND/OR tree. The prototype covered light and dark themes, keyboard behavior, reduced motion and 84 end-to-end checks. For a design prototype, it was robust as hell.
 
-A spinner would not be enough.
+We did not have the capacity to move all of that into production while other launch work was moving. The richer editor, variables, nested conditions and deeper scheduling were cut. Basic email notifications reached Pave. Most of the authoring system went to scrap.
 
-When the system was building, users needed a sense that work was happening in a structured way. I designed build-state patterns and subagent cards to make system activity legible without turning the product into a log viewer.
+I still think that work could have become a stronger product, but we did not ship enough of it to prove that. What I can show is what I delivered. The released editor itself saw almost no adoption. Most notifications are created through chat, so credit to Pave's agents for making that path work.
 
-The builder needed to communicate:
+## Rebrand the system without breaking launch
 
-- Something is happening.
-- The work has steps.
-- The app is being shaped by the user's intent.
-- The user can return to steering after the system finishes.
+By the time Blinq became Pave, the product had already been Vibe UI and Flint. Four names in a few months sounds funny until every name leaves colors, type, logos and one-off decisions behind. The builder, navigation, notifications and landing work were all moving toward launch, so there was no clean time to stop and repaint everything.
 
-Too little activity feels opaque. Too much activity feels like fake technical theater. The narrow line was showing enough system activity to support trust without asking the user to read backend process as product value.
+Johnny owned the palette, icon direction and wider visual language. My part was making that direction work across the real product: light and dark themes, focus and disabled states, warnings, errors, navigation and the generated app inside the builder.
 
-### Cut scope without breaking the thesis
+I asked [Nick Vanselow](https://www.linkedin.com/in/nickvanselow/) for a component analysis before planning the migration. He found Button used in 76 files and 257 Lucide icon uses across 80 icons. I used those numbers to build the Brand Impact Matrix and plan the rollout.
 
-The April 28 public launch forced hard prioritization. Early explorations covered deeper planning, editing, configuration, history, billing, marketplace, and operational workflows. Those explorations were useful because they clarified the long-term product direction, but they were too much for the first public MVP.
+The credit matters. I framed the question and rollout. Nick did the measurement. “I discovered 76 files” sounds better in a portfolio. Nick discovered 76 files.
 
-The real design work became reduction:
+## Plan before spending credits
 
-- Broad product possibility
-- MVP product thesis
-- Launchable interaction foundation
-- Implementation-ready components
+Plan Mode had become common across GenAI platforms, so we needed one too. When I started designing it, I wanted it to work differently. We expected enterprise users to plan a task and then edit the plan itself to get the best result.
 
-The question became:
+I designed Plan Mode around four steps: clarify the request, show the planned work in a sliding panel, let the user edit the Markdown plan and ask for approval before running it. A labeled Plan/Build segmented control replaced icon-only modes. I built `ClarifyCard` to gather missing details. `PlanCard` carried the plan from creation through review and execution. `Approve & Run` made the result clear.
 
-> What must remain true for the MVP to still feel like Pave?
+```case-video-copy
+title: Plan Mode: clarify, review, approve, build
+file: public/case-studies/media/pave/pave-plan-mode.mp4
 
-For me, the answer was:
+The coded interaction shows clarification, a streaming implementation plan, review and the transition into execution. The dashboard, tasks and timings are mock content used to exercise the state model.
+```
 
-- Users can start from intent.
-- Chat and building feel connected.
-- The app surface remains visible and controllable.
-- Product state is explicit enough to trust.
-- The experience has a credible path toward enterprise app creation.
-- The product is polished enough to support a public launch.
+Behind the demo, copy, motion, actions and progress still had to agree. A paused plan should not shimmer as if it is still working.
 
-## Builder loop
+## Direct edit: introducing granular change
 
-The builder carried the main product argument. It needed to avoid two failure modes: becoming just a chatbot, or becoming a visual editor where AI disappears after generation.
+Once Pave could plan and generate, the next problem was clear. Prompting worked well for large changes, but it was clumsy for one exact edit. The first version of Direct Edit was very technical and engineering-led. Joey Cruz allowed users to edit some CSS values directly, but it was not friendly to use.
 
-The core loop was:
+`Make this heading smaller` should leave the table below it alone.
 
-1. User describes what they want.
-2. Pave clarifies or plans when needed.
-3. Build activity becomes visible.
-4. Preview remains anchored.
-5. User can inspect, adjust, and continue the conversation.
+```case-video-copy
+title: Direct Edit and its interaction catalogue
+file: public/case-studies/media/pave/pave-direct-edit.mp4
 
-The loop mattered more than any single component. It let the product feel fast while still giving the user a visible object to reason about.
+The recording moves from selecting and editing generated UI into the component-aware toolbar, state notes and motion catalogue used for implementation. The product data in the prototype is fabricated.
+```
 
-The January builder scaffold is useful evidence because it shows the product structure early: chat, preview, app chrome, input, and generation state treated as one workspace rather than separate screens. Later work refined the visuals, but the core product model was already present.
+I reviewed more than twelve AI builders and design tools. They kept using the same generic CSS controls for buttons, tables and charts. That felt insufficient. It was flexible in the way a box of loose screws is flexible.
 
-This also made mobile prioritization clearer. On small viewports, the builder input and active work needed priority over secondary monetization or navigation. Credit nudges, banners, and account surfaces could not be allowed to collapse the main creation loop.
+I made the selected element the unit of direct editing. Text got text controls. Charts got chart controls and templates. Forms, filters, detail views, badges and metrics got smaller sets of controls that matched their job.
 
-## Planning before generation
+This reduced the need for people to know in advance how an edit should work. Not everyone is a designer, and even designers can struggle with the right control. A prompt or template could give them a useful starting point.
 
-Pave also needed a step between prompt and generated app. Without that, the product could feel fast but reckless: the system starts building before the user understands what it thinks it is building.
+The next decision was to stage each change. Selecting an element created a clean state. Editing created a dirty state. Save and Discard stayed visible until the person saved or cancelled the change. AI-generated software already asks people to trust a black box. An immediate and irreversible local edit would have added another problem.
 
-Planning introduced reviewable trust artifacts into the AI loop:
+Johnny completed a visual and UI polish pass for Direct Edit and turned it into something beautiful. I added the interaction timing, component-aware toolbar, motion catalogue and animated icon behavior.
 
-- Clarification when the prompt was ambiguous
-- A plan object that could be revised through chat
-- Workflow previews that showed triggers, conditions, actions, owners, and missing pieces
-- Connection setup that stayed inside the building path
-- A single approval moment before execution started
+Design and Prompt shared one surface but had different controls. Save and Discard appeared only when there was a real change to resolve. Reduced motion lived in the working prototype so engineering could test it.
 
-![PlanCard light-mode capture from the archive.](/case-studies/pave-evidence/plancard-light.webp)
+During handoff, one of our principal engineers called the Direct Edit handoff the clearest and easiest-to-navigate deliverable. Almost all of the specifications made it into the release. Engineers stopped hunting through my filing system. That mattered more than the code-versus-Figma argument. It was living proof that design could make a positive engineering impact.
 
-Small copy decisions did real work here. `Approve & Run` was the right kind of explicit: it told the user execution starts now without turning the flow into approval theater.
+## Explore how a workflow might become inspectable
 
-The planning layer made conversation history more than a transcript. It became an audit trail of user intent, system interpretation, and the next action the product was about to take.
+While launch and Direct Edit were moving, we explored what might happen if Pave coordinated work across several systems instead of making one app at a time.
 
-## Direct edit
+```case-video-copy
+title: Early workflow concept: from intent to inspectable sequence
+file: public/case-studies/media/pave/pave-workflow-builder.mp4
 
-Generated output needed a local editing model. If every correction routes through prompt, users can lose work that was already right.
+The WIP prototype moves from a workflow request through questions into a visible sequence and connected systems. It is an early product exploration that stayed outside the public launch.
+```
 
-Direct Edit answered a specific failure mode in AI builders:
+The flow moved through three representations: conversation, workflow definition, generated application. Chat remained the authoring surface. I kept the diagram deliberately short of a full visual-programming canvas. It used a staged mental model: here is what will run, in what order, against which connected systems.
 
-> A small change should not require a risky regeneration.
+The interaction asked clarifying questions, converted the answers into steps, exposed required connections and allowed revision before a dry run and generation. If the workflow depended on Snowflake and Slack, those dependencies appeared in the definition because “we will sort auth out later” is how demos become archaeological sites.
 
-The model used three layers:
+Two designers tested an earlier flow. Three routes silently locked after connection errors.
 
-- Selection grammar: hover, selected, dirty, and multi-selected states
-- Controls: universal toolbar plus component-specific settings
-- Staged changes: live preview before save or discard
+The happy path had made the diagram reassuring. The broken path revealed that it was also a promise. If the interface showed a staged workflow, it had to explain which step failed, whether earlier work remained valid and whether retrying would duplicate anything.
 
-![Direct Edit sequence archive.](/case-studies/pave-evidence/direct-edit-sequence.webp)
+The workflow concept remained prototype/WIP and unavailable publicly. Later, Johnny Lee developed a much better version, but the early exploration belongs here because it tested how far the product model might stretch.
 
-This gave small visual changes a safer path than prompt-only editing. `Make heading smaller` or `give this card less padding` should not risk changing the table below it. AI remained available for semantic changes, but deterministic edits needed a deterministic path.
+## Rebuild navigation around the product Pave had become
 
-The strongest detail was the save/discard boundary. Previewing a local change live is useful only if the user knows when it becomes the new baseline and how to recover if it was wrong.
+The first Blinq navigation shipped internally. Pave grew past it soon after.
 
-## Credits as product state
+Recent apps on Home could open a live app while the side navigation sent people to the builder. Content design flagged that “Builder” sounded like internal Quickbase language. Pave now included building, app use, permissions, data, publishing and governance. The shell still treated all of that like one long list.
 
-Credits were not only a billing detail. In an AI builder, credits sit directly between user intent and system action.
+It looked like sidebar cleanup at first. In practice, each new part of Pave needed a clear place to live.
 
-If a limit appears only when work stops, the product feels unfair. If upgrade prompts appear too early or too loudly, the product feels like a funnel instead of a tool. Pave needed to answer practical questions in context:
+Before shaping the redesign, I asked [Kevin Rau](https://www.linkedin.com/in/kevindanielrau/) for completion, drop-off, time-to-screen, search, support and enterprise-area usage data. Most of it was available in theory. The baseline numbers never arrived in the thread. The redesign used documented friction, Ryan's journey maps and the real permission model instead of a quantitative funnel. I am not adding a research chart to cover that gap.
 
-- How many credits do I have?
-- When do they renew?
-- Why am I seeing this warning?
-- What can I do now?
-- Can I keep my work moving?
+Over three days, I turned five roles - Builder, End User, Admin, Realm Admin and Viewer - into task flows and storyboarded click sequences.
 
-![Billing credit sequence from the archive.](/case-studies/pave-evidence/billing-sequence.webp)
+The main routing question was simple:
 
-The useful model was a four-state ladder: healthy, warning, low, depleted. Each state had to map across the header pill, chat card, nudge banner, pricing, checkout, account billing, and recovery actions.
+- Is the question about the application's content? Stay in Build and use chat.
+- Is it about access, data flows, releases or operation? Go to Manage.
 
-The strongest pattern was inline recovery inside chat. If a user hit a limit while building, a modal would break the main loop. A chat card could explain the state and offer next steps without pretending the work context disappeared.
+Any task that did not fit showed a problem in the information architecture.
 
-## Marketplace and governance
+That led to a unified top bar, a Build/Manage control and a role-based Manage rail. [Simona Georgieva](https://www.linkedin.com/in/simona-georgieva1/) found a problem in the first version: a new builder who went into permissions or version checks might never return to chat. We kept Manage behind first publish and protected Pave's one reliable wow moment.
 
-Marketplace work extended the same product model beyond a blank prompt. Users needed to discover reusable app starts, inspect them, adapt them, and publish within a governed enterprise context.
+![PHASE 1 / LATER EXPLORATION - The unified header and Build/Manage model. The header and toggle reached the internal Phase 1 release; the complete overview and persona-gated rail remained later-phase work.](/case-studies/pave-nav/manage-mode-builder-view.webp)
 
-The important move was away from vague `Preview` behavior and toward real inspection: open the app start, understand what it includes, then fork it into the builder with context preserved.
+### The label fight was the design fight
 
-![Marketplace sequence from the archive.](/case-studies/pave-evidence/marketplace-sequence.webp)
+Emma Townsend and [Eva Miranda](https://www.linkedin.com/in/eva-miranda-23a570111/?skipRedirect=true) proposed `Chat | Settings`. That was reasonable. Chat is where people build, and Settings is familiar.
 
-Marketplace also introduced policy-aware publishing. A fast realm could publish directly. A governed realm could require review. The CTA needed to respect that difference: `Submit for review` is not the same product promise as `Publish`.
+I argued for `Build | Manage`. Settings sounded like minor preferences, but this side of Pave already held data, users, permissions, versions and billing. Workflow ideas also pointed toward more operational work. Chat is a tool. Settings is a destination. Build and Manage are two actions on the same app.
 
-This was post-launch ecosystem work, but it proved the same design posture could scale: make the next product action visible, preserve context, and keep enterprise control paths explicit.
+The internal release used Build/Manage. The meeting that settled it is not in the written record. I can show the reasoning and the result, but I will not invent the final speech.
 
-## Executable product specs
+Other decisions followed the same pattern:
 
-Because the team was small and senior, static mockups were not enough.
+- Manage stayed unavailable until first publish.
+- Published apps kept the canvas. Pave moved to a low-priority footer chip.
+- End users saw “your apps,” not “your projects,” because access was granted per app.
+- Theme switching stayed reachable after Ryan supplied the number that changed the IA: one in five users changed their theme.
+- Publish versus Share ended in an agreed A/B test.
 
-The design needed to answer implementation questions:
+Ryan signed off on the direction. Kevin made the redesign P0, an Approved branch was cut for engineering and QA continued through release.
 
-- What states exist?
-- What changes before, during, and after generation?
-- How does navigation behave?
-- Which components are reusable?
-- Which parts are launch-critical?
-- Which parts can be deferred?
-- Where are the known gaps?
+The internal Phase 1 release included the unified header, Build/Manage control, grouped header actions, overlay navigation flyout and a less cluttered sidebar.
 
-I used runnable prototypes and structured notes as part of the design work. The useful artifact was not a pile of screenshots. It was a product behavior model that made user goal, interaction state, component behavior, implementation note, and known gap visible.
+Phase 1 did not include the Command Center, role-based Manage rail or the wider administration and governance plane. Johnny led design QA for a separate visual refresh of the same sidebar, and [Swapnil Mittal](https://www.linkedin.com/in/swapnil-mittal/) planned its implementation.
 
-That helped the team avoid treating design as a pile of screens. It made the product easier to reason about and helped implementation conversations stay grounded in behavior.
+My favorite unshipped artifact was the Command Center. I would cut it. It repeated the overview cards and needed a grand name to justify the repeat.
 
-The companion [Building Pave](/case-studies/building-pave-environment/) case study explains the code-based handoff system behind that workflow.
+The navigation work is a useful ending because it includes the problems that came before it. Build and Manage only make sense after the builder, versions, planning and editing exist. The concept work also tested what the product might need next. The final shell caught up with what Pave had become.
 
-## Outcome
+## What changed
 
-Pave launched publicly on April 28, 2026.
+The original chat-and-iframe demo became Pave, a revenue-generating product, in seven months. I know that part from inside the product. The work covered planning, recovery, local editing, onboarding, an app gallery and a navigation model built around Build and Manage. Each chapter marks whether the work became public, shipped internally, or stayed as a prototype.
 
-I am not sharing internal product metrics. The public impact I can safely describe is qualitative:
+[Quickbase's launch announcement](https://www.quickbase.com/news/press-releases/quickbase-announces-pave) confirms Pave's public release. Its public materials document [version rollback and email notifications](https://www.quickbase.com/pave/how-it-works), plus [Plan Mode](https://www.quickbase.com/blog/pave/planning-mode-in-pave) and [Direct Edit](https://www.quickbase.com/blog/pave/introducing-direct-edit-in-pave). Navigation Phase 1 was an internal release.
 
-- Product impact: I established the prompt-first builder model where chat, build activity, preview, navigation, and product state worked together as one loop.
-- Execution impact: design work made product behavior reviewable through prototypes, diagrams, implementation-oriented handoffs, and public-safe evidence artifacts.
-- Strategic impact: the MVP clarified that AI-assisted app creation needed to become more understandable, controllable, and operationally useful after the initial generation moment.
+Data around public adoption, retention and task success is still sensitive, so I would share it later. One thing is clear: a small team shipped something huge and complex in a short time.
 
-## Reflection
+## Related work
 
-The biggest lesson from Pave was that AI product design is not only about the generation moment.
+[Building Pave](/case-studies/building-pave-environment/) covers the branch previews, token enforcement and handoff grammar behind this work.
 
-The impressive demo is the easy part. The hard part is everything around it:
-
-- Helping users understand what the system is doing
-- Giving them enough control to trust the output
-- Preserving the relationship between prompt and app
-- Making product state visible
-- Cutting scope without breaking the thesis
-- Helping engineering understand design well enough to ship it
-
-Using code helped make behavior concrete. It made states, motion, layout, copy, and component intent easier to evaluate. It also created a real tension: a design-intent prototype can look production-ready when it is not.
-
-The better framing was:
-
-> Prototype, not production architecture. A working design artifact that made behavior, state, and intent easier to implement.
-
-Looking back, I would have created an even clearer shipped-versus-exploratory map earlier. Some explorations were intentionally broader than launch scope, and the team needed sharp boundaries between what we were shipping, what we were validating, and what we were using to clarify direction.
-
-But the core product model held. Pave needed to feel fast, but not reckless. It needed to make AI feel powerful, but not opaque. It needed enough structure for a small team to move from ambiguity to a public MVP in six months.
-
-## Evidence links
-
-- [Pave - Building Loop](/case-studies/pave-building-loop/) - chat, build activity, and preview as one loop.
-- [Pave - Planning](/case-studies/pave-planning/) - plans, clarification, workflow diagrams, and approval before generation.
-- [Pave - Direct Edit](/case-studies/pave-direct-edit/) - local editing for generated UI.
-- [Pave - Credits](/case-studies/pave-credits/) - credit states, pricing, checkout, and recovery.
-- [Pave - Marketplace](/case-studies/pave-marketplace/) - governed reusable app starts and guided previews.
-- [Building Pave](/case-studies/building-pave-environment/) - design environment and handoff workflow behind the product work.
+[Design systems that AI can use](/case-studies/design-systems-ai-practice/) covers machine-readable components, guardrails and human review.

@@ -43,6 +43,20 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 
 Frontmatter should include `title`, `summary`, `group`, `category`, `status`, `tags`, `readTime`, and `order` when route order matters. `slugOverrides` in `src/lib/content.ts` is the source for legacy route names.
 
+### Case-study voice
+
+- Write in Alexander's operator voice: technical, opinionated, self-mocking, and grounded in what actually broke. The 2019–2021 essay voice may add vulnerability and visual texture; the more generic 2024 guide voice must not set the sentence-level style.
+- Factual truth outranks a satisfying story. Do not invent incidents, motives, quotes, user reactions, metrics, research findings, or embarrassing admissions. If the available material does not support a claim, qualify it, name the gap, or remove it.
+- Enter through a concrete incident, decision, or admission when the evidence supports one. Do not open already knowing the lesson or with a generic product-design thesis.
+- Make Alexander part of the problem. Show the attractive first belief, the moment reality complicated it, the initial wrong or incomplete explanation, and the concrete detail that changed the interpretation. Do not mechanically force every beat when the record does not contain it.
+- Use product mechanics as evidence: exact UI behavior, awkward handoffs, broken states, implementation constraints, research language, scope cuts, and artifacts. Tool or stack names belong only when they explain a product consequence.
+- Stay fair to engineers, users, stakeholders, and inherited systems. Criticism should follow self-implication and explain what the supposed antagonist was protecting or responding to.
+- Mix developed, clause-heavy paragraphs with blunt interruptions. Use fragments, parenthetical corrections, rough syntax, slang, or profanity only when the story earns them. Do not manufacture quirks or put every sentence on its own line.
+- Prefer honest uncertainty over portfolio theatre. Distinguish shipped behavior, prototypes, assumptions, and unmeasured outcomes. Use `case-stat` only for real, attributable signals.
+- End with what remains limited, unresolved, irritating, or unproven. Do not turn the ending into a universal lesson, quote-card maxim, or engagement question.
+- Rewrite when three or more are true: the opening already knows the conclusion; a tidy reversal arrives before a specific incident; adjacent paragraphs are artificially isolated; the wording is suspiciously symmetrical; Alexander is wiser than everyone from line one; the details could fit any company; the ending is too quotable; or there is no admission that costs Alexander a little pride.
+- Keep frontmatter summaries plain and factual. Avoid `unlock`, `drive alignment`, `enable transformation`, `foster innovation`, `at its core`, `the real lesson`, `the key takeaway`, and `this is where leadership begins` unless quoting source material critically.
+
 Custom fences:
 
 ````md

@@ -371,12 +371,15 @@ class AsciiPlayground {
     this.gl = this.canvas.getContext("webgl", {
       alpha: false,
       antialias: false,
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: false
     });
     this.controls = { ...PLAYGROUND_DEFAULTS };
     this.mouse = { x: 0.5, y: 0.5 };
     this.click = { x: 0.5, y: 0.5, heat: 0 };
     this.lastAscii = 0;
+    this.lastFrame = 0;
+    this.lastAsciiOutput = this.pre.textContent;
+    this.pendingFrame = 0;
     this.pixelBuffer = new Uint8Array(4);
     this.sceneCanvas = document.createElement("canvas");
     this.sceneContext = this.sceneCanvas.getContext("2d", { willReadFrequently: true });
@@ -447,11 +450,20 @@ class AsciiPlayground {
       this.click.y = 1 - (event.clientY - rect.top) / rect.height;
       this.click.heat = 1;
     });
+    this.root.addEventListener("turntable-ready", () => {
+      this.lastTurntablePayload = "";
+      this.syncTurntableControls();
+    });
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(this.root);
     this.resize();
-    requestAnimationFrame((time) => this.render(time));
+    this.onVisibilityChange = () => {
+      if (!document.hidden) this.scheduleRender();
+    };
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
+    window.addEventListener("pagehide", () => this.destroy(), { once: true });
+    this.scheduleRender();
   }
 
   createShader(type, source) {
@@ -502,6 +514,12 @@ class AsciiPlayground {
       this.root.style.setProperty("--playground-glow", value);
     }
     this.syncTurntableControls();
+    this.scheduleRender();
+  }
+
+  scheduleRender() {
+    if (this.pendingFrame || document.hidden || this.reducedMotion) return;
+    this.pendingFrame = requestAnimationFrame((time) => this.render(time));
   }
 
   syncTurntableControls() {
@@ -553,6 +571,8 @@ class AsciiPlayground {
   }
 
   render(time) {
+    this.pendingFrame = 0;
+    if (document.hidden) return;
     const seconds = this.reducedMotion ? 4.2 : time * 0.001;
     const isTurntable = this.controls.mode === "turntable";
     this.root.classList.toggle("is-turntable-example", isTurntable);
@@ -560,11 +580,15 @@ class AsciiPlayground {
     this.canvas.style.opacity = isTurntable ? "0" : "";
 
     if (isTurntable) {
-      this.pre.textContent = "";
-
-      if (!this.reducedMotion) requestAnimationFrame((next) => this.render(next));
+      if (this.pre.textContent) this.pre.textContent = "";
       return;
     }
+
+    if (time - this.lastFrame < 1000 / 15) {
+      this.scheduleRender();
+      return;
+    }
+    this.lastFrame = time;
 
     const gl = this.gl;
     gl.useProgram(this.program);
@@ -594,12 +618,30 @@ class AsciiPlayground {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     this.click.heat *= 0.94;
 
-    if (time - this.lastAscii > 50 || this.reducedMotion) {
+    if (time - this.lastAscii > 1000 / 15 || this.reducedMotion) {
       this.lastAscii = time;
-      this.pre.textContent = this.toAscii(seconds);
+      const output = this.toAscii(seconds);
+      if (output !== this.lastAsciiOutput) {
+        this.pre.textContent = output;
+        this.lastAsciiOutput = output;
+      }
     }
 
-    if (!this.reducedMotion) requestAnimationFrame((next) => this.render(next));
+    this.scheduleRender();
+  }
+
+  destroy() {
+    if (this.pendingFrame) cancelAnimationFrame(this.pendingFrame);
+    this.pendingFrame = 0;
+    this.resizeObserver?.disconnect();
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
+    if (this.gl) {
+      if (this.buffer) this.gl.deleteBuffer(this.buffer);
+      if (this.program) this.gl.deleteProgram(this.program);
+      this.gl.getExtension("WEBGL_lose_context")?.loseContext();
+    }
+    this.sasiImage.onload = null;
+    this.sasiImage.src = "";
   }
 
   toAscii(seconds) {

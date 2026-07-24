@@ -24,7 +24,10 @@ function stopIdentityRotator(rotator) {
 }
 
 function getMotionDuration(token, fallback) {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(token);
+  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  if (!value) return fallback;
+  if (value.endsWith("ms")) return Number.parseFloat(value) || fallback;
+  if (value.endsWith("s")) return Number.parseFloat(value) * 1000 || fallback;
   return Number.parseFloat(value) || fallback;
 }
 

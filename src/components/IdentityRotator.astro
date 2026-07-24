@@ -5,23 +5,35 @@ type Props = {
   class?: string;
   prefixClass?: string;
   rotatorClass?: string;
+  decodeOnLoad?: boolean;
 };
 
 const {
   class: className = "",
   prefixClass = "about-title__prefix",
-  rotatorClass = "identity-rotator"
+  rotatorClass = "identity-rotator",
+  decodeOnLoad = false
 } = Astro.props;
 
 const initial = identityEntries[0];
 ---
 
 <span class:list={["identity-phrase", className]} data-identity-phrase>
-  <span class={prefixClass} data-identity-prefix lang="en">Alexander is {initial.article}</span>
+  <span
+    class={prefixClass}
+    data-identity-prefix
+    data-scramble={decodeOnLoad ? "" : undefined}
+    data-scramble-trigger={decodeOnLoad ? "load" : undefined}
+    data-scramble-duration={decodeOnLoad ? "560" : undefined}
+    lang="en"
+  >Alexander is {initial.article}</span>
   <span
     class={rotatorClass}
     data-identity-rotator
     data-identities={JSON.stringify(identityEntries)}
+    data-scramble={decodeOnLoad ? "" : undefined}
+    data-scramble-trigger={decodeOnLoad ? "load" : undefined}
+    data-scramble-duration={decodeOnLoad ? "920" : undefined}
     lang="en"
   >{initial.english}</span>
 </span>

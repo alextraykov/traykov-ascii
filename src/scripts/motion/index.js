@@ -63,7 +63,7 @@ function setIdentityLanguage(rotator, entry, language) {
 function animateIdentitySwap(rotator, state, outgoing, incoming) {
   const reverseDuration = getMotionDuration("--dur-2", 180);
   const translationDuration = getMotionDuration("--dur-3", 260);
-  const translationHold = translationDuration * 0.72;
+  const translationHold = getMotionDuration("--dur-6", 720);
   const revealDuration = getMotionDuration("--dur-4", 340);
   const translationReverseDuration = reverseDuration;
   const totalDuration =
@@ -144,7 +144,8 @@ function startIdentityRotator(rotator) {
     animateIdentitySwap(rotator, state, outgoing, incoming);
   };
 
-  state.interval = window.setInterval(rotate, 1900);
+  const rotationInterval = getMotionDuration("--dur-6", 720) * 4;
+  state.interval = window.setInterval(rotate, rotationInterval);
   rotatorTimers.set(rotator, state);
 }
 

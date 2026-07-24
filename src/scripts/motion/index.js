@@ -5,7 +5,9 @@ import "./count-up.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const rotatorObservers = new Map();
-const rotatorTimers = new Map();
+const rotatorTimers =
+  globalThis.__traykovIdentityRotatorTimers ||
+  (globalThis.__traykovIdentityRotatorTimers = new WeakMap());
 const motionMedia = new Set();
 const caseVideos = new Set();
 let mediaObserver;
@@ -18,6 +20,7 @@ function stopIdentityRotator(rotator) {
   window.clearTimeout(state.reverseTimer);
   window.cancelAnimationFrame(state.frame);
   rotatorTimers.delete(rotator);
+  delete rotator.dataset.identityControllerActive;
 }
 
 function getMotionDuration(token, fallback) {
@@ -126,7 +129,13 @@ function animateIdentitySwap(rotator, state, outgoing, incoming) {
 }
 
 function startIdentityRotator(rotator) {
-  if (rotatorTimers.has(rotator) || reducedMotion.matches) return;
+  if (
+    rotatorTimers.has(rotator) ||
+    rotator.dataset.identityControllerActive === "true" ||
+    reducedMotion.matches
+  ) {
+    return;
+  }
 
   const identities = JSON.parse(rotator.getAttribute("data-identities") || "[]");
   if (identities.length < 2) return;
@@ -145,6 +154,7 @@ function startIdentityRotator(rotator) {
   };
 
   const rotationInterval = getMotionDuration("--dur-6", 720) * 4;
+  rotator.dataset.identityControllerActive = "true";
   state.interval = window.setInterval(rotate, rotationInterval);
   rotatorTimers.set(rotator, state);
 }

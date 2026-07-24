@@ -35,23 +35,11 @@ const ariaAction = href ? `Open ${study.title} case study` : `${study.title} cas
   data-reveal-delay={String(Math.min(index, 6) * 60)}
   data-case-id={study.id}
 >
-  {isPave && (
-    <div
-      class="pave-card-gradient"
-      data-pave-card-gradient
-      aria-hidden="true"
-    >
-      <div class="pave-card-gradient__field">
-        <span class="pave-card-gradient__orb pave-card-gradient__orb--horizon"></span>
-        <span class="pave-card-gradient__bloom"></span>
-        <span class="pave-card-gradient__orb pave-card-gradient__orb--left"></span>
-        <span class="pave-card-gradient__orb pave-card-gradient__orb--center"></span>
-        <span class="pave-card-gradient__orb pave-card-gradient__orb--left-center"></span>
-        <span class="pave-card-gradient__orb pave-card-gradient__orb--right-center"></span>
-        <span class="pave-card-gradient__interactive-orb"></span>
-      </div>
-    </div>
-  )}
+  <canvas
+    class="project-card__ascii-dispersal"
+    data-project-card-ascii-dispersal
+    aria-hidden="true"
+  ></canvas>
   {href ? (
     <a class="project-card__body" href={href} aria-label={ariaAction}>
       <ProjectMark group={study.group} title={study.title} image={study.image} />

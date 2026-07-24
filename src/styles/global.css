@@ -86,11 +86,9 @@
   --card-media-filter-hover: none;
   --card-shadow: rgba(8, 8, 8, 0.12);
   --card-rest-shadow: none;
-  --card-hover-shadow: inset 0 0 0 1px var(--edge-strong);
+  --card-lift-shadow: 0 0 var(--space-5) calc(var(--space-1) * -1) var(--card-shadow);
   --card-media-rest-scale: 1.005;
   --card-media-hover-scale: 1.025;
-  /* Pave project-card glow: source brand green from vibe-design. */
-  --pave-gradient-green: #05875a;
   --ascii-stage-background: #f2f1eb;
   --ascii-stage-ink: rgba(8, 8, 8, 0.32);
   --ascii-stage-base-color: rgb(86, 86, 80);
@@ -1823,25 +1821,41 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 }
 
 .project-card {
+  position: relative;
+  isolation: isolate;
   min-height: 150px;
-  border: 1px solid var(--card-media-border);
-  background: var(--card-surface);
-  box-shadow: var(--card-rest-shadow);
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   transition:
     background-color var(--dur-2) var(--ease-out-expo),
-    border-color var(--dur-2) var(--ease-out-expo),
-    box-shadow var(--dur-2) var(--ease-out-expo);
+    box-shadow var(--dur-3) var(--ease-out-expo),
+    transform var(--dur-3) var(--ease-out-expo);
 }
 
 .project-card:is(:hover, :focus-within) {
-  border-color: var(--edge-strong);
-  background: var(--card-surface-hover);
-  box-shadow: var(--card-hover-shadow);
+  z-index: var(--z-inline-effect);
+  background: transparent;
+  box-shadow: var(--card-lift-shadow);
+  transform: translate3d(0, calc(var(--space-1) * -1), 0);
 }
 
+.project-card__ascii-dispersal {
+  position: absolute;
+  inset: calc(var(--space-6) * -4);
+  z-index: var(--z-inline-effect);
+  display: block;
+  width: calc(100% + (var(--space-6) * 8));
+  height: calc(100% + (var(--space-6) * 8));
+  max-width: none;
+  color: var(--ink);
+  pointer-events: none;
+}
 .project-card > a,
 .project-card__body {
   position: relative;
+  z-index: var(--z-inline-effect);
   height: 100%;
   min-height: inherit;
   display: grid;
@@ -1868,7 +1882,7 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 }
 
 .project-card--expandable[open] {
-  background: var(--card-surface-hover);
+  background: transparent;
 }
 
 .project-card--expandable[open] > .project-card__body {
@@ -1876,7 +1890,7 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 }
 
 .project-card > a:hover {
-  background: var(--card-surface-hover);
+  background: transparent;
 }
 
 .project-turntable {
@@ -1971,6 +1985,10 @@ body[data-case-theme="synapse"] .case-timeline li::before {
   height: 100%;
 }
 
+.project-card .project-mark {
+  border: 0;
+}
+
 .project-video-turntable {
   position: absolute;
   inset: 0;
@@ -2032,186 +2050,6 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 .project-card:is(:hover, :focus-within) .project-video-turntable__media {
   filter: var(--card-media-filter-hover);
   transform: scale(var(--card-media-hover-scale));
-}
-
-.project-card--pave {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-
-.project-card--pave .project-card__body {
-  z-index: var(--z-inline-effect);
-  background: transparent;
-}
-
-.project-card--pave > a:hover,
-.project-card--construction.project-card--pave > .project-card__body:is(:hover, :focus-visible) {
-  background: transparent;
-}
-
-.pave-card-gradient {
-  --pave-pointer-x: 50%;
-  --pave-pointer-y: 50%;
-  --pave-hover-hue: 0deg;
-  position: absolute;
-  inset: calc(var(--space-6) * -1);
-  z-index: var(--z-card-background);
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
-  filter: blur(var(--space-6)) hue-rotate(var(--pave-hover-hue));
-  transition:
-    opacity var(--dur-6) var(--ease-out-expo),
-    filter var(--dur-5) var(--ease-out-expo);
-}
-
-.pave-card-gradient__field,
-.pave-card-gradient__orb {
-  position: absolute;
-  inset: 0;
-}
-
-.pave-card-gradient__field {
-  will-change: auto;
-}
-
-.pave-card-gradient__orb {
-  background-repeat: no-repeat;
-}
-
-.pave-card-gradient__orb,
-.pave-card-gradient__bloom {
-  scale: 0;
-  transition: scale var(--dur-6) var(--ease-out-expo);
-}
-
-.pave-card-gradient__orb--horizon {
-  inset: auto;
-  left: 50%;
-  bottom: -168%;
-  width: auto;
-  height: 320%;
-  aspect-ratio: 1;
-  opacity: 0.75;
-  background: radial-gradient(
-    circle at center,
-    var(--pave-gradient-green) 0,
-    color-mix(in srgb, var(--pave-gradient-green) 40%, transparent) 40%,
-    color-mix(in srgb, var(--pave-gradient-green) 20%, transparent) 60%,
-    transparent 80%
-  );
-  transform: translateX(-50%);
-}
-
-.pave-card-gradient__bloom {
-  position: absolute;
-  left: 50%;
-  bottom: 16%;
-  width: 72%;
-  height: var(--space-6);
-  opacity: 0.55;
-  background: radial-gradient(
-    ellipse 80% 40% at 50% 50%,
-    color-mix(in srgb, var(--pave-gradient-green) 60%, transparent) 0,
-    transparent 100%
-  );
-  filter: blur(var(--space-4));
-  transform: translateX(-50%);
-}
-
-.pave-card-gradient__orb--left {
-  inset: auto;
-  left: 15%;
-  bottom: -40%;
-  width: auto;
-  height: 88%;
-  aspect-ratio: 1;
-  opacity: 0.7;
-  background: radial-gradient(
-    circle at center,
-    color-mix(in srgb, var(--pave-gradient-green) 90%, transparent) 0,
-    color-mix(in srgb, var(--pave-gradient-green) 30%, transparent) 30%,
-    transparent 55%
-  );
-}
-
-.pave-card-gradient__orb--center {
-  inset: auto;
-  left: 50%;
-  bottom: -28.8%;
-  width: auto;
-  height: 102.4%;
-  aspect-ratio: 1;
-  opacity: 0.75;
-  background: radial-gradient(
-    circle at center,
-    var(--pave-gradient-green) 0,
-    transparent 50%
-  );
-  transform: translateX(-50%);
-}
-
-.pave-card-gradient__orb--left-center {
-  inset: auto;
-  left: 25%;
-  bottom: -44.8%;
-  width: auto;
-  height: 108.8%;
-  aspect-ratio: 1;
-  opacity: 0.65;
-  background: radial-gradient(
-    circle at center,
-    var(--pave-gradient-green) 0,
-    transparent 50%
-  );
-}
-
-.pave-card-gradient__orb--right-center {
-  inset: auto;
-  right: 25%;
-  bottom: -44.8%;
-  width: auto;
-  height: 96%;
-  aspect-ratio: 1;
-  opacity: 0.65;
-  background: radial-gradient(
-    circle at center,
-    var(--pave-gradient-green) 0,
-    transparent 50%
-  );
-}
-
-.pave-card-gradient__interactive-orb {
-  position: absolute;
-  left: var(--pave-pointer-x);
-  top: var(--pave-pointer-y);
-  width: auto;
-  height: 48%;
-  aspect-ratio: 1;
-  opacity: 0;
-  background: radial-gradient(
-    circle at center,
-    color-mix(in srgb, var(--pave-gradient-green) 50%, transparent) 0,
-    transparent 70%
-  );
-  filter: blur(var(--space-6));
-  mix-blend-mode: soft-light;
-  transform: translate(-50%, -50%);
-  transition: opacity var(--dur-5) var(--ease-out-expo);
-}
-
-.project-card--pave:is(:hover, :focus-within) .pave-card-gradient {
-  opacity: 1;
-}
-
-.project-card--pave:is(:hover, :focus-within) .pave-card-gradient__orb,
-.project-card--pave:is(:hover, :focus-within) .pave-card-gradient__bloom {
-  scale: 1;
-}
-
-.project-card--pave:hover .pave-card-gradient__interactive-orb {
-  opacity: 0.35;
 }
 
 .project-index {
@@ -2347,7 +2185,7 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 }
 
 .project-card--construction .project-card__body:hover {
-  background: var(--card-surface-hover);
+  background: transparent;
 }
 
 .construction-status {
@@ -2375,10 +2213,8 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 }
 
 .project-card--synapsis {
-  position: relative;
-  isolation: isolate;
-  border: 2px solid var(--card-media-border);
-  background: var(--card-surface);
+  border: 0;
+  background: transparent;
   transition:
     transform 150ms var(--synapse-snap),
     border-color 100ms var(--synapse-snap),
@@ -2402,21 +2238,21 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 .project-card--synapsis::before {
   inset: 0;
   z-index: 4;
-  border: 3px double var(--synapse-primary);
+  border: 0;
   transform: scale(0.997);
 }
 
 .project-card--synapsis::after {
   inset: 8px;
   z-index: 1;
-  border: 1px solid var(--synapse-border);
+  border: 0;
   background:
     linear-gradient(to bottom, var(--synapse-surface) 0 40px, transparent 40px),
     linear-gradient(to bottom, transparent 39px, var(--synapse-border-ghost) 39px 40px, transparent 40px),
     radial-gradient(circle, var(--synapse-grid-dot) var(--synapse-grid-dot-size), transparent var(--synapse-grid-dot-fade)),
     linear-gradient(180deg, rgba(88, 214, 141, 0.035), transparent 54%);
   background-size: auto, auto, var(--synapse-grid-size) var(--synapse-grid-size), auto;
-  box-shadow: inset 0 0 24px rgba(88, 214, 141, 0.035);
+  box-shadow: none;
 }
 
 .project-card--synapsis > a,
@@ -2576,10 +2412,9 @@ body[data-case-theme="synapse"] .case-timeline li::before {
 
 .project-card--synapsis:is(:hover, :focus-within) {
   z-index: 3;
-  border-color: var(--synapse-border);
   background: var(--synapse-bg);
-  box-shadow: var(--card-hover-shadow);
-  transform: none;
+  box-shadow: var(--card-lift-shadow);
+  transform: translate3d(0, calc(var(--space-1) * -1), 0);
 }
 
 .project-card--synapsis:is(:hover, :focus-within)::before,
@@ -4236,6 +4071,20 @@ body.is-reading-tools-visible .case-reading-tools:not([data-dismissed="true"]),
 
 .case-image-grid--cols-3 {
   --case-image-cols: 3;
+}
+
+.case-image-grid--cols-4 .case-image-grid__items {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: min(82vw, calc(var(--shell-max) / 2));
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding-bottom: var(--space-2);
+  scroll-snap-type: inline mandatory;
+}
+
+.case-image-grid--cols-4 .case-image-card {
+  scroll-snap-align: start;
 }
 
 .case-image-card {
@@ -6736,7 +6585,7 @@ body,
 .project-card > a:focus-visible,
 .project-card--expandable[open],
 .project-card--construction .project-card__body:hover {
-  background: var(--card-surface-hover);
+  background: transparent;
 }
 
 .work-directory a:hover,
@@ -6991,8 +6840,7 @@ html[data-theme="dark"] .case-study-body .case-bluf-note__eyebrow {
   body,
   .site-nav,
   .project-card,
-  .pave-card-gradient,
-  .pave-card-gradient__interactive-orb,
+  .project-card__ascii-dispersal,
   .project-video-turntable__media,
   .project-evidence-mark img,
   .footer-booking__trigger,
@@ -7015,6 +6863,14 @@ html[data-theme="dark"] .case-study-body .case-bluf-note__eyebrow {
     transition: none;
   }
 
+  .project-card__ascii-dispersal {
+    display: none;
+  }
+
+  .project-card:is(:hover, :focus-within) {
+    transform: none;
+  }
+
   .project-card:is(:hover, :focus-within) .project-video-turntable__media {
     transform: scale(var(--card-media-rest-scale));
   }
@@ -7023,16 +6879,6 @@ html[data-theme="dark"] .case-study-body .case-bluf-note__eyebrow {
     transform: none;
   }
 
-  .pave-card-gradient__field {
-    transform: none;
-    will-change: auto;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .pave-card-gradient {
-    display: none;
-  }
 }
 
 @media (max-width: 640px) {
@@ -7969,6 +7815,12 @@ body[data-component-preview-width="640"] .component-preview__stage-inner {
   margin: 0;
 }
 
+.component-preview__stage--card {
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
 .component-preview__mark-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -8379,22 +8231,23 @@ body[data-component-preview-surface="inverse"] .component-preview__stage :is(h1,
 #project-card.is-preview-hover .project-card,
 #project-card.is-preview-focus .project-card,
 #project-card.is-preview-active .project-card {
-  transform: translateY(calc(var(--space-1) * -1));
-  box-shadow: var(--shadow-block);
+  z-index: var(--z-inline-effect);
+  transform: translate3d(0, calc(var(--space-1) * -1), 0);
+  box-shadow: var(--card-lift-shadow);
 }
 
 #project-card.is-preview-hover .project-copy,
 #project-card.is-preview-focus .project-copy {
-  transform: translateX(var(--space-2));
+  transform: none;
 }
 
 #project-card.is-preview-hover .project-mark,
 #project-card.is-preview-focus .project-mark {
-  transform: scale(1.025);
+  transform: none;
 }
 
 #project-card.is-preview-active .project-card {
-  transform: translateY(0) scale(0.99);
+  transform: none;
 }
 
 #project-card.is-preview-decay .project-mark {

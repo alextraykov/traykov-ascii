@@ -286,8 +286,11 @@
     if (!/^https?:$/.test(target.protocol)) return;
 
     const nextRoute = classify(target);
+    if (nextRoute.path === currentRoute.path) {
+      if (target.hash === currentRoute.hash) event.preventDefault();
+      return;
+    }
     if (!currentRoute.scoped || !nextRoute.scoped) return;
-    if (nextRoute.path === currentRoute.path) return;
 
     const transitionKind = getTransitionKind(currentRoute, nextRoute);
     const transport =

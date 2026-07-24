@@ -179,6 +179,20 @@ async function driveHoverTarget(entry, mode, token) {
   dispatchPointer(target, "pointerover", bounds.left + bounds.width * 0.35, bounds.top + bounds.height * 0.5);
   if (mode === "focus") target.focus({ preventScroll: true });
   entry.classList.add(mode === "focus" ? "is-preview-focus" : "is-preview-hover");
+  if (entry.id === "project-card" && mode === "hover") {
+    const session = getSession(entry);
+    const sweepSteps = Math.max(5, Math.round(5 + session.energy * 3));
+    for (let index = 0; index < sweepSteps; index += 1) {
+      const progress = index / Math.max(1, sweepSteps - 1);
+      dispatchPointer(
+        target,
+        "pointermove",
+        bounds.left + bounds.width * (0.12 + progress * 0.76),
+        bounds.top + bounds.height * (index % 2 ? 0.68 : 0.32)
+      );
+      await wait(18 / session.rate);
+    }
+  }
   if (entry.id === "project-card" || entry.id === "site-footer") {
     const words = entry.querySelectorAll("[data-scramble]");
     await Promise.all(

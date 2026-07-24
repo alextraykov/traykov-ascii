@@ -1,15 +1,31 @@
 import { SURFACE_ASCII_RAMP } from "./structural-glyph-field.js";
 
-const CLICK_TARGET_SELECTOR = "button:not([disabled]), [data-ascii-burst]";
+const CLICK_TARGET_SELECTOR = [
+  "button:not([disabled])",
+  '[role="button"]:not([aria-disabled="true"])',
+  'nav a[href]:not([aria-disabled="true"])',
+  "[data-ascii-action]",
+  "[data-ascii-burst]"
+].join(", ");
 const STREAM_TARGET_SELECTOR = "[data-ascii-stream]";
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const particles = [];
 const streams = new Map();
+const pointerActivations = new WeakMap();
 let canvas;
 let context;
 let frame = 0;
 let previousTime = 0;
+
+const syncCanvasLayer = () => {
+  if (!canvas) return;
+  const openDialogs = document.querySelectorAll("dialog[open]");
+  const topDialog = openDialogs.item(openDialogs.length - 1);
+  const host = topDialog instanceof HTMLDialogElement ? topDialog : document.body;
+
+  if (canvas.parentElement !== host) host.append(canvas);
+};
 
 const smoothstep = (edgeStart, edgeEnd, value) => {
   const progress = clamp((value - edgeStart) / (edgeEnd - edgeStart), 0, 1);
@@ -17,12 +33,17 @@ const smoothstep = (edgeStart, edgeEnd, value) => {
 };
 
 const ensureCanvas = () => {
-  if (canvas?.isConnected && context) return true;
+  if (canvas?.isConnected && context) {
+    syncCanvasLayer();
+    return true;
+  }
+
   canvas = document.createElement("canvas");
   canvas.className = "ascii-control-particles";
   canvas.setAttribute("aria-hidden", "true");
   document.body.append(canvas);
   context = canvas.getContext("2d", { alpha: true });
+  syncCanvasLayer();
   return Boolean(context);
 };
 
@@ -79,19 +100,19 @@ const emitSplash = (target, event) => {
   const originY = hasPointerOrigin
     ? event.clientY
     : bounds.top + bounds.height / 2;
-  const count = target.matches("[data-theme-toggle]") ? 10 : 13;
+  const count = target.matches("[data-theme-toggle]") ? 18 : 30;
   const themeAdaptive = target.matches("[data-theme-toggle]");
 
   for (let index = 0; index < count; index += 1) {
-    const angle = (index / count) * Math.PI * 2 + Math.random() * 0.34;
-    const speed = 0.8 + Math.random() * 1.55;
+    const angle = (index / count) * Math.PI * 2 + Math.random() * 0.26;
+    const speed = 1.05 + Math.random() * 2.2;
     addParticle({
       x: originX,
       y: originY,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      duration: 460 + Math.random() * 220,
-      size: 8 + Math.random() * 3,
+      duration: 520 + Math.random() * 260,
+      size: 8 + Math.random() * 4,
       themeAdaptive,
       sourceGlyph:
         SURFACE_ASCII_RAMP[
@@ -99,7 +120,7 @@ const emitSplash = (target, event) => {
         ]
     });
   }
-  requestDraw();
+  requestDraw(true);
 };
 
 const emitStream = (target) => {
@@ -186,16 +207,50 @@ const draw = (now) => {
   }
 };
 
-const requestDraw = () => {
-  if (!frame && !reducedMotion.matches) frame = requestAnimationFrame(draw);
+const requestDraw = (immediate = false) => {
+  if (reducedMotion.matches) return;
+
+  if (immediate) {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    draw(performance.now());
+    return;
+  }
+
+  if (!frame) frame = requestAnimationFrame(draw);
 };
 
 if (!window.__asciiControlEffectsInitialized) {
   window.__asciiControlEffectsInitialized = true;
 
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.isPrimary === false || event.button !== 0) return;
+      const target = event.target.closest?.(CLICK_TARGET_SELECTOR);
+      if (!(target instanceof HTMLElement)) return;
+      if (target.matches(":disabled, [aria-disabled='true']")) return;
+      pointerActivations.set(target, performance.now());
+      emitSplash(target, event);
+    },
+    { capture: true, passive: true }
+  );
+
   document.addEventListener("click", (event) => {
     const target = event.target.closest?.(CLICK_TARGET_SELECTOR);
-    if (target instanceof HTMLElement) emitSplash(target, event);
+    if (!(target instanceof HTMLElement)) return;
+    const pointerActivation = pointerActivations.get(target);
+    const followsRecentPointerPress =
+      event.detail > 0 &&
+      pointerActivation !== undefined &&
+      performance.now() - pointerActivation < 750;
+
+    if (followsRecentPointerPress) {
+      pointerActivations.delete(target);
+      return;
+    }
+
+    emitSplash(target, event);
   });
 
   document.addEventListener("pointerover", (event) => {

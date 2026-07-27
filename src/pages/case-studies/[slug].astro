@@ -145,12 +145,6 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
           </nav>
           <p class="section-kicker">{caseMeta}</p>
           <h1 id="case-title">{study.title}</h1>
-          {isPublicStudy && (
-            <p class="case-hero-disclaimer">
-              The case study is AI slop-free and it was written with intent and attention.<br />
-              It&apos;s worth reading if you&apos;re interested in my thinking and building process.
-            </p>
-          )}
           {study.summary && <p class="case-hero-summary">{study.summary}</p>}
           {tagMeta && <p class="case-hero-meta"><span>{tagMeta}</span></p>}
         </div>
@@ -164,7 +158,15 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
                 <img src={study.image} alt="" loading="eager" />
               </figure>
             )}
-            <div class="case-study-body" set:html={renderMarkdown(study.body)} />
+            <div class="case-study-body">
+              {isPublicStudy && (
+                <aside class="authorship-disclaimer" aria-label="Authorship disclaimer">
+                  <p><strong>The case study is AI slop-free and it was written with intent and attention.</strong></p>
+                  <p><strong>It&apos;s worth reading if you&apos;re interested in my thinking and building process.</strong></p>
+                </aside>
+              )}
+              <Fragment set:html={renderMarkdown(study.body)} />
+            </div>
           </div>
 
           {hasReadingTools && (

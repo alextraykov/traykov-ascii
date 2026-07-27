@@ -1,0 +1,81 @@
+{
+  "slug": "the-confidence-crutch",
+  "title": "The confidence crutch",
+  "summary": "I’ve noticed a phenomenon in design where a lot of lukewarm designers with high levels of confidence, extroversion, and self-promotion end up landing jobs with higher titles than people who are materially better at the work but lack those skills.",
+  "publishedAt": "2026-07-27T00:00:00+03:00",
+  "tags": [],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "I’ve noticed a phenomenon in design where a lot of lukewarm designers with high levels of confidence, extroversion, and self-promotion end up landing jobs with higher titles than people who are materially better at the work but lack those skills."
+    },
+    {
+      "type": "paragraph",
+      "text": "I'm tired of seeing thigs like the conversion of ordinary stakeholder management into a branded mUlti-sTeP orG wiDe fRamEwOrk, posts about craft without actual examples of craft claims of turning prodcts from zero to one, without explanations on difficult decision, constraint, failure and measurable outcome."
+    },
+    {
+      "type": "paragraph",
+      "text": "Oh and the hot new shit - every new technology produces an immediate hot take, usually with a pinch of ragebait, but there's almost never a follow up showing a \"living\" thing or an artefact of them using the technology in the first place."
+    },
+    {
+      "type": "paragraph",
+      "text": "And since I don't want to sound like a hater, there's tons of research that overconfidence helps with looking competent and hitting higher status, even when that confidence is not supported by skill."
+    },
+    {
+      "type": "paragraph",
+      "text": "But the methods fail at a certain point."
+    },
+    {
+      "type": "paragraph",
+      "text": "When we’re talking about SV level, such as FAANG (if that's still a thing), Anthropic, OpenAI, Figma, Vercel or similarly design-heavy environments, yapping without proof will actually work against you. If you follow what's happening in tech, you probably know that these companies are literally **jam-packed** with confident, articulate people, who proved their worth."
+    },
+    {
+      "type": "paragraph",
+      "text": "The proof - shipping things as designers, great level of craft, complex problem-solving, business impact. Do all of this proof require good communication? Obviously - in order to expose your cases properly, you have to be articulate - but that's the catch - the sole purpose of proper comms is for exposure and clarity around the skill, not the skill replacement itself. (thanks to genai for permanantly ruining using antithesis whenever I'm writing)"
+    },
+    {
+      "type": "paragraph",
+      "text": "One can get so far with solely relying on good communication without the actual evidence of their worth."
+    },
+    {
+      "type": "paragraph",
+      "text": "A great example that comes to mind is Jenny Wen and her portfolio. It does not rely on abstract claims about being a visionary design leader, but points to specific products and contributions:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "leading the Claude visual refresh,",
+        "setting the initial vision for Cowork",
+        "pushing code",
+        "shipping Dispatch",
+        "designing concrete parts of FigJam’s core experience"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "and exactly this specificity is what differentiates the GOATs in design from the larpers."
+    },
+    {
+      "type": "paragraph",
+      "text": "Even Anthropic describes its own product-building approach in similarly practical terms: experimenting at the edge of what the technology can do >  testing unfinished versions>  learning what works > scaling"
+    },
+    {
+      "type": "paragraph",
+      "text": "So at that level, which all of us designers must strive for, our \"proof\" have to survive the pressure of the evaluators who can accurately read through the work, usually through questions like:"
+    },
+    {
+      "type": "questions",
+      "items": [
+        "Where did you fail?",
+        "Which part was yours?",
+        "What was actually difficult?",
+        "What exactly did you make?",
+        "What changed because of your decisions?"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "So the reality is this - it's not about who talks the most, but who can back up their talk."
+    }
+  ]
+}

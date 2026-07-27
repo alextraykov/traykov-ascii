@@ -1,4 +1,5 @@
 import localDraft from "../content/notes/prompting-is-not-taste.json";
+import confidenceDraft from "../content/notes/the-confidence-crutch.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
 import legacyManifest from "../content/notes/legacy/index.json";
 
@@ -36,10 +37,14 @@ type LocalNoteDraft = {
   image?: string;
   imageAlt?: string;
   tags: string[];
-  paragraphs: string[];
+  paragraphs?: string[];
+  blocks?: Array<
+    | { type: "paragraph"; text: string }
+    | { type: "list" | "questions"; items: string[] }
+  >;
 };
 
-const localDrafts: LocalNoteDraft[] = [localDraft, titlesDraft];
+const localDrafts: LocalNoteDraft[] = [confidenceDraft, localDraft, titlesDraft];
 
 function decodeXmlEntities(value: string): string {
   const named: Record<string, string> = {
@@ -97,6 +102,44 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function localInlineHtml(value: string): string {
+  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainText: string } {
+  if (draft.blocks) {
+    const contentHtml = draft.blocks
+      .map((block) => {
+        if (block.type === "paragraph") {
+          return `<p>${localInlineHtml(block.text)}</p>`;
+        }
+
+        if (block.type === "list") {
+          return `<ul>${block.items.map((item) => `<li>${localInlineHtml(item)}</li>`).join("")}</ul>`;
+        }
+
+        return `<div class="note-question-list">${block.items
+          .map((item) => `<p>${localInlineHtml(item)}</p>`)
+          .join("")}</div>`;
+      })
+      .join("\n");
+    const plainText = draft.blocks
+      .flatMap((block) => block.type === "paragraph" ? [block.text] : block.items)
+      .join(" ")
+      .replace(/\*\*/g, "");
+
+    return { contentHtml, plainText };
+  }
+
+  const paragraphs = draft.paragraphs ?? [];
+  return {
+    contentHtml: paragraphs
+      .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+      .join("\n"),
+    plainText: paragraphs.join(" ")
+  };
 }
 
 function stripHtml(value: string): string {
@@ -195,10 +238,7 @@ function parseFeed(xml: string): NoteRecord[] {
 
 function localNotes(): NoteRecord[] {
   return localDrafts.map((draft) => {
-    const contentHtml = draft.paragraphs
-      .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
-      .join("\n");
-    const plainText = draft.paragraphs.join(" ");
+    const { contentHtml, plainText } = localDraftContent(draft);
 
     return {
       slug: draft.slug,

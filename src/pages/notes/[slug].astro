@@ -115,33 +115,30 @@ const structuredData = {
 
         <div class="note-body" set:html={note.contentHtml} />
 
-        <footer class="note-source">
-          {note.source === "substack" && note.sourceUrl ? (
-            <>
-              <span>SOURCE / SUBSTACK</span>
-              <a href={note.sourceUrl} target="_blank" rel="noreferrer">
-                ORIGINAL POST ↗
-              </a>
-            </>
-          ) : note.source === "legacy" && note.sourceUrl ? (
-            <>
-              <span>SOURCE / TRAYKOV.CC ARCHIVE</span>
-              <a href={note.sourceUrl} target="_blank" rel="noreferrer">
-                ORIGINAL FILE ↗
-              </a>
-            </>
-          ) : note.source === "local-published" ? (
-            <>
-              <span>SOURCE / TRAYKOV.CC</span>
-              <span>PUBLISHED LOCALLY</span>
-            </>
-          ) : (
-            <>
-              <span>STATUS / LOCAL PREVIEW</span>
-              <span>REPLACED WHEN SUBSTACK SLUG MATCHES</span>
-            </>
-          )}
-        </footer>
+        {note.source !== "local" && (
+          <footer class="note-source">
+            {note.source === "substack" && note.sourceUrl ? (
+              <>
+                <span>SOURCE / SUBSTACK</span>
+                <a href={note.sourceUrl} target="_blank" rel="noreferrer">
+                  ORIGINAL POST ↗
+                </a>
+              </>
+            ) : note.source === "legacy" && note.sourceUrl ? (
+              <>
+                <span>SOURCE / TRAYKOV.CC ARCHIVE</span>
+                <a href={note.sourceUrl} target="_blank" rel="noreferrer">
+                  ORIGINAL FILE ↗
+                </a>
+              </>
+            ) : (
+              <>
+                <span>SOURCE / TRAYKOV.CC</span>
+                <span>PUBLISHED LOCALLY</span>
+              </>
+            )}
+          </footer>
+        )}
       </article>
     </main>
 

@@ -9330,10 +9330,10 @@ body[data-case-theme="pave"] .case-image-grid--cols-3 .case-image-card {
 .notes-rss-banner {
   display: block;
   overflow: hidden;
-  border-bottom: var(--hairline) solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  font: 700 12px/1 var(--mono);
+  border-bottom: var(--hairline) solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: 400 10px/1 var(--mono);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -9341,7 +9341,7 @@ body[data-case-theme="pave"] .case-image-grid--cols-3 .case-image-card {
 .notes-rss-banner__track {
   display: flex;
   width: max-content;
-  padding-block: var(--space-3);
+  padding-block: var(--space-2);
   animation: notes-rss-scan var(--dur-rss-scan) linear infinite;
   will-change: transform;
 }

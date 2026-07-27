@@ -19,24 +19,23 @@ const phases = [
   },
   {
     code: "01",
-    state: "NOW",
+    state: "DONE",
     title: "NOTES",
     items: [
       "[LIVE] Substack → /notes/ sync",
       "[LIVE] Full-text search",
-      "[LIVE] RSS",
-      "[NEXT] Publish Prompting is not taste"
+      "[LIVE] RSS"
     ]
   },
   {
     code: "02",
-    state: "NEXT",
+    state: "NOW",
     title: "NAVIGATION",
     items: [
       "Copy section link",
       "Related case / note / lab",
       "Content events",
-      "Full-text search",
+      "Full-site search",
       "Continue reading if useful"
     ]
   },
@@ -89,7 +88,7 @@ const phases = [
           </div>
           <div>
             <dt>CURRENT</dt>
-            <dd>01 / NOTES</dd>
+            <dd>02 / NAVIGATION</dd>
           </div>
           <div>
             <dt>FORMAT</dt>
@@ -98,10 +97,10 @@ const phases = [
         </dl>
       </header>
 
-      <div class="site-plan__signal" aria-label="One of four roadmap phases is complete. Phase one is current." data-reveal="scan">
+      <div class="site-plan__signal" aria-label="Two of four roadmap phases are complete. Phase two is current." data-reveal="scan">
         <span data-state="done">00&nbsp;&nbsp;[XXXXXXXX]</span>
-        <span data-state="now">01&nbsp;&nbsp;[&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;]</span>
-        <span>02&nbsp;&nbsp;[........]</span>
+        <span data-state="done">01&nbsp;&nbsp;[XXXXXXXX]</span>
+        <span data-state="now">02&nbsp;&nbsp;[&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;]</span>
         <span>03&nbsp;&nbsp;[........]</span>
       </div>
 

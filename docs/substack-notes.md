@@ -29,11 +29,6 @@ One external setup step is required:
 
 New Substack posts then appear on the portfolio after the next scheduled rebuild.
 
-## Local preview
-
-`src/content/notes/prompting-is-not-taste.json` is a temporary preview for the
-unpublished note. Feed entries win by slug, so publishing a Substack post at:
-
-`/p/prompting-is-not-taste`
-
-automatically replaces the preview during the next build.
+Local notes with `status: "published"` are published directly on traykov.cc and
+included in its RSS feed. Feed entries still win by matching slug or normalized
+title if the same note is later published on Substack.

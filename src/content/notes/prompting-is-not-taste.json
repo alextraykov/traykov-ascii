@@ -3,6 +3,7 @@
   "title": "Prompting is not taste",
   "summary": "The current frontier models feel they deliver a lot of good design work for the untrained eye.",
   "publishedAt": "2026-07-25T00:00:00+03:00",
+  "status": "published",
   "image": "/notes/prompting-is-not-taste.png",
   "imageAlt": "A two-by-two matrix comparing weak and strong prompting with weak and strong taste.",
   "tags": ["AI", "Design", "Taste"],

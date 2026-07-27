@@ -2,6 +2,7 @@
 import CaseContactPrompt from "../components/CaseContactPrompt.astro";
 import DitherImageTrail from "../components/DitherImageTrail.astro";
 import IdentityRotator from "../components/IdentityRotator.astro";
+import AsciiBannerStudio from "../components/AsciiBannerStudio.astro";
 import ObjTurntable from "../components/ObjTurntable.astro";
 import PaveTurntable from "../components/PaveTurntable.astro";
 import ProjectCard from "../components/ProjectCard.astro";
@@ -26,6 +27,7 @@ const paveStudy = featuredStudies.find((study) => study.id === "designing-pave")
 const synapseStudy = featuredStudies.find((study) => study.id === "synapse-sys") ?? featuredStudies[1] ?? featuredStudies[0];
 
 const catalogue = [
+  ["ascii-banner-studio", "AsciiBannerStudio", "AsciiBannerStudio.astro", "3"],
   ["theme-toggle", "ThemeToggle", "ThemeToggle.astro", "1"],
   ["identity-rotator", "IdentityRotator", "IdentityRotator.astro", "1"],
   ["case-contact-prompt", "CaseContactPrompt", "CaseContactPrompt.astro", "2"],
@@ -53,9 +55,10 @@ const catalogue = [
   </head>
   <body class="component-preview-page" data-component-preview-width="fluid">
     <header class="site-nav">
-      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
         <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
         <a href="/about/" data-scramble>About</a>
         <a href="/contact/" data-scramble>Contact</a>
       </nav>
@@ -97,8 +100,31 @@ const catalogue = [
           </nav>
         </aside>
 
-        <div class="component-preview-catalogue">
-          <article id="theme-toggle" class="component-preview-entry">
+      <div class="component-preview-catalogue">
+        <article id="ascii-banner-studio" class="component-preview-entry">
+          <header class="component-preview-entry__header">
+            <div>
+              <p>00 / Export surface</p>
+              <h2>AsciiBannerStudio</h2>
+            </div>
+            <div class="component-preview-entry__meta">
+              <code>src/components/AsciiBannerStudio.astro</code>
+              <span>Live / Level 3 / editable shader export</span>
+            </div>
+          </header>
+          <p class="component-preview-entry__intent">
+            Public banner generator using the 3D turntable glyph ramp, platform and freeform
+            canvases, five creative-coding fields, direct positioning, and native, Retina, 2K,
+            or 4K PNG export.
+          </p>
+          <div class="component-preview__stage component-preview__stage--banner">
+            <div class="component-preview__stage-inner">
+              <AsciiBannerStudio />
+            </div>
+          </div>
+        </article>
+
+        <article id="theme-toggle" class="component-preview-entry">
             <header class="component-preview-entry__header">
               <div>
                 <p>01 / Input</p>

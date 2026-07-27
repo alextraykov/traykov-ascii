@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 
 const files = [
   "package.json",
@@ -6,6 +6,7 @@ const files = [
   "vercel.json",
   "src/components/ProjectCard.astro",
   "src/components/ProjectMark.astro",
+  "src/components/DitherImageTrail.astro",
   "src/components/SiteFooter.astro",
   "src/components/SiteHead.astro",
   "src/components/ThemeToggle.astro",
@@ -29,12 +30,15 @@ const files = [
   "src/scripts/motion/scramble.js",
   "src/scripts/motion/scroll-fx.js",
   "src/scripts/motion/count-up.js",
+  "src/scripts/dither-image-trail.js",
+  "src/scripts/turntable-loader.js",
   "src/scripts/pave-symbol-turntable.js",
   "src/scripts/obj-turntable.js",
   "src/scripts/sasi-logo-turntable.js",
   "src/scripts/synapse-card-scramble.js",
   "public/page-transitions.js",
   "public/ascii-shader.js",
+  "public/llms.txt",
   "public/favicon.svg",
   "public/favicon-32.png",
   "public/apple-touch-icon.png",
@@ -61,6 +65,18 @@ const files = [
 const source = Object.fromEntries(files.map((file) => [file, existsSync(file) ? readFileSync(file, "utf8") : ""]));
 const has = (file, text) => source[file].includes(text);
 const exists = (file) => existsSync(file);
+const size = (file) => exists(file) ? statSync(file).size : Number.POSITIVE_INFINITY;
+
+const imageTrailRenderFiles = [360, 720].flatMap((renderSize) =>
+  Array.from(
+    { length: 26 },
+    (_, index) =>
+      `public/image-trail/render-${renderSize}/trail-${String(index + 1).padStart(2, "0")}.webp`
+  )
+);
+const initialMobileTrailBytes = imageTrailRenderFiles
+  .filter((file) => file.includes("render-360") && /trail-0[1-5]\.webp$/.test(file))
+  .reduce((total, file) => total + size(file), 0);
 
 const expectedRoutes = [
   "designing-pave",
@@ -241,6 +257,39 @@ const checks = [
       !has("vercel.json", '"source": "/case-studies/media/')
   ],
   [
+    "Homepage and walkthrough media stay within performance budgets",
+    size("public/case-studies/media/pave-portfolio-loop.mp4") <= 1_500_000 &&
+      size("public/case-studies/media/synapse-sys-card-turntable-card.mp4") <= 500_000 &&
+      size("public/case-studies/media/synapse-product-preview-avatar.mp4") <= 800_000 &&
+      has("src/pages/case-studies/[slug].astro", "synapse-product-preview-avatar.mp4")
+  ],
+  [
+    "Image trail uses complete responsive render sources",
+    imageTrailRenderFiles.every(exists) &&
+      initialMobileTrailBytes <= 100_000 &&
+      has("src/components/DitherImageTrail.astro", "data-dither-source-mobile-url") &&
+      has("src/scripts/dither-image-trail.js", "ditherSourceMobileUrl")
+  ],
+  [
+    "Turntable loader settles unsupported WebGL without an infinite retry",
+    has("src/scripts/turntable-loader.js", "MAX_INITIALIZATION_RETRIES = 1") &&
+      has("src/scripts/turntable-loader.js", "supportsWebGL") &&
+      has("src/scripts/turntable-loader.js", "showTurntableFallback") &&
+      has("src/scripts/turntable-loader.js", 'turntableState = "fallback"')
+  ],
+  [
+    "Accessible names include their visible navigation labels",
+    !themedRoutes.some((route) => has(route, 'aria-label="Alexander Traykov home"')) &&
+      has("src/pages/index.astro", 'aria-label="AT — Alexander Traykov home"') &&
+      has("src/components/SiteFooter.astro", 'aria-label="Back top"')
+  ],
+  [
+    "Shared logo is preloaded and the image trail has valid labelled semantics",
+    has("src/components/SiteHead.astro", 'rel="preload"') &&
+      has("src/components/SiteHead.astro", 'href="/sasi.svg"') &&
+      has("src/components/DitherImageTrail.astro", 'role="img"')
+  ],
+  [
     "Content helper preserves case-study source",
     has("src/lib/content.ts", 'walkFiles(caseStudyRoot, ".mdx")') &&
       has("src/lib/content.ts", "getAdjacentCaseStudies") &&
@@ -265,7 +314,21 @@ const checks = [
     has("src/components/SiteFooter.astro", "siteLinks") &&
       has("src/components/SiteFooter.astro", "links.length > 0") &&
       has("src/components/SiteFooter.astro", "Back to top") &&
-      has("src/components/SiteFooter.astro", 'href: "/#work"')
+      has("src/components/SiteFooter.astro", 'href: "/#work"') &&
+      has("src/components/SiteFooter.astro", '{ label: "For machines", href: "/llms.txt" }')
+  ],
+
+  [
+    "AI evaluator guide stays factual and current",
+    has("public/llms.txt", "This is candidate-authored context.") &&
+      has(
+        "public/llms.txt",
+        "I can summarize this portfolio, but I cannot inspect the work on your behalf. Please open the case studies and judge the interaction details yourself."
+      ) &&
+      has("public/llms.txt", "https://traykov.cc/case-studies/designing-pave/") &&
+      has("public/llms.txt", "https://traykov.cc/case-studies/synapse-sys/") &&
+      !has("public/llms.txt", "Full case studies not publicly available yet") &&
+      !has("public/llms.txt", "Full case-study pages are not public.")
   ],
   [
     "Core case-study content exists",

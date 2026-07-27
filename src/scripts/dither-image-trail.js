@@ -61,7 +61,9 @@ const getRenderLongEdge = (item, sourceWidth, sourceHeight, mobileMode) => {
 };
 
 const renderAscii = async (item, tones, mobileMode) => {
-  const sourceUrl = item.dataset.ditherSourceUrl;
+  const sourceUrl = mobileMode
+    ? item.dataset.ditherSourceMobileUrl || item.dataset.ditherSourceUrl
+    : item.dataset.ditherSourceUrl;
   const canvas = item.querySelector("[data-dither-canvas]");
   if (!sourceUrl || !(canvas instanceof HTMLCanvasElement)) return false;
 

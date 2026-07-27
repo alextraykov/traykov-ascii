@@ -5,16 +5,21 @@ type Props = {
 };
 
 const { images, label = "Interactive ASCII image trail" }: Props = Astro.props;
+const renderSource = (src: string, size: 720 | 360) =>
+  src.startsWith("/image-trail/")
+    ? src.replace("/image-trail/", `/image-trail/render-${size}/`)
+    : src;
 ---
 
-<div class="dither-trail" data-dither-trail aria-label={label}>
+<div class="dither-trail" data-dither-trail role="img" aria-label={label}>
   <div class="dither-trail__field" data-dither-trail-field aria-hidden="true">
     {images.map((src, index) => (
       <figure
         class="dither-trail__item"
         data-dither-trail-item
         data-dither-prompt={index < 2 ? true : undefined}
-        data-dither-source-url={src}
+        data-dither-source-url={renderSource(src, 720)}
+        data-dither-source-mobile-url={renderSource(src, 360)}
         style={`--trail-static-x: ${8 + index * 8}vw; --trail-static-y: ${26 + (index % 3) * 9}svh; --trail-mobile-x: ${index * 12}vw; --trail-mobile-y: ${(index % 2) * 10}svh`}
       >
         <canvas data-dither-canvas></canvas>

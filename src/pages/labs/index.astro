@@ -1,0 +1,139 @@
+---
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import "../../styles/global.css";
+
+const labs = [
+  {
+    id: "banner",
+    number: "01",
+    title: "ASCII Banner Studio",
+    description:
+      "Generate platform-sized ASCII fields, move the composition, tune the glyph material, and export a production-ready PNG.",
+    href: "/labs/ascii-banner/",
+    action: "Open banner studio",
+    status: "Public tool",
+    tags: ["LinkedIn", "X", "Meta", "YouTube", "Freeform"],
+    preview: [
+      "··············································",
+      "····················••++***✦✶✷✶✦**+••········",
+      "················••+*✦✶✷✸✹✹✸✷✶✦*+••··········",
+      "··················••+**✦✶✷✶✦**+••············",
+      "··············································"
+    ].join("\n")
+  },
+  {
+    id: "turntable",
+    number: "02",
+    title: "SVG → 3D ASCII",
+    description:
+      "Upload an SVG mark, extrude it into a Three.js object, tune the turntable, and export the result.",
+    href: "/svg-ascii-studio/",
+    action: "Open turntable editor",
+    status: "Public tool",
+    tags: ["SVG upload", "3D", "ASCII", "Export"],
+    preview: [
+      "             ·•+*✦✶✷✶✦*+•·",
+      "          ·+✦✷✸✹✹✹✸✷✦+·",
+      "        ·*✶✸✹✹✸✷✶✦*+·",
+      "          ·+✦✶✷✸✷✶✦+·",
+      "             ·•+*✦*+•·"
+    ].join("\n")
+  },
+  {
+    id: "shader",
+    number: "03",
+    title: "Turntable Playground",
+    description:
+      "Stress-test reveal, pressure, lift, click, decay, and recovery across the production ASCII turntables.",
+    href: "/playground",
+    action: "Open shader playground",
+    status: "Working lab",
+    tags: ["GLB", "Motion", "Dispersal", "Controls"],
+    preview: [
+      "SOURCE 100   PRESSURE 00   MEMORY ON",
+      "·········••+++***✦✶✷✸✹✸✷✶✦***+++••·········",
+      "LIFT 00     VELOCITY 00   DETACHED 00",
+      "····••++**✦✶✷✸✹✹✹✸✷✶✦**++••····",
+      "RECOVER READY"
+    ].join("\n")
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Labs — Alexander Traykov"
+      description="Public creative-coding tools for ASCII banners, SVG-to-3D turntables, and shader experiments."
+      path="/labs/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="labs-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" aria-current="page" data-scramble>Labs</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="labs-shell section-shell">
+      <section class="labs-hero">
+        <div class="labs-hero__meta">
+          <span>AT.LABS / {String(labs.length).padStart(2, "0")} public experiments</span>
+          <span>No signup / exports stay local</span>
+        </div>
+        <div class="labs-hero__copy">
+          <h1>Labs</h1>
+        </div>
+      </section>
+
+      <section class="labs-directory" aria-labelledby="labs-directory-title">
+        <header>
+          <p id="labs-directory-title">Available now</p>
+        </header>
+
+        <div class="project-grid labs-grid" data-reveal-group>
+          {
+            labs.map((lab, index) => (
+              <article
+                id={`lab-${lab.id}`}
+                class="project-card project-card--direct project-card--construction labs-project-card"
+                data-reveal="rise"
+                data-reveal-delay={String(Math.min(index, 6) * 60)}
+              >
+                <a class="project-card__body" href={lab.href} aria-label={lab.action}>
+                  <div class="project-mark labs-project-card__preview" aria-hidden="true">
+                    <pre>{lab.preview}</pre>
+                  </div>
+                  <div class="project-copy">
+                    <span class="project-index" data-scramble data-scramble-trigger="hover">
+                      {lab.number} / Lab / {lab.status}
+                    </span>
+                    <h3>{lab.title}</h3>
+                    <p>{lab.description}</p>
+                    <p class="project-card__tags">{lab.tags.join(" / ")}</p>
+                    <span class="construction-status" data-scramble data-scramble-trigger="hover">
+                      {lab.action}
+                    </span>
+                  </div>
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter links={[{ label: "Labs index", href: "#top" }]} />
+    <SiteAnalytics />
+  </body>
+</html>

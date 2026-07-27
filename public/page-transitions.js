@@ -176,7 +176,9 @@
     setContextAttributes(context);
     prepareSharedElements(context);
     body.classList.add("is-page-arriving");
-    broadcastTransitionState(true, "incoming");
+    // The outgoing page is already captured. Let the incoming turntable initialize
+    // behind the shared poster instead of blocking it until the poster disappears.
+    broadcastTransitionState(false, "incoming");
   };
 
   const clearTransitionState = () => {

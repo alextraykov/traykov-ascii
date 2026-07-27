@@ -1,0 +1,18 @@
+{
+  "slug": "prompting-is-not-taste",
+  "title": "Prompting is not taste",
+  "summary": "The current frontier models feel they deliver a lot of good design work for the untrained eye.",
+  "publishedAt": "2026-07-25T00:00:00+03:00",
+  "image": "/notes/prompting-is-not-taste.png",
+  "imageAlt": "A two-by-two matrix comparing weak and strong prompting with weak and strong taste.",
+  "tags": ["AI", "Design", "Taste"],
+  "paragraphs": [
+    "The current frontier models feel they deliver a lot of good design work for the untrained eye.",
+    "But I think they're not there ye when it comes to delivering uniqueness or the so called \"taste\".",
+    "And what I mean by \"taste\", since like most new wave terms related to AI, it became grossly bloated - is the ability of a designer to convey their accumulation of experience in the broader world of aesthetics.",
+    "And since designers are interested in the domain of visuals - things like typography, classic arts, architecture, fashion, photography, you name it, they are directly or indirectly influenced in their approach of the visual layer of a product.",
+    "So what I'm seeing in AIs is that they're having rough time in creating uniqueness without the direct, meticulous  influence and steering of the designer. Those who lack this kind of experience will also lack the aesthetic qualities in what they build.",
+    "I’m not saying that good results cannot appear, or that AI cannot be steered by somebody who isn’t a designer. My take is that it will take one much longer to get there, with much more trial and error, and the final quality will probably still be lower.",
+    "Experienced designers don’t necessarily get better AI output because they are better at prompting (I'd argue that most of us are bad at prompting), but we get better output because we know what to look for, what to reject, what feels generic, and what needs to change, or simply put - we already have the taste required to steer the model."
+  ]
+}

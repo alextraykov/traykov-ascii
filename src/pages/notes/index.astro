@@ -1,0 +1,134 @@
+---
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import { getNotes } from "../../lib/substack";
+import "../../styles/global.css";
+
+const notes = await getNotes();
+const syncedCount = notes.filter((note) => note.source === "substack").length;
+const archiveCount = notes.filter((note) => note.source === "legacy").length;
+const previewCount = notes.filter((note) => note.source === "local").length;
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  timeZone: "Europe/Sofia"
+});
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Notes — Alexander Traykov"
+      description="Notes by Alexander Traykov on product design, AI, teams, and visual craft."
+      path="/notes/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="notes">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="notes-index section-shell">
+      <section class="notes-hero" aria-labelledby="notes-title" data-reveal="rise">
+        <div class="notes-hero__meta">
+          <span>AT.NOTES / {String(notes.length).padStart(2, "0")} entries</span>
+          <a href="/rss.xml">RSS.XML ↗</a>
+        </div>
+        <div class="notes-hero__copy">
+          <p class="section-kicker">Writing</p>
+          <h1 id="notes-title">Notes.</h1>
+          <dl>
+            <div>
+              <dt>SYNCED</dt>
+              <dd>{String(syncedCount).padStart(2, "0")}</dd>
+            </div>
+            <div>
+              <dt>ARCHIVE</dt>
+              <dd>{String(archiveCount).padStart(2, "0")}</dd>
+            </div>
+            <div>
+              <dt>PREVIEW</dt>
+              <dd>{String(previewCount).padStart(2, "0")}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <a
+        class="notes-rss-banner"
+        href="/rss.xml"
+        aria-label="Add traykov.cc RSS to your feed reader"
+        data-reveal="scan"
+      >
+        <span class="notes-rss-banner__track" aria-hidden="true">
+          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+        </span>
+      </a>
+
+      <section class="notes-directory" aria-labelledby="notes-directory-title">
+        <header>
+          <p id="notes-directory-title">All notes</p>
+          <span>Newest first</span>
+        </header>
+
+        <div class="notes-search" aria-labelledby="notes-search-label" data-reveal="scan">
+          <label id="notes-search-label" for="notes-query">SEARCH</label>
+          <input
+            id="notes-query"
+            type="search"
+            placeholder="TITLE, IDEA, PHRASE"
+            autocomplete="off"
+            spellcheck="false"
+            data-notes-query
+          />
+          <output data-notes-count>{notes.length} / {notes.length}</output>
+        </div>
+
+        <div class="notes-list" aria-label="Notes" data-notes-list>
+          {notes.map((note, index) => (
+            <article
+              class="notes-list__item"
+              data-note-slug={note.slug}
+              data-reveal="rise"
+              data-reveal-delay={String(Math.min(index, 5) * 60)}
+            >
+              <a href={`/notes/${note.slug}/`}>
+                <div class="notes-list__meta">
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <time datetime={note.publishedAt}>{dateFormatter.format(new Date(note.publishedAt))}</time>
+                  <span>
+                    {note.source === "local" ? "PREVIEW" : note.source === "legacy" ? "ARCHIVE" : "SYNCED"}
+                  </span>
+                </div>
+                <h2>{note.title}</h2>
+                <span class="notes-list__read-time">{note.readTime}</span>
+                <span class="notes-list__arrow" aria-hidden="true">↗</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <p class="notes-empty" hidden data-notes-empty>NO MATCHES.</p>
+    </main>
+
+    <SiteFooter />
+    <script src="../../scripts/notes-search.js"></script>
+    <SiteAnalytics />
+  </body>
+</html>

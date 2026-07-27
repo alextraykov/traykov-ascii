@@ -116,14 +116,16 @@ const writingAndInterviews = [
     title: "A conversation with Mode Remote",
     body: "An interview about my path into product design, the work behind the work, and what I have learned along the way.",
     href: "https://moderemote.com/interviews/alexander-traykov",
-    cta: "Read the interview"
+    cta: "Read the interview",
+    external: true
   },
   {
-    eyebrow: "Writing / Substack",
+    eyebrow: "Writing / Notes",
     title: "Notes from Alexander Traykov",
     body: "Essays and working notes on product design, teams, craft, and the ideas I keep returning to.",
-    href: "https://alexandertraykov.substack.com/",
-    cta: "Read my writing"
+    href: "/notes/",
+    cta: "Read my writing",
+    external: false
   }
 ];
 
@@ -142,9 +144,10 @@ const writingAndInterviews = [
   <body data-page-type="about">
 
     <header class="site-nav">
-      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
         <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
         <a href="/about/" aria-current="page" data-scramble>About</a>
         <a href="/contact/" data-scramble>Contact</a>
       </nav>
@@ -242,14 +245,14 @@ const writingAndInterviews = [
               <p class="published-item__body">{item.body}</p>
                 <a
                   href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noreferrer" : undefined}
                   data-ascii-action="secondary"
                   data-ascii-stream
                   data-ascii-burst
                 >
                 <span data-scramble data-scramble-label={item.cta}>{item.cta}</span>
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">{item.external ? "↗" : "→"}</span>
               </a>
             </article>
           ))}

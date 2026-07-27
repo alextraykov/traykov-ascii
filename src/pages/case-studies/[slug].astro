@@ -52,6 +52,10 @@ const tagMeta = study.tags.length > 0 ? study.tags.join(" / ") : "";
 const caseHeadings = getCaseStudyHeadings(study.body);
 const hasReadingTools = caseHeadings.length > 1 || Boolean(study.walkthroughVideo);
 const walkthroughPoster = study.walkthroughPoster ?? study.image;
+const walkthroughPreviewVideo =
+  study.id === "synapse-sys"
+    ? "/case-studies/media/synapse-product-preview-avatar.mp4"
+    : study.walkthroughVideo;
 const walkthroughLabel = study.walkthroughLabel ?? "Watch walkthrough";
 const caseHref = (item: { id: string }) => `/case-studies/${item.id}/`;
 const pageTitle = `${study.title} - Alexander Traykov`;
@@ -95,9 +99,10 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
   <body data-page-type="case" data-case-id={study.id} data-case-theme={caseTheme}>
 
     <header class="site-nav site-nav--case">
-      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
         <a href="/#work" aria-current="page" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
         <a href="/about/" data-scramble>About</a>
         <a href="/contact/" data-scramble>Contact</a>
       </nav>
@@ -140,6 +145,12 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
           </nav>
           <p class="section-kicker">{caseMeta}</p>
           <h1 id="case-title">{study.title}</h1>
+          {isPublicStudy && (
+            <p class="case-hero-disclaimer">
+              The case study is AI slop-free and it was written with intent and attention.<br />
+              It&apos;s worth reading if you&apos;re interested in my thinking and building process.
+            </p>
+          )}
           {study.summary && <p class="case-hero-summary">{study.summary}</p>}
           {tagMeta && <p class="case-hero-meta"><span>{tagMeta}</span></p>}
         </div>
@@ -180,7 +191,7 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
                   >
                     <span class="case-walkthrough__avatar" aria-hidden="true">
                       <video
-                        src={study.walkthroughVideo}
+                        src={walkthroughPreviewVideo}
                         muted
                         loop
                         playsinline

@@ -4,7 +4,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "verify": "node scripts/verify-site.mjs"
+    "verify": "node scripts/verify-site.mjs && node --test tests/contact-api.test.mjs"
   },
   "dependencies": {
     "@fontsource/geist-mono": "^5.2.7",

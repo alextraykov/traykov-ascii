@@ -1,0 +1,106 @@
+[
+  {
+    "slug": "2019-year-in-review",
+    "title": "2019 in review",
+    "summary": "2019 was probably the most eventful year I've had. It was so densely packed with stuff happening around me, that at the end of it it feels that I can't even recall most of them. Luckily, this year I was almost consistent with writing my personal journal, and that helped me extract a lot of these forgotten memories out of my hazy mind.",
+    "publishedAt": "2020-01-04T00:00:00+02:00",
+    "tags": [
+      "Life",
+      "Year in review"
+    ],
+    "bodyFile": "2019-year-in-review.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/2019-recap.html",
+    "heroImage": "/notes/legacy/Filmphoto1.jpg"
+  },
+  {
+    "slug": "letter-for-amsterdam",
+    "title": "My letter to Amsterdam",
+    "summary": "The gorgeous sight of Amsterdam’s Central Station, standing on its own island and softly encircled by the freezing waters of the North Sea.",
+    "publishedAt": "2019-03-02T00:00:00+02:00",
+    "tags": [
+      "Travel",
+      "Personal"
+    ],
+    "bodyFile": "letter-for-amsterdam.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/amsterdam.html",
+    "heroImage": "/notes/legacy/amsterdam08.jpg"
+  },
+  {
+    "slug": "on-receiving-my-blue-belt",
+    "title": "Getting my blue belt in BJJ",
+    "summary": "After over two years of hard work, I was promoted to blue belt in Brazilian Jiujitsu—the most difficult and brutally honest combat sport I’ve done.",
+    "publishedAt": "2023-07-30T00:00:00+03:00",
+    "tags": [
+      "Brazilian Jiu-Jitsu",
+      "Personal"
+    ],
+    "bodyFile": "on-receiving-my-blue-belt.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/bjj-bluebelt.html",
+    "heroImage": null
+  },
+  {
+    "slug": "vicious-unforgiving-circle",
+    "title": "A vicious, unforgiving circle",
+    "summary": "Comparison bias, insecurity, ego, and envy. How the mixture of those traits is slowly ruining our lives and how can we fight against that.",
+    "publishedAt": "2019-02-28T00:00:00+02:00",
+    "tags": [
+      "Personal",
+      "Reflection"
+    ],
+    "bodyFile": "vicious-unforgiving-circle.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/circle.html",
+    "heroImage": null
+  },
+  {
+    "slug": "introspection-compassion-correction",
+    "title": "Introspection, compassion, correction",
+    "summary": "The Reflective Growth Triad is a mental toolset I’ve used on my path of self-discovery.",
+    "publishedAt": "2024-05-01T00:00:00+03:00",
+    "tags": [
+      "Personal growth",
+      "Reflection"
+    ],
+    "bodyFile": "introspection-compassion-correction.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/introspection-compassion-correction.html",
+    "heroImage": null
+  },
+  {
+    "slug": "il-mio-viaggio-nella-lingua-italiana",
+    "title": "Il mio viaggio nella lingua italiana 🇮🇹",
+    "summary": "La lingua italiana ha un posto speciale in mio cuore. È così che è iniziato il mio viaggio nella lingua italiana.",
+    "publishedAt": "2019-12-13T00:00:00+02:00",
+    "tags": [
+      "Italian",
+      "Learning"
+    ],
+    "bodyFile": "il-mio-viaggio-nella-lingua-italiana.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/italiano.html",
+    "heroImage": null
+  },
+  {
+    "slug": "radio-check",
+    "title": "Radio Check, Radio Check this is your Inner Voice - Over!",
+    "summary": "How checking in with your Inner Voice is almost the same as communicating through a two-way radio",
+    "publishedAt": "2019-07-25T00:00:00+03:00",
+    "tags": [
+      "Communication",
+      "Reflection"
+    ],
+    "bodyFile": "radio-check.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/radio-check.html",
+    "heroImage": "/notes/legacy/egocheck.jpg"
+  },
+  {
+    "slug": "taking-my-time-back",
+    "title": "Taking my time back",
+    "summary": "Our phones are cool. The tiny pocket computer resting on my hip contains just about all the knowledge of humanity—and keeps asking for my time.",
+    "publishedAt": "2019-04-29T00:00:00+03:00",
+    "tags": [
+      "Time",
+      "Personal"
+    ],
+    "bodyFile": "taking-my-time-back.html",
+    "sourceUrl": "https://github.com/alextraykov/traykov.cc/blob/master/blogposts/time.html",
+    "heroImage": null
+  }
+]

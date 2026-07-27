@@ -3,8 +3,10 @@ import { initScramble, scrambleElement } from "./scramble.js";
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let observer;
 
-function markIn(element) {
+function markIn(element, { animate = true } = {}) {
   element.dataset.revealState = "in";
+
+  if (!animate) return;
 
   if (element.dataset.reveal === "scramble") {
     scrambleElement(element);
@@ -54,12 +56,12 @@ function prepareElement(element) {
   if (delay > 0) element.style.setProperty("--reveal-delay", `${delay}ms`);
 
   if (reducedMotion.matches) {
-    markIn(element);
+    markIn(element, { animate: false });
     return;
   }
 
   if (element.getBoundingClientRect().top < window.innerHeight * 0.92) {
-    markIn(element);
+    markIn(element, { animate: false });
     return;
   }
 
@@ -67,7 +69,9 @@ function prepareElement(element) {
 }
 
 function applyReducedMotion() {
-  document.querySelectorAll("[data-reveal]").forEach((element) => markIn(element));
+  document
+    .querySelectorAll("[data-reveal]")
+    .forEach((element) => markIn(element, { animate: false }));
   observer?.disconnect();
   document.documentElement.dataset.motion = "ready";
 }

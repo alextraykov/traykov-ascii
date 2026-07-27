@@ -1,0 +1,164 @@
+<section class="ascii-banner-studio" data-ascii-banner-studio>
+  <div class="ascii-banner-studio__preview">
+    <canvas
+      width="1584"
+      height="396"
+      aria-label="ASCII banner preview using the 3D turntable glyph set"
+      data-ascii-banner-canvas
+    ></canvas>
+    <span aria-hidden="true" data-ascii-banner-dimensions>
+      1584 × 396 / LinkedIn · Native
+    </span>
+  </div>
+
+  <form class="ascii-banner-studio__controls" data-ascii-banner-controls>
+    <fieldset class="ascii-banner-studio__formats">
+      <legend>Canvas format</legend>
+      <div>
+        <button type="button" data-ascii-banner-format="linkedin" aria-pressed="true">
+          <strong>LinkedIn</strong>
+          <span>1584 × 396</span>
+        </button>
+        <button type="button" data-ascii-banner-format="x" aria-pressed="false">
+          <strong>X header</strong>
+          <span>1500 × 500</span>
+        </button>
+        <button type="button" data-ascii-banner-format="meta" aria-pressed="false">
+          <strong>Meta cover</strong>
+          <span>1640 × 624</span>
+        </button>
+        <button type="button" data-ascii-banner-format="youtube" aria-pressed="false">
+          <strong>YouTube</strong>
+          <span>2560 × 1440</span>
+        </button>
+        <button type="button" data-ascii-banner-format="open-graph" aria-pressed="false">
+          <strong>Open Graph</strong>
+          <span>1200 × 630</span>
+        </button>
+        <button type="button" data-ascii-banner-format="github" aria-pressed="false">
+          <strong>GitHub social</strong>
+          <span>1280 × 640</span>
+        </button>
+        <button type="button" data-ascii-banner-format="freeform" aria-pressed="false">
+          <strong>Freeform</strong>
+          <span>Your dimensions</span>
+        </button>
+      </div>
+    </fieldset>
+
+    <div class="ascii-banner-studio__freeform" data-ascii-banner-freeform hidden>
+      <label>
+        <span>Width</span>
+        <input type="number" name="customWidth" min="320" max="2048" step="1" value="1920" />
+      </label>
+      <span aria-hidden="true">×</span>
+      <label>
+        <span>Height</span>
+        <input type="number" name="customHeight" min="160" max="2048" step="1" value="480" />
+      </label>
+    </div>
+
+    <fieldset class="ascii-banner-studio__presets">
+      <legend>Shader preset</legend>
+      <div>
+        <button type="button" data-ascii-banner-preset="vortex" aria-pressed="true">
+          01 / Vortex
+        </button>
+        <button type="button" data-ascii-banner-preset="flow" aria-pressed="false">
+          02 / Flow field
+        </button>
+        <button type="button" data-ascii-banner-preset="interference" aria-pressed="false">
+          03 / Interference
+        </button>
+        <button type="button" data-ascii-banner-preset="topography" aria-pressed="false">
+          04 / Topography
+        </button>
+        <button type="button" data-ascii-banner-preset="cells" aria-pressed="false">
+          05 / Cells
+        </button>
+      </div>
+    </fieldset>
+
+    <label>
+      <span>Density <output data-ascii-banner-output="density">180</output></span>
+      <input type="range" name="density" min="96" max="240" step="4" value="180" />
+    </label>
+
+    <label>
+      <span>Field scale <output data-ascii-banner-output="scale">1.35</output></span>
+      <input
+        type="range"
+        name="scale"
+        min="0.6"
+        max="2.6"
+        step="0.05"
+        value="1.35"
+      />
+    </label>
+
+    <label>
+      <span>Contrast <output data-ascii-banner-output="contrast">1.25</output></span>
+      <input
+        type="range"
+        name="contrast"
+        min="0.55"
+        max="2.2"
+        step="0.05"
+        value="1.25"
+      />
+    </label>
+
+    <label>
+      <span>Min opacity <output data-ascii-banner-output="opacity">0.08</output></span>
+      <input
+        type="range"
+        name="opacity"
+        min="0.02"
+        max="0.34"
+        step="0.01"
+        value="0.08"
+      />
+    </label>
+
+    <label>
+      <span>Phase <output data-ascii-banner-output="phase">24</output></span>
+      <input type="range" name="phase" min="0" max="100" step="1" value="24" />
+    </label>
+
+    <label>
+      <span>Position X <output data-ascii-banner-output="focusX">56%</output></span>
+      <input type="range" name="focusX" min="0" max="1" step="0.01" value="0.56" />
+    </label>
+
+    <label>
+      <span>Position Y <output data-ascii-banner-output="focusY">50%</output></span>
+      <input type="range" name="focusY" min="0" max="1" step="0.01" value="0.5" />
+    </label>
+
+    <label class="ascii-banner-studio__quality">
+      <span>Export quality</span>
+      <select name="quality" data-ascii-banner-quality>
+        <option value="native">Native platform size</option>
+        <option value="retina">Retina / 2×</option>
+        <option value="2k">2K long edge</option>
+        <option value="4k">4K long edge</option>
+      </select>
+    </label>
+
+    <div class="ascii-banner-studio__actions">
+      <button type="button" data-ascii-banner-seed>New seed</button>
+      <button type="reset">Reset</button>
+      <button type="button" class="ascii-banner-studio__save" data-ascii-banner-save>
+        Save PNG
+      </button>
+    </div>
+  </form>
+
+  <p class="ascii-banner-studio__status" role="status" aria-live="polite" data-ascii-banner-status>
+    Drag the shader directly or use Position X/Y. Export renders at the selected native size.
+  </p>
+</section>
+
+<script>
+  import "../scripts/ascii-banner-studio.js";
+</script>

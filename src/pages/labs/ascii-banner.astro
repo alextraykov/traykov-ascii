@@ -1,0 +1,93 @@
+---
+import AsciiBannerStudio from "../../components/AsciiBannerStudio.astro";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import "../../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="ASCII Banner Studio — Alexander Traykov Labs"
+      description="Generate and export ASCII banners for LinkedIn, X, Meta, YouTube, Open Graph, GitHub, or custom dimensions."
+      path="/labs/ascii-banner/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="labs-tool-page">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" aria-current="page" data-scramble>Labs</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="labs-tool-shell section-shell">
+      <section class="labs-tool-hero">
+        <a href="/labs/" data-scramble>← All labs</a>
+        <div>
+          <p class="section-kicker">Lab 01 / Public tool</p>
+          <h1>ASCII Banner Studio</h1>
+          <p>
+            Pick a platform or define your own canvas. Build the field, move it, break it,
+            then export the actual pixels. Nothing uploads anywhere.
+          </p>
+        </div>
+      </section>
+
+      <section class="labs-tool-workbench" aria-label="ASCII banner generator">
+        <AsciiBannerStudio />
+      </section>
+
+      <section class="labs-tool-notes" aria-label="Tool notes">
+        <article>
+          <span>01 / Canvas</span>
+          <h2>Platform or freeform</h2>
+          <p>
+            Start from LinkedIn, X, Meta, YouTube, Open Graph, or GitHub dimensions. Freeform
+            accepts any canvas from 320 × 160 through 2048 × 2048 before export scaling.
+          </p>
+        </article>
+        <article>
+          <span>02 / Material</span>
+          <h2>Turntable glyphs</h2>
+          <p>
+            Every preset uses the same glyph ramp as the 3D turntables:
+            <code>· • + * ✦ ✶ ✷ ✸ ✹</code>. Opacity carries the depth.
+          </p>
+        </article>
+        <article>
+          <span>03 / Output</span>
+          <h2>Native pixels</h2>
+          <p>
+            Native, Retina, 2K, and 4K exports are rendered again at the target resolution.
+            The browser never stretches the preview into a fake high-resolution file.
+          </p>
+        </article>
+      </section>
+
+      <nav class="labs-tool-related" aria-label="Related labs">
+        <span>Next tool</span>
+        <a href="/svg-ascii-studio/">
+          <span>SVG → 3D ASCII turntable</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </main>
+
+    <SiteFooter
+      links={[
+        { label: "Labs index", href: "/labs/" },
+        { label: "Banner studio", href: "#top" }
+      ]}
+    />
+    <SiteAnalytics />
+  </body>
+</html>

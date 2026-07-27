@@ -1,4 +1,35 @@
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const MAX_INITIALIZATION_RETRIES = 1;
+let webglSupport;
+
+function supportsWebGL() {
+  if (webglSupport !== undefined) return webglSupport;
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("webgl2", {
+    alpha: false,
+    antialias: false,
+    failIfMajorPerformanceCaveat: true
+  });
+
+  const rendererInfo = context?.getExtension("WEBGL_debug_renderer_info");
+  const renderer = rendererInfo
+    ? context.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL)
+    : "";
+  const usesSoftwareRenderer = /swiftshader|llvmpipe|software/i.test(String(renderer));
+
+  webglSupport = Boolean(context) && !usesSoftwareRenderer;
+  context?.getExtension("WEBGL_lose_context")?.loseContext();
+  return webglSupport;
+}
+
+function showTurntableFallback(root) {
+  root.classList.remove("is-turntable-loading", "has-webgl");
+  root.classList.add("is-turntable-fallback");
+  root.dataset.turntableState = "fallback";
+
+  root.dispatchEvent(new CustomEvent("turntable-fallback", { bubbles: true }));
+}
 
 export function registerTurntables(selector, load, initialize) {
   const roots = Array.from(document.querySelectorAll(selector));
@@ -14,12 +45,14 @@ export function registerTurntables(selector, load, initialize) {
     let initialized = false;
     let instance;
     let destroyed = false;
+    let failed = false;
     let retryTimer = 0;
     let retryCount = 0;
 
     const isSelected = () =>
       !playground || playground.dataset.activeTurntable === root.dataset.playgroundTurntable;
     const isActive = () =>
+      !failed &&
       intersecting &&
       !document.hidden &&
       document.documentElement.dataset.pageTransitionActive !== "true" &&
@@ -30,6 +63,13 @@ export function registerTurntables(selector, load, initialize) {
       if (destroyed) return;
       let active = isActive();
       if (active && !initialized) {
+        if (!supportsWebGL()) {
+          failed = true;
+          showTurntableFallback(root);
+          root.dispatchEvent(new CustomEvent("turntable-eligibility", { detail: { active: false } }));
+          return;
+        }
+
         initialized = true;
         try {
           const module = await load();
@@ -43,9 +83,16 @@ export function registerTurntables(selector, load, initialize) {
           } else {
             initialized = false;
           }
-        } catch {
+        } catch (error) {
           initialized = false;
-          if (isActive() && !retryTimer) {
+          const permanentRendererFailure =
+            error instanceof Error &&
+            /webgl context|error creating webgl/i.test(error.message);
+
+          if (permanentRendererFailure || retryCount >= MAX_INITIALIZATION_RETRIES) {
+            failed = true;
+            showTurntableFallback(root);
+          } else if (isActive() && !retryTimer) {
             const retryDelay = Math.min(400 * (2 ** retryCount), 3200);
             retryCount += 1;
             retryTimer = window.setTimeout(() => {

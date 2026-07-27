@@ -1,0 +1,141 @@
+---
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import "../styles/global.css";
+
+const phases = [
+  {
+    code: "00",
+    state: "DONE",
+    title: "FOUNDATION",
+    items: [
+      "Pave + Synapse",
+      "Contact + booking",
+      "Labs + ASCII Studio",
+      "Vercel pageviews"
+    ]
+  },
+  {
+    code: "01",
+    state: "NOW",
+    title: "NOTES",
+    items: [
+      "[LIVE] Substack → /notes/ sync",
+      "[LIVE] Full-text search",
+      "[LIVE] RSS",
+      "[NEXT] Publish Prompting is not taste"
+    ]
+  },
+  {
+    code: "02",
+    state: "NEXT",
+    title: "NAVIGATION",
+    items: [
+      "Copy section link",
+      "Related case / note / lab",
+      "Content events",
+      "Full-text search",
+      "Continue reading if useful"
+    ]
+  },
+  {
+    code: "03",
+    state: "LATER",
+    title: "LIVING ARCHIVE",
+    items: [
+      "/now/",
+      "Spotify (cached)",
+      "/archive/",
+      "Browse by topic / year / type",
+      "Command palette",
+      "Content graph + feeds"
+    ]
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Site Roadmap — Alexander Traykov"
+      description="Current and planned additions to traykov.cc."
+      path="/roadmap/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="roadmap">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="site-plan section-shell">
+      <header class="site-plan__header" data-reveal="rise">
+        <p>ROADMAP.LOG</p>
+        <h1>SITE ROADMAP</h1>
+        <dl>
+          <div>
+            <dt>UPDATED</dt>
+            <dd>2026-07</dd>
+          </div>
+          <div>
+            <dt>CURRENT</dt>
+            <dd>01 / NOTES</dd>
+          </div>
+          <div>
+            <dt>FORMAT</dt>
+            <dd>SEQUENCE, NO DATES</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div class="site-plan__signal" aria-label="One of four roadmap phases is complete. Phase one is current." data-reveal="scan">
+        <span data-state="done">00&nbsp;&nbsp;[XXXXXXXX]</span>
+        <span data-state="now">01&nbsp;&nbsp;[&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;]</span>
+        <span>02&nbsp;&nbsp;[........]</span>
+        <span>03&nbsp;&nbsp;[........]</span>
+      </div>
+
+      <section class="site-plan__queue" aria-label="Roadmap phases">
+        {phases.map((phase) => (
+          <article
+            id={`phase-${phase.code}`}
+            class="site-plan__phase"
+            data-state={phase.state.toLowerCase()}
+            data-reveal="rise"
+          >
+            <div class="site-plan__phase-label">
+              <span>{phase.code}</span>
+              <strong>[{phase.state}]</strong>
+            </div>
+            <h2>{phase.title}</h2>
+            <ol>
+              {phase.items.map((item, index) => (
+                <li>
+                  <span>{phase.code}.{String(index + 1).padStart(2, "0")}</span>
+                  <p>{item}</p>
+                </li>
+              ))}
+            </ol>
+          </article>
+        ))}
+      </section>
+
+      <p class="site-plan__note">
+        ORDER MAY CHANGE. DONE MEANS LIVE.
+      </p>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+  </body>
+</html>

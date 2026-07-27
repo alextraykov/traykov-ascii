@@ -5,6 +5,7 @@ import SiteHead from "../components/SiteHead.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/global.css";
 
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <!doctype html>
@@ -16,12 +17,23 @@ import "../styles/global.css";
       path="/contact/"
     />
     <script src="/page-transitions.js" defer></script>
+    {
+      turnstileSiteKey && (
+        <script
+          is:inline
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          async
+          defer
+        ></script>
+      )
+    }
   </head>
   <body data-page-type="contact">
     <header class="site-nav">
-      <a class="brand" href="/" aria-label="Alexander Traykov home">AT</a>
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
       <nav aria-label="Primary">
         <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
         <a href="/about/" data-scramble>About</a>
         <a href="/contact/" aria-current="page" data-scramble>Contact</a>
       </nav>
@@ -42,10 +54,10 @@ import "../styles/global.css";
         <div class="contact-layout" data-reveal-group>
           <form
             class="contact-form"
-            action="mailto:hi@traykov.cc"
-            method="get"
-            enctype="text/plain"
+            action="/api/contact"
+            method="post"
             data-contact-form
+            aria-describedby="contact-form-status"
           >
             <div class="contact-form__heading">
               <span>01 / Write</span>
@@ -54,31 +66,96 @@ import "../styles/global.css";
 
             <label>
               <span>Name</span>
-              <input type="text" name="name" autocomplete="name" required />
+              <input
+                type="text"
+                name="name"
+                autocomplete="name"
+                maxlength="100"
+                required
+              />
             </label>
 
             <label>
               <span>Email</span>
-              <input type="email" name="email" autocomplete="email" required />
+              <input
+                type="email"
+                name="email"
+                autocomplete="email"
+                inputmode="email"
+                maxlength="254"
+                required
+              />
             </label>
 
             <label>
               <span>Message</span>
-              <textarea name="message" rows="7" required></textarea>
+              <textarea
+                name="message"
+                rows="7"
+                minlength="10"
+                maxlength="5000"
+                required
+              ></textarea>
             </label>
 
+            <label class="contact-form__trap" aria-hidden="true">
+              <span>Leave this field empty</span>
+              <input
+                type="text"
+                name="website"
+                autocomplete="off"
+                tabindex="-1"
+              />
+            </label>
+
+            {
+              turnstileSiteKey ? (
+                <div class="contact-form__verification">
+                  <div
+                    class="cf-turnstile"
+                    data-sitekey={turnstileSiteKey}
+                    data-action="contact"
+                    data-theme="auto"
+                  ></div>
+                  <p>Spam check by Cloudflare Turnstile.</p>
+                </div>
+              ) : (
+                <p class="contact-form__configuration">
+                  Secure sending is not configured yet. Email{" "}
+                  <a href="mailto:hi@traykov.cc">hi@traykov.cc</a> directly.
+                </p>
+              )
+            }
+
+            <p
+              id="contact-form-status"
+              class="contact-form__status"
+              role="status"
+              aria-live="polite"
+              data-contact-status
+            ></p>
+
             <div class="contact-form__submit">
-              <p>Opens your email app with the message ready.</p>
+              <p>Sends directly to my inbox. Your address is only used to reply.</p>
               <button
                 type="submit"
+                disabled={!turnstileSiteKey}
                 data-ascii-action="primary"
                 data-ascii-stream
                 data-ascii-burst
+                data-contact-submit
               >
-                <span data-scramble data-scramble-label="Write email">Write email</span>
+                <span data-contact-submit-label>Send message</span>
                 <span aria-hidden="true">↗</span>
               </button>
             </div>
+
+            <noscript>
+              <p class="contact-form__configuration">
+                This protected form requires JavaScript. Email{" "}
+                <a href="mailto:hi@traykov.cc">hi@traykov.cc</a> instead.
+              </p>
+            </noscript>
           </form>
 
           <aside class="contact-call" aria-labelledby="contact-call-title">
@@ -108,17 +185,95 @@ import "../styles/global.css";
       document.querySelectorAll("[data-contact-form]").forEach((form) => {
         if (!(form instanceof HTMLFormElement)) return;
 
-        form.addEventListener("submit", (event) => {
+        const status = form.querySelector("[data-contact-status]");
+        const submitButton = form.querySelector("[data-contact-submit]");
+        const submitLabel = form.querySelector("[data-contact-submit-label]");
+        const turnstileElement = form.querySelector(".cf-turnstile");
+
+        if (
+          !(status instanceof HTMLElement) ||
+          !(submitButton instanceof HTMLButtonElement) ||
+          !(submitLabel instanceof HTMLElement)
+        ) {
+          return;
+        }
+
+        const setStatus = (message: string, state: "idle" | "error" | "success") => {
+          status.textContent = message;
+          status.dataset.state = state;
+        };
+
+        const query = new URLSearchParams(window.location.search);
+        if (query.get("sent") === "1") {
+          setStatus("Message sent. I’ll get back to you soon.", "success");
+          query.delete("sent");
+          const nextQuery = query.toString();
+          window.history.replaceState(
+            {},
+            "",
+            `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash}`,
+          );
+        } else if (query.get("error") === "1") {
+          setStatus(
+            "The message could not be sent. Try again or email hi@traykov.cc.",
+            "error",
+          );
+        }
+
+        form.addEventListener("submit", async (event) => {
           event.preventDefault();
 
-          const data = new FormData(form);
-          const name = String(data.get("name") ?? "").trim();
-          const email = String(data.get("email") ?? "").trim();
-          const message = String(data.get("message") ?? "").trim();
-          const subject = `Website note from ${name}`;
-          const body = [`Name: ${name}`, `Email: ${email}`, "", message].join("\n");
+          if (!form.reportValidity()) return;
 
-          window.location.href = `mailto:hi@traykov.cc?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          const data = new FormData(form);
+          const turnstileToken = String(data.get("cf-turnstile-response") ?? "");
+
+          if (!turnstileToken) {
+            setStatus("Complete the anti-spam check before sending.", "error");
+            return;
+          }
+
+          submitButton.disabled = true;
+          submitLabel.textContent = "Sending…";
+          form.setAttribute("aria-busy", "true");
+          setStatus("Sending your message…", "idle");
+
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(Object.fromEntries(data)),
+            });
+            const result = (await response.json().catch(() => null)) as {
+              error?: string;
+              ok?: boolean;
+            } | null;
+
+            if (!response.ok || !result?.ok) {
+              throw new Error(result?.error || "The message could not be sent.");
+            }
+
+            form.reset();
+            const turnstile = Reflect.get(window, "turnstile");
+            if (turnstileElement && turnstile?.reset) {
+              turnstile.reset(turnstileElement);
+            }
+            setStatus("Message sent. I’ll get back to you soon.", "success");
+          } catch (error) {
+            setStatus(
+              error instanceof Error
+                ? error.message
+                : "The message could not be sent. Please try again.",
+              "error",
+            );
+          } finally {
+            submitButton.disabled = false;
+            submitLabel.textContent = "Send message";
+            form.removeAttribute("aria-busy");
+          }
         });
       });
     </script>

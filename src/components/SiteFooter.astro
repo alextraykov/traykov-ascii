@@ -20,10 +20,14 @@ const currentPath = Astro.url.pathname;
 const siteLinks: FooterLink[] = [
   { label: "Work", href: "/#work" },
   { label: "About", href: "/about/" },
+  { label: "Roadmap", href: "/roadmap/" },
   { label: "Contact", href: "/contact/" },
-  { label: "Labs", href: "/playground" },
+  { label: "Labs", href: "/labs/" },
+  { label: "Banner studio", href: "/labs/ascii-banner/" },
   { label: "Turntable editor", href: "/svg-ascii-studio/" },
-  { label: "Notes", href: "https://alexandertraykov.substack.com/", external: true }
+  { label: "For machines", href: "/llms.txt" },
+  { label: "Notes", href: "/notes/" },
+  { label: "RSS", href: "/rss.xml" }
 ];
 const socialLinks: FooterLink[] = [
   { label: "Email hi@traykov.cc", href: "mailto:hi@traykov.cc" },
@@ -169,7 +173,7 @@ const bookingEmbedUrl = (() => {
 
     <div class="site-footer__meta" aria-label="Footer details">
       <span>Ideated, designed and prompted in Sofia, Bulgaria 2026</span>
-      <a href={`${currentPath}#top`} aria-label="Back to top">
+      <a href={`${currentPath}#top`} aria-label="Back top">
         <span data-scramble data-scramble-label="Back to top">Back top</span>
       </a>
     </div>

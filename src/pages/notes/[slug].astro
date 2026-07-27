@@ -1,0 +1,136 @@
+---
+import type { GetStaticPaths } from "astro";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import { getNotes, noteUrl, type NoteRecord } from "../../lib/substack";
+import "../../styles/global.css";
+
+type Props = {
+  note: NoteRecord;
+};
+
+export const getStaticPaths = (async () => {
+  const notes = await getNotes();
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note }
+  }));
+}) satisfies GetStaticPaths;
+
+const { note } = Astro.props as Props;
+const published = new Intl.DateTimeFormat("en", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+  timeZone: "Europe/Sofia"
+}).format(new Date(note.publishedAt));
+const pagePath = `/notes/${note.slug}/`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: note.title,
+  description: note.summary,
+  datePublished: note.publishedAt,
+  mainEntityOfPage: noteUrl(note),
+  author: {
+    "@type": "Person",
+    name: "Alexander Traykov",
+    url: "https://traykov.cc/about/"
+  }
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title={`${note.title} — Alexander Traykov`}
+      description={note.summary}
+      path={pagePath}
+      canonical={note.canonicalUrl}
+      image={note.heroImage}
+      imageAlt={note.heroImageAlt ?? note.title}
+      ogType="article"
+      structuredData={structuredData}
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="note">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="note-page section-shell">
+      <nav class="note-page__back" aria-label="Notes">
+        <a href="/notes/">← ALL NOTES</a>
+      </nav>
+
+      <article>
+        <header class="note-header" data-reveal="rise">
+          <div class="note-header__meta">
+            <span>
+              {note.source === "local" ? "[PREVIEW]" : note.source === "legacy" ? "[ARCHIVE]" : "[SYNCED]"}
+            </span>
+            <time datetime={note.publishedAt}>{published}</time>
+            <span>{note.readTime}</span>
+          </div>
+          <h1>{note.title}</h1>
+          {note.tags.length > 0 && (
+            <ul aria-label="Topics">
+              {note.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          )}
+        </header>
+
+        {note.source === "local" && note.heroImage && (
+          <figure class="note-hero-image" data-reveal="scan">
+            <img
+              src={note.heroImage}
+              alt={note.heroImageAlt ?? ""}
+              width="3292"
+              height="2436"
+              loading="eager"
+            />
+          </figure>
+        )}
+
+        <div class="note-body" set:html={note.contentHtml} />
+
+        <footer class="note-source">
+          {note.source === "substack" && note.sourceUrl ? (
+            <>
+              <span>SOURCE / SUBSTACK</span>
+              <a href={note.sourceUrl} target="_blank" rel="noreferrer">
+                ORIGINAL POST ↗
+              </a>
+            </>
+          ) : note.source === "legacy" && note.sourceUrl ? (
+            <>
+              <span>SOURCE / TRAYKOV.CC ARCHIVE</span>
+              <a href={note.sourceUrl} target="_blank" rel="noreferrer">
+                ORIGINAL FILE ↗
+              </a>
+            </>
+          ) : (
+            <>
+              <span>STATUS / LOCAL PREVIEW</span>
+              <span>REPLACED WHEN SUBSTACK SLUG MATCHES</span>
+            </>
+          )}
+        </footer>
+      </article>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+  </body>
+</html>

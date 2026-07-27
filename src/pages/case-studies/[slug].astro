@@ -161,8 +161,8 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
             <div class="case-study-body">
               {isPublicStudy && (
                 <aside class="authorship-disclaimer" aria-label="Authorship disclaimer">
-                  <p><strong>The case study is AI slop-free and it was written with intent and attention.</strong></p>
-                  <p><strong>It&apos;s worth reading if you&apos;re interested in my thinking and building process.</strong></p>
+                  <p>The case study is AI slop-free and it was written with intent and attention.</p>
+                  <p>It&apos;s worth reading if you&apos;re interested in my thinking and building process.</p>
                 </aside>
               )}
               <Fragment set:html={renderMarkdown(study.body)} />

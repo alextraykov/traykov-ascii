@@ -1,0 +1,95 @@
+---
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { experience } from "../lib/cv";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="CV — Alexander Traykov"
+      description="Alexander Traykov’s product design and UX leadership experience."
+      path="/cv/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="cv">
+    <header class="site-nav">
+      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
+      <nav aria-label="Primary">
+        <a href="/#work" data-scramble>Work</a>
+        <a href="/labs/" data-scramble>Labs</a>
+        <a href="/about/" data-scramble>About</a>
+        <a href="/contact/" data-scramble>Contact</a>
+      </nav>
+      <ThemeToggle />
+    </header>
+
+    <main id="top" class="notes-index section-shell">
+      <section class="notes-hero" aria-labelledby="cv-title" data-reveal="rise">
+        <div class="notes-hero__meta">
+          <span>AT.CV / 2014—NOW</span>
+          <span>SOFIA, BULGARIA</span>
+        </div>
+        <div class="notes-hero__copy">
+          <p class="section-kicker">Work experience</p>
+          <h1 id="cv-title">CV.</h1>
+          <dl>
+            <div>
+              <dt>EXPERIENCE</dt>
+              <dd>13 YEARS</dd>
+            </div>
+            <div>
+              <dt>ROLES</dt>
+              <dd>{String(experience.length).padStart(2, "0")}</dd>
+            </div>
+            <div>
+              <dt>CURRENT</dt>
+              <dd>QUICKBASE</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section id="experience" class="about-experience" aria-labelledby="experience-title" data-reveal="rise">
+        <div class="section-heading">
+          <p class="section-kicker">Experience</p>
+          <h2 id="experience-title">The whole path, not just the recent bit.</h2>
+        </div>
+
+        <div class="experience-list" data-reveal-group>
+          {experience.map((item) => (
+            <article class="experience-item">
+              <div>
+                <p>{item.period}</p>
+                <h3>{item.company} - {item.role}</h3>
+              </div>
+              <div>
+                <p>{item.body}</p>
+                {item.href && (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    data-ascii-action="secondary"
+                    data-ascii-stream
+                    data-ascii-burst
+                  >
+                    Visit
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter links={[{ label: "CV index", href: "#top" }]} />
+    <SiteAnalytics />
+  </body>
+</html>

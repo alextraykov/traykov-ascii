@@ -7,7 +7,9 @@ import { getNotes } from "../../lib/substack";
 import "../../styles/global.css";
 
 const notes = await getNotes();
-const syncedCount = notes.filter((note) => note.source === "substack").length;
+const publishedCount = notes.filter(
+  (note) => note.source === "substack" || note.source === "local-published"
+).length;
 const archiveCount = notes.filter((note) => note.source === "legacy").length;
 const previewCount = notes.filter((note) => note.source === "local").length;
 const dateFormatter = new Intl.DateTimeFormat("en", {
@@ -51,8 +53,8 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
           <h1 id="notes-title">Notes.</h1>
           <dl>
             <div>
-              <dt>SYNCED</dt>
-              <dd>{String(syncedCount).padStart(2, "0")}</dd>
+              <dt>PUBLISHED</dt>
+              <dd>{String(publishedCount).padStart(2, "0")}</dd>
             </div>
             <div>
               <dt>ARCHIVE</dt>
@@ -73,10 +75,16 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
         data-reveal="scan"
       >
         <span class="notes-rss-banner__track" aria-hidden="true">
-          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-          <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+          <span class="notes-rss-banner__group">
+            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+          </span>
+          <span class="notes-rss-banner__group">
+            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
+          </span>
         </span>
       </a>
 
@@ -112,7 +120,13 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <time datetime={note.publishedAt}>{dateFormatter.format(new Date(note.publishedAt))}</time>
                   <span>
-                    {note.source === "local" ? "PREVIEW" : note.source === "legacy" ? "ARCHIVE" : "SYNCED"}
+                    {note.source === "local"
+                      ? "PREVIEW"
+                      : note.source === "local-published"
+                        ? "PUBLISHED"
+                        : note.source === "legacy"
+                          ? "ARCHIVE"
+                          : "SYNCED"}
                   </span>
                 </div>
                 <h2>{note.title}</h2>

@@ -9346,12 +9346,13 @@ body[data-case-theme="pave"] .case-image-grid--cols-3 .case-image-card {
   will-change: transform;
 }
 
-.notes-rss-banner__track span {
+.notes-rss-banner__group {
+  display: flex;
   flex: 0 0 auto;
 }
 
-.notes-rss-banner:is(:hover, :focus-visible) .notes-rss-banner__track {
-  animation-play-state: paused;
+.notes-rss-banner__group > span {
+  flex: 0 0 auto;
 }
 
 .notes-directory {

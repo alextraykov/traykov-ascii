@@ -78,7 +78,13 @@ const structuredData = {
         <header class="note-header" data-reveal="rise">
           <div class="note-header__meta">
             <span>
-              {note.source === "local" ? "[PREVIEW]" : note.source === "legacy" ? "[ARCHIVE]" : "[SYNCED]"}
+              {note.source === "local"
+                ? "[PREVIEW]"
+                : note.source === "local-published"
+                  ? "[PUBLISHED]"
+                  : note.source === "legacy"
+                    ? "[ARCHIVE]"
+                    : "[SYNCED]"}
             </span>
             <time datetime={note.publishedAt}>{published}</time>
             <span>{note.readTime}</span>
@@ -95,7 +101,7 @@ const structuredData = {
           <p>This note is AI slop-free and it was written with intent and attention.</p>
         </aside>
 
-        {note.source === "local" && note.heroImage && (
+        {(note.source === "local" || note.source === "local-published") && note.heroImage && (
           <figure class="note-hero-image" data-reveal="scan">
             <img
               src={note.heroImage}
@@ -123,6 +129,11 @@ const structuredData = {
               <a href={note.sourceUrl} target="_blank" rel="noreferrer">
                 ORIGINAL FILE ↗
               </a>
+            </>
+          ) : note.source === "local-published" ? (
+            <>
+              <span>SOURCE / TRAYKOV.CC</span>
+              <span>PUBLISHED LOCALLY</span>
             </>
           ) : (
             <>

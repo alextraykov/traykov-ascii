@@ -26,7 +26,7 @@ export type NoteRecord = {
   heroImageAlt?: string;
   tags: string[];
   readTime: string;
-  source: "substack" | "legacy" | "local";
+  source: "substack" | "legacy" | "local" | "local-published";
 };
 
 type LocalNoteDraft = {
@@ -36,6 +36,7 @@ type LocalNoteDraft = {
   publishedAt: string;
   image?: string;
   imageAlt?: string;
+  status?: "published";
   tags: string[];
   paragraphs?: string[];
   blocks?: Array<
@@ -252,7 +253,7 @@ function localNotes(): NoteRecord[] {
       heroImageAlt: draft.imageAlt,
       tags: draft.tags,
       readTime: readTime(plainText),
-      source: "local" as const
+      source: draft.status === "published" ? "local-published" as const : "local" as const
     };
   });
 }

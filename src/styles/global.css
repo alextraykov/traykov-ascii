@@ -9601,6 +9601,18 @@ body[data-case-theme="pave"] .case-image-grid--cols-3 .case-image-card {
   background: var(--wave-preview-background);
 }
 
+@media (max-width: 900px) {
+  .note-wave-preview canvas {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 640px) {
+  .note-wave-preview canvas {
+    aspect-ratio: 1;
+  }
+}
+
 .note-body {
   width: min(100%, 70ch);
   margin-inline: auto;

@@ -1,3 +1,4 @@
+import digitalArtDraft from "../content/notes/on-digital-art.json";
 import localDraft from "../content/notes/prompting-is-not-taste.json";
 import confidenceDraft from "../content/notes/the-confidence-crutch.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
@@ -45,7 +46,12 @@ type LocalNoteDraft = {
   >;
 };
 
-const localDrafts: LocalNoteDraft[] = [confidenceDraft, localDraft, titlesDraft];
+const localDrafts: LocalNoteDraft[] = [
+  digitalArtDraft,
+  confidenceDraft,
+  localDraft,
+  titlesDraft
+];
 
 function decodeXmlEntities(value: string): string {
   const named: Record<string, string> = {

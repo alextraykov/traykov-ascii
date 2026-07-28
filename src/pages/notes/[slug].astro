@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
+import BlocktypeWavePreview from "../../components/BlocktypeWavePreview.astro";
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
@@ -20,6 +21,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { note } = Astro.props as Props;
+const showBlocktypeWavePreview = note.slug === "on-digital-art";
 const published = new Intl.DateTimeFormat("en", {
   day: "2-digit",
   month: "long",
@@ -112,6 +114,8 @@ const structuredData = {
             />
           </figure>
         )}
+
+        {showBlocktypeWavePreview && <BlocktypeWavePreview />}
 
         <div class="note-body" set:html={note.contentHtml} />
 

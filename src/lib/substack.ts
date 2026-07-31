@@ -1,4 +1,5 @@
 import digitalArtDraft from "../content/notes/on-digital-art.json";
+import designOutsideDesignDraft from "../content/notes/design-outside-design.json";
 import localDraft from "../content/notes/prompting-is-not-taste.json";
 import confidenceDraft from "../content/notes/the-confidence-crutch.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
@@ -48,6 +49,7 @@ type LocalNoteDraft = {
 
 const localDrafts: LocalNoteDraft[] = [
   digitalArtDraft,
+  designOutsideDesignDraft,
   confidenceDraft,
   localDraft,
   titlesDraft

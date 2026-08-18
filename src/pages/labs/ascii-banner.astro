@@ -3,7 +3,7 @@ import AsciiBannerStudio from "../../components/AsciiBannerStudio.astro";
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
-import ThemeToggle from "../../components/ThemeToggle.astro";
+import SiteNav from "../../components/SiteNav.astro";
 import "../../styles/global.css";
 ---
 
@@ -18,22 +18,12 @@ import "../../styles/global.css";
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="labs-tool-page">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" aria-current="page" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav />
 
     <main id="top" class="labs-tool-shell section-shell">
       <section class="labs-tool-hero">
         <a href="/labs/" data-scramble>← All labs</a>
         <div>
-          <p class="section-kicker">Lab 01 / Public tool</p>
           <h1>ASCII Banner Studio</h1>
           <p>
             Pick a platform or define your own canvas. Build the field, move it, break it,
@@ -48,7 +38,6 @@ import "../../styles/global.css";
 
       <section class="labs-tool-notes" aria-label="Tool notes">
         <article>
-          <span>01 / Canvas</span>
           <h2>Platform or freeform</h2>
           <p>
             Start from LinkedIn, X, Meta, YouTube, Open Graph, or GitHub dimensions. Freeform
@@ -56,7 +45,6 @@ import "../../styles/global.css";
           </p>
         </article>
         <article>
-          <span>02 / Material</span>
           <h2>Turntable glyphs</h2>
           <p>
             Every preset uses the same glyph ramp as the 3D turntables:
@@ -64,7 +52,6 @@ import "../../styles/global.css";
           </p>
         </article>
         <article>
-          <span>03 / Output</span>
           <h2>Native pixels</h2>
           <p>
             Native, Retina, 2K, and 4K exports are rendered again at the target resolution.
@@ -82,12 +69,7 @@ import "../../styles/global.css";
       </nav>
     </main>
 
-    <SiteFooter
-      links={[
-        { label: "Labs index", href: "/labs/" },
-        { label: "Banner studio", href: "#top" }
-      ]}
-    />
+    <SiteFooter />
     <SiteAnalytics />
   </body>
 </html>

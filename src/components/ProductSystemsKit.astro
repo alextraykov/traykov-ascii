@@ -1,0 +1,219 @@
+---
+const items = [
+  {
+    id: "figma",
+    name: "Figma",
+    mark: "FG",
+    category: "Design",
+    description:
+      "Interface design, system definition, interaction prototyping, and the visual decisions that need to survive implementation.",
+    href: "/case-studies/designing-pave/",
+    linkLabel: "See it used in Designing Pave"
+  },
+  {
+    id: "chatgpt",
+    name: "ChatGPT",
+    mark: "GPT",
+    category: "AI",
+    description:
+      "Exploration, synthesis, critique, and turning loose product questions into material that can be tested."
+  },
+  {
+    id: "codex",
+    name: "Codex",
+    mark: "CX",
+    category: "AI",
+    description:
+      "Repository exploration, rapid prototyping, implementation support, and design-system automation."
+  },
+  {
+    id: "vscode",
+    name: "VS Code",
+    mark: "VS",
+    category: "Build",
+    description:
+      "The portable workbench for editing product code, inspecting behavior, and tightening the handoff between design and implementation."
+  },
+  {
+    id: "terminal",
+    name: "Terminal",
+    mark: ">_",
+    category: "Build",
+    description:
+      "Builds, tests, repository operations, local tooling, and the unglamorous checks that keep prototypes honest."
+  },
+  {
+    id: "github",
+    name: "GitHub",
+    mark: "GH",
+    category: "Build",
+    description:
+      "Versioned product work, reviewable changes, and a shared place for design decisions to meet production code.",
+    href: "/case-studies/designing-pave/",
+    linkLabel: "See it used in Designing Pave"
+  },
+  {
+    id: "linear-jira",
+    name: "Linear / Jira",
+    mark: "L/J",
+    category: "Operations",
+    description:
+      "Planning, sequencing, and keeping product decisions connected to delivery without pretending the ticket is the work."
+  },
+  {
+    id: "notion-obsidian",
+    name: "Notion / Obsidian",
+    mark: "N/O",
+    category: "Operations",
+    description:
+      "Working notes, research material, decision trails, and the archive needed when memory stops being a dependable interface."
+  }
+];
+
+const selectedItem = items[0];
+---
+
+<section class="product-kit" data-product-systems-kit data-state="closed" aria-labelledby="product-kit-title">
+  <header class="product-kit__status" aria-label="Inventory status">
+    <span>AT.KIT / 08 items</span>
+    <span data-kit-status>Case sealed</span>
+  </header>
+
+  <div class="product-kit__workspace">
+    <div class="product-kit__stage">
+      <div class="product-kit__closed" data-kit-closed>
+        <button
+          class="product-kit__trigger"
+          type="button"
+          data-kit-open
+          aria-label="Open the Product Systems Kit"
+          aria-expanded="true"
+          aria-controls="product-kit-open-state"
+        >
+          <img
+            class="product-kit__layer product-kit__layer--ambient"
+            src="/labs/product-systems-kit/pixel/ambient-shadow.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="product-kit__layer product-kit__layer--case"
+            src="/labs/product-systems-kit/pixel/closed-case.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="product-kit__layer product-kit__layer--lid"
+            src="/labs/product-systems-kit/pixel/closed-lid.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="product-kit__layer product-kit__layer--handle"
+            src="/labs/product-systems-kit/pixel/handle.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="product-kit__layer product-kit__layer--latch product-kit__layer--latch-left"
+            src="/labs/product-systems-kit/pixel/latch-left.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="product-kit__layer product-kit__layer--latch product-kit__layer--latch-right"
+            src="/labs/product-systems-kit/pixel/latch-right.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <span class="product-kit__case-label" aria-hidden="true">
+            <strong>A. TRAYKOV</strong>
+            <span>PRODUCT SYSTEMS KIT</span>
+          </span>
+          <span class="product-kit__open-label" aria-hidden="true">
+            <span data-scramble>Release latches</span>
+            <span>↵</span>
+          </span>
+        </button>
+      </div>
+
+      <div
+        id="product-kit-open-state"
+        class="product-kit__open"
+        data-kit-open-state
+        aria-hidden="false"
+      >
+        <div class="product-kit__toolbox" aria-label="Open Product Systems Kit">
+          <img
+            class="product-kit__pixel-case"
+            src="/labs/product-systems-kit/pixel/open-kit.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <span class="product-kit__pixel-stamp" aria-hidden="true">
+            A. TRAYKOV / PRODUCT SYSTEMS KIT
+          </span>
+
+          <div class="product-kit__inventory" role="grid" aria-label="Equipped tools">
+            {
+              items.map((item, index) => (
+                <button
+                  type="button"
+                  role="gridcell"
+                  class="product-kit__item"
+                  data-kit-item
+                  data-kit-id={item.id}
+                  data-kit-name={item.name}
+                  data-kit-category={item.category}
+                  data-kit-description={item.description}
+                  data-kit-href={item.href}
+                  data-kit-link-label={item.linkLabel}
+                  aria-label={`${item.name}, ${item.category}, status equipped`}
+                  aria-selected={index === 0 ? "true" : "false"}
+                  tabindex={index === 0 ? "0" : "-1"}
+                  style={`--kit-item-delay: var(--stagger-${Math.min(index + 1, 4)})`}
+                >
+                  <span class="product-kit__item-name">{item.name}</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="product-kit__inspection" aria-labelledby="product-kit-title">
+      <div class="product-kit__inspection-heading">
+        <span data-kit-detail-category>{selectedItem.category} equipment</span>
+        <span>STATUS / EQUIPPED</span>
+      </div>
+      <h2 id="product-kit-title" data-kit-detail-name>{selectedItem.name}</h2>
+      <p data-kit-detail-description>{selectedItem.description}</p>
+      <a href={selectedItem.href} data-kit-detail-link>
+        <span data-kit-detail-link-label>{selectedItem.linkLabel}</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <button type="button" data-kit-close>
+        <span>Pack kit</span>
+        <span aria-hidden="true">×</span>
+      </button>
+    </aside>
+  </div>
+
+  <ol class="product-kit__fallback-details" aria-label="Complete equipment inventory">
+    {
+      items.map((item) => (
+        <li>
+          <span>{item.category} / Equipped</span>
+          <h2>{item.name}</h2>
+          <p>{item.description}</p>
+          {item.href && <a href={item.href}>{item.linkLabel}</a>}
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<script>
+  import "../scripts/product-systems-kit.js";
+</script>

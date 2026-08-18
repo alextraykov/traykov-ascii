@@ -7,15 +7,33 @@ const files = [
   "src/components/ProjectCard.astro",
   "src/components/ProjectMark.astro",
   "src/components/DitherImageTrail.astro",
+  "src/components/CaseContactPrompt.astro",
   "src/components/SiteFooter.astro",
   "src/components/SiteHead.astro",
+  "src/components/SiteNav.astro",
   "src/components/ThemeToggle.astro",
   "src/components/PaveTurntable.astro",
   "src/components/ObjTurntable.astro",
   "src/components/SvgLogoTurntable.astro",
+  "src/components/RhizomeField.astro",
+  "src/components/WebCemeterySketch.astro",
   "src/pages/index.astro",
   "src/pages/about.astro",
+  "src/pages/contact.astro",
+  "src/pages/cv.astro",
+  "src/pages/notes/index.astro",
+  "src/pages/notes/[slug].astro",
   "src/pages/playground.astro",
+  "src/pages/component-preview.astro",
+  "src/pages/image-trail.astro",
+  "src/pages/roadmap.astro",
+  "src/pages/shader-explainer.astro",
+  "src/pages/svg-ascii-studio.astro",
+  "src/pages/labs/index.astro",
+  "src/pages/labs/ascii-banner.astro",
+  "src/pages/labs/product-systems-kit.astro",
+  "src/pages/labs/rhizome-field.astro",
+  "src/pages/labs/sketchbook.astro",
   "src/pages/pave-turntable.astro",
   "src/pages/obj-turntable.astro",
   "src/pages/sasi-turntable.astro",
@@ -23,7 +41,9 @@ const files = [
   "src/pages/case-studies/index.astro",
   "src/pages/case-studies/[slug].astro",
   "src/lib/content.ts",
+  "src/lib/substack.ts",
   "src/lib/public-case-studies.ts",
+  "src/content/notes/the-cemetery-loop.json",
   "src/styles/global.css",
   "src/scripts/motion/index.js",
   "src/scripts/motion/reveal.js",
@@ -36,15 +56,22 @@ const files = [
   "src/scripts/obj-turntable.js",
   "src/scripts/sasi-logo-turntable.js",
   "src/scripts/synapse-card-scramble.js",
+  "src/scripts/rhizome-field.js",
+  "src/scripts/web-cemetery.js",
+  "src/sketches/shaders/web-cemetery.js",
+  "src/sketches/shared/blocktype-material.js",
   "public/page-transitions.js",
   "public/ascii-shader.js",
   "public/llms.txt",
+  "public/robots.txt",
   "public/favicon.svg",
   "public/favicon-32.png",
   "public/apple-touch-icon.png",
   "public/og-image.png",
   "public/og-image.svg",
   "public/site.webmanifest",
+  "public/notes/the-cemetery-loop-poster.svg",
+  "public/models/cemetery/LICENSE.txt",
   "case-studies/_template.mdx",
   "case-studies/pages/designing-pave.mdx",
   "case-studies/pages/synapse-sys.mdx",
@@ -59,7 +86,9 @@ const files = [
   "case-studies/_archive/old-work/bolt-fun.mdx",
   "AGENTS.md",
   "CLAUDE.md",
-  "docs/design-language.md"
+  "docs/design-language.md",
+  "docs/codex-harness.md",
+  "src/pages/sitemap.xml.ts"
 ];
 
 const source = Object.fromEntries(files.map((file) => [file, existsSync(file) ? readFileSync(file, "utf8") : ""]));
@@ -77,6 +106,22 @@ const imageTrailRenderFiles = [360, 720].flatMap((renderSize) =>
 const initialMobileTrailBytes = imageTrailRenderFiles
   .filter((file) => file.includes("render-360") && /trail-0[1-5]\.webp$/.test(file))
   .reduce((total, file) => total + size(file), 0);
+
+const cemeteryModelFiles = [
+  "public/models/cemetery/gravestone-bevel.glb",
+  "public/models/cemetery/gravestone-broken.glb",
+  "public/models/cemetery/gravestone-decorative.glb",
+  "public/models/cemetery/gravestone-round.glb",
+  "public/models/cemetery/gravestone-wide.glb"
+];
+
+const cemeteryRuntimeFiles = [
+  "src/content/notes/the-cemetery-loop.json",
+  "src/components/WebCemeterySketch.astro",
+  "src/scripts/web-cemetery.js",
+  "src/sketches/shaders/web-cemetery.js",
+  "public/notes/the-cemetery-loop-poster.svg"
+];
 
 const expectedRoutes = [
   "designing-pave",
@@ -130,6 +175,31 @@ const themedRoutes = [
   "src/pages/synapse-turntable.astro"
 ];
 
+const sharedNavShells = [
+  "src/pages/index.astro",
+  "src/pages/about.astro",
+  "src/pages/contact.astro",
+  "src/pages/cv.astro",
+  "src/pages/notes/index.astro",
+  "src/pages/notes/[slug].astro",
+  "src/pages/case-studies/[slug].astro",
+  "src/pages/component-preview.astro",
+  "src/pages/image-trail.astro",
+  "src/pages/roadmap.astro",
+  "src/pages/obj-turntable.astro",
+  "src/pages/pave-turntable.astro",
+  "src/pages/sasi-turntable.astro",
+  "src/pages/synapse-turntable.astro",
+  "src/pages/playground.astro",
+  "src/pages/shader-explainer.astro",
+  "src/pages/svg-ascii-studio.astro",
+  "src/pages/labs/index.astro",
+  "src/pages/labs/ascii-banner.astro",
+  "src/pages/labs/product-systems-kit.astro",
+  "src/pages/labs/rhizome-field.astro",
+  "src/pages/labs/sketchbook.astro"
+];
+
 const checks = [
   ["Astro dependency exists", has("package.json", '"astro"')],
   ["Astro config exists", has("astro.config.mjs", "defineConfig")],
@@ -158,7 +228,8 @@ const checks = [
       has("src/components/ThemeToggle.astro", 'class="hn hn-moon"') &&
       has("src/components/ThemeToggle.astro", 'aria-live="polite"') &&
       has("src/styles/global.css", 'html:not([data-theme])') &&
-      themedRoutes.every((route) => has(route, "ThemeToggle"))
+      has("src/components/SiteNav.astro", 'import ThemeToggle from "./ThemeToggle.astro"') &&
+      sharedNavShells.every((route) => has(route, "SiteNav"))
   ],
   [
     "Global CRT scanlines are removed",
@@ -179,11 +250,22 @@ const checks = [
       !has("public/page-transitions.js", '"is-nav-scrolling"')
   ],
   [
-    "Footer booking uses Cal.com",
+    "Booking actions retain real href fallbacks and enhance Cal.com links",
     has("src/components/SiteFooter.astro", "PUBLIC_CAL_BOOKING_URL") &&
+      has("src/components/SiteFooter.astro", "PUBLIC_BOOKING_URL") &&
       has("src/components/SiteFooter.astro", "https://cal.com/alexander-cqn5aq/30min") &&
       has("src/components/SiteFooter.astro", 'url.searchParams.set("embed", "true")') &&
       has("src/components/SiteFooter.astro", "Book a 30-minute call with Alexander Traykov") &&
+      has("src/components/SiteFooter.astro", 'document.querySelectorAll<HTMLElement>("[data-booking-modal-open]")') &&
+      has("src/pages/contact.astro", 'id="book-a-call"') &&
+      has("src/pages/contact.astro", "href={bookingPageUrl}") &&
+      has("src/components/CaseContactPrompt.astro", "href={bookingPageUrl}") &&
+      ["src/pages/contact.astro", "src/components/CaseContactPrompt.astro"].every((file) =>
+        has(file, "PUBLIC_CAL_BOOKING_URL") &&
+        has(file, "PUBLIC_BOOKING_URL") &&
+        has(file, "defaultBookingUrl") &&
+        has(file, "data-booking-modal-open")
+      ) &&
       !has("src/components/SiteFooter.astro", "PUBLIC_GOOGLE_CALENDAR_BOOKING_URL") &&
       !has("src/components/SiteFooter.astro", "calendar.google.com")
   ],
@@ -278,10 +360,27 @@ const checks = [
       has("src/scripts/turntable-loader.js", 'turntableState = "fallback"')
   ],
   [
+    "Shared navigation has exactly the recruiter-facing primary links",
+    has("src/components/SiteNav.astro", 'export type SiteNavSection = "work" | "notes" | "about" | "contact"') &&
+      has("src/components/SiteNav.astro", 'variant?: "default" | "case"') &&
+      ["Work", "Notes", "About", "Contact"].every((label) =>
+        has("src/components/SiteNav.astro", `label: "${label}"`)
+      ) &&
+      !has("src/components/SiteNav.astro", 'label: "Labs"') &&
+      has("src/components/SiteNav.astro", "case-progress") &&
+      sharedNavShells.every((route) => has(route, "<SiteNav")) &&
+      !sharedNavShells.some((route) => has(route, 'class="site-nav"')) &&
+      has("src/pages/index.astro", '<SiteNav active="work"') &&
+      has("src/pages/notes/index.astro", '<SiteNav active="notes"') &&
+      has("src/pages/about.astro", '<SiteNav active="about"') &&
+      has("src/pages/contact.astro", '<SiteNav active="contact"') &&
+      has("src/pages/case-studies/[slug].astro", '<SiteNav active="work" variant="case"') &&
+      has("src/styles/global.css", "grid-template-columns: repeat(4, minmax(0, 1fr))")
+  ],
+  [
     "Accessible names include their visible navigation labels",
-    !themedRoutes.some((route) => has(route, 'aria-label="Alexander Traykov home"')) &&
-      has("src/pages/index.astro", 'aria-label="AT — Alexander Traykov home"') &&
-      has("src/components/SiteFooter.astro", 'aria-label="Back top"')
+    has("src/components/SiteNav.astro", 'aria-label="AT — Alexander Traykov home"') &&
+      has("src/components/SiteFooter.astro", 'aria-label="Back to top"')
   ],
   [
     "Shared logo is preloaded and the image trail has valid labelled semantics",
@@ -310,12 +409,40 @@ const checks = [
       has("src/styles/global.css", ".case-preview-placeholder")
   ],
   [
-    "Footer exposes public routes only",
+    "Footer is a compact utility strip with fixed public links",
     has("src/components/SiteFooter.astro", "siteLinks") &&
-      has("src/components/SiteFooter.astro", "links.length > 0") &&
+      ["Notes", "Labs", "About", "Contact", "CV", "RSS"].every((label) =>
+        has("src/components/SiteFooter.astro", `label: "${label}"`)
+      ) &&
+      !has("src/components/SiteFooter.astro", "Astro.props") &&
       has("src/components/SiteFooter.astro", "Back to top") &&
-      has("src/components/SiteFooter.astro", 'href: "/#work"') &&
-      has("src/components/SiteFooter.astro", '{ label: "For machines", href: "/llms.txt" }')
+      has("src/components/SiteFooter.astro", 'href="/llms.txt"') &&
+      has("src/components/SiteFooter.astro", 'aria-label="For machines"') &&
+      has("src/components/SiteFooter.astro", "data-footer-booking-modal") &&
+      has("src/components/SiteFooter.astro", "data-booking-modal-open") &&
+      has("src/styles/global.css", "grid-template-columns: var(--tap-target) minmax(0, 1fr) auto") &&
+      has("src/styles/global.css", "grid-column: 1 / -1") &&
+      has("src/styles/global.css", "column-gap: var(--space-3)") &&
+      !has("src/components/SiteFooter.astro", 'label: "Work"') &&
+      !has("src/components/SiteFooter.astro", 'label: "Banner studio"') &&
+      !has("src/components/SiteFooter.astro", 'label: "Turntable editor"')
+  ],
+
+  [
+    "Homepage and Notes reduce identity and archive clutter without losing core behavior",
+    has("src/pages/index.astro", 'title="AI Product Designer & UX Lead — Alexander Traykov"') &&
+      has("src/pages/index.astro", "AI Product Designer &amp; UX Lead") &&
+      has("src/pages/index.astro", "Alexander Traykov") &&
+      !has("src/pages/index.astro", "IdentityRotator") &&
+      has("src/pages/index.astro", 'objSrc="/models/me.glb"') &&
+      !has("src/pages/notes/index.astro", "publishedCount") &&
+      !has("src/pages/notes/index.astro", "archiveCount") &&
+      !has("src/pages/notes/index.astro", "AT.NOTES / {String(notes.length)") &&
+      !has("src/pages/notes/index.astro", "<dl>") &&
+      has("src/pages/notes/index.astro", "notes-rss-banner") &&
+      has("src/pages/notes/index.astro", "data-notes-query") &&
+      has("src/pages/notes/index.astro", '"SYNCED"') &&
+      has("src/pages/notes/index.astro", '"ARCHIVE"')
   ],
 
   [
@@ -329,6 +456,67 @@ const checks = [
       has("public/llms.txt", "https://traykov.cc/case-studies/synapse-sys/") &&
       !has("public/llms.txt", "Full case studies not publicly available yet") &&
       !has("public/llms.txt", "Full case-study pages are not public.")
+  ],
+  [
+    "Crawler surfaces publish only intended canonical portfolio routes",
+    has("astro.config.mjs", 'site: "https://traykov.cc"') &&
+      has("public/robots.txt", "User-agent: *") &&
+      has("public/robots.txt", "Allow: /") &&
+      has("public/robots.txt", "Sitemap: https://traykov.cc/sitemap.xml") &&
+      has("src/pages/sitemap.xml.ts", "getPublicCaseStudies") &&
+      has("src/pages/sitemap.xml.ts", '"/notes/"') &&
+      has("src/pages/sitemap.xml.ts", '"/labs/"') &&
+      has("src/pages/sitemap.xml.ts", '"/svg-ascii-studio/"') &&
+      has("src/pages/sitemap.xml.ts", '"/synapse-turntable/"') &&
+      has("src/pages/sitemap.xml.ts", 'note.source !== "local-published" && note.source !== "legacy"') &&
+      has("src/pages/sitemap.xml.ts", "url.origin !== SITE_URL") &&
+      has("src/pages/sitemap.xml.ts", "function sourceDate") &&
+      has("src/pages/sitemap.xml.ts", "sourceDate(note.publishedAt)")
+  ],
+  [
+    "Metadata is role-specific and canonical-aware",
+    has("src/components/SiteHead.astro", 'name="author" content="Alexander Traykov"') &&
+      has("src/components/SiteHead.astro", 'property="og:locale" content="en_US"') &&
+      has("src/components/SiteHead.astro", 'property="og:url" content={canonicalUrl}') &&
+      has("src/pages/about.astro", "AI Product Designer & UX Lead") &&
+      has("src/pages/contact.astro", "AI Product Designer & UX Lead") &&
+      has("src/pages/cv.astro", "AI Product Designer & UX Lead") &&
+      has("src/pages/case-studies/[slug].astro", "AI Product Design Case Study") &&
+      has("src/pages/playground.astro", 'path="/playground/"')
+  ],
+  [
+    "Structured data keeps person, case-study, and note canonical IDs aligned",
+    has("src/pages/index.astro", '"@id": `${siteUrl}/#person`') &&
+      has("src/pages/index.astro", '"@id": `${siteUrl}/#website`') &&
+      has("src/pages/about.astro", '"@type": "ProfilePage"') &&
+      has("src/pages/about.astro", 'mainEntity: { "@id": "https://traykov.cc/#person" }') &&
+      has("src/pages/case-studies/[slug].astro", '"@type": "Article"') &&
+      has("src/pages/case-studies/[slug].astro", '"@type": "BreadcrumbList"') &&
+      has("src/pages/case-studies/[slug].astro", "mainEntityOfPage: pageUrl") &&
+      has("src/pages/notes/[slug].astro", "canonicalUrl = new URL(note.canonicalUrl, siteUrl).toString()") &&
+      has("src/pages/notes/[slug].astro", "mainEntityOfPage: canonicalUrl") &&
+      has("src/pages/notes/[slug].astro", '"@type": "BreadcrumbList"') &&
+      has("src/pages/notes/[slug].astro", 'canonical={canonicalUrl}') &&
+      has("src/lib/substack.ts", "canonicalUrl: sourceUrl") &&
+      has("src/lib/substack.ts", 'canonicalUrl: `${SITE_URL}/notes/${draft.slug}/`')
+  ],
+  [
+    "Imported Notes preserve a single page H1 and downgrade embedded Substack H1s",
+    has("src/lib/substack.ts", '.replace(/<h1(\\s[^>]*)?>/gi, "<h2$1>")') &&
+      has("src/lib/substack.ts", '.replace(/<\\/h1>/gi, "</h2>")') &&
+      has("src/pages/notes/[slug].astro", "<h1>{note.title}</h1>") &&
+      has("src/pages/notes/[slug].astro", "note.contentHtml")
+  ],
+  [
+    "LLM orientation links crawler surfaces and factual search topics",
+    has("public/llms.txt", "https://traykov.cc/sitemap.xml") &&
+      has("public/llms.txt", "https://traykov.cc/rss.xml") &&
+      has("public/llms.txt", "https://traykov.cc/notes/the-cemetery-loop/") &&
+      has("public/llms.txt", "AI product design") &&
+      has("public/llms.txt", "Enterprise UX") &&
+      has("public/llms.txt", "Design engineering") &&
+      has("public/llms.txt", "Hands-on UX leadership") &&
+      has("public/llms.txt", "Rhizome Field")
   ],
   [
     "Core case-study content exists",
@@ -356,6 +544,54 @@ const checks = [
       has("src/styles/global.css", "prefers-reduced-motion")
   ],
   ["Shader asset remains available", has("public/ascii-shader.js", 'getContext("webgl"')],
+  [
+    "Rhizome field is routable, GPU-only, and within its image budget",
+    has("src/pages/labs/index.astro", 'href: "/labs/rhizome-field/"') &&
+      has("src/pages/labs/rhizome-field.astro", "RhizomeField") &&
+      has("src/components/RhizomeField.astro", "data-rhizome-canvas") &&
+      has("src/scripts/rhizome-field.js", 'const ASCII_RAMP = " .:+*#%@"') &&
+      has("src/scripts/rhizome-field.js", 'getContext("webgl"') &&
+      has("src/scripts/rhizome-field.js", "u_glyph_atlas") &&
+      has("src/scripts/rhizome-field.js", "u_block_atlas") &&
+      has("src/scripts/rhizome-field.js", "createBlockGlyphAtlas") &&
+      has("src/scripts/rhizome-field.js", "u_bundles[3]") &&
+      has("src/scripts/rhizome-field.js", "const MAX_BUNDLES = 3") &&
+      has("src/scripts/rhizome-field.js", "u_disperse_progress") &&
+      has("src/scripts/rhizome-field.js", "u_time") &&
+      has("src/scripts/rhizome-field.js", "prefers-reduced-motion: reduce") &&
+      !has("src/scripts/rhizome-field.js", "readPixels") &&
+      has("src/styles/global.css", "--rhizome-xylem") &&
+      exists("public/labs/rhizome-field/male-fern-rhizome.webp") &&
+      size("public/labs/rhizome-field/male-fern-rhizome.webp") <= 250_000
+  ],
+  [
+    "Cemetery loop keeps its deterministic, fallback-first WebGL contract",
+    has("src/content/notes/the-cemetery-loop.json", '"visual": "web-cemetery"') &&
+      has("src/scripts/web-cemetery.js", "seed: 1847") &&
+      cemeteryModelFiles.length === 5 &&
+      cemeteryModelFiles.every(exists) &&
+      has("public/models/cemetery/LICENSE.txt", "Kenney Graveyard Kit 5.0") &&
+      has("public/models/cemetery/LICENSE.txt", "Creative Commons Zero 1.0 Universal (CC0 1.0)") &&
+      has(
+        "src/sketches/shaders/web-cemetery.js",
+        'import { blocktypeMaterialGlsl } from "../shared/blocktype-material.js";'
+      ) &&
+      has("src/sketches/shared/blocktype-material.js", "float blocktypeBayer4(vec2 cell)") &&
+      has("src/sketches/shaders/web-cemetery.js", "blocktypeBayer4(cell)") &&
+      has(
+        "src/sketches/shaders/web-cemetery.js",
+        "blocktypeHash21(floor(cell / 4.0) + vec2(uSeed * 37.0, uSeed * 53.0))"
+      ) &&
+      has("src/scripts/web-cemetery.js", "uSeed: { value: CEMETERY_CONFIG.seed / 65521 }") &&
+      !cemeteryRuntimeFiles.some((file) => /\b(network|globe|packet|fence|gate)\b/i.test(source[file])) &&
+      has("src/sketches/shaders/web-cemetery.js", "export const cemeteryFogFragmentShader") &&
+      has("src/sketches/shaders/web-cemetery.js", "float moonDisk") &&
+      has("src/components/WebCemeterySketch.astro", 'src="/notes/the-cemetery-loop-poster.svg"') &&
+      exists("public/notes/the-cemetery-loop-poster.svg") &&
+      has("src/components/WebCemeterySketch.astro", "<img") &&
+      has("src/components/WebCemeterySketch.astro", "<noscript>") &&
+      has("src/scripts/web-cemetery.js", "this.reducedMotion.matches ? 0 : 1")
+  ],
   [
     "Motion tokens exist",
     has("src/styles/global.css", "--ease-out-expo") &&

@@ -2,7 +2,7 @@
 import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHead from "../components/SiteHead.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteNav from "../components/SiteNav.astro";
 import { experience } from "../lib/cv";
 import "../styles/global.css";
 ---
@@ -11,23 +11,14 @@ import "../styles/global.css";
 <html lang="en">
   <head>
     <SiteHead
-      title="CV — Alexander Traykov"
-      description="Alexander Traykov’s product design and UX leadership experience."
+      title="Alexander Traykov CV — AI Product Designer & UX Lead"
+      description="Alexander Traykov’s product design, AI product work, enterprise UX, design systems, and UX leadership experience."
       path="/cv/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body data-page-type="cv">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav />
 
     <main id="top" class="notes-index section-shell">
       <section class="notes-hero" aria-labelledby="cv-title" data-reveal="rise">
@@ -89,7 +80,7 @@ import "../styles/global.css";
       </section>
     </main>
 
-    <SiteFooter links={[{ label: "CV index", href: "#top" }]} />
+    <SiteFooter />
     <SiteAnalytics />
   </body>
 </html>

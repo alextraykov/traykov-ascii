@@ -3,7 +3,7 @@ import SiteAnalytics from "../components/SiteAnalytics.astro";
 import DitherImageTrail from "../components/DitherImageTrail.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHead from "../components/SiteHead.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteNav from "../components/SiteNav.astro";
 import { imageTrailImages } from "../lib/image-trail";
 import "../styles/global.css";
 
@@ -45,30 +45,33 @@ const writingAndInterviews = [
   }
 ];
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": "https://traykov.cc/about/#profile",
+  url: "https://traykov.cc/about/",
+  name: "About Alexander Traykov",
+  description:
+    "About Alexander Traykov, an AI product designer and UX lead working across enterprise software, design systems, and design engineering.",
+  mainEntity: { "@id": "https://traykov.cc/#person" }
+};
+
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <SiteHead
-      title="Alexander Traykov"
-      description="Alexander Traykov is a human building things with the help of machines."
+      title="About Alexander Traykov — AI Product Designer & UX Lead"
+      description="About Alexander Traykov, an AI product designer and UX lead working across enterprise software, design systems, and design engineering."
       path="/about/"
+      structuredData={structuredData}
     />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body data-page-type="about">
 
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" aria-current="page" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav active="about" />
 
     <main id="top" class="about-page">
       <section class="about-hero about-hero--trail" aria-labelledby="about-title">

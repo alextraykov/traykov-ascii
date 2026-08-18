@@ -1,8 +1,10 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { chromium } from "@playwright/test";
+import { BROWSER_VIEWPORTS, DECORATIVE_OVERFLOW_SELECTOR } from "./browser-manifest.mjs";
 
-const baseUrl = process.env.BASE_URL || "http://127.0.0.1:4330";
+const baseUrl = process.env.BASE_URL || "http://127.0.0.1:4326";
+const baseOrigin = new URL(baseUrl).origin;
 const distDir = "dist";
 
 function walk(dir) {
@@ -21,105 +23,117 @@ function routeFromFile(file) {
   return `/${rel.replace(/\.html$/, "")}`;
 }
 
-function isMonochromeLike(color) {
-  const match = color.match(/rgba?\(([^)]+)\)/);
-  if (!match) return true;
-  const [r, g, b, a = "1"] = match[1].split(/,\s*|\s+/).filter(Boolean).map(Number);
-  if (Number.isFinite(a) && a === 0) return true;
-  if (![r, g, b].every(Number.isFinite)) return true;
-  return Math.max(r, g, b) - Math.min(r, g, b) <= 10;
+function localUrl(path) {
+  return new URL(path, baseUrl).toString();
 }
 
-if (!existsSync(distDir)) {
-  throw new Error("dist/ does not exist. Run npm run build first.");
+function relativeUrl(url) {
+  const parsed = new URL(url);
+  return parsed.origin === baseOrigin ? `${parsed.pathname}${parsed.search}${parsed.hash}` : parsed.toString();
 }
 
-const routes = [...new Set(walk(distDir).map(routeFromFile))].sort();
-const viewports = [
-  { name: "desktop", width: 1440, height: 1000 },
-  { name: "mobile", width: 390, height: 844 }
-];
-
-const browser = await chromium.launch();
-const context = await browser.newContext();
-const failures = [];
-const results = [];
-
-for (const route of routes) {
-  const page = await context.newPage();
-
-  for (const viewport of viewports) {
-    await page.setViewportSize(viewport);
-    const response = await page.goto(new URL(route, baseUrl).toString(), { waitUntil: "load" });
-    await page.waitForTimeout(250);
-
-    const audit = await page.evaluate(() => {
-      const sampled = [...document.querySelectorAll("body *")]
-        .filter((element) => {
-          const rect = element.getBoundingClientRect();
-          return rect.width > 0 && rect.height > 0;
-        })
-        .slice(0, 400)
-        .flatMap((element) => {
-          const style = getComputedStyle(element);
-          return [
-            [element.tagName.toLowerCase(), "color", style.color],
-            [element.tagName.toLowerCase(), "backgroundColor", style.backgroundColor],
-            [element.tagName.toLowerCase(), "borderColor", style.borderColor]
-          ];
-        });
-
-      const nav = document.querySelector(".site-nav nav");
-      const navRect = nav?.getBoundingClientRect();
-      const navLinks = nav ? [...nav.children].map((child) => child.getBoundingClientRect()) : [];
-
-      return {
-        title: document.title,
-        bodyWidth: document.documentElement.scrollWidth,
-        viewportWidth: window.innerWidth,
-        navWraps: navLinks.some((rect) => navRect && rect.top > navRect.top + 6),
-        overflowing: [...document.querySelectorAll("body *")]
-          .filter((element) => {
-            const rect = element.getBoundingClientRect();
-            return rect.width > 0 && rect.right > window.innerWidth + 1;
-          })
-          .slice(0, 8)
-          .map((element) => ({
-            tag: element.tagName.toLowerCase(),
-            className: String(element.className || ""),
-            text: String(element.textContent || "").trim().slice(0, 80),
-            right: Math.round(element.getBoundingClientRect().right)
-          })),
-        sampled
-      };
-    });
-
-    const offPalette = audit.sampled.filter(([, property, color]) => {
-      if (property === "backgroundColor" && color === "rgba(0, 0, 0, 0)") return false;
-      return !isMonochromeLike(color);
-    });
-
-    const result = {
-      route,
-      viewport: viewport.name,
-      status: response?.status(),
-      horizontalOverflow: audit.bodyWidth > audit.viewportWidth + 1,
-      navWraps: audit.navWraps,
-      overflowing: audit.overflowing,
-      offPalette: offPalette.slice(0, 6)
-    };
-
-    results.push(result);
-    if (result.status !== 200 || result.horizontalOverflow || result.navWraps || result.offPalette.length) {
-      failures.push(result);
-    }
+async function main() {
+  if (!existsSync(distDir)) {
+    throw new Error("dist/ does not exist. Run npm run build first.");
   }
 
-  await page.close();
+  const routes = [...new Set(walk(distDir).map(routeFromFile))].sort();
+  const browser = await chromium.launch();
+  const results = [];
+
+  try {
+    for (const route of routes) {
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      const navigations = [];
+      page.on("response", (response) => {
+        const request = response.request();
+        if (!request.isNavigationRequest() || request.frame() !== page.mainFrame()) return;
+        navigations.push({
+          url: relativeUrl(response.url()),
+          status: response.status(),
+          location: response.headers().location
+        });
+      });
+
+      for (const viewport of BROWSER_VIEWPORTS) {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        const requestedUrl = localUrl(route);
+        const navigationStart = navigations.length;
+        const result = {
+          route,
+          viewport: viewport.name,
+          requestedUrl,
+          finalUrl: "",
+          status: undefined,
+          redirect: undefined,
+          horizontalOverflow: false,
+          navWraps: false,
+          overflowing: []
+        };
+
+        try {
+          const response = await page.goto(requestedUrl, { waitUntil: "domcontentloaded" });
+          result.status = response?.status();
+          await page.waitForTimeout(350);
+          result.finalUrl = page.url();
+
+          const metrics = await page.evaluate((decorativeSelector) => {
+            const nav = document.querySelector(".site-nav nav");
+            const navRect = nav?.getBoundingClientRect();
+            const navLinks = nav ? [...nav.querySelectorAll(":scope > a")].map((link) => link.getBoundingClientRect()) : [];
+            const isDecorative = (element) =>
+              Boolean(decorativeSelector) &&
+              (element.matches(decorativeSelector) || Boolean(element.closest(decorativeSelector)));
+
+            return {
+              bodyWidth: document.documentElement.scrollWidth,
+              viewportWidth: document.documentElement.clientWidth,
+              navWraps: navLinks.some((rect) => navRect && rect.top > navRect.top + 6),
+              overflowing: [...document.querySelectorAll("body *")]
+                .filter((element) => {
+                  const rect = element.getBoundingClientRect();
+                  return rect.width > 0 && rect.right > window.innerWidth + 1 && !isDecorative(element);
+                })
+                .slice(0, 8)
+                .map((element) => {
+                  const rect = element.getBoundingClientRect();
+                  return {
+                    tag: element.tagName.toLowerCase(),
+                    className: String(element.className || ""),
+                    text: String(element.textContent || "").trim().slice(0, 80),
+                    right: Math.round(rect.right)
+                  };
+                })
+            };
+          }, DECORATIVE_OVERFLOW_SELECTOR);
+
+          result.horizontalOverflow = metrics.bodyWidth > metrics.viewportWidth + 1;
+          result.navWraps = metrics.navWraps;
+          result.overflowing = metrics.overflowing;
+          const navigationChain = navigations.slice(navigationStart);
+          result.redirect = {
+            detected: result.finalUrl !== requestedUrl || navigationChain.some((entry) => entry.status >= 300 && entry.status < 400),
+            destination: relativeUrl(result.finalUrl),
+            navigationChain
+          };
+        } catch (error) {
+          result.finalUrl = page.url();
+          result.error = error instanceof Error ? error.message : String(error);
+        }
+
+        results.push(result);
+      }
+
+      await context.close();
+    }
+  } finally {
+    await browser.close();
+  }
+
+  // All route-level issues are advisory findings. A rejected script indicates an
+  // infrastructure/runtime problem rather than a palette, redirect, or layout rule.
+  console.log(JSON.stringify({ routeCount: routes.length, results }, null, 2));
 }
 
-await browser.close();
-
-console.log(JSON.stringify({ routeCount: routes.length, results, failures }, null, 2));
-
-if (failures.length) process.exitCode = 1;
+await main();

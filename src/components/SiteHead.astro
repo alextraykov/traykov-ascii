@@ -7,26 +7,25 @@ type Props = {
   image?: string;
   imageAlt?: string;
   ogType?: "website" | "article";
-noindex?: boolean;
-refresh?: string;
-structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  refresh?: string;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 };
 
 const {
-title = "Alexander Traykov - Product Designer",
+  title = "AI Product Designer & UX Lead — Alexander Traykov",
   description = "Product design work by Alexander Traykov across AI tools, enterprise software, and design systems.",
   path = Astro.url.pathname,
   canonical,
   image = "/og-image.png",
   imageAlt = "Product Designer Alexander Traykov — ai-first design / systems / 0-> 1",
   ogType = "website",
-noindex = false,
-refresh,
-structuredData
+  noindex = false,
+  refresh,
+  structuredData
 }: Props = Astro.props;
 
-const siteUrl = "https://traykov.cc";
-const pageUrl = new URL(path, siteUrl).toString();
+const siteUrl = Astro.site ?? new URL("https://traykov.cc");
 const canonicalUrl = new URL(canonical ?? path, siteUrl).toString();
 const imageUrl = new URL(image, siteUrl).toString();
 const structuredDataItems = structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : [];
@@ -207,6 +206,7 @@ const structuredDataItems = structuredData ? (Array.isArray(structuredData) ? st
 </script>
 <title>{title}</title>
 <meta name="description" content={description} />
+<meta name="author" content="Alexander Traykov" />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 {refresh && <meta http-equiv="refresh" content={refresh} />}
 <link rel="canonical" href={canonicalUrl} />
@@ -223,10 +223,11 @@ const structuredDataItems = structuredData ? (Array.isArray(structuredData) ? st
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
 <meta property="og:site_name" content="Alexander Traykov" />
+<meta property="og:locale" content="en_US" />
 <meta property="og:type" content={ogType} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={pageUrl} />
+<meta property="og:url" content={canonicalUrl} />
 <meta property="og:image" content={imageUrl} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />

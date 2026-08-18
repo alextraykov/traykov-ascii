@@ -2,9 +2,18 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "sketches": "astro dev --open /labs/sketchbook/",
     "build": "astro build",
     "preview": "astro preview",
-    "verify": "node scripts/verify-site.mjs && node --test tests/contact-api.test.mjs"
+    "export:blocktype-wave": "node scripts/export-blocktype-wave-video.mjs",
+    "smoke:product-kit": "node scripts/product-systems-kit-smoke.mjs",
+    "verify": "node scripts/verify-site.mjs && node --test tests/contact-api.test.mjs",
+    "check:fast": "npm run verify && npm run build",
+    "check:browser": "node scripts/run-browser-check.mjs scripts/browser-contract.mjs",
+    "check": "npm run check:fast && npm run check:browser",
+    "audit:visual": "node scripts/run-browser-check.mjs scripts/visual-audit.mjs",
+    "audit:routes": "node scripts/run-browser-check.mjs scripts/route-audit.mjs",
+    "audit:performance": "node scripts/run-browser-check.mjs scripts/performance-audit.mjs"
   },
   "dependencies": {
     "@fontsource/geist-mono": "^5.2.7",

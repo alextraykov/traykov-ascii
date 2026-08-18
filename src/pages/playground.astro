@@ -2,7 +2,7 @@
 import PaveTurntable from "../components/PaveTurntable.astro";
 import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteNav from "../components/SiteNav.astro";
 import SvgLogoTurntable from "../components/SvgLogoTurntable.astro";
 import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
 import ObjTurntable from "../components/ObjTurntable.astro";
@@ -66,21 +66,12 @@ const playgroundDiagrams = [
     <SiteHead
       title="ASCII Shader Playground - Alexander Traykov"
       description="Interactive Cyrillic ASCII shader playground for tuning flame, ripple, plume, and smoke forms."
-      path="/playground"
+      path="/playground/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="playground-page">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav />
 
     <main class="playground-shell">
       <section class="playground-stage" aria-label="ASCII shader playground">

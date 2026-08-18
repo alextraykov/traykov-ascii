@@ -1,11 +1,19 @@
 <section class="ascii-banner-studio" data-ascii-banner-studio>
-  <div class="ascii-banner-studio__preview">
+  <div
+    class="ascii-banner-studio__preview"
+    data-ascii-banner-stage
+    tabindex="0"
+    aria-label="ASCII banner preview. Drag to position the field."
+  >
     <canvas
       width="1584"
       height="396"
       aria-label="ASCII banner preview using the 3D turntable glyph set"
       data-ascii-banner-canvas
     ></canvas>
+    <p class="ascii-banner-studio__fallback" data-ascii-banner-fallback>
+      ASCII Banner Studio preview. Enable JavaScript to generate the live field and export a PNG.
+    </p>
     <span aria-hidden="true" data-ascii-banner-dimensions>
       1584 × 396 / LinkedIn · Native
     </span>
@@ -135,17 +143,69 @@
       <input type="range" name="focusY" min="0" max="1" step="0.01" value="0.5" />
     </label>
 
-    <label class="ascii-banner-studio__quality">
+    <div class="ascii-banner-studio__quality">
       <span>Export quality</span>
-      <select name="quality" data-ascii-banner-quality>
-        <option value="native">Native platform size</option>
-        <option value="retina">Retina / 2×</option>
-        <option value="2k">2K long edge</option>
-        <option value="4k">4K long edge</option>
-      </select>
-    </label>
+      <div class="ascii-banner-studio__quality-picker" data-ascii-banner-quality-picker>
+        <input type="hidden" name="quality" value="native" data-ascii-banner-quality />
+        <button
+          type="button"
+          class="ascii-banner-studio__quality-trigger"
+          data-ascii-banner-quality-trigger
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="ascii-banner-quality-listbox"
+          aria-label="Choose export quality: Native platform size"
+        >
+          <span data-ascii-banner-quality-label>Native platform size</span>
+          <span aria-hidden="true">↓</span>
+        </button>
+        <div
+          class="ascii-banner-studio__quality-listbox"
+          id="ascii-banner-quality-listbox"
+          role="listbox"
+          aria-label="Export quality"
+          data-ascii-banner-quality-listbox
+          hidden
+        >
+          <button
+            type="button"
+            role="option"
+            aria-selected="true"
+            data-ascii-banner-quality-option="native"
+          >
+            Native platform size
+          </button>
+          <button
+            type="button"
+            role="option"
+            aria-selected="false"
+            data-ascii-banner-quality-option="retina"
+          >
+            Retina / 2×
+          </button>
+          <button
+            type="button"
+            role="option"
+            aria-selected="false"
+            data-ascii-banner-quality-option="2k"
+          >
+            2K long edge
+          </button>
+          <button
+            type="button"
+            role="option"
+            aria-selected="false"
+            data-ascii-banner-quality-option="4k"
+          >
+            4K long edge
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div class="ascii-banner-studio__actions">
+      <button type="button" data-ascii-banner-play aria-pressed="true">Pause motion</button>
+      <button type="button" data-ascii-banner-fullscreen>Fullscreen</button>
       <button type="button" data-ascii-banner-seed>New seed</button>
       <button type="reset">Reset</button>
       <button type="button" class="ascii-banner-studio__save" data-ascii-banner-save>

@@ -1,0 +1,105 @@
+<section class="creative-sketchbook" data-creative-sketchbook>
+  <header class="creative-sketchbook__bar">
+    <div class="creative-sketchbook__identity">
+      <span>AT.SKETCHBOOK</span>
+      <strong data-sketch-title>Dither orbit / static frame</strong>
+    </div>
+
+    <div class="creative-sketchbook__actions" aria-label="Sketch actions" data-sketch-interactive>
+      <button type="button" data-sketch-action="pause" aria-pressed="false">
+        <span data-sketch-pause-label>Pause</span>
+        <kbd>Space</kbd>
+      </button>
+      <button type="button" data-sketch-action="seed">
+        New seed
+        <kbd>R</kbd>
+      </button>
+      <button type="button" data-sketch-action="save">
+        Save PNG
+        <kbd>S</kbd>
+      </button>
+      <button
+        type="button"
+        data-sketch-action="fullscreen"
+        aria-label="Preview sketch fullscreen without controls"
+        aria-pressed="false"
+      >
+        <span data-sketch-fullscreen-label>Fullscreen</span>
+        <kbd>F</kbd>
+      </button>
+    </div>
+  </header>
+
+  <div class="creative-sketchbook__workspace">
+    <nav
+      class="creative-sketchbook__directory"
+      aria-label="Available sketches"
+      data-sketch-directory
+      data-sketch-interactive
+    >
+      <p>Sketches</p>
+      <div data-sketch-list></div>
+    </nav>
+
+    <div class="creative-sketchbook__stage-column">
+      <div
+        class="creative-sketchbook__stage"
+        aria-label="Dither Orbit sketch preview. JavaScript adds interactive controls and sketch switching."
+        tabindex="-1"
+        data-sketch-stage
+      >
+        <canvas aria-label="Creative coding sketch output" data-sketch-canvas data-sketch-interactive></canvas>
+        <div class="creative-sketchbook__stage-grid" aria-hidden="true" data-sketch-interactive></div>
+        <pre
+          class="creative-sketchbook__fallback"
+          data-sketch-static-fallback
+          aria-label="Static Dither Orbit sketch"
+        >DITHER ORBIT / STATIC FRAME
+        · · : : + + * * # * * + + : : · ·
+      · : + * # % @ @ % # * + : ·
+    : + # % @ # * : : * # @ % # + :
+      · : + * # % @ @ % # * + : ·
+        · · : : + + * * # * * + + : : · ·</pre>
+        <p class="creative-sketchbook__empty" data-sketch-empty data-sketch-interactive hidden>
+          The sketch could not start. Check the browser console for the exact error.
+        </p>
+      </div>
+
+      <noscript>
+        <p class="creative-sketchbook__noscript">
+          JavaScript activates the live controls. This static Dither Orbit frame remains readable without it.
+        </p>
+      </noscript>
+
+      <footer class="creative-sketchbook__readout" aria-live="polite" data-sketch-interactive>
+        <span data-sketch-technique>Canvas 2D</span>
+        <span data-sketch-resolution>— × —</span>
+        <span data-sketch-fps>— FPS</span>
+        <span>Pointer reactive</span>
+      </footer>
+    </div>
+
+    <aside class="creative-sketchbook__inspector" data-sketch-interactive>
+      <div class="creative-sketchbook__inspector-header">
+        <span>Parameters</span>
+        <button type="button" data-sketch-action="reset">Reset</button>
+      </div>
+      <p data-sketch-description>
+        Select a sketch, change its parameters, and save anything worth keeping.
+      </p>
+      <form data-sketch-controls></form>
+      <div class="creative-sketchbook__seed">
+        <span>Seed</span>
+        <output data-sketch-seed>000000</output>
+      </div>
+    </aside>
+  </div>
+
+  <p class="creative-sketchbook__status" role="status" data-sketch-status data-sketch-interactive>
+    Loading the local sketch registry…
+  </p>
+</section>
+
+<script>
+  import "../scripts/creative-sketchbook.js";
+</script>

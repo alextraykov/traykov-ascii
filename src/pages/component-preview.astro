@@ -10,6 +10,7 @@ import ProjectMark from "../components/ProjectMark.astro";
 import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHead from "../components/SiteHead.astro";
+import SiteNav from "../components/SiteNav.astro";
 import SvgLogoTurntable from "../components/SvgLogoTurntable.astro";
 import SynapseSysTurntable from "../components/SynapseSysTurntable.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
@@ -54,16 +55,7 @@ const catalogue = [
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="component-preview-page" data-component-preview-width="fluid">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav />
 
     <main id="top" class="component-preview-shell">
       <section class="component-preview-hero">
@@ -432,15 +424,15 @@ const catalogue = [
               </div>
               <div class="component-preview-entry__meta">
                 <code>src/components/SiteFooter.astro</code>
-                <span>Live / Level 2 / decode + booking</span>
+                <span>Live / Level 2 / compact route index</span>
               </div>
             </header>
             <p class="component-preview-entry__intent">
-              Full production footer including booking, dialog behavior, navigation decode, and back-to-top state.
+              Compact production footer with high-level routes, contextual links, machine-readable access, and back-to-top state.
             </p>
             <div class="component-preview__stage component-preview__stage--flush">
               <div class="component-preview__stage-inner">
-                <SiteFooter links={[{ label: "Component language", href: "#top" }]} />
+                <SiteFooter />
               </div>
             </div>
           </article>

@@ -1,0 +1,36 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+export type SiteNavSection = "work" | "notes" | "about" | "contact";
+
+type Props = {
+  active?: SiteNavSection;
+  variant?: "default" | "case";
+};
+
+const { active, variant = "default" }: Props = Astro.props;
+
+const links: Array<{ section: SiteNavSection; label: string; href: string }> = [
+  { section: "work", label: "Work", href: "/#work" },
+  { section: "notes", label: "Notes", href: "/notes/" },
+  { section: "about", label: "About", href: "/about/" },
+  { section: "contact", label: "Contact", href: "/contact/" }
+];
+---
+
+<header class:list={["site-nav", variant === "case" && "site-nav--case"]}>
+  <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
+  <nav aria-label="Primary">
+    {links.map((link) => (
+      <a
+        href={link.href}
+        aria-current={active === link.section ? "page" : undefined}
+        data-scramble
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+  <ThemeToggle />
+  {variant === "case" && <div class="case-progress" aria-hidden="true"><span></span></div>}
+</header>

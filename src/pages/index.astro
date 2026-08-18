@@ -6,40 +6,42 @@ import SiteHead from "../components/SiteHead.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { getCaseStudies } from "../lib/content";
 import { getFeaturedCaseStudies } from "../lib/public-case-studies";
-import IdentityRotator from "../components/IdentityRotator.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteNav from "../components/SiteNav.astro";
 import "../styles/global.css";
 
 const featuredCards = getFeaturedCaseStudies(getCaseStudies());
 
 const siteUrl = "https://traykov.cc";
 const structuredData = [
-{
-"@context": "https://schema.org",
-"@type": "Person",
-name: "Alexander Traykov",
-url: siteUrl,
-jobTitle: "Product Designer and UX Team Lead",
-description:
-"Product designer and UX lead working on AI tools, enterprise software, and design systems.",
-sameAs: ["https://www.linkedin.com/in/alextraykov/", "https://adplist.org/mentors/alexander-traykov"],
-knowsAbout: [
-"AI product design",
-"Product design leadership",
-"Design systems",
-"Enterprise software",
-"Design engineering",
-"Platform UX"
-]
-},
-{
-"@context": "https://schema.org",
-"@type": "WebSite",
-name: "Alexander Traykov Portfolio",
-url: siteUrl,
-description:
-"Product design case studies by Alexander Traykov across AI app creation, automation, design systems, and enterprise software."
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${siteUrl}/#person`,
+    name: "Alexander Traykov",
+    url: siteUrl,
+    jobTitle: "AI Product Designer and UX Lead",
+    description:
+      "AI product designer and UX lead working across enterprise software, design systems, and design engineering.",
+    sameAs: ["https://www.linkedin.com/in/alextraykov/", "https://adplist.org/mentors/alexander-traykov"],
+    knowsAbout: [
+      "AI product design",
+      "Product design leadership",
+      "Design systems",
+      "Enterprise software",
+      "Design engineering",
+      "Platform UX"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    name: "Alexander Traykov Portfolio",
+    url: siteUrl,
+    author: { "@id": `${siteUrl}/#person` },
+    description:
+      "Product design case studies by Alexander Traykov across AI app creation, automation, design systems, and enterprise software."
+  }
 ];
 
 ---
@@ -47,26 +49,17 @@ description:
 <!doctype html>
 <html lang="en">
   <head>
-<SiteHead
-title="Alexander Traykov - Product Designer"
-description="Product design work across AI tools, enterprise software, and design systems."
-path="/"
-structuredData={structuredData}
-/>
+    <SiteHead
+      title="AI Product Designer & UX Lead — Alexander Traykov"
+      description="Alexander Traykov designs AI products, enterprise software, and design systems from early product questions through shipped interaction detail."
+      path="/"
+      structuredData={structuredData}
+    />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body data-page-type="home">
 
-<header class="site-nav">
-<a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-<a href="/contact/" data-scramble>Contact</a>
-</nav>
-<ThemeToggle />
-</header>
+    <SiteNav active="work" />
 
     <main id="top">
       <section class="about-hero section-shell" aria-labelledby="hero-title">
@@ -102,14 +95,15 @@ structuredData={structuredData}
           ariaLabel=""
         />
 
-<div class="about-hero-copy" data-transition-copy>
-<h1 id="hero-title" class="about-title about-title--carousel">
-<IdentityRotator decodeOnLoad />
-</h1>
-<p class="about-hero-lede">
-I design AI and enterprise software from early product questions through shipped interaction detail.
-</p>
-</div>
+        <div class="about-hero-copy" data-transition-copy>
+          <p class="about-title__prefix">Alexander Traykov</p>
+          <h1 id="hero-title" class="about-title about-title--role">
+            AI Product Designer &amp; UX Lead
+          </h1>
+          <p class="about-hero-lede">
+            I design AI and enterprise software from early product questions through shipped interaction detail.
+          </p>
+        </div>
 </section>
 
 <section id="work" class="work section-shell" aria-label="Selected case studies">

@@ -2,7 +2,7 @@
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
-import ThemeToggle from "../../components/ThemeToggle.astro";
+import SiteNav from "../../components/SiteNav.astro";
 import "../../styles/global.css";
 
 const labs = [
@@ -59,6 +59,60 @@ const labs = [
       "····••++**✦✶✷✸✹✹✹✸✷✶✦**++••····",
       "RECOVER READY"
     ].join("\n")
+  },
+  {
+    id: "product-systems-kit",
+    number: "04",
+    title: "Product Systems Kit",
+    description:
+      "Open a battered engineer's toolbox and inspect the equipment behind the product work.",
+    href: "/labs/product-systems-kit/",
+    action: "Open product systems kit",
+    status: "Interactive inventory",
+    tags: ["Design", "AI", "Build", "Operations"],
+    preview: [
+      "┌────────────────────────────────────────────┐",
+      "│ A.TRAYKOV / PRODUCT SYSTEMS KIT       [••] │",
+      "├──────────┬──────────┬──────────┬──────────┤",
+      "│ DESIGN   │ AI       │ BUILD    │ OPS      │",
+      "└──────────┴──────────┴──────────┴──────────┘"
+    ].join("\n")
+  },
+  {
+    id: "sketchbook",
+    number: "05",
+    title: "Creative Coding Sketchbook",
+    description:
+      "A local-first canvas environment for making, tuning, seeding, and exporting dither, ASCII, pixel, and LCD studies.",
+    href: "/labs/sketchbook/",
+    action: "Open sketchbook",
+    status: "Local playground",
+    tags: ["Dither", "ASCII", "LCD", "Pixel"],
+    preview: [
+      "░▒▓█  .:+*#%@  ░▒▓█  .:+*#%@",
+      " R G B  R G B  R G B  R G B ",
+      "▓▒░  %#+*+.#  ░▒▓  @%#*+:.  ",
+      " R G B  R G B  R G B  R G B ",
+      ".:+*#%@  ░▒▓█  .:+*#%@  ░▒▓█"
+    ].join("\n")
+  },
+  {
+    id: "rhizome-field",
+    number: "06",
+    title: "Rhizome Field",
+    description:
+      "Rebuild a male fern cross-section with weighted cells, vascular fields, Departure Mono Blocktype dither, and ASCII.",
+    href: "/labs/rhizome-field/",
+    action: "Open rhizome field",
+    status: "GPU specimen",
+    tags: ["WebGL", "Voronoi", "Dither", "ASCII"],
+    preview: [
+      " .:+*#%@  .:+*#%@  .:+*#%@ ",
+      ".:+*#%%@   [ XYLEM ]   .:+*",
+      ":+*#%@  (( MERISTELE ))  :+",
+      ".:+*#%@   [ F₂ − F₁ ]  .:+*",
+      " .:+*#%@  .:+*#%@  .:+*#%@ "
+    ].join("\n")
   }
 ];
 ---
@@ -68,22 +122,13 @@ const labs = [
   <head>
     <SiteHead
       title="Labs — Alexander Traykov"
-      description="Public creative-coding tools for ASCII banners, SVG-to-3D turntables, and shader experiments."
+      description="Public creative-coding tools, interactive product experiments, and an inspectable systems toolkit."
       path="/labs/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="labs-page">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" aria-current="page" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav />
 
     <main id="top" class="labs-shell section-shell">
       <section class="labs-hero">
@@ -133,7 +178,7 @@ const labs = [
       </section>
     </main>
 
-    <SiteFooter links={[{ label: "Labs index", href: "#top" }]} />
+    <SiteFooter />
     <SiteAnalytics />
   </body>
 </html>

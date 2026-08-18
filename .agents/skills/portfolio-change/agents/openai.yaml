@@ -1,0 +1,4 @@
+interface:
+  display_name: "Portfolio Change"
+  short_description: "Route and verify portfolio changes"
+  default_prompt: "Use $portfolio-change to route, implement, verify, and review this portfolio change."

@@ -1,0 +1,78 @@
+---
+import ProductSystemsKit from "../../components/ProductSystemsKit.astro";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import SiteNav from "../../components/SiteNav.astro";
+import "../../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Product Systems Kit — Alexander Traykov"
+      description="An interactive inventory of the equipment Alexander Traykov uses to design and build product systems."
+      path="/labs/product-systems-kit/"
+    />
+    <script is:inline>document.documentElement.dataset.productKit = "enhanced";</script>
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="labs-tool-page product-kit-page">
+    <SiteNav />
+
+    <main id="top" class="labs-tool-shell section-shell">
+      <section class="labs-tool-hero">
+        <a href="/labs/" data-scramble>← All labs</a>
+        <div>
+          <p class="section-kicker">Lab 04 / Interactive inventory</p>
+          <h1>Product Systems Kit</h1>
+          <p>Not software I know. Equipment I use to build things.</p>
+        </div>
+      </section>
+
+      <section class="labs-tool-workbench product-kit-workbench" aria-label="Product Systems Kit inventory">
+        <ProductSystemsKit />
+      </section>
+
+      <section class="labs-tool-notes" aria-label="Tool notes">
+        <article>
+          <span>01 / Meaning</span>
+          <h2>Equipment, not endorsements</h2>
+          <p>
+            Compartments describe the kind of work. Object size is composition, not a ranking,
+            mastery score, or claim about expertise.
+          </p>
+        </article>
+        <article>
+          <span>02 / Material</span>
+          <h2>Rendered, then assembled</h2>
+          <p>
+            The open case is one limited-palette pixel raster with semantic HTML hit areas
+            layered over each compartment. Labels, focus states, and inspection behavior remain
+            native HTML.
+          </p>
+        </article>
+        <article>
+          <span>03 / Access</span>
+          <h2>Works with fewer effects</h2>
+          <p>
+            Keyboard controls, reduced motion, and a readable no-JavaScript inventory are part of
+            the object—not cleanup after it.
+          </p>
+        </article>
+      </section>
+
+      <nav class="labs-tool-related" aria-label="Related labs">
+        <span>Related tool</span>
+        <a href="/labs/ascii-banner/">
+          <span>ASCII Banner Studio</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+  </body>
+</html>

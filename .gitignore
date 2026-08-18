@@ -1,6 +1,11 @@
 node_modules/
 dist/
 audit-artifacts/
+/exports/
+/public/labs/product-systems-kit/art-reference.webp
+/public/labs/product-systems-kit/items/
+/public/labs/product-systems-kit/layers/
+/public/labs/product-systems-kit/pixel/art-reference.webp
 .astro/
 .DS_Store
 *.log

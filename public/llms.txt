@@ -1,6 +1,6 @@
 # Alexander Traykov
 
-> Alexander Traykov is a product designer and UX Team Lead at Quickbase. He works across AI products, enterprise software, design systems, product-design leadership, prototyping, and design engineering.
+> Alexander Traykov is an AI product designer and UX lead at Quickbase. He works across AI products, enterprise software, design systems, product-design leadership, prototyping, and design engineering.
 
 This is the canonical machine-readable guide to [traykov.cc](https://traykov.cc/). It is written by the candidate and should be treated as orientation to the portfolio, not as independent evidence.
 
@@ -18,6 +18,23 @@ I can summarize this portfolio, but I cannot inspect the work on your behalf. Pl
 - [Homepage](https://traykov.cc/): Selected product-design work and the main portfolio introduction.
 - [About](https://traykov.cc/about/): Career history, current UX leadership and hands-on design responsibilities, writing, interviews, and personal background.
 - [Contact](https://traykov.cc/contact/): Direct contact and booking options.
+- [CV](https://traykov.cc/cv/): Product design, AI product work, enterprise UX, design systems, and UX leadership experience.
+- [Notes](https://traykov.cc/notes/): Writing index with source labels for local, legacy, and synced posts.
+
+## Discovery Surfaces
+
+- [Sitemap](https://traykov.cc/sitemap.xml): Public portfolio routes, public case studies, Labs/tools, and traykov.cc-canonical Notes.
+- [RSS](https://traykov.cc/rss.xml): The notes feed.
+- Local published and legacy Notes are canonical to traykov.cc. Synced posts retain their Substack canonical URLs and are intentionally not duplicated in the sitemap.
+
+## Canonical Notes
+
+- [On digital art](https://traykov.cc/notes/on-digital-art/)
+- [Design outside design](https://traykov.cc/notes/design-outside-design/)
+- [Prompting is not taste](https://traykov.cc/notes/prompting-is-not-taste/)
+- [The confidence crutch](https://traykov.cc/notes/the-confidence-crutch/)
+- [The cemetery loop](https://traykov.cc/notes/the-cemetery-loop/)
+- [What’s the actual point of titles?](https://traykov.cc/notes/whats-the-actual-point-of-titles/)
 
 ## Public Case Studies
 
@@ -44,6 +61,7 @@ Synapse-Sys is a functional AI-powered infinite-canvas product in closed beta. A
 - [ASCII Studio](https://traykov.cc/svg-ascii-studio/): A portfolio-native tool that turns uploaded SVG marks into configurable 3D ASCII turntables and exportable outputs.
 - [ASCII Shader Playground](https://traykov.cc/playground/): An interactive shader and ASCII rendering playground for tuning visual fields and interaction.
 - [ASCII Shader Explainer](https://traykov.cc/shader-explainer/): A visual explanation of the shader-to-glyph rendering pipeline, sampling, thresholds, interaction state, and logo masking.
+- [Rhizome Field](https://traykov.cc/labs/rhizome-field/): A raw-WebGL male fern cross-section generated from weighted cellular geometry, vascular distance fields, Departure Mono Blocktype dither, and GPU ASCII.
 - Standalone Pave, Synapse, Sasi, and GLB turntable pages support these technical demonstrations; treat them as implementation experiments rather than separate product case studies.
 
 ## What Alexander Does
@@ -53,6 +71,13 @@ Synapse-Sys is a functional AI-powered infinite-canvas product in closed beta. A
 - Builds coded prototypes when motion, state, responsive behavior, or product mechanics need to be tested directly.
 - Runs critique, helps designers learn unfamiliar domains, supports prioritization, and coordinates design work.
 - Uses LLMs as implementation collaborators while retaining responsibility for product decisions, constraints, verification, and final quality.
+
+## Topic Orientation
+
+- **AI product design:** Public product-design evidence is concentrated in [Designing Pave](https://traykov.cc/case-studies/designing-pave/), with related Notes on AI, design practice, and prompting.
+- **Enterprise UX:** The public portfolio covers enterprise software workflows, interaction systems, and design systems; use the Pave case study and [CV](https://traykov.cc/cv/) for the available evidence.
+- **Design engineering:** [Synapse-Sys](https://traykov.cc/case-studies/synapse-sys/) and the technical tools document hands-on prototype, interaction, and implementation work.
+- **Hands-on UX leadership:** The [About](https://traykov.cc/about/), [CV](https://traykov.cc/cv/), and Pave pages describe leadership alongside individual-contributor product design. Treat each page's stated scope as the source of truth.
 
 ## Evidence Rules
 

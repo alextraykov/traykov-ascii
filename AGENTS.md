@@ -102,5 +102,37 @@ Renderer limits: this is a line-based custom renderer. Do not rely on nested lis
 
 - `npm run verify`
 - `npm run build`
+- `npm run check:browser`
 - Check `/`, `/case-studies/`, `/case-studies/synapse-sys/`, `/case-studies/designing-pave/`, and `/about/`.
 - For motion work, test reduced motion and no-JS visibility.
+
+## 9. Agent Harness Execution Protocol
+
+- Preserve or snapshot a dirty worktree before implementation; never stash, reset, or overwrite user changes automatically.
+- Keep Sol High as the primary orchestrator. Give one Luna Max or Terra Max implementer an exact five-part contract and never run parallel writers.
+- Use Luna for clear, bounded work. Use Terra for shared CSS/motion, routing/renderer, WebGL, contact/security, cross-cutting browser work, or a failed Luna task.
+- Inspect the worker's actual diff and rerun verification. `npm run check` is the full deterministic handoff gate; audits are advisory.
+- Close the implementer before the fresh Sol High `portfolio_reviewer`. Record status before and after review because runtime permissions can broaden requested read-only access.
+- Codex findings are advisory. A human owns merge decisions; do not use automatic model fixes or merges.
+
+## Code Review Rules
+
+### Renderer and slug compatibility
+
+- Flag changes that break line-based headings, custom fences, frontmatter parsing, canonical slugs, or legacy route compatibility.
+  Safe path: preserve existing parser output and wire names; add backward-compatible `slugOverrides` or aliases and test canonical plus legacy routes.
+
+### Token and motion compatibility
+
+- Flag new hardcoded visual values or motion outside the existing token and reveal/scan/scramble/rise-stagger/blink vocabulary.
+  Safe path: reuse `:root` tokens and shared motion primitives; layer study-specific identity under a scoped body attribute.
+
+### No-JS and reduced-motion rest state
+
+- Flag content hidden without JavaScript, reveal content hidden at reduced motion, active reduced-motion parallax, or WebGL without readable fallback content.
+  Safe path: gate hidden reveal states through `html[data-motion="ready"]`, expose content at rest, zero scroll effects, and preserve the fallback.
+
+### Asserted behavior and strings
+
+- Flag changes that silently invalidate behavior or strings protected by `scripts/verify-site.mjs`.
+  Safe path: preserve the asserted contract, or change the implementation and its assertion together only when the owner explicitly changes that contract. Leave mechanical enforcement in CI.

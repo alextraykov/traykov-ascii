@@ -70,7 +70,7 @@ const configs = {
   },
   "site-footer": {
     level: "L2 / EROSION",
-    states: ["rest", "hover", "focus", "active", "booking", "decay", "recover", "reduced"]
+    states: ["rest", "hover", "focus", "active", "decay", "recover", "reduced"]
   },
   infrastructure: {
     level: "L0 / STATIC",
@@ -166,7 +166,7 @@ function getPrimaryTarget(entry) {
     "case-contact-prompt": "[data-ascii-stream]",
     "project-card": ".project-card__body",
     "project-mark": ".project-mark",
-    "site-footer": "[data-footer-booking-open], .footer-links a"
+    "site-footer": ".footer-links a"
   }[entry.id];
   return selector ? entry.querySelector(selector) : null;
 }
@@ -411,8 +411,6 @@ async function applyState(entry, state, { fromAuto = false } = {}) {
     ["trail", "click", "decay", "recover"].includes(state)
   ) {
     await driveDither(entry, state, token);
-  } else if (entry.id === "site-footer" && state === "booking") {
-    entry.querySelector("[data-footer-booking-open]")?.click();
   } else if (state === "decay") {
     entry.classList.add("is-preview-decay");
     await wait(420 / session.rate);

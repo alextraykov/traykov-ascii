@@ -1,0 +1,18 @@
+Kenney Graveyard Kit 5.0
+
+Source: https://kenney.nl/assets/graveyard-kit
+Creator and distributor: Kenney (https://kenney.nl)
+Original pack date: 2025-10-17
+License: Creative Commons Zero 1.0 Universal (CC0 1.0)
+License text: https://creativecommons.org/publicdomain/zero/1.0/
+
+The selected GLB files in this directory may be used, modified, and
+redistributed for personal, educational, and commercial purposes. Credit is
+appreciated by the creator but is not required by the license.
+
+Selected non-cross models:
+- gravestone-bevel.glb
+- gravestone-broken.glb
+- gravestone-decorative.glb
+- gravestone-round.glb
+- gravestone-wide.glb

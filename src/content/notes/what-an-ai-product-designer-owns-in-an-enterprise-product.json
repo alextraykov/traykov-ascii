@@ -1,0 +1,47 @@
+{
+  "slug": "what-an-ai-product-designer-owns-in-an-enterprise-product",
+  "title": "What an AI product designer owns in an enterprise product",
+  "summary": "A factual account of the product-design work behind an enterprise AI app builder: product structure, interaction models, prototypes, design QA, handoff, and the limits of what shipped.",
+  "publishedAt": "2026-08-14T00:00:00+03:00",
+  "status": "published",
+  "tags": ["AI product design", "Enterprise UX", "UX leadership", "Design engineering"],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "\"AI product designer\" can mean anything from making a prompt box look less embarrassing to owning the hard decisions around a product that changes while people use it. On Pave, an enterprise AI app builder at Quickbase, it meant working across both. I was the founding product designer for the first seven months, an interim Design Manager, and still a full-time hands-on IC."
+    },
+    {
+      "type": "paragraph",
+      "text": "I joined an engineer-built alpha where chat sent a request, an LLM generated code, and an iframe showed the result. The loop existed. The product around it did not yet have a clear entry point, navigation, role model, build states, or useful recovery behaviour. Calling that a design-system problem would have been a very efficient way to avoid the actual product work."
+    },
+    {
+      "type": "paragraph",
+      "text": "The work I owned was not one neat lane. It included research, product structure, coded prototypes, interaction models, design QA, and engineering handoff. The emphasis moved as the product did: making chat, building, and preview behave like one workspace; making status and recovery legible; helping people inspect and control a generated app without asking them to understand the underlying implementation first."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Product structure: the builder needed places for building, app use, permissions, data, publishing, and governance rather than one expanding list of controls.",
+        "Interaction models: Plan Mode used clarification, a reviewable editable plan, and an approval step before execution; Direct Edit treated the selected element as the unit of change and kept Save and Discard visible for dirty states.",
+        "Design engineering: I used coded prototypes and component previews to make states, motion, and intended behaviour inspectable for engineering instead of leaving a polished Figma file to carry too much of the explanation.",
+        "Leadership: I worked across collaborators and design direction while remaining accountable for the concrete work that moved through design QA and handoff."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That does not make every design artefact a launch claim. Pave launched publicly, and its public materials document Plan Mode, Direct Edit, and email notifications. Navigation Phase 1—the unified header, Build/Manage control, grouped actions, overlay flyout, and a less cluttered sidebar—shipped internally. Other navigation concepts, richer notification authoring, workflow work, and some version-history interactions remained prototypes or were cut when priorities and capacity changed."
+    },
+    {
+      "type": "paragraph",
+      "text": "The distinction matters because enterprise AI products make it easy to build convincing demos. A visible workflow, an attractive plan, or a working prototype can imply reliability, permissions, recovery, and operational clarity that the product has not earned yet. In Pave, the unhappy paths kept breaking the simple story: connection errors could lock workflow routes; changing the source table in notification work reset dependent setup; an immediate local edit could create a second trust problem on top of an AI-generated result."
+    },
+    {
+      "type": "paragraph",
+      "text": "My job was often to turn that discomfort into an explicit state, a constraint, or a question engineering and product could act on. It was not to make the AI feel magical at any cost. The public portfolio does not include adoption, retention, task-success, or other sensitive internal metrics, so I cannot use them to prove outcomes here. It does show the product mechanics and the scope of the work."
+    },
+    {
+      "type": "paragraph",
+      "text": "So, in this kind of product, an AI product designer owns more than prompts or screens. The role is about making generated behaviour understandable, giving people a way to inspect and change it, and being precise about what has launched, what is internal, and what is still only a useful prototype. That is less tidy than a capability list. It is also closer to the work."
+    }
+  ]
+}

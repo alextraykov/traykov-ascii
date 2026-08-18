@@ -4,8 +4,9 @@ import BlocktypeWavePreview from "../../components/BlocktypeWavePreview.astro";
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
-import ThemeToggle from "../../components/ThemeToggle.astro";
-import { getNotes, noteUrl, type NoteRecord } from "../../lib/substack";
+import SiteNav from "../../components/SiteNav.astro";
+import WebCemeterySketch from "../../components/WebCemeterySketch.astro";
+import { getNotes, type NoteRecord } from "../../lib/substack";
 import "../../styles/global.css";
 
 type Props = {
@@ -22,6 +23,7 @@ export const getStaticPaths = (async () => {
 
 const { note } = Astro.props as Props;
 const showBlocktypeWavePreview = note.slug === "on-digital-art";
+const showWebCemetery = note.visual === "web-cemetery";
 const published = new Intl.DateTimeFormat("en", {
   day: "2-digit",
   month: "long",
@@ -29,19 +31,32 @@ const published = new Intl.DateTimeFormat("en", {
   timeZone: "Europe/Sofia"
 }).format(new Date(note.publishedAt));
 const pagePath = `/notes/${note.slug}/`;
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: note.title,
-  description: note.summary,
-  datePublished: note.publishedAt,
-  mainEntityOfPage: noteUrl(note),
-  author: {
-    "@type": "Person",
-    name: "Alexander Traykov",
-    url: "https://traykov.cc/about/"
+const siteUrl = "https://traykov.cc";
+const canonicalUrl = new URL(note.canonicalUrl, siteUrl).toString();
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${canonicalUrl}#article`,
+    headline: note.title,
+    description: note.summary,
+    datePublished: note.publishedAt,
+    mainEntityOfPage: canonicalUrl,
+    ...(note.heroImage ? { image: new URL(note.heroImage, siteUrl).toString() } : {}),
+    keywords: note.tags,
+    author: { "@id": `${siteUrl}/#person` }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumbs`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: "Notes", item: `${siteUrl}/notes/` },
+      { "@type": "ListItem", position: 3, name: note.title, item: canonicalUrl }
+    ]
   }
-};
+];
 ---
 
 <!doctype html>
@@ -51,7 +66,7 @@ const structuredData = {
       title={`${note.title} — Alexander Traykov`}
       description={note.summary}
       path={pagePath}
-      canonical={note.canonicalUrl}
+      canonical={canonicalUrl}
       image={note.heroImage}
       imageAlt={note.heroImageAlt ?? note.title}
       ogType="article"
@@ -60,16 +75,7 @@ const structuredData = {
     <script src="/page-transitions.js" defer></script>
   </head>
   <body data-page-type="note">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav active="notes" />
 
     <main id="top" class="note-page section-shell">
       <nav class="note-page__back" aria-label="Notes">
@@ -103,7 +109,7 @@ const structuredData = {
           <p>This note is AI slop-free and it was written with intent and attention.</p>
         </aside>
 
-        {(note.source === "local" || note.source === "local-published") && note.heroImage && (
+        {(note.source === "local" || note.source === "local-published") && note.heroImage && !showWebCemetery && (
           <figure class="note-hero-image" data-reveal="scan">
             <img
               src={note.heroImage}
@@ -114,6 +120,8 @@ const structuredData = {
             />
           </figure>
         )}
+
+        {showWebCemetery && <WebCemeterySketch />}
 
         {showBlocktypeWavePreview && <BlocktypeWavePreview />}
 

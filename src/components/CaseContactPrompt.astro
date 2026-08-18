@@ -8,6 +8,19 @@ interface Props {
 
 const { caseTitle, eyebrow, title, body } = Astro.props;
 const emailHref = `mailto:hi@traykov.cc?subject=${encodeURIComponent(`Product question after reading ${caseTitle}`)}`;
+const defaultBookingUrl = "https://cal.com/alexander-cqn5aq/30min";
+const configuredBookingUrl =
+  import.meta.env.PUBLIC_CAL_BOOKING_URL ??
+  import.meta.env.PUBLIC_BOOKING_URL ??
+  defaultBookingUrl;
+const bookingPageUrl = (() => {
+  try {
+    const url = new URL(configuredBookingUrl);
+    return ["https:", "http:"].includes(url.protocol) ? url.toString() : defaultBookingUrl;
+  } catch {
+    return defaultBookingUrl;
+  }
+})();
 ---
 
 <aside class="case-contact-prompt" aria-labelledby="case-contact-title" data-reveal="rise">
@@ -19,8 +32,8 @@ const emailHref = `mailto:hi@traykov.cc?subject=${encodeURIComponent(`Product qu
 
   <div class="case-contact-prompt__actions">
     <a
-      href="#book-a-call"
-      data-case-contact-booking
+      href={bookingPageUrl}
+      data-booking-modal-open
       data-ascii-action="primary"
       data-ascii-stream
       data-ascii-burst
@@ -30,15 +43,3 @@ const emailHref = `mailto:hi@traykov.cc?subject=${encodeURIComponent(`Product qu
     <a href={emailHref} data-ascii-action="text" data-ascii-burst>Email instead</a>
   </div>
 </aside>
-
-<script>
-  document.querySelectorAll<HTMLAnchorElement>("[data-case-contact-booking]").forEach((link) => {
-    link.addEventListener("click", (event) => {
-      const booking = document.querySelector<HTMLElement>("[data-footer-booking-open]");
-      if (!booking) return;
-
-      event.preventDefault();
-      booking.click();
-    });
-  });
-</script>

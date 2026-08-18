@@ -1,0 +1,16 @@
+{
+  "slug": "the-cemetery-loop",
+  "title": "The cemetery loop",
+  "summary": "A moonlit procedural cemetery, drifting pale fog, and real CC0 headstone models rendered through calibrated blocktype glyphs.",
+  "publishedAt": "2026-08-14T00:00:00+03:00",
+  "status": "published",
+  "image": "/notes/the-cemetery-loop-poster.svg",
+  "imageAlt": "A dark procedural cemetery hill with a stone path, five headstones, pale drifting fog, and a moon in a nearly black sky.",
+  "visual": "web-cemetery",
+  "tags": ["Creative coding", "Dither", "WebGL"],
+  "paragraphs": [
+    "A deterministic cemetery field built from procedural terrain, a climbing stone path, five CC0 headstone models, and broad bands of animated fog.",
+    "The moon and sky are shader fields rather than background art. Their cold light catches the imported stone geometry while the fog moves horizontally across several depth layers and responds faintly to pointer velocity.",
+    "The final render is sampled on a stable character grid and reconstructed from blank cells, ░, ▒, and ▓ in Departure Mono. The Bayer threshold does not move. Geometry and atmosphere move behind it, which keeps the lighter fog readable without turning the dither into noise."
+  ]
+}

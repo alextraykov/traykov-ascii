@@ -1,0 +1,192 @@
+<section class="rhizome-field" data-rhizome-field data-state="fallback" data-view="specimen">
+  <div class="rhizome-field__stage" data-rhizome-stage>
+    <img
+      class="rhizome-field__fallback"
+      src="/labs/rhizome-field/male-fern-rhizome.webp"
+      alt="Bright-field microscope cross-section of a male fern rhizome, showing pale parenchyma cells and magenta vascular tissue."
+      width="1440"
+      height="922"
+      decoding="async"
+      data-rhizome-fallback
+    />
+    <canvas
+      class="rhizome-field__canvas"
+      role="button"
+      aria-label="Procedurally generated male fern rhizome cross-section. Click, tap, or press Enter to add a vascular bundle."
+      aria-describedby="rhizome-field-status"
+      tabindex="0"
+      data-rhizome-canvas
+    ></canvas>
+    <div class="rhizome-field__readout" aria-hidden="true">
+      <span data-rhizome-technique>GPU / SPECIMEN</span>
+      <span data-rhizome-resolution>— × —</span>
+      <span>SEED <span data-rhizome-seed-readout>25502</span></span>
+    </div>
+  </div>
+
+  <form class="rhizome-field__controls" data-rhizome-controls>
+    <fieldset class="rhizome-field__views">
+      <legend>Render view</legend>
+      <div role="group" aria-label="Rhizome render view">
+        <button type="button" aria-pressed="true" data-rhizome-view="specimen">Specimen</button>
+        <button type="button" aria-pressed="false" data-rhizome-view="structure">Structure</button>
+        <button type="button" aria-pressed="false" data-rhizome-view="dither">Blocktype</button>
+        <button type="button" aria-pressed="false" data-rhizome-view="ascii">ASCII</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="rhizome-field__control-group">
+      <legend>Cell geometry</legend>
+      <div class="rhizome-field__control-grid">
+        <label>
+          <span>Cell scale <output data-rhizome-output="cellScale">16</output></span>
+          <input
+            type="range"
+            name="cellScale"
+            min="8"
+            max="28"
+            step="1"
+            value="16"
+            data-rhizome-control
+          />
+        </label>
+        <label>
+          <span>Irregularity <output data-rhizome-output="irregularity">0.62</output></span>
+          <input
+            type="range"
+            name="irregularity"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.62"
+            data-rhizome-control
+          />
+        </label>
+        <label>
+          <span>Wall width <output data-rhizome-output="wallWidth">0.042</output></span>
+          <input
+            type="range"
+            name="wallWidth"
+            min="0.015"
+            max="0.09"
+            step="0.001"
+            value="0.042"
+            data-rhizome-control
+          />
+        </label>
+        <label>
+          <span>Stain <output data-rhizome-output="stain">0.86</output></span>
+          <input
+            type="range"
+            name="stain"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.86"
+            data-rhizome-control
+          />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="rhizome-field__control-group rhizome-field__bundles">
+      <legend>Vascular islands</legend>
+      <div class="rhizome-field__control-grid">
+        <div class="rhizome-field__bundle-summary">
+          <span>
+            Intact bundles
+            <output data-rhizome-output="bundleCount">2 / 3</output>
+          </span>
+          <small>Click or tap the specimen to add one. The oldest disperses after three.</small>
+        </div>
+        <label>
+          <span>Bundle scale <output data-rhizome-output="bundleScale">1.00</output></span>
+          <input
+            type="range"
+            name="bundleScale"
+            min="0.65"
+            max="1.45"
+            step="0.01"
+            value="1"
+            data-rhizome-control
+          />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="rhizome-field__control-group">
+      <legend>GPU post-process</legend>
+      <div class="rhizome-field__control-grid">
+        <label>
+          <span>Glyph size <output data-rhizome-output="glyphSize">6 px</output></span>
+          <input
+            type="range"
+            name="glyphSize"
+            min="4"
+            max="12"
+            step="1"
+            value="6"
+            data-rhizome-control
+          />
+        </label>
+        <label>
+          <span>Block dither <output data-rhizome-output="dither">1.00</output></span>
+          <input
+            type="range"
+            name="dither"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            data-rhizome-control
+          />
+        </label>
+        <label>
+          <span>ASCII blend <output data-rhizome-output="asciiBlend">1.00</output></span>
+          <input
+            type="range"
+            name="asciiBlend"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            data-rhizome-control
+          />
+        </label>
+        <label>
+          <span>ASCII color</span>
+          <select name="glyphColor" data-rhizome-control>
+            <option value="specimen" selected>Specimen</option>
+            <option value="monochrome">Monochrome</option>
+          </select>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="rhizome-field__actions">
+      <button type="button" data-rhizome-seed>New seed</button>
+      <button type="reset">Reset</button>
+    </div>
+  </form>
+
+  <p
+    id="rhizome-field-status"
+    class="rhizome-field__status"
+    role="status"
+    aria-live="polite"
+    data-rhizome-status
+  >
+    The cell field flows upward while vascular bundles stay fixed. Move to scan; click or tap
+    to add a bundle. After three, the oldest disperses into the surrounding cells.
+  </p>
+  <noscript>
+    <p class="rhizome-field__noscript">
+      WebGL is optional. The reference specimen and mathematical explanation remain available
+      without JavaScript.
+    </p>
+  </noscript>
+</section>
+
+<script>
+  import "../scripts/rhizome-field.js";
+</script>

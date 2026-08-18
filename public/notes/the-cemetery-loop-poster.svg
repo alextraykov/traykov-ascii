@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" role="img" aria-labelledby="title desc">
+  <title id="title">The cemetery loop procedural poster</title>
+  <desc id="desc">A nearly black moonlit sky above a low cemetery hill, a stone path, five distinct headstones, and pale drifting fog.</desc>
+  <defs>
+    <radialGradient id="sky-glow" cx="70%" cy="20%" r="58%">
+      <stop offset="0" stop-color="#dbe5db" stop-opacity=".16"/>
+      <stop offset=".11" stop-color="#8a9aa0" stop-opacity=".055"/>
+      <stop offset=".46" stop-color="#15212a" stop-opacity=".11"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#05090d"/>
+      <stop offset=".56" stop-color="#03070b"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <linearGradient id="hill" x1=".56" y1="0" x2=".44" y2="1">
+      <stop offset="0" stop-color="#172127"/>
+      <stop offset=".42" stop-color="#0a1116"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#405058"/>
+      <stop offset="1" stop-color="#11191e"/>
+    </linearGradient>
+    <radialGradient id="moon-halo">
+      <stop offset="0" stop-color="#d5d4c5" stop-opacity=".12"/>
+      <stop offset=".45" stop-color="#5f6e6c" stop-opacity=".035"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="fog" x="-16%" y="-80%" width="132%" height="260%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <mask id="moon-crescent">
+      <rect width="1672" height="941" fill="#000"/>
+      <circle cx="1172" cy="174" r="44" fill="#fff"/>
+      <circle cx="1151" cy="161" r="45" fill="#000"/>
+    </mask>
+  </defs>
+
+  <rect width="1672" height="941" fill="url(#sky)"/>
+  <rect width="1672" height="941" fill="url(#sky-glow)"/>
+  <circle cx="1172" cy="174" r="76" fill="url(#moon-halo)"/>
+  <g mask="url(#moon-crescent)">
+    <circle cx="1172" cy="174" r="44" fill="#c7bdab" opacity=".66"/>
+    <circle cx="1180" cy="159" r="8" fill="#6f766f" opacity=".34"/>
+    <circle cx="1194" cy="190" r="10" fill="#778078" opacity=".26"/>
+    <circle cx="1190" cy="148" r="4" fill="#e2dac9" opacity=".28"/>
+  </g>
+
+  <path d="M0 941C138 816 319 718 509 643C682 575 825 464 1015 430C1242 389 1470 497 1672 689V941Z" fill="url(#hill)"/>
+  <path d="M0 941C319 820 618 791 886 694C1085 622 1368 626 1672 795V941Z" fill="#05090c" opacity=".76"/>
+
+  <g fill="#111b21" stroke="#516068" stroke-opacity=".38" stroke-width="3">
+    <path d="M517 941L637 918L660 932L538 956Z"/>
+    <path d="M578 896L684 875L704 888L597 910Z"/>
+    <path d="M631 854L723 836L741 848L648 867Z"/>
+    <path d="M679 816L759 800L775 811L694 828Z"/>
+    <path d="M720 781L789 767L803 777L733 792Z"/>
+    <path d="M758 749L818 736L831 745L770 759Z"/>
+    <path d="M791 721L844 710L856 718L802 730Z"/>
+    <path d="M821 695L868 686L879 693L831 703Z"/>
+    <path d="M849 672L890 664L900 671L858 680Z"/>
+  </g>
+
+  <g fill="url(#stone)" stroke="#758188" stroke-opacity=".54" stroke-width="3">
+    <path d="M474 720V638L491 612H552L569 638V720Z"/>
+    <path d="M628 742V624L647 598L710 607L728 641V742Z"/>
+    <path d="M1050 732V602C1050 570 1074 545 1106 545S1162 570 1162 602V732Z"/>
+    <path d="M893 864V732C893 694 922 664 960 664S1027 694 1027 732V864Z"/>
+    <path d="M1251 816V719C1251 691 1272 669 1300 669H1370C1398 669 1419 691 1419 719V816Z"/>
+  </g>
+  <g fill="none" stroke="#9ba7a8" stroke-opacity=".22" stroke-width="4">
+    <path d="M493 653H550M653 648L706 654M1077 622H1137M918 752H1004M1272 726H1398"/>
+    <path d="M1106 575V691M960 693V824M1335 691V782"/>
+  </g>
+
+  <g fill="#d7e0d9" filter="url(#fog)">
+    <ellipse cx="463" cy="571" rx="365" ry="18" opacity=".2"/>
+    <ellipse cx="1098" cy="688" rx="496" ry="16" opacity=".26"/>
+    <ellipse cx="904" cy="808" rx="520" ry="22" opacity=".31"/>
+  </g>
+  <g fill="none" stroke="#cad8d0" stroke-opacity=".19" stroke-width="10">
+    <path d="M143 808C427 774 641 818 872 789C1116 752 1350 765 1571 806"/>
+    <path d="M213 635C441 609 629 632 810 619C1003 604 1217 608 1452 639" opacity=".62"/>
+  </g>
+</svg>

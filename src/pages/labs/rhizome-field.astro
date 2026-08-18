@@ -1,0 +1,157 @@
+---
+import RhizomeField from "../../components/RhizomeField.astro";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import SiteNav from "../../components/SiteNav.astro";
+import "../../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Rhizome Field — Alexander Traykov Labs"
+      description="A GPU-generated male fern rhizome built from weighted Voronoi cells, vascular distance fields, Departure Mono Blocktype dither, and ASCII."
+      path="/labs/rhizome-field/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="labs-tool-page rhizome-page">
+    <SiteNav />
+
+    <main id="top" class="labs-tool-shell section-shell">
+      <section class="labs-tool-hero rhizome-hero">
+        <a href="/labs/" data-scramble>← All labs</a>
+        <div>
+          <p class="section-kicker">Lab 06 / GPU cellular field</p>
+          <h1>Rhizome Field</h1>
+          <p>
+            A male fern cross-section rebuilt as two coupled geometries: packed ground tissue
+            and sparse vascular islands. Then broken again by Blocktype dither and ASCII.
+          </p>
+        </div>
+      </section>
+
+      <section class="labs-tool-workbench rhizome-workbench" aria-label="Interactive rhizome shader">
+        <RhizomeField />
+      </section>
+
+      <section class="rhizome-explainer" aria-labelledby="rhizome-math-title">
+        <header>
+          <p class="section-kicker">Model / not mythology</p>
+          <h2 id="rhizome-math-title">There is mathematics here. There is not one magic equation.</h2>
+          <p>
+            The pale field is ground tissue. The dense ovals are compatible with meristeles:
+            vascular strands visible when a fern dictyostele is cut across. Their exact positions
+            are developmental, so the shader uses separate rules for cells and bundles.
+          </p>
+        </header>
+
+        <div class="rhizome-equations">
+          <article>
+            <span>01 / Slice</span>
+            <h3>Weighted Voronoi tissue</h3>
+            <code>Dᵢ(x) = ‖Mᵢ(x − pᵢ)‖² − wᵢ</code>
+            <p>
+              Each seed owns the points with the smallest weighted distance. Rotation, stretch,
+              and weight make the cells unequal and approximate a plane cutting through a
+              three-dimensional packing.
+            </p>
+          </article>
+          <article>
+            <span>02 / Wall</span>
+            <h3>Two nearest cells</h3>
+            <code>W(x) = 1 − smoothstep(t, t + ε, F₂ − F₁)</code>
+            <p>
+              A shared wall appears where the nearest and second-nearest seeds are almost equally
+              distant. The shader stains that narrow boundary instead of drawing polygons on the
+              CPU.
+            </p>
+          </article>
+          <article>
+            <span>03 / Stele</span>
+            <h3>Elliptical vascular fields</h3>
+            <code>Eₖ(x) = ‖diag(1/aₖ, 1/bₖ) R(−θₖ)(x − cₖ)‖ − 1</code>
+            <p>
+              Seeded centers establish the initial separation; a click chooses a new cₖ directly.
+              Each static ellipse contains a second, denser tessellation for xylem-like lumens,
+              phloem texture, and the dark sheath.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="rhizome-reference" aria-labelledby="rhizome-reference-title">
+        <figure>
+          <img
+            src="/labs/rhizome-field/male-fern-rhizome.webp"
+            alt="Bright-field cross-section of the rhizome of Dryopteris filix-mas at 300 times magnification."
+            width="1440"
+            height="922"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            <span>Reference / 300× bright field</span>
+            <p id="rhizome-reference-title">
+              <i>Dryopteris filix-mas</i>, rhizome cross-section. Image by Josef Reischig,
+              <a
+                href="https://commons.wikimedia.org/wiki/File:Rhizome_(255_02)_Male_fern_(Dryopteris_filix-mas);_cross-section.jpg"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Wikimedia Commons
+              </a>,
+              licensed
+              <a
+                href="https://creativecommons.org/licenses/by-sa/3.0/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                CC BY-SA 3.0
+              </a>.
+            </p>
+          </figcaption>
+        </figure>
+        <div class="rhizome-reference__notes">
+          <article>
+            <span>Biology</span>
+            <p>
+              Fern dictyosteles form an interconnected vascular network. A cross-section can show
+              several distinct bundles separated by parenchymatous leaf gaps.
+            </p>
+            <a
+              href="https://www.britannica.com/plant/fern/Vascular-tissues"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Fern vascular tissues ↗
+            </a>
+          </article>
+          <article>
+            <span>Geometry</span>
+            <p>
+              Voronoi models reproduce a useful idealized packing. Actual plant shape also depends
+              on turgor pressure, anisotropic wall mechanics, growth, and division.
+            </p>
+            <a href="https://arxiv.org/abs/0901.4469" target="_blank" rel="noreferrer">
+              Generalized Voronoi tissue model ↗
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <nav class="labs-tool-related" aria-label="Related labs">
+        <span>Related tool</span>
+        <a href="/labs/sketchbook/">
+          <span>Creative Coding Sketchbook</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+  </body>
+</html>

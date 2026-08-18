@@ -2,7 +2,7 @@
 import DitherImageTrail from "../components/DitherImageTrail.astro";
 import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteNav from "../components/SiteNav.astro";
 import { imageTrailImages } from "../lib/image-trail";
 import "../styles/global.css";
 ---
@@ -18,16 +18,7 @@ import "../styles/global.css";
     />
   </head>
   <body class="dither-trail-page">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav />
 
     <main>
       <section class="dither-trail-prototype" aria-labelledby="trail-title">

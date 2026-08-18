@@ -2,18 +2,31 @@
 import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHead from "../components/SiteHead.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteNav from "../components/SiteNav.astro";
 import "../styles/global.css";
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const defaultBookingUrl = "https://cal.com/alexander-cqn5aq/30min";
+const configuredBookingUrl =
+  import.meta.env.PUBLIC_CAL_BOOKING_URL ??
+  import.meta.env.PUBLIC_BOOKING_URL ??
+  defaultBookingUrl;
+const bookingPageUrl = (() => {
+  try {
+    const url = new URL(configuredBookingUrl);
+    return ["https:", "http:"].includes(url.protocol) ? url.toString() : defaultBookingUrl;
+  } catch {
+    return defaultBookingUrl;
+  }
+})();
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <SiteHead
-      title="Contact Alexander Traykov"
-      description="Send Alexander Traykov a message or book a call."
+      title="Contact Alexander Traykov — AI Product Designer & UX Lead"
+      description="Contact Alexander Traykov about AI product design, enterprise UX, design systems, or a focused product-design conversation."
       path="/contact/"
     />
     <script src="/page-transitions.js" defer></script>
@@ -29,16 +42,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     }
   </head>
   <body data-page-type="contact">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" aria-current="page" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav active="contact" />
 
     <main id="top" class="contact-page">
       <section class="contact-hero section-shell" aria-labelledby="contact-title">
@@ -164,8 +168,9 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
               <h2 id="contact-call-title">Book a call</h2>
               <p>Thirty minutes. No pitch, no pressure.</p>
             </div>
-            <button
-              type="button"
+            <a
+              id="book-a-call"
+              href={bookingPageUrl}
               data-booking-modal-open
               data-ascii-action="inverse"
               data-ascii-stream
@@ -173,7 +178,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
             >
               <span data-scramble data-scramble-label="Book a call">Book a call</span>
               <span aria-hidden="true">+</span>
-            </button>
+            </a>
           </aside>
         </div>
       </section>

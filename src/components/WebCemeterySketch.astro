@@ -1,0 +1,81 @@
+<figure
+  class="web-cemetery"
+  data-web-cemetery
+  data-state="fallback"
+  data-web-cemetery-view="6"
+  aria-labelledby="web-cemetery-caption"
+>
+  <div class="web-cemetery__stage">
+    <img
+      class="web-cemetery__fallback"
+      src="/notes/the-cemetery-loop-poster.svg"
+      alt=""
+      width="1672"
+      height="941"
+      loading="eager"
+      decoding="async"
+      data-web-cemetery-fallback
+    />
+    <canvas
+      class="web-cemetery__canvas"
+      role="img"
+      aria-label="A procedural cemetery hill under a pale moon, with drifting fog, a stone path, and five modelled headstones."
+      data-web-cemetery-canvas
+    ></canvas>
+
+    <div class="web-cemetery__readout" aria-hidden="true">
+      <span>MOON / FOG / BLOCKTYPE ░▒▓</span>
+      <span>SEED 1847</span>
+    </div>
+  </div>
+
+  <figcaption id="web-cemetery-caption">
+    Five CC0 headstone models sit inside a deterministic field of procedural terrain, pale drifting
+    fog, and moonlit sky. The final image is reconstructed from calibrated Departure Mono block
+    glyphs rather than covered by an ASCII texture.
+  </figcaption>
+
+  <aside class="web-cemetery__debug" hidden data-web-cemetery-debug aria-label="Cemetery renderer diagnostic views">
+    <header>
+      <strong>RENDER DEBUG</strong>
+      <span><output data-web-cemetery-output="view">[6]</output> VIEW</span>
+      <span><output data-web-cemetery-output="fps">— FPS</output></span>
+      <span><output data-web-cemetery-output="resolution">— × —</output></span>
+      <span>SEED <output data-web-cemetery-output="seed">1847</output></span>
+      <span><output data-web-cemetery-output="headstones">0/5 GLB</output></span>
+      <span><output data-web-cemetery-output="luminance">MED —</output></span>
+    </header>
+
+    <div class="web-cemetery__debug-views" role="group" aria-label="Render view">
+      {
+        [
+          [1, "Raw"],
+          [2, "Terrain"],
+          [3, "Fog"],
+          [4, "Sky"],
+          [5, "Lighting"],
+          [6, "Blocktype"]
+        ].map(([value, label]) => (
+          <button
+            type="button"
+            aria-pressed={value === 6 ? "true" : "false"}
+            data-web-cemetery-view={value}
+          >
+            {value} / {label}
+          </button>
+        ))
+      }
+    </div>
+
+  </aside>
+
+  <noscript>
+    <p class="web-cemetery__noscript">
+      The live moonlit fog requires WebGL and JavaScript. This procedural poster preserves the composition.
+    </p>
+  </noscript>
+</figure>
+
+<script>
+  import "../scripts/web-cemetery.js";
+</script>

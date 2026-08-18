@@ -5,7 +5,7 @@ import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteHead from "../../components/SiteHead.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SynapseSysTurntable from "../../components/SynapseSysTurntable.astro";
-import ThemeToggle from "../../components/ThemeToggle.astro";
+import SiteNav from "../../components/SiteNav.astro";
 import { getCaseStudies, getCaseStudyHeadings, renderMarkdown } from "../../lib/content";
 import { getPublicCaseStudies, isPublicCaseStudy } from "../../lib/public-case-studies";
 import "../../styles/global.css";
@@ -58,13 +58,35 @@ const walkthroughPreviewVideo =
     : study.walkthroughVideo;
 const walkthroughLabel = study.walkthroughLabel ?? "Watch walkthrough";
 const caseHref = (item: { id: string }) => `/case-studies/${item.id}/`;
-const pageTitle = `${study.title} - Alexander Traykov`;
-const metaDescription = study.summary || `${study.title} case study by Alexander Traykov.`;
-const footerLinks = [
-  { label: "All work", href: "/#work" },
-  previousStudy ? { label: `Previous: ${previousStudy.title}`, href: caseHref(previousStudy) } : undefined,
-  nextStudy ? { label: `Next: ${nextStudy.title}`, href: caseHref(nextStudy) } : undefined
-].filter(Boolean);
+const pagePath = `/case-studies/${study.id}/`;
+const pageUrl = new URL(pagePath, "https://traykov.cc").toString();
+const pageTitle = `${study.title} — AI Product Design Case Study | Alexander Traykov`;
+const metaDescription = study.summary
+  ? `${study.summary} An AI product design case study by Alexander Traykov.`
+  : `${study.title}, an AI product design case study by Alexander Traykov.`;
+const structuredData = isPublicStudy ? [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${pageUrl}#article`,
+    headline: study.title,
+    description: metaDescription,
+    mainEntityOfPage: pageUrl,
+    image: new URL(study.image ?? "/og-image.png", "https://traykov.cc").toString(),
+    keywords: study.tags,
+    author: { "@id": "https://traykov.cc/#person" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${pageUrl}#breadcrumbs`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://traykov.cc/" },
+      { "@type": "ListItem", position: 2, name: "Work", item: "https://traykov.cc/#work" },
+      { "@type": "ListItem", position: 3, name: study.title, item: pageUrl }
+    ]
+  }
+] : undefined;
 const contactPromptByStudy: Record<string, { eyebrow: string; title: string; body: string }> = {
   "designing-pave": {
     eyebrow: "AI product work",
@@ -90,25 +112,17 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
     <SiteHead
       title={pageTitle}
       description={metaDescription}
-      path={`/case-studies/${study.id}/`}
+      path={pagePath}
       image={study.image ?? "/og-image.png"}
+      ogType="article"
       noindex={!isPublicStudy}
+      structuredData={structuredData}
     />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body data-page-type="case" data-case-id={study.id} data-case-theme={caseTheme}>
 
-    <header class="site-nav site-nav--case">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" aria-current="page" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-      <div class="case-progress" aria-hidden="true"><span></span></div>
-    </header>
+    <SiteNav active="work" variant="case" />
 
     <main id="top" class="case-page">
       <section class:list={["case-hero", hasTurntable && "case-hero--turntable"]} aria-labelledby="case-title">
@@ -274,7 +288,7 @@ const contactPrompt = contactPromptByStudy[study.id] ?? {
       </nav>
     </main>
 
-    <SiteFooter links={footerLinks} />
+    <SiteFooter />
 
     <script is:inline src="/ascii-shader.js?v=case-pages-4"></script>
     {useSynapseTurntable && <script src="/synapse-mini-canvas.js" defer></script>}

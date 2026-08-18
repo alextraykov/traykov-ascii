@@ -31,6 +31,7 @@ const caseStudyHotReload = {
 };
 
 export default defineConfig({
+  site: "https://traykov.cc",
   integrations: [caseStudyHotReload],
   devToolbar: {
     enabled: false

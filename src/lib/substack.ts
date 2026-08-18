@@ -2,6 +2,8 @@ import digitalArtDraft from "../content/notes/on-digital-art.json";
 import designOutsideDesignDraft from "../content/notes/design-outside-design.json";
 import localDraft from "../content/notes/prompting-is-not-taste.json";
 import confidenceDraft from "../content/notes/the-confidence-crutch.json";
+import cemeteryLoopDraft from "../content/notes/the-cemetery-loop.json";
+import aiProductDesignerOwnershipDraft from "../content/notes/what-an-ai-product-designer-owns-in-an-enterprise-product.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
 import legacyManifest from "../content/notes/legacy/index.json";
 
@@ -26,6 +28,7 @@ export type NoteRecord = {
   plainText: string;
   heroImage?: string;
   heroImageAlt?: string;
+  visual?: "web-cemetery";
   tags: string[];
   readTime: string;
   source: "substack" | "legacy" | "local" | "local-published";
@@ -38,6 +41,7 @@ type LocalNoteDraft = {
   publishedAt: string;
   image?: string;
   imageAlt?: string;
+  visual?: "web-cemetery";
   status?: "published";
   tags: string[];
   paragraphs?: string[];
@@ -51,7 +55,9 @@ const localDrafts: LocalNoteDraft[] = [
   digitalArtDraft,
   designOutsideDesignDraft,
   confidenceDraft,
+  cemeteryLoopDraft,
   localDraft,
+  aiProductDesignerOwnershipDraft,
   titlesDraft
 ];
 
@@ -191,6 +197,8 @@ function normalizeSubstackHtml(value: string): string {
     .replace(/<(script|style|noscript|form)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
     .replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi, "")
     .replace(/<p>\s*<\/p>/gi, "")
+    .replace(/<h1(\s[^>]*)?>/gi, "<h2$1>")
+    .replace(/<\/h1>/gi, "</h2>")
     .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*')/gi, "")
     .replace(
       /\b(href|src)=(["'])\/(?!\/)/gi,
@@ -259,6 +267,7 @@ function localNotes(): NoteRecord[] {
       plainText,
       heroImage: draft.image,
       heroImageAlt: draft.imageAlt,
+      visual: draft.visual,
       tags: draft.tags,
       readTime: readTime(plainText),
       source: draft.status === "published" ? "local-published" as const : "local" as const

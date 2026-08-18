@@ -1,0 +1,79 @@
+---
+import CreativeSketchbook from "../../components/CreativeSketchbook.astro";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import SiteNav from "../../components/SiteNav.astro";
+import "../../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Creative Coding Sketchbook — Alexander Traykov Labs"
+      description="A local-first canvas playground for dither, ASCII, pixel, and LCD experiments."
+      path="/labs/sketchbook/"
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="labs-tool-page sketchbook-page">
+    <SiteNav />
+
+    <main id="top" class="labs-tool-shell section-shell">
+      <section class="labs-tool-hero">
+        <a href="/labs/" data-scramble>← All labs</a>
+        <div>
+          <p class="section-kicker">Lab 05 / Local sketch environment</p>
+          <h1>Creative coding sketchbook</h1>
+          <p>
+            A low-friction place for dither, ASCII, pixel, and LCD studies. Tweak live
+            parameters, move through the field, lock a seed, and export the frame.
+          </p>
+        </div>
+      </section>
+
+      <section class="labs-tool-workbench sketchbook-workbench" aria-label="Creative coding sketchbook">
+        <CreativeSketchbook />
+      </section>
+
+      <section class="labs-tool-notes" aria-label="Sketchbook notes">
+        <article>
+          <span>01 / Run</span>
+          <h2>One local command</h2>
+          <p>
+            Run <code>npm run sketches</code>. Astro opens this route and hot reloads every
+            edit while the current seed stays in the URL.
+          </p>
+        </article>
+        <article>
+          <span>02 / Make</span>
+          <h2>Copy the template</h2>
+          <p>
+            Start in <code>src/sketches/_template.js</code>, add the sketch to
+            <code>src/sketches/index.js</code>, and the directory and controls build themselves.
+          </p>
+        </article>
+        <article>
+          <span>03 / Keep</span>
+          <h2>Capture the actual canvas</h2>
+          <p>
+            Press <code>S</code> at any point. The PNG uses the rendered canvas resolution,
+            including device-pixel density, rather than a screenshot of the interface.
+          </p>
+        </article>
+      </section>
+
+      <nav class="labs-tool-related" aria-label="Related labs">
+        <span>Related tool</span>
+        <a href="/labs/ascii-banner/">
+          <span>ASCII Banner Studio</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+  </body>
+</html>

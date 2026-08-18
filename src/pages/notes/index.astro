@@ -2,15 +2,11 @@
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
-import ThemeToggle from "../../components/ThemeToggle.astro";
+import SiteNav from "../../components/SiteNav.astro";
 import { getNotes } from "../../lib/substack";
 import "../../styles/global.css";
 
 const notes = await getNotes();
-const publishedCount = notes.filter(
-  (note) => note.source === "substack" || note.source === "local-published"
-).length;
-const archiveCount = notes.filter((note) => note.source === "legacy").length;
 const dateFormatter = new Intl.DateTimeFormat("en", {
   day: "2-digit",
   month: "short",
@@ -30,36 +26,17 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
     <script src="/page-transitions.js" defer></script>
   </head>
   <body data-page-type="notes">
-    <header class="site-nav">
-      <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
-      <nav aria-label="Primary">
-        <a href="/#work" data-scramble>Work</a>
-        <a href="/labs/" data-scramble>Labs</a>
-        <a href="/about/" data-scramble>About</a>
-        <a href="/contact/" data-scramble>Contact</a>
-      </nav>
-      <ThemeToggle />
-    </header>
+    <SiteNav active="notes" />
 
     <main id="top" class="notes-index section-shell">
       <section class="notes-hero" aria-labelledby="notes-title" data-reveal="rise">
         <div class="notes-hero__meta">
-          <span>AT.NOTES / {String(notes.length).padStart(2, "0")} entries</span>
+          <span>AT.NOTES / FIELD NOTES</span>
           <a href="/rss.xml">RSS.XML ↗</a>
         </div>
         <div class="notes-hero__copy">
           <p class="section-kicker">Writing</p>
           <h1 id="notes-title">Notes.</h1>
-          <dl>
-            <div>
-              <dt>PUBLISHED</dt>
-              <dd>{String(publishedCount).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>ARCHIVE</dt>
-              <dd>{String(archiveCount).padStart(2, "0")}</dd>
-            </div>
-          </dl>
         </div>
       </section>
 

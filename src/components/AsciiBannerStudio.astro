@@ -1,24 +1,47 @@
-<section class="ascii-banner-studio" data-ascii-banner-studio>
+---
+type Props = {
+  displayOnly?: boolean;
+  initialPreset?: "vortex" | "flow" | "interference" | "topography" | "cells";
+};
+
+const { displayOnly = false, initialPreset = "vortex" } = Astro.props as Props;
+---
+
+<section
+  class="ascii-banner-studio"
+  data-ascii-banner-studio
+  data-ascii-banner-display-only={displayOnly ? "true" : undefined}
+  data-ascii-banner-initial-preset={displayOnly ? initialPreset : undefined}
+>
   <div
     class="ascii-banner-studio__preview"
     data-ascii-banner-stage
-    tabindex="0"
-    aria-label="ASCII banner preview. Drag to position the field."
+    tabindex={displayOnly ? undefined : "0"}
+    aria-label={displayOnly ? "Animated ASCII flow field." : "ASCII banner preview. Drag to position the field."}
   >
     <canvas
       width="1584"
       height="396"
-      aria-label="ASCII banner preview using the 3D turntable glyph set"
+      aria-label={
+        displayOnly
+          ? "Animated ASCII flow field using the Banner Studio glyph set"
+          : "ASCII banner preview using the 3D turntable glyph set"
+      }
       data-ascii-banner-canvas
     ></canvas>
     <p class="ascii-banner-studio__fallback" data-ascii-banner-fallback>
-      ASCII Banner Studio preview. Enable JavaScript to generate the live field and export a PNG.
+      {displayOnly
+        ? "Flow field sketch. Enable JavaScript to render the animated ASCII field."
+        : "ASCII Banner Studio preview. Enable JavaScript to generate the live field and export a PNG."}
     </p>
-    <span aria-hidden="true" data-ascii-banner-dimensions>
-      1584 × 396 / LinkedIn · Native
-    </span>
+    {!displayOnly && (
+      <span aria-hidden="true" data-ascii-banner-dimensions>
+        1584 × 396 / LinkedIn · Native
+      </span>
+    )}
   </div>
 
+  {!displayOnly && (
   <form class="ascii-banner-studio__controls" data-ascii-banner-controls>
     <fieldset class="ascii-banner-studio__formats">
       <legend>Canvas format</legend>
@@ -213,10 +236,13 @@
       </button>
     </div>
   </form>
+  )}
 
+  {!displayOnly && (
   <p class="ascii-banner-studio__status" role="status" aria-live="polite" data-ascii-banner-status>
     Drag the shader directly or use Position X/Y. Export renders at the selected native size.
   </p>
+  )}
 </section>
 
 <script>

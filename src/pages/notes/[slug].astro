@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
+import AsciiFlowFieldSketch from "../../components/AsciiFlowFieldSketch.astro";
 import BlocktypeWavePreview from "../../components/BlocktypeWavePreview.astro";
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
@@ -23,6 +24,7 @@ export const getStaticPaths = (async () => {
 
 const { note } = Astro.props as Props;
 const showBlocktypeWavePreview = note.slug === "on-digital-art";
+const showAsciiFlowField = note.visual === "ascii-flow-field";
 const showWebCemetery = note.visual === "web-cemetery";
 const published = new Intl.DateTimeFormat("en", {
   day: "2-digit",
@@ -124,6 +126,8 @@ const structuredData = [
         {showWebCemetery && <WebCemeterySketch />}
 
         {showBlocktypeWavePreview && <BlocktypeWavePreview />}
+
+        {showAsciiFlowField && <AsciiFlowFieldSketch />}
 
         <div class="note-body" set:html={note.contentHtml} />
 

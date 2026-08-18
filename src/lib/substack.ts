@@ -1,5 +1,6 @@
 import digitalArtDraft from "../content/notes/on-digital-art.json";
 import designOutsideDesignDraft from "../content/notes/design-outside-design.json";
+import internetFeelsDeadDraft from "../content/notes/the-internet-feels-dead.json";
 import localDraft from "../content/notes/prompting-is-not-taste.json";
 import confidenceDraft from "../content/notes/the-confidence-crutch.json";
 import cemeteryLoopDraft from "../content/notes/the-cemetery-loop.json";
@@ -28,7 +29,7 @@ export type NoteRecord = {
   plainText: string;
   heroImage?: string;
   heroImageAlt?: string;
-  visual?: "web-cemetery";
+  visual?: "web-cemetery" | "ascii-flow-field";
   tags: string[];
   readTime: string;
   source: "substack" | "legacy" | "local" | "local-published";
@@ -41,7 +42,7 @@ type LocalNoteDraft = {
   publishedAt: string;
   image?: string;
   imageAlt?: string;
-  visual?: "web-cemetery";
+  visual?: "web-cemetery" | "ascii-flow-field";
   status?: "published";
   tags: string[];
   paragraphs?: string[];
@@ -54,6 +55,7 @@ type LocalNoteDraft = {
 const localDrafts: LocalNoteDraft[] = [
   digitalArtDraft,
   designOutsideDesignDraft,
+  internetFeelsDeadDraft,
   confidenceDraft,
   cemeteryLoopDraft,
   localDraft,

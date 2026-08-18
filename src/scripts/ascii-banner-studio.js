@@ -180,6 +180,10 @@ const cellular = (x, y, seed) => {
 class AsciiBannerStudio {
   constructor(root) {
     this.root = root;
+    this.displayOnly = root.dataset.asciiBannerDisplayOnly === "true";
+    const requestedPreset = root.dataset.asciiBannerInitialPreset;
+    const initialPreset =
+      requestedPreset && PRESETS[requestedPreset] ? requestedPreset : BASE_DEFAULTS.preset;
     this.stage = root.querySelector("[data-ascii-banner-stage]");
     this.canvas = root.querySelector("[data-ascii-banner-canvas]");
     this.form = root.querySelector("[data-ascii-banner-controls]");
@@ -200,7 +204,11 @@ class AsciiBannerStudio {
     this.qualityOptions = Array.from(
       root.querySelectorAll("[data-ascii-banner-quality-option]")
     );
-    this.settings = { ...BASE_DEFAULTS };
+    this.settings = {
+      ...BASE_DEFAULTS,
+      ...PRESETS[initialPreset],
+      preset: initialPreset
+    };
     this.dragging = false;
     this.pointer = { x: 0.5, y: 0.5, active: false };
     this.motionTime = 0;
@@ -216,7 +224,7 @@ class AsciiBannerStudio {
 
     if (
       !(this.canvas instanceof HTMLCanvasElement) ||
-      !(this.form instanceof HTMLFormElement) ||
+      (!this.displayOnly && !(this.form instanceof HTMLFormElement)) ||
       !(this.stage instanceof HTMLElement)
     ) {
       return;
@@ -225,13 +233,16 @@ class AsciiBannerStudio {
     this.resetMotionState();
     this.bind();
     this.setupLifecycle();
-    this.syncForm();
+    if (this.displayOnly) this.updateDimensions();
+    else this.syncForm();
     if (this.draw()) this.root.dataset.asciiBannerReady = "true";
     document.fonts?.ready.then(() => this.draw());
     this.updateAnimationState();
   }
 
   bind() {
+    if (this.displayOnly || !(this.form instanceof HTMLFormElement)) return;
+
     this.form.addEventListener("input", () => {
       const previousDensity = this.settings.density;
       this.readSettings();
@@ -353,7 +364,7 @@ class AsciiBannerStudio {
       if (this.fullscreenButton instanceof HTMLButtonElement) {
         this.fullscreenButton.textContent = this.isFullscreen ? "Exit fullscreen" : "Fullscreen";
       }
-      if (this.isFullscreen) this.stage.focus({ preventScroll: true });
+      if (this.isFullscreen && !this.displayOnly) this.stage.focus({ preventScroll: true });
       this.lastFrame = 0;
       window.requestAnimationFrame(() => this.draw());
       this.updateAnimationState();

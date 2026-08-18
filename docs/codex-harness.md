@@ -59,7 +59,7 @@ Promote a class from Luna to Terra when two changes in that class require Terra 
 | 2 | Cross-cutting UI + SEO | Terra Max | Max | 0 | pass | ship after one booking-fallback fix-first cycle | Custom worker role was unavailable; Terra was pinned explicitly. Hard gate passed before the concurrent cemetery/WebGL contract expansion. |
 | 3 | Local evidence-backed Note | Sol primary (Luna unavailable) | High | 0 | pass | pending | Local-first AI-product-design Note; generated route has one H1, local canonical/schema, and sitemap membership. |
 | 4 | ASCII Banner Studio animation + recording controls | Terra Max | Max | 0 | pass | reviewer pending | Vortex/Flow use stateful physics; Interference/Topography use seeded procedural evolution; Cells use the rebirth lifecycle. Native fullscreen needs manual follow-up because the available browser rejected the fullscreen API. |
-| 5 |  |  |  |  |  |  |  |
+| 5 | Local Note + display-only Flow field sketch | Terra Max | Max | 0 | pass | reviewer pending | Reuses the existing Banner Studio Flow preset without exposing its controls. |
 | 6 |  |  |  |  |  |  |  |
 | 7 |  |  |  |  |  |  |  |
 | 8 |  |  |  |  |  |  |  |

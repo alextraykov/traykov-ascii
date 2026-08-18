@@ -10660,6 +10660,30 @@ body[data-page-type="cv"] .notes-hero__copy dd {
   background: var(--wave-preview-background);
 }
 
+.note-ascii-flow-field {
+  display: grid;
+  gap: var(--space-2);
+  width: min(calc(100vw - (var(--space-4) * 2)), var(--shell-max));
+  max-width: none;
+  margin-block: 0;
+  margin-inline: 50%;
+  transform: translateX(-50%);
+}
+
+.note-ascii-flow-field .ascii-banner-studio {
+  gap: 0;
+}
+
+.note-ascii-flow-field .ascii-banner-studio__preview {
+  cursor: default;
+  touch-action: auto;
+}
+
+.note-ascii-flow-field figcaption {
+  color: var(--muted);
+  font: 400 0.66rem/1.45 var(--mono);
+}
+
 @media (max-width: 900px) {
   .note-wave-preview canvas {
     aspect-ratio: 16 / 9;

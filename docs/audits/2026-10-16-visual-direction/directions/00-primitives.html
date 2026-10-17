@@ -1,0 +1,130 @@
+<section class="group" id="g-primitives">
+<h2>Primitives</h2>
+<article class="cmp" id="cmp-primitives" data-name="Primitives" data-group="Primitives" data-no-pick
+  data-baseline="One 8 px dither tile, a 6 px marker in three steps, the diagonal press, a dotted outline for disabled and a green cell check for done. Every component below is built from these.">
+  <template data-markup>
+    <div class="pr">
+      <div class="pr-block">
+        <h4 class="pr-h">Density, 0 to 8</h4>
+        <div class="pr-levels" data-levels></div>
+        <p class="demo-label">At this direction's cell size</p>
+        <div class="cells pr-small" data-small></div>
+      </div>
+      <div class="pr-block">
+        <h4 class="pr-h">Markers</h4>
+        <div class="demo-row">
+          <a class="pr-host" href="#cmp-primitives" data-marker="left"><span data-label-step>Hover or focus</span></a>
+          <a class="pr-host pr-host--under" href="#cmp-primitives" data-marker="under">Under marker</a>
+        </div>
+        <button class="demo-link" type="button" data-hold aria-pressed="false">Hold both markers</button>
+      </div>
+      <div class="pr-block">
+        <h4 class="pr-h">Soft rule</h4>
+        <p class="pr-rule"><span>Soft</span><span class="rule-soft"></span></p>
+        <p class="pr-rule"><span>Current</span><span class="rule-soft is-on"></span></p>
+      </div>
+      <div class="pr-block pr-enter">
+        <h4 class="pr-h">Entrance</h4>
+        <p data-enter>The first line arrives.</p>
+        <p data-enter>Then the second.</p>
+        <div class="pr-media" data-enter="media"></div>
+        <button class="demo-link" type="button" data-play>Play the entrance</button>
+      </div>
+      <div class="pr-block">
+        <h4 class="pr-h">Press</h4>
+        <div class="demo-row">
+          <button class="pr-btn" type="button" data-press="primary">Press me</button>
+          <button class="pr-btn" type="button" data-press="secondary">Secondary</button>
+        </div>
+        <p class="reason pr-note"></p>
+      </div>
+      <div class="pr-block">
+        <h4 class="pr-h">Disabled and error</h4>
+        <div class="demo-row">
+          <button class="pr-btn is-dotted" type="button" aria-disabled="true" aria-describedby="pr-reason">Send</button>
+          <button class="pr-btn" type="button" data-error-target>Save</button>
+        </div>
+        <p class="reason" id="pr-reason">Add a message first.</p>
+        <button class="demo-link" type="button" data-error>Show error</button>
+      </div>
+      <div class="pr-block">
+        <h4 class="pr-h">Working and done</h4>
+        <div class="demo-row">
+          <button class="pr-btn pr-btn--wide" type="button" data-press="primary" data-marker="left" data-sim><span data-label-step>Send message</span></button>
+        </div>
+        <button class="demo-link" type="button" data-sim-go>Simulate send</button>
+      </div>
+      <div class="pr-block">
+        <h4 class="pr-h">On the shared clock</h4>
+        <div class="demo-row">
+          <span data-loader="quarter"></span>
+          <span data-loader="breathe"></span>
+          <span data-loader="sweep"></span>
+          <span class="demo-label">Loading</span>
+        </div>
+        <p class="reason">All three stop together when motion is off.</p>
+      </div>
+    </div>
+  </template>
+  <style>
+    #cmp-primitives .pr { display: grid; gap: 33px; }
+    #cmp-primitives .pr-block { display: grid; gap: 11px; justify-items: start; }
+    #cmp-primitives .pr-h { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); color: var(--muted); width: 100%; padding-bottom: 6px; border-bottom: var(--hairline) solid var(--line); }
+    #cmp-primitives .pr-levels { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; width: 100%; max-width: 330px; }
+    #cmp-primitives .pr-levels span { display: grid; justify-items: center; gap: 4px; font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--muted); }
+    #cmp-primitives .pr-levels .cell { --cell-size: 30px; width: 100%; max-width: 30px; }
+    #cmp-primitives .pr-small { --cells: 9; }
+    #cmp-primitives .pr-host { display: inline-flex; align-items: center; min-height: 48px; padding: 0 16px; border: var(--hairline) solid var(--line); text-decoration: none; font: 500 14px / 1 var(--sans); }
+    #cmp-primitives .pr-host--under { padding: 0 4px; border-color: transparent; }
+    #cmp-primitives .pr-rule { display: grid; gap: 6px; width: 100%; font: 500 14px / 1.4 var(--sans); }
+    #cmp-primitives .dir-a .pr-rule .rule-soft, #cmp-primitives .dir-c .pr-rule .rule-soft { width: 100%; }
+    #cmp-primitives .pr-enter p { font-size: var(--read-size); }
+    #cmp-primitives .pr-media { width: 100%; max-width: 240px; }
+    #cmp-primitives .pr-btn { min-height: 48px; padding: 0 20px; border: var(--hairline) solid var(--ink); background: var(--paper); font: 500 15px / 1 var(--sans); cursor: pointer; }
+    #cmp-primitives .dir-a .pr-btn { min-height: 44px; }
+    #cmp-primitives .pr-btn--wide { min-width: 184px; }
+    #cmp-primitives .dir-a .pr-btn--wide { min-width: 176px; }
+  </style>
+  <script>
+    Dir.component("cmp-primitives", (col, dir, api) => {
+      const levels = col.querySelector("[data-levels]");
+      for (let level = 0; level <= 8; level += 1) {
+        const item = document.createElement("span");
+        api.cells(item, 1, { level });
+        item.append(String(level));
+        levels.append(item);
+      }
+      api.cells(col.querySelector("[data-small]"), 9).forEach((cell, level) => api.setLevel(cell, level));
+
+      const hosts = [...col.querySelectorAll(".pr-host")];
+      const holdButton = col.querySelector("[data-hold]");
+      holdButton.addEventListener("click", () => {
+        const on = holdButton.getAttribute("aria-pressed") !== "true";
+        holdButton.setAttribute("aria-pressed", String(on));
+        holdButton.textContent = on ? "Let the markers go" : "Hold both markers";
+        hosts.forEach((host) => api.marker(host, host.dataset.marker).hold(on));
+      });
+      hosts.forEach((host) => host.addEventListener("click", (event) => event.preventDefault()));
+
+      api.placeholder(col.querySelector(".pr-media"));
+      col.querySelector("[data-play]").addEventListener("click", () => api.enter(col.querySelector(".pr-enter")));
+
+      col.querySelector(".pr-note").textContent = {
+        a: "Fills in reading order through 2, 4, 6, 8, holds, then steps out.",
+        b: "Fills on the diagonal in eight steps, holds, then dissolves.",
+        c: "Fills in dither order to level 6, rests there for a beat, then goes solid. Level 5 in dark. Secondary stops at the beat."
+      }[dir];
+
+      const errorTarget = col.querySelector("[data-error-target]");
+      col.querySelector("[data-error]").addEventListener("click", () => api.flash(errorTarget));
+
+      const send = col.querySelector("[data-sim]");
+      api.press(send);
+      api.marker(send, "left");
+      col.querySelector("[data-sim-go]").addEventListener("click", () => api.simulate(send, { working: "Sending", done: "Sent" }));
+
+      col.querySelectorAll("[data-loader]").forEach((host) => api.loader(host, host.dataset.loader));
+    });
+  </script>
+</article>
+</section>

@@ -22,16 +22,16 @@ const links: Array<{ section: SiteNavSection; label: string; href: string }> = [
 ];
 ---
 
+<a class="skip-link" href="#top" data-skip-link>Skip to content</a>
 <header class:list={["site-nav", variant === "case" && "site-nav--case"]}>
   <a class="brand" href="/" aria-label="AT — Alexander Traykov home">AT</a>
   <nav aria-label="Primary">
     {links.map((link) => (
       <a
-        class="has-marker has-marker--under"
         href={link.href}
         aria-current={active === link.section ? "page" : undefined}
       >
-        {link.label}
+        <span class="site-nav__text">{link.label}</span>
       </a>
     ))}
   </nav>
@@ -41,3 +41,33 @@ const links: Array<{ section: SiteNavSection; label: string; href: string }> = [
   </div>
   {variant === "case" && <div class="case-progress" aria-hidden="true"><span></span></div>}
 </header>
+
+<script>
+  // Nav hover band (picks, C): it arrives 3 → 6 → 8 in CSS while hovered; leaving plays the short
+  // exit 6 → 3 → gone (two steps of 40 ms) through this class.
+  document.querySelectorAll<HTMLAnchorElement>(".site-nav nav a").forEach((link) => {
+    let timer = 0;
+    link.addEventListener("pointerleave", () => {
+      if (link.getAttribute("aria-current") === "page" || link.matches(":focus-visible")) return;
+      window.clearTimeout(timer);
+      link.classList.add("is-band-out");
+      timer = window.setTimeout(() => link.classList.remove("is-band-out"), 80);
+    });
+    link.addEventListener("pointerenter", () => {
+      window.clearTimeout(timer);
+      link.classList.remove("is-band-out");
+    });
+  });
+
+  // Full-screen tool pages have no #top: the skip link then lands on the first thing after the bar.
+  document.querySelectorAll<HTMLAnchorElement>("[data-skip-link]").forEach((link) => {
+    if (document.getElementById("top")) return;
+    link.addEventListener("click", (event) => {
+      const target = document.querySelector<HTMLElement>("main") || document.querySelector<HTMLElement>(".site-nav + *");
+      if (!target) return;
+      event.preventDefault();
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+      target.focus();
+    });
+  });
+</script>

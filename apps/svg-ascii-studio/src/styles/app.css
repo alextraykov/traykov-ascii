@@ -776,3 +776,459 @@
 .s2-val {
   font-weight: 400;
 }
+
+/* ── picks batch 3 (site-picks-implementation.md 3.13–3.15, 1.18) ─────────────────────────────
+   Drop zone (A), swatches (A), the export primary with its working/done ladder (A), and the
+   disclosure summaries as quiet actions with a cell chevron (A). Still scoped to .studio2 and still
+   standalone-safe: every site token has a paper/ink fallback. */
+
+.studio2 {
+  --s2-ink: var(--ink, #080808);
+  --s2-paper: var(--paper, #fbfbf8);
+  --s2-muted: var(--muted, #666660);
+  --s2-soft-text: var(--text-soft, rgba(8, 8, 8, 0.78));
+  --s2-fail: var(--signal-fail, #b8421f);
+  --s2-ok-sign: var(--signal-ok, #04764e);
+  --s2-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='9' viewBox='0 0 15 9' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h3v3H0zM12 0h3v3h-3zM3 3h3v3H3zM9 3h3v3H9zM6 6h3v3H6z'/%3E%3C/svg%3E");
+}
+
+.s2-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 5 × 5 cell icons at 3 px (studio-ui.js) */
+.studio2 .s2-icon {
+  display: inline-grid;
+  flex: none;
+  grid-template-columns: repeat(5, 3px);
+  grid-auto-rows: 3px;
+  width: 15px;
+  height: 15px;
+  clip-path: none;
+  background: none;
+}
+
+.studio2 .s2-icon i {
+  display: block;
+  width: 3px;
+  height: 3px;
+}
+
+.studio2 .s2-icon i[data-l="8"] {
+  background: currentColor;
+}
+
+.studio2 .s2-icon--ok {
+  color: var(--s2-ok-sign);
+}
+
+/* ── drop zone (A): a 176 px hairline box; drag-over is a 2 px ink border in one step ── */
+.studio2 .stage-empty {
+  gap: 14px;
+  border: 0;
+  background: var(--s2-paper);
+}
+
+.studio2 .s2-drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(440px, 100%);
+  min-height: 176px;
+  padding: 16px;
+  border: 1px solid var(--s2-line);
+  color: var(--s2-ink);
+}
+
+.studio2 .stage-empty.is-over .s2-drop,
+.studio2 .stage-empty.is-dragging .s2-drop {
+  border: 2px solid var(--s2-ink);
+  padding: 15px;
+}
+
+.studio2 .stage-empty.is-dragging {
+  box-shadow: none;
+}
+
+.studio2 .s2-empty-title {
+  font: 500 15px/1.3 var(--s2-sans);
+}
+
+.studio2 .s2-drop .s2-link {
+  min-height: 32px;
+  font: 500 15px/1 var(--s2-sans);
+}
+
+.studio2 .s2-drop-hint {
+  margin: 0;
+  color: var(--s2-muted);
+  font: 400 13px/1.4 var(--s2-sans);
+}
+
+.studio2[data-source-state="error"] .s2-drop {
+  border-color: var(--s2-fail);
+  animation: s2-flash-border 480ms steps(1, end) both;
+}
+
+/* Replace mark: the same drop target once a mark is loaded; loaded holds a 4 px A marker. */
+.studio2 .s2-replace {
+  border-color: var(--s2-line);
+}
+
+.studio2[data-source-state="sample"] .s2-replace,
+.studio2[data-source-state="uploaded"] .s2-replace {
+  box-shadow: inset 4px 0 0 var(--s2-ink);
+  padding-left: 18px;
+}
+
+.studio2 .s2-replace.is-over,
+.studio2 .s2-replace.is-dragging {
+  border: 2px solid var(--s2-ink);
+  box-shadow: inset 4px 0 0 var(--s2-ink);
+}
+
+/* Loaded: the green check before the file name, 15 px. */
+.studio2 .s2-bar > .s2-icon--ok {
+  display: none;
+}
+
+.studio2[data-source-state="sample"] .s2-bar > .s2-icon--ok,
+.studio2[data-source-state="uploaded"] .s2-bar > .s2-icon--ok {
+  display: inline-grid;
+  margin-right: -8px;
+}
+
+.studio2[data-source-state="sample"] .s2-file,
+.studio2[data-source-state="uploaded"] .s2-file {
+  margin-right: auto;
+  font: 500 15px/1.4 var(--s2-sans);
+}
+
+/* Error: one sentence in the status line, two short flashes, then still. */
+.studio2 .s2-status.is-error {
+  color: var(--s2-ink);
+  animation: s2-flash-text 480ms steps(1, end) both;
+}
+
+.studio2 .s2-status.is-error::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  margin-right: 8px;
+  vertical-align: -3px;
+  background: var(--s2-fail);
+}
+
+@keyframes s2-flash-text {
+  0%, 50% { color: var(--s2-fail); }
+  25%, 75%, 100% { color: var(--s2-ink); }
+}
+
+@keyframes s2-flash-border {
+  0%, 50% { border-color: var(--s2-fail); }
+  25%, 75% { border-color: var(--s2-line); }
+  100% { border-color: var(--s2-fail); }
+}
+
+/* ── swatches (A): 24 px squares on a hairline, 11 px apart; selected = a 2 px solid rule under
+   the square, hover = the rule at level 3. "Other…" is the native picker's quiet label. ── */
+.studio2 .s2-colors {
+  display: grid;
+  gap: 14px;
+}
+
+.studio2 .s2-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 11px 16px;
+}
+
+.studio2 .s2-swatch-name {
+  min-width: 56px;
+  color: var(--s2-muted);
+  font: 500 13px/1.3 var(--s2-sans);
+}
+
+.studio2 .s2-swatches {
+  display: flex;
+  gap: 11px;
+}
+
+.studio2 .s2-swatches[hidden] {
+  display: none;
+}
+
+.studio2 .s2-swatch {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.studio2 .s2-swatch input {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 1px solid var(--s2-line);
+  border-radius: 0;
+  background: var(--swatch);
+  cursor: pointer;
+}
+
+.studio2 .s2-swatch::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--s2-ink);
+  visibility: hidden;
+}
+
+.studio2 .s2-swatch:hover::after {
+  visibility: visible;
+  -webkit-mask: var(--s2-d3) 0 0 / 8px 8px;
+  mask: var(--s2-d3) 0 0 / 8px 8px;
+}
+
+.studio2 .s2-swatch:has(input:checked)::after {
+  visibility: visible;
+  -webkit-mask: none;
+  mask: none;
+}
+
+.studio2 .s2-swatch input:focus-visible {
+  outline: 2px solid var(--s2-ink);
+  outline-offset: 2px;
+}
+
+.studio2 label.s2-other {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font: 500 15px/1.2 var(--s2-sans);
+  cursor: pointer;
+}
+
+.studio2 label.s2-other > span:first-child {
+  display: inline;
+}
+
+.studio2 .s2-swatch-row:not(.is-enhanced) label.s2-other > span {
+  order: 2;
+}
+
+.studio2 .s2-swatch-row.is-enhanced label.s2-other {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+/* the quiet rule under "Other…": 2 px at level 3, solid on hover and focus */
+.studio2 .s2-swatch-row.is-enhanced label.s2-other > span::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 4px;
+  background: var(--s2-ink);
+  -webkit-mask: var(--s2-d3) 0 0 / 8px 8px;
+  mask: var(--s2-d3) 0 0 / 8px 8px;
+}
+
+.studio2 .s2-swatch-row.is-enhanced label.s2-other:is(:hover, :focus-within) > span::after {
+  -webkit-mask: none;
+  mask: none;
+}
+
+/* the native picker stays reachable, small, after the word */
+.studio2 .s2-swatch-row.is-enhanced label.s2-other input[type="color"] {
+  order: 2;
+  width: 24px;
+  height: 24px;
+}
+
+/* ── export primary (A): 44 px, paper with an ink hairline, the A press, then Exporting → Saved ── */
+.studio2 .s2-primary,
+.studio2 .s2-primary:not(:disabled) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 176px;
+  min-height: 44px;
+  padding: 0 20px;
+  overflow: hidden;
+  border: 1px solid var(--s2-ink);
+  background: var(--s2-paper);
+  color: var(--s2-ink);
+  font: 500 15px/1 var(--s2-sans);
+  transition: transform 140ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.studio2 .s2-primary:disabled {
+  border-color: transparent;
+  color: var(--s2-muted);
+}
+
+.studio2 .s2-primary:not(:disabled)::after {
+  z-index: 2;
+  width: 4px;
+  background: var(--s2-ink);
+}
+
+.studio2 .s2-primary:not(:disabled):is(:hover, :focus-visible) .s2-press-word {
+  transform: translateX(4px);
+  transition: transform 120ms steps(2, end);
+}
+
+.studio2 .s2-primary:not(:disabled):focus-visible .s2-press-word {
+  transition: none;
+}
+
+.studio2 .s2-primary[data-state="done"]::after {
+  transform: scaleX(1);
+}
+
+.studio2 .s2-primary:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+.studio2 .s2-press-word,
+.studio2 .s2-press-sign {
+  position: relative;
+  z-index: 1;
+}
+
+.studio2 .s2-press-sign[hidden] {
+  display: none;
+}
+
+.studio2 .s2-quarter {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 5px);
+  grid-auto-rows: 5px;
+  gap: 1px;
+}
+
+.studio2 .s2-quarter i {
+  display: block;
+  width: 5px;
+  height: 5px;
+}
+
+.studio2 .s2-quarter i[data-l="8"] { background: currentColor; }
+.studio2 .s2-quarter i[data-l="3"] { background: currentColor; -webkit-mask: var(--s2-d3) 0 0 / 8px 8px; mask: var(--s2-d3) 0 0 / 8px 8px; }
+
+.studio2 .s2-press-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--s2-ink);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* The A press: in reading order through levels 2 → 4 → 6 → 8 (160 ms), hold 200 ms, out 6 → 4 → 2 (160 ms). */
+.studio2 .s2-primary.is-pressing .s2-press-fill {
+  animation: s2-press-a 520ms steps(1, end) both;
+}
+
+.studio2 .s2-primary.is-pressing :is(.s2-press-word, .s2-press-sign) {
+  animation: s2-press-label 520ms steps(1, end) both;
+}
+
+@keyframes s2-press-a {
+  0% { visibility: visible; -webkit-mask: var(--s2-d2) 0 0 / 8px 8px; mask: var(--s2-d2) 0 0 / 8px 8px; }
+  7.7% { visibility: visible; -webkit-mask: var(--s2-d4) 0 0 / 8px 8px; mask: var(--s2-d4) 0 0 / 8px 8px; }
+  15.4% { visibility: visible; -webkit-mask: var(--s2-d6) 0 0 / 8px 8px; mask: var(--s2-d6) 0 0 / 8px 8px; }
+  23.1%, 69.2% { visibility: visible; -webkit-mask: none; mask: none; }
+  76.9% { visibility: visible; -webkit-mask: var(--s2-d6) 0 0 / 8px 8px; mask: var(--s2-d6) 0 0 / 8px 8px; }
+  84.6% { visibility: visible; -webkit-mask: var(--s2-d4) 0 0 / 8px 8px; mask: var(--s2-d4) 0 0 / 8px 8px; }
+  92.3% { visibility: visible; -webkit-mask: var(--s2-d2) 0 0 / 8px 8px; mask: var(--s2-d2) 0 0 / 8px 8px; }
+  100% { visibility: hidden; }
+}
+
+@keyframes s2-press-label {
+  0%, 76.9%, 100% { color: inherit; }
+  15.4%, 69.2% { color: var(--s2-paper); }
+}
+
+/* ── disclosures (A): quiet summaries with a 2 px level-3 rule and a 5 × 3 cell chevron ── */
+.studio2 :is(.s2-paste summary, .s2-more summary, .s2-adjust > summary, .s2-about > summary) {
+  position: relative;
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  gap: 8px;
+}
+
+.studio2 :is(.s2-paste summary, .s2-more summary, .s2-adjust > summary, .s2-about > summary)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  height: 2px;
+  background: var(--s2-ink);
+  -webkit-mask: var(--s2-d3) 0 0 / 8px 8px;
+  mask: var(--s2-d3) 0 0 / 8px 8px;
+  pointer-events: none;
+}
+
+.studio2 :is(.s2-paste, .s2-more, .s2-adjust, .s2-about)[open] > summary::before,
+.studio2 :is(.s2-paste summary, .s2-more summary, .s2-adjust > summary, .s2-about > summary):is(:hover, :focus-visible)::before {
+  -webkit-mask: none;
+  mask: none;
+}
+
+.studio2 :is(.s2-paste summary, .s2-more summary, .s2-adjust > summary, .s2-about > summary)::after {
+  content: "";
+  width: 15px;
+  height: 9px;
+  background: currentColor;
+  clip-path: none;
+  -webkit-mask: var(--s2-chevron) 0 0 / 15px 9px no-repeat;
+  mask: var(--s2-chevron) 0 0 / 15px 9px no-repeat;
+}
+
+.studio2 .s2-paste summary {
+  display: flex;
+  margin: 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio2 .s2-primary,
+  .studio2 .s2-primary .s2-press-word {
+    transition: none !important;
+  }
+
+  .studio2 .s2-primary:active {
+    transform: none;
+  }
+
+  .studio2 .s2-primary.is-pressing :is(.s2-press-fill, .s2-press-word, .s2-press-sign),
+  .studio2 .s2-status.is-error,
+  .studio2[data-source-state="error"] .s2-drop {
+    animation: none;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .studio2 :is(.s2-primary, .s2-primary .s2-press-word) {
+  transition: none !important;
+  transform: none;
+}

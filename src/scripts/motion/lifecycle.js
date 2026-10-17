@@ -59,6 +59,17 @@ function updateControls(state) {
     control.setAttribute("aria-label", "Motion");
     if (description) description.textContent = descriptionText;
     if (stateLabel) stateLabel.textContent = stateText;
+    // The static switch (picks, B): two cells, 8·8 on, 0·0 off; a dotted frame when the system
+    // reduces motion. One step, never animated, nothing on it subscribes to the tick.
+    const switchCells = control.querySelector(".motion-toggle__switch");
+    if (switchCells) {
+      switchCells.classList.toggle("is-dotted", state.reduced);
+      switchCells.querySelectorAll(".cell").forEach((cell) => {
+        const level = motionOn ? "8" : "0";
+        if (cell.getAttribute("data-level") !== level) cell.setAttribute("data-level", level);
+      });
+    }
+    control.classList.toggle("is-off", !motionOn);
   });
 }
 

@@ -3,7 +3,8 @@
   type="button"
   data-theme-toggle
   aria-label="Automatic color theme. Activate to switch theme."
-  title="Automatic theme"
+  title="Theme: automatic"
+  data-tooltip="Theme: automatic"
 >
   <i class="hn hn-sun"></i>
   <i class="hn hn-moon"></i>
@@ -53,6 +54,8 @@
     const state = themeController?.state || { preference: "auto", resolved: "light" };
     themeController?.set(nextPreference(state));
     button.classList.remove("is-flipping");
+    // Enter or Space flips at once; a pointer click resolves 2 → 4 → 6 → the new level (CSS).
+    if (event.detail === 0) return;
     void button.offsetWidth;
     button.classList.add("is-flipping");
     window.setTimeout(() => button.classList.remove("is-flipping"), 260);

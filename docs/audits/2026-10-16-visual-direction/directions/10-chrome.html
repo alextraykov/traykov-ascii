@@ -1,0 +1,625 @@
+<section class="group" id="g-chrome">
+<h2>Chrome</h2>
+
+<article class="cmp" id="cmp-nav" data-name="Site nav" data-group="Chrome" data-num="1" data-wide
+  data-baseline="64 px bar, logo left, five links centred, a cell rule under the current link that fills left to right on hover. Case pages add a dithered reading line at the bottom edge.">
+  <template data-markup>
+    <div class="nv">
+      <header class="nv-bar">
+        <a class="nv-brand" href="#cmp-nav" aria-label="Alexander Traykov, home"><span class="logo-mark" aria-hidden="true"></span></a>
+        <nav class="nv-links" aria-label="Primary">
+          <a href="#cmp-nav" aria-current="page"><i class="nv-n" aria-hidden="true">1</i><span class="nv-t">Work<span class="nv-cur" aria-hidden="true"></span></span></a>
+          <a href="#cmp-nav"><i class="nv-n" aria-hidden="true">2</i><span class="nv-t">Notes<span class="nv-cur" aria-hidden="true"></span></span></a>
+          <a href="#cmp-nav"><i class="nv-n" aria-hidden="true">3</i><span class="nv-t">Labs<span class="nv-cur" aria-hidden="true"></span></span></a>
+          <a href="#cmp-nav"><i class="nv-n" aria-hidden="true">4</i><span class="nv-t">About<span class="nv-cur" aria-hidden="true"></span></span></a>
+          <a href="#cmp-nav"><i class="nv-n" aria-hidden="true">5</i><span class="nv-t">Contact<span class="nv-cur" aria-hidden="true"></span></span></a>
+        </nav>
+        <span class="nv-ctl" aria-hidden="true"></span>
+        <span class="nv-read" aria-hidden="true"></span>
+      </header>
+      <div class="demo-row nv-demo">
+        <button class="demo-link" type="button" data-choose>Choose Notes</button>
+        <label class="demo-label nv-scrub">Reading line on case pages <input type="range" min="0" max="100" value="35"></label>
+      </div>
+    </div>
+  </template>
+  <style>
+html[data-view="phone"] :is(#cmp-nav, #cmp-footer) .tri { grid-template-columns: repeat(auto-fill, min(375px, 100%)); }
+#cmp-nav .col { --bar-h: 66px; --logo: 33px; }
+#cmp-nav .dir-b { --bar-h: 64px; --logo: 32px; }
+#cmp-nav .dir-c { --logo: 36px; }
+#cmp-nav .nv-bar { position: relative; display: flex; align-items: center; gap: 16px; height: var(--bar-h); padding: 0 16px; border-bottom: var(--hairline) solid var(--line); }
+#cmp-nav .dir-c .nv-bar { border-bottom: 2px solid var(--ink); }
+#cmp-nav .nv-brand { display: grid; place-items: center; min-width: 44px; min-height: 44px; }
+#cmp-nav .nv-brand .logo-mark { width: var(--logo); height: var(--logo); }
+#cmp-nav .nv-links { flex: 1; display: flex; justify-content: center; }
+#cmp-nav .nv-links a { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; font: 500 14px / 1 var(--sans); color: var(--ink); text-decoration: none; }
+#cmp-nav .dir-a .nv-links a { color: var(--muted); }
+#cmp-nav .dir-a .nv-links a:is(:hover, [aria-current]) { color: var(--ink); }
+#cmp-nav .nv-n { display: none; font: 400 var(--type-px-11) / 1 var(--font-pixel); font-style: normal; color: var(--muted); }
+#cmp-nav .dir-b .nv-n { display: inline; }
+#cmp-nav .nv-t { position: relative; padding: 6px 0; }
+#cmp-nav .nv-cur { position: absolute; left: 0; right: 0; bottom: 0; height: var(--marker-height); background: var(--ink); }
+#cmp-nav .nv-cur[data-level="0"] { visibility: hidden; }
+#cmp-nav .dir-b .nv-t { position: static; }
+#cmp-nav .dir-b .nv-cur { display: flex; gap: 1px; background: none; }
+#cmp-nav .dir-b .nv-cur .cell { flex: 1 1 0; width: auto; height: 100%; }
+#cmp-nav .nv-ctl { display: grid; place-items: center; width: 44px; height: 44px; }
+#cmp-nav .nv-ctl::before { content: ""; width: 13px; height: 13px; border: 2px solid var(--ink); background: linear-gradient(90deg, var(--ink) 50%, transparent 0); }
+#cmp-nav .dir-b .nv-ctl::before { display: none; }
+#cmp-nav .dir-c .nv-ctl::before { width: 15px; height: 15px; border: 0; background: var(--ink); mask: var(--dither-4) 0 0 / 4px 4px; }
+#cmp-nav .nv-read { position: absolute; left: 0; right: 0; bottom: -1px; display: flex; height: 1px; overflow: hidden; }
+#cmp-nav .nv-read > i { display: block; width: 100%; height: 100%; background: var(--ink); transform-origin: 0 50%; }
+#cmp-nav .dir-a a:focus-visible .marker { transition: none; }
+#cmp-nav .dir-b .nv-read { bottom: 0; height: 3px; gap: 1px; }
+#cmp-nav .dir-b .nv-read .cell { width: 4px; height: 3px; }
+#cmp-nav .dir-c .nv-read { bottom: 0; height: 4px; }
+#cmp-nav .dir-c .nv-read .cell { width: 12px; height: 4px; }
+#cmp-nav .nv-demo { margin-top: 16px; }
+#cmp-nav .nv-scrub { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; }
+#cmp-nav .nv-scrub input { accent-color: var(--ink); width: 160px; }
+@container col (max-width: 640px) {
+  #cmp-nav .nv-bar { flex-wrap: wrap; height: auto; padding: 0; gap: 0; }
+  #cmp-nav .nv-brand { margin: 11px 16px; }
+  #cmp-nav .nv-ctl { margin: 0 8px 0 auto; }
+  #cmp-nav .nv-links { order: 3; flex: 1 0 100%; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: var(--hairline) solid var(--line); }
+  #cmp-nav .nv-links a { padding: 0 2px; font-size: 13px; }
+  #cmp-nav .dir-b .nv-n { display: none; }
+  #cmp-nav .dir-b .nv-cur { bottom: 6px; }
+  #cmp-nav .dir-c .nv-links a { min-height: 48px; font-size: 14px; }
+}
+  </style>
+  <script>
+/* Craft: 1 hover, click and scrub; keyboard focus and Enter land at once, the scrub is direct. 2 hover in 120 ms, out 60 ms
+  (A out at once); handover in 120, out 60. 3 steps inside each cell, ease-out across cells, no ease-in. 4 links, so no press
+  scale; nothing grows from zero. 5 every change restarts from the current levels; the A marker is a transition. 6 level swaps
+  and transform only. 7 motion off: final levels at once, the current rule still shows. */
+Dir.component("cmp-nav", (col, dir, api) => {
+  const links = [...col.querySelectorAll(".nv-links a")];
+  const chooser = col.querySelector("[data-choose]");
+  const stops = new Map();
+  const run = (key, fn) => { (stops.get(key) || (() => {}))(); stops.set(key, fn()); };
+  // Level-bearing elements to a level path. B: seven groups in reading order (or reversed), ease-out across.
+  const go = (list, p, { back, t = 0, s = 40, quick } = {}) => {
+    if (quick || !Dir.motionActive()) { list.forEach((c) => { c.dataset.level = String(p[p.length - 1]); }); return () => {}; }
+    return Dir.runField({
+      values: list.map((_, i) => Math.floor(((back ? list.length - 1 - i : i) * 7) / list.length) / 6), total: t, steps: p.length, stepMs: s,
+      render: (at) => list.forEach((c, i) => { const k = at(i); if (k >= 0) c.dataset.level = String(p[Math.min(k, p.length - 1)]); })
+    });
+  };
+  const B = dir === "b";
+  const into = (list, quick) => go(list, B ? [8] : [3, 6, 8], { t: B ? 100 : 0, s: B ? 20 : 40, quick });
+  const away = (list, to, quick) => go(list, B ? [to] : [3, to], { back: true, t: B ? 40 : 0, s: B ? 20 : 30, quick });
+  links.forEach((a) => {
+    const on = a.hasAttribute("aria-current");
+    const t = a.querySelector(".nv-t");
+    const cur = t.querySelector(".nv-cur");
+    a._cur = B ? api.cells(cur, 14, { clear: true, level: on ? 8 : 0 }) : [cur];
+    if (!B) cur.dataset.level = on ? "8" : "0";
+    let hot;
+    if (dir === "a") { const m = api.marker(t, "under"); hot = (want) => (want ? m.arrive() : m.leave()); }
+    else {
+      let list = a._cur;
+      if (!B) { const h = document.createElement("span"); h.className = "nv-cur"; h.dataset.level = "0"; h.setAttribute("aria-hidden", "true"); t.append(h); list = [h]; }
+      hot = (want, quick) => {
+        if (B && a.hasAttribute("aria-current")) return;
+        run(list, () => (want ? (B ? go(list, [4], { t: 100, s: 20, quick }) : into(list, quick)) : away(list, 0, quick)));
+      };
+    }
+    a.addEventListener("pointerenter", () => hot(true));
+    a.addEventListener("pointerleave", () => hot(false));
+    a.addEventListener("focus", () => { if (a.matches(":focus-visible")) hot(true, true); });
+    a.addEventListener("blur", () => hot(false, true));
+    a.addEventListener("click", (event) => { event.preventDefault(); choose(a, event.detail === 0); });
+  });
+  const choose = (next, quick) => {
+    const old = links.find((a) => a.hasAttribute("aria-current"));
+    if (old === next) return;
+    old.removeAttribute("aria-current");
+    next.setAttribute("aria-current", "page");
+    if (dir === "a") {
+      old._cur[0].dataset.level = "0";
+      next._cur[0].dataset.level = quick || !Dir.motionActive() ? "8" : "0";
+      // The new rule steps in once the page dissolve would be done.
+      run(next._cur, () => { const id = setTimeout(() => { next._cur[0].dataset.level = "8"; }, api.ms("--switch")); return () => clearTimeout(id); });
+    } else { run(old._cur, () => away(old._cur, 0, quick)); run(next._cur, () => into(next._cur, quick)); }
+    chooser.textContent = next === links[1] ? "Choose Work" : "Choose Notes";
+  };
+  chooser.addEventListener("click", (event) => choose(links[1].hasAttribute("aria-current") ? links[0] : links[1], event.detail === 0));
+  col.querySelector(".nv-brand").addEventListener("click", (event) => event.preventDefault());
+  if (B) api.icon(col.querySelector(".nv-ctl").appendChild(document.createElement("span")), "themeLight");
+
+  const read = col.querySelector(".nv-read");
+  const scrub = col.querySelector(".nv-scrub input");
+  let cells = [];
+  const draw = () => {
+    const p = scrub.value / 100;
+    if (dir === "a") { if (!read.firstChild) read.append(document.createElement("i")); read.firstChild.style.transform = `scaleX(${p})`; return; }
+    const w = read.clientWidth;
+    const n = Math.max(1, B ? Math.floor((w + 1) / 5) : Math.ceil(w / 12));
+    if (n !== cells.length) { read.textContent = ""; cells = api.cells(read, n); }
+    const x = p * n;
+    const k = Math.floor(x);
+    const low = B ? 0 : 4;
+    cells.forEach((c, i) => api.setLevel(c, i < k ? 8 : i === k ? low + (8 - low) * (x - k) : low));
+  };
+  scrub.addEventListener("input", draw);
+  const ro = new ResizeObserver(draw);
+  ro.observe(read);
+  api.cleanup(() => { ro.disconnect(); stops.forEach((stop) => stop && stop()); });
+});
+  </script>
+</article>
+
+<article class="cmp" id="cmp-theme" data-name="Theme control" data-group="Chrome" data-num="2"
+  data-baseline="A 15 px half-filled square in the nav with a title tooltip; the inside dithers 2, 4, 6, then clears on flip. The footer says Theme and the value. Cycles automatic, light, dark.">
+  <template data-markup>
+    <div class="th">
+      <div class="th-row">
+        <span class="demo-label">In the nav</span>
+        <span class="th-wrap">
+          <button class="th-icon" type="button" data-theme-toggle aria-label="Color theme: automatic. Activate to switch to light." aria-describedby="th-tip"><span class="th-glyph" aria-hidden="true"></span></button>
+          <span class="th-tip" id="th-tip" role="tooltip" hidden>Theme: automatic</span>
+        </span>
+      </div>
+      <div class="th-row">
+        <span class="demo-label">In the footer</span>
+        <button class="th-set" type="button" data-theme-toggle><span class="th-name">Theme</span> <span class="th-val">Auto</span></button>
+      </div>
+      <p class="reason th-status" aria-live="polite">Automatic color theme.</p>
+      <p class="demo-label">Both controls share one setting here. The bar at the top changes the page.</p>
+    </div>
+  </template>
+  <style>
+#cmp-theme .th { display: grid; gap: 11px; }
+#cmp-theme .th-row { display: flex; align-items: center; gap: 16px; min-height: 48px; }
+#cmp-theme .th-row > .demo-label { width: 88px; }
+#cmp-theme .th-wrap { position: relative; display: inline-flex; }
+#cmp-theme .th-icon { position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 48px; height: 48px; padding: 0; border: 0; background: none; cursor: pointer; }
+#cmp-theme .th-glyph { position: relative; display: block; width: 13px; height: 13px; border: 2px solid var(--ink); }
+#cmp-theme .dir-a .th-glyph::after { content: ""; position: absolute; top: 0; bottom: 0; width: 50%; background: var(--ink); }
+#cmp-theme .dir-a .th-glyph[data-side="light"]::after { left: 0; }
+#cmp-theme .dir-a .th-glyph[data-side="dark"]::after { right: 0; }
+#cmp-theme .dir-a .th-glyph[data-side="auto"]::after { left: 0; right: 0; top: 50%; width: auto; }
+#cmp-theme .dir-a .th-glyph[data-side="none"]::after { display: none; }
+#cmp-theme .dir-b .th-glyph { display: inline-grid; width: auto; height: auto; border: 0; }
+#cmp-theme .th-rule { --cells: 2; --cell-size: 7px; --cell-gap: 1px; }
+#cmp-theme .th-rule .cell { height: 3px; }
+#cmp-theme .dir-c .th-glyph { width: 15px; height: 15px; }
+#cmp-theme .th-fill { position: absolute; inset: 0; background: var(--ink); --dither-size: 4px; }
+#cmp-theme .th-fill[data-level="0"] { visibility: hidden; }
+#cmp-theme .th-tip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); padding: 6px 11px; background: var(--ink); color: var(--paper); font: 500 13px / 1.2 var(--sans); white-space: nowrap; z-index: 3; }
+#cmp-theme .th-set { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 4px; border: 0; background: none; font: 500 15px / 1 var(--sans); color: var(--text-soft); cursor: pointer; }
+#cmp-theme .th-set:hover, #cmp-theme .th-set:focus-visible { color: var(--ink); }
+#cmp-theme .th-val { font: 400 var(--type-px-11) / 1 var(--font-pixel); }
+#cmp-theme .dir-b .th-set { color: var(--ink); }
+#cmp-theme .dir-b .th-name { font: 400 var(--type-px-11) / 1 var(--font-pixel); }
+#cmp-theme .th-meter { --cells: 3; --cell-size: 7px; --cell-gap: 1px; }
+#cmp-theme .th-cell { display: inline-flex; padding: 1px; border: 1px solid var(--ink); }
+#cmp-theme .th-cell .cell { --cell-size: 12px; }
+  </style>
+  <script>
+/* Craft: 1 clicks, now and then; Enter or Space flips at once, the tooltip is instant on focus. 2 A blank 120 ms then swap,
+  B morph 120 ms, C 2-4-6 then the level in 200 ms; tooltip after a 300 ms hover rest. 3 stepped, no ease-in. 4 no press scale
+  (a setting, not a button role); nothing from zero. 5 a second click cancels and starts from the current frame. 6 level and
+  attribute swaps only. 7 motion off: the new state shows at once. */
+Dir.component("cmp-theme", (col, dir, api) => {
+  const $ = (s) => col.querySelector(s);
+  const make = (cls) => { const el = document.createElement("span"); el.className = cls; el.setAttribute("aria-hidden", "true"); return el; };
+  const btn = $(".th-icon"), glyph = $(".th-glyph"), set = $(".th-set"), val = $(".th-val"), status = $(".th-status"), tip = $(".th-tip");
+  const next = { auto: "light", light: "dark", dark: "auto" };
+  const word = { auto: "Auto", light: "Light", dark: "Dark" };
+  const level = { auto: 4, light: 0, dark: 8 };
+  const name = (s) => (s === "auto" ? "automatic" : s);
+  const sys = () => document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  let state = "auto";
+  let stop = () => {};
+  let rule, meter, fill, cell;
+  if (dir === "b") {
+    api.icon(glyph, sys() === "dark" ? "themeDark" : "themeLight");
+    const r = make("cells th-rule"); btn.append(r); rule = api.cells(r, 2);
+    const m = make("cells th-meter"); set.insertBefore(m, val); meter = api.cells(m, 3);
+    btn.dataset.marker = "under"; set.dataset.marker = "under";
+  }
+  if (dir === "c") {
+    fill = make("th-fill"); glyph.append(fill);
+    const c = make("th-cell"); set.insertBefore(c, val); cell = api.cells(c, 1)[0];
+    const bump = (el, up) => { el.dataset.level = String(Math.min(8, level[state] + (up ? 1 : 0))); };
+    [[btn, () => fill], [set, () => cell]].forEach(([host, el]) => {
+      host.addEventListener("pointerenter", () => bump(el(), true));
+      host.addEventListener("pointerleave", () => bump(el(), false));
+      host.addEventListener("focus", () => { if (host.matches(":focus-visible")) bump(el(), true); });
+      host.addEventListener("blur", () => bump(el(), false));
+    });
+  }
+  if (dir === "a") {
+    let t = 0;
+    const show = (on) => { clearTimeout(t); tip.hidden = !on; };
+    btn.addEventListener("pointerenter", () => { t = setTimeout(() => show(true), 300); });
+    btn.addEventListener("pointerleave", () => show(false));
+    btn.addEventListener("focus", () => { if (btn.matches(":focus-visible")) show(true); });
+    btn.addEventListener("blur", () => show(false));
+    const esc = (event) => { if (event.key === "Escape") show(false); };
+    document.addEventListener("keydown", esc);
+    api.cleanup(() => { clearTimeout(t); document.removeEventListener("keydown", esc); });
+  } else { tip.remove(); btn.removeAttribute("aria-describedby"); }
+
+  const paint = (animate) => {
+    const s = state;
+    const moving = animate && Dir.motionActive();
+    val.textContent = word[s];
+    btn.setAttribute("aria-label", `Color theme: ${name(s)}. Activate to switch to ${name(next[s])}.`);
+    if (dir === "a") tip.textContent = `Theme: ${name(s)}`; else btn.title = `Theme: ${name(s)}`;
+    status.textContent = s === "auto" ? `Automatic color theme, ${sys()} right now.` : `${word[s]} color theme selected.`;
+    stop();
+    if (dir === "a") {
+      if (!moving) { glyph.dataset.side = s; return; }
+      glyph.dataset.side = "none";
+      const t = setTimeout(() => { glyph.dataset.side = s; }, 120);
+      stop = () => clearTimeout(t);
+    } else if (dir === "b") {
+      stop = Dir.morph(glyph, (s === "auto" ? sys() : s) === "dark" ? "themeDark" : "themeLight");
+      [[3, 3], [8, 0], [0, 8]][["auto", "light", "dark"].indexOf(s)].forEach((v, i) => api.setLevel(rule[i], v));
+      meter.forEach((c, i) => api.setLevel(c, i === ["auto", "light", "dark"].indexOf(s) ? 8 : 0));
+    } else {
+      const p = moving ? [2, 4, 6, level[s]] : [level[s]];
+      stop = Dir.runField({ values: [0], total: 0, steps: p.length, stepMs: 50, render: (at) => { const k = at(0); if (k >= 0) fill.dataset.level = String(p[Math.min(k, p.length - 1)]); } });
+      cell.dataset.level = String(level[s]);
+    }
+  };
+  const flip = (event) => { state = next[state]; paint(event.detail !== 0); };
+  btn.addEventListener("click", flip);
+  set.addEventListener("click", flip);
+  paint(false);
+  api.cleanup(() => stop());
+});
+  </script>
+</article>
+
+<article class="cmp" id="cmp-motion" data-name="Motion control" data-group="Chrome" data-num="3"
+  data-baseline="A footer button that reads Motion and its state (on, off, reduced) in Departure. It is disabled when the system asks for reduced motion and hidden without scripts.">
+  <template data-markup>
+    <div class="mo-list">
+      <button class="mo" type="button" data-motion-toggle aria-label="Motion" aria-pressed="true" aria-describedby="mo-d"><span class="mo-n" aria-hidden="true">Motion</span><span class="mo-sw" aria-hidden="true"></span><span class="mo-s" aria-hidden="true">On</span><span class="vh" id="mo-d">Motion is on</span></button>
+      <button class="mo mo--r" type="button" data-motion-toggle aria-label="Motion" aria-pressed="false" aria-disabled="true" aria-describedby="mo-rd"><span class="mo-n" aria-hidden="true">Motion</span><span class="mo-sw" aria-hidden="true"></span><span class="mo-s" aria-hidden="true">Reduced by your system</span></button>
+      <p class="reason" id="mo-rd">Reduced by system setting. Your device asks for less motion, so this stays off.</p>
+      <p class="demo-label">The first control switches only itself. Its own blink stops when it is off and when the page's motion is off.</p>
+    </div>
+  </template>
+  <style>
+#cmp-motion .mo-list { display: grid; gap: 11px; justify-items: start; }
+#cmp-motion .mo { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 11px; border: 0; background: none; font: 500 15px / 1 var(--sans); color: var(--text-soft); cursor: pointer; }
+#cmp-motion .mo:hover, #cmp-motion .mo:focus-visible { color: var(--ink); }
+#cmp-motion .mo-s { font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--ink); }
+#cmp-motion .mo.is-off .mo-s, #cmp-motion .mo--r .mo-s { color: var(--muted); }
+#cmp-motion .mo--r { cursor: not-allowed; }
+#cmp-motion .mo-sw { display: none; }
+#cmp-motion .dir-b .mo-n { font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--ink); }
+#cmp-motion .dir-b .mo-sw { display: inline-grid; grid-template-columns: repeat(2, 7px); gap: 1px; width: 20px; height: 11px; padding: 1px 2px; border: var(--hairline) solid var(--line); }
+#cmp-motion .dir-b .mo-sw .cell { width: 7px; height: 7px; }
+#cmp-motion .dir-c .mo-sw { display: inline-flex; padding: 1px; border: 1px solid var(--ink); }
+#cmp-motion .dir-c .mo-sw .cell { --cell-size: 12px; }
+#cmp-motion .mo-sw.is-dotted { color: inherit; }
+  </style>
+  <script>
+/* Craft: 1 a rare click; Enter or Space switches at once. 2 B on 60 ms, off 30 ms; C on 200 ms, off 120 ms in fewer steps.
+  3 stepped on the 40 ms clock, no ease-in. 4 a setting, so no press scale. 5 a second click cancels and restarts from the
+  current levels. 6 level swaps only. 7 off or reduced: the blink stops on its full frame (on = solid cells), words still change. */
+Dir.component("cmp-motion", (col, dir, api) => {
+  const [btn, reduced] = col.querySelectorAll(".mo");
+  const word = btn.querySelector(".mo-s");
+  const desc = btn.querySelector(".vh");
+  let on = true;
+  let busy = false;
+  let stop = () => {};
+  let list = [];
+  if (dir === "a") reduced.classList.add("is-dotted");
+  else {
+    const n = dir === "b" ? 2 : 1;
+    list = api.cells(btn.querySelector(".mo-sw"), n, { level: 8 });
+    const sw = reduced.querySelector(".mo-sw");
+    sw.classList.add("is-dotted");
+    api.cells(sw, n, { clear: true });
+  }
+  reduced.addEventListener("click", (event) => event.preventDefault());
+  const rest = () => { if (!busy) list.forEach((c) => api.setLevel(c, on ? 8 : 0)); };
+  if (list.length) {
+    api.tick(btn, (count) => {
+      if (!on || busy) return;
+      // B: the right cell blinks, 400 ms on and 400 ms off. C: the cell dips to 6 for one tick every 10.
+      if (dir === "b") api.setLevel(list[1], Math.floor(count / 10) % 2 ? 0 : 8);
+      else api.setLevel(list[0], count % 10 ? 8 : 6);
+    }, rest);
+  }
+  btn.addEventListener("click", (event) => {
+    on = !on;
+    btn.setAttribute("aria-pressed", String(on));
+    btn.classList.toggle("is-off", !on);
+    word.textContent = on ? "On" : "Off";
+    desc.textContent = on ? "Motion is on" : "Motion is off";
+    if (!list.length) return;
+    const p = event.detail === 0 ? [on ? 8 : 0] : dir === "b" ? (on ? [4, 8] : [0]) : on ? [2, 4, 6, 8] : [4, 2, 0];
+    stop();
+    busy = true;
+    stop = Dir.runField({
+      values: [0], total: 0, steps: p.length, stepMs: dir === "b" ? 30 : on ? 50 : 40,
+      render: (at) => { const k = at(0); if (k >= 0) list.forEach((c) => api.setLevel(c, p[Math.min(k, p.length - 1)])); },
+      done: () => { busy = false; }
+    });
+  });
+  api.cleanup(() => stop());
+});
+  </script>
+</article>
+
+<article class="cmp" id="cmp-footer" data-name="Footer" data-group="Chrome" data-num="4" data-wide
+  data-baseline="Paper with a hairline above, four columns (Site, Contact, Feeds, Settings) under Departure headings, 48 px link rows, then a base row with the logo, the line about Sofia and Back to top. Two columns at 820 px.">
+  <template data-markup>
+    <footer class="ft">
+      <div class="ft-cols">
+        <nav class="ft-col" aria-label="Footer"><h4 class="ft-h">Site</h4><span class="rule-soft"></span>
+          <a href="#cmp-footer"><span data-label-step>Work</span></a><a href="#cmp-footer"><span data-label-step>Notes</span></a><a href="#cmp-footer"><span data-label-step>Labs</span></a><a href="#cmp-footer"><span data-label-step>About</span></a>
+        </nav>
+        <nav class="ft-col" aria-label="Contact"><h4 class="ft-h">Contact</h4><span class="rule-soft"></span>
+          <a href="#cmp-footer"><span data-label-step>Contact</span></a><a href="#cmp-footer" data-booking-modal-open><span data-label-step>Book a call</span></a><a href="#cmp-footer"><span data-label-step>CV</span></a>
+        </nav>
+        <nav class="ft-col" aria-label="Feeds"><h4 class="ft-h">Feeds</h4><span class="rule-soft"></span>
+          <a href="#cmp-footer"><span data-label-step>RSS</span></a><a href="#cmp-footer"><span data-label-step>For machines</span></a>
+        </nav>
+        <div class="ft-col"><h4 class="ft-h">Settings</h4><span class="rule-soft"></span>
+          <button class="ft-set" type="button" data-theme-toggle><span data-label-step>Theme <span class="ft-v">Auto</span></span></button>
+          <button class="ft-set" type="button" data-motion-toggle aria-pressed="true"><span data-label-step>Motion <span class="ft-v">On</span></span></button>
+        </div>
+      </div>
+      <div class="ft-base">
+        <a class="ft-mark" href="#cmp-footer"><span class="logo-mark" aria-hidden="true"></span><span>Alexander Traykov · Sofia, Bulgaria · 2026</span></a>
+        <a class="ft-top" href="#top" data-back-to-top>Back to top</a>
+      </div>
+    </footer>
+  </template>
+  <style>
+:is(#cmp-theme, #cmp-footer, #cmp-back-to-top, #cmp-dialog, #cmp-skip) .dir-c { --marker-step: 40ms; }
+#cmp-footer .ft { padding: 66px 16px 0; border-top: var(--hairline) solid var(--line); }
+#cmp-footer .dir-b .ft { padding-top: 48px; }
+#cmp-footer .dir-c .ft { border-top: 2px solid var(--ink); }
+#cmp-footer .ft-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 33px 22px; }
+#cmp-footer .ft-col { display: flex; flex-direction: column; align-items: stretch; }
+#cmp-footer .ft-h { margin: 0 0 8px; font: 400 var(--type-px-11) / 1.4 var(--font-pixel); color: var(--muted); }
+#cmp-footer .dir-a .ft-h { font: 500 13px / 1.4 var(--sans); }
+#cmp-footer .dir-a .rule-soft { display: none; }
+#cmp-footer .dir-b .rule-soft { height: 2px; }
+#cmp-footer .ft .rule-soft { margin-bottom: 8px; }
+#cmp-footer .ft-col a, #cmp-footer .ft-set { position: relative; display: flex; align-items: center; min-height: 48px; padding: 0; border: 0; background: none; text-align: left; text-decoration: none; font: 500 15px / 1.2 var(--sans); color: var(--ink); cursor: pointer; }
+#cmp-footer .dir-a :is(.ft-col a, .ft-set) { color: var(--text-soft); }
+#cmp-footer .dir-a :is(.ft-col a, .ft-set):is(:hover, :focus-visible) { color: var(--ink); }
+#cmp-footer :is(.dir-b, .dir-c) :is(.ft-col a, .ft-set) { padding-left: 4px; }
+#cmp-footer .ft-v { margin-left: 6px; font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--muted); }
+#cmp-footer .ft-base { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 11px 22px; margin-top: 44px; padding: 11px 0; border-top: var(--hairline) solid var(--line); font: 400 13px / 1.4 var(--sans); }
+#cmp-footer .dir-b .ft-base { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); }
+#cmp-footer .ft-base a { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; text-decoration: none; color: var(--text-soft); }
+#cmp-footer .ft-base a:hover { color: var(--ink); }
+#cmp-footer .ft-base .logo-mark { width: 24px; height: 24px; }
+@container col (max-width: 820px) { #cmp-footer .ft-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container col (max-width: 480px) { #cmp-footer .ft-cols { grid-template-columns: minmax(0, 1fr); } }
+  </style>
+  <script>
+/* Craft: 1 hover is frequent: B and C markers arrive in about 120 ms (C steps at 40 ms here), A only turns the text ink.
+  2 under 300 ms; the marker leaves faster than it came where the runtime allows. 3 stepped cells, ease-out across them.
+  4 links and settings, no press scale; the label steps aside, the row never moves. 5 markers retarget mid-flight. 6 levels
+  and a transform on the label. 7 motion off: markers land at once, settings still change their word. */
+Dir.component("cmp-footer", (col, dir, api) => {
+  col.querySelectorAll(".ft a").forEach((a) => a.addEventListener("click", (event) => event.preventDefault()));
+  if (dir !== "a") col.querySelectorAll(".ft-col a, .ft-set").forEach((el) => { el.dataset.marker = "left"; });
+  const [theme, motion] = col.querySelectorAll(".ft-set");
+  const words = ["Auto", "Light", "Dark"];
+  let index = 0;
+  theme.addEventListener("click", () => { index = (index + 1) % 3; theme.querySelector(".ft-v").textContent = words[index]; });
+  motion.addEventListener("click", () => {
+    const on = motion.getAttribute("aria-pressed") !== "true";
+    motion.setAttribute("aria-pressed", String(on));
+    motion.querySelector(".ft-v").textContent = on ? "On" : "Off";
+  });
+});
+  </script>
+</article>
+
+<article class="cmp" id="cmp-back-to-top" data-name="Back to top" data-group="Chrome" data-num="5"
+  data-baseline="A link reading Back to top and how far down you are, with 16 cells (5 by 10 px) filling with scroll; the leading cell is dithered.">
+  <template data-markup>
+    <div class="bt-wrap">
+      <a class="bt" href="#top" aria-label="Back to top"><span class="bt-cells cells" aria-hidden="true"></span><span class="bt-t">Back to top</span><span class="bt-p" aria-hidden="true"></span></a>
+      <label class="demo-label bt-scrub">Page position <input type="range" min="0" max="100" value="61"></label>
+      <p class="reason">On the site the link scrolls back to the top. Here it plays the return and resets the position.</p>
+    </div>
+  </template>
+  <style>
+#cmp-back-to-top .bt-wrap { display: grid; gap: 11px; justify-items: start; }
+#cmp-back-to-top .bt { position: relative; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 11px; min-height: 44px; padding: 0 2px; font: 500 13px / 1 var(--sans); color: var(--ink); text-decoration: none; }
+#cmp-back-to-top .dir-a .bt { color: var(--text-soft); }
+#cmp-back-to-top .dir-a .bt:is(:hover, :focus-visible) { color: var(--ink); }
+#cmp-back-to-top .dir-a .bt-cells { order: 2; }
+#cmp-back-to-top .dir-a .bt-p { display: none; }
+#cmp-back-to-top .bt-cells { --n: 1; --w: 6px; --h: 16px; --g: 1px; grid-template-columns: repeat(var(--n), var(--w)); gap: var(--g); }
+#cmp-back-to-top .bt-cells .cell { width: var(--w); height: var(--h); }
+#cmp-back-to-top .dir-b .bt-cells { --n: 24; --w: 7px; --h: 10px; }
+#cmp-back-to-top .dir-c .bt-cells { --n: 8; --w: 10px; --h: 10px; --g: 2px; }
+#cmp-back-to-top .bt-p { font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--muted); }
+#cmp-back-to-top .bt-scrub { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; }
+#cmp-back-to-top .bt-scrub input { accent-color: var(--ink); width: 160px; }
+  </style>
+  <script>
+/* Craft: 1 the scrub is direct and high-frequency; a click plays the return, Enter lands at once. 2 return 240 ms (A, B),
+  180 ms (C). 3 stepped inside, ease-out across the B cells. 4 a link, no press scale. 5 a new scrub or click cancels the
+  return. 6 level swaps only. 7 motion off: the cells empty at once. */
+Dir.component("cmp-back-to-top", (col, dir, api) => {
+  const link = col.querySelector(".bt");
+  const pct = col.querySelector(".bt-p");
+  const scrub = col.querySelector(".bt-scrub input");
+  const n = { a: 1, b: 24, c: 8 }[dir];
+  const list = api.cells(col.querySelector(".bt-cells"), n);
+  let hot = false;
+  let stop = () => {};
+  if (dir === "b") link.dataset.marker = "under";
+  const draw = () => {
+    const p = scrub.value / 100;
+    pct.textContent = `${Math.round(p * 100)}% down`;
+    if (dir === "a") { api.setLevel(list[0], p * 8); return; }
+    const x = p * n;
+    const k = Math.min(n - 1, Math.floor(x));
+    list.forEach((c, i) => api.setLevel(c, i < k ? 8 : i === k ? (x - k) * 8 + (hot && dir === "c" ? 1 : 0) : 0));
+  };
+  const heat = (on) => { hot = on; if (dir === "c") draw(); };
+  link.addEventListener("pointerenter", () => heat(true));
+  link.addEventListener("pointerleave", () => heat(false));
+  link.addEventListener("focus", () => { if (link.matches(":focus-visible")) heat(true); });
+  link.addEventListener("blur", () => heat(false));
+  scrub.addEventListener("input", () => { stop(); draw(); });
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    stop();
+    if (event.detail === 0) { scrub.value = "0"; draw(); return; }
+    const from = list.map((c) => Number(c.dataset.level));
+    const done = () => { scrub.value = "0"; draw(); };
+    if (dir === "a") stop = Dir.runField({ values: [0], total: 0, steps: 8, stepMs: 30, render: (at) => { const k = at(0); if (k >= 0) api.setLevel(list[0], from[0] * (1 - (k + 1) / 8)); }, done });
+    else if (dir === "b") stop = Dir.runField({ values: list.map((_, i) => (n - 1 - i) / (n - 1)), total: 220, steps: 1, stepMs: 20, render: (at) => list.forEach((c, i) => { if (at(i) >= 0) api.setLevel(c, 0); }), done });
+    else stop = Dir.runField({ values: [0], total: 0, steps: 3, stepMs: 60, render: (at) => { const k = at(0); if (k >= 0) list.forEach((c, i) => api.setLevel(c, [Math.min(from[i], 4), Math.min(from[i], 2), 0][k])); }, done });
+  });
+  draw();
+  api.cleanup(() => stop());
+});
+  </script>
+</article>
+
+<article class="cmp" id="cmp-dialog" data-name="Dialog" data-group="Chrome" data-num="6"
+  data-baseline="A native dialog for booking and the walkthrough: Departure heading, a close button, the calendar or video, a dimmed backdrop. Closes on a backdrop click and returns focus.">
+  <template data-markup>
+    <div class="dg-demo">
+      <button class="dg-open" type="button" data-marker="left"><span data-label-step>Book a call</span></button>
+      <p class="reason">Escape, the close button or a click outside closes it. Focus comes back to the button.</p>
+      <dialog class="dg" aria-labelledby="dg-t">
+        <div class="dg-in">
+          <header class="dg-head">
+            <span class="dg-k">Booking</span>
+            <h4 class="dg-t" id="dg-t">Pick a time that works.</h4>
+            <button class="dg-x" type="button" aria-label="Close"><span class="dg-xi"></span></button>
+          </header>
+          <span class="rule-soft dg-rule"></span>
+          <div class="dg-body"><div class="dg-ph"></div><p class="reason">The booking calendar loads here.</p></div>
+        </div>
+      </dialog>
+    </div>
+  </template>
+  <style>
+#cmp-dialog .dg-demo { display: grid; gap: 11px; justify-items: start; }
+#cmp-dialog .dg-open { position: relative; min-height: 44px; padding: 0 20px; border: var(--hairline) solid var(--ink); background: var(--paper); font: 500 15px / 1 var(--sans); cursor: pointer; }
+#cmp-dialog :is(.dir-b, .dir-c) .dg-open { min-height: 48px; }
+#cmp-dialog .dg { width: min(720px, calc(100vw - 32px)); max-height: 80vh; padding: 0; border: var(--hairline) solid var(--line); background: var(--paper); color: var(--ink); overflow: visible; }
+#cmp-dialog .dg::backdrop { background: var(--paper-50); }
+#cmp-dialog .dir-b .dg { border-color: var(--ink); }
+#cmp-dialog .dir-b .dg::backdrop { background: var(--ink-46); }
+#cmp-dialog .dir-c .dg { border: 2px solid var(--ink); }
+#cmp-dialog .dir-c .dg::before { content: ""; position: absolute; inset: -8px; border: 6px solid var(--ink); mask: var(--dither-1) 0 0 / var(--dither-size) var(--dither-size); pointer-events: none; }
+#cmp-dialog .dir-c .dg::backdrop { background: var(--ink); mask: var(--dither-2) 0 0 / var(--dither-size, 12px) var(--dither-size, 12px); }
+#cmp-dialog .dg-in { max-height: calc(80vh - 4px); overflow: auto; }
+#cmp-dialog :is(.dir-a, .dir-b) .dg { clip-path: inset(0); transition: clip-path var(--switch) steps(4, jump-start); }
+#cmp-dialog .dg.is-shut { clip-path: inset(calc(50% - 1px) 0); }
+#cmp-dialog .dir-a .dg.is-closing { transition: clip-path 120ms steps(2, jump-start); }
+#cmp-dialog .dir-b .dg.is-closing { opacity: 0; transition: opacity var(--afterglow) steps(3, jump-start); }
+#cmp-dialog .dg-open, #cmp-skip .sk { transition: transform 120ms var(--ease-out-expo); }
+@media (prefers-reduced-motion: no-preference) { html:not([data-motion="off"]) :is(#cmp-dialog .dg-open, #cmp-skip .sk):active { transform: scale(0.97); } }
+#cmp-dialog .dg-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 11px; padding: 11px 11px 11px 22px; }
+#cmp-dialog .dg-k { display: none; flex: 1 0 100%; font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--muted); }
+#cmp-dialog .dir-b .dg-k { display: block; padding-top: 8px; }
+#cmp-dialog .dg-t { flex: 1; margin: 0; font: 400 var(--type-px-22) / 1.2 var(--font-pixel); }
+#cmp-dialog .dg-x { position: relative; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: var(--hairline) solid var(--ink); background: var(--paper); cursor: pointer; }
+#cmp-dialog :is(.dir-b, .dir-c) .dg-x { width: 48px; height: 48px; }
+#cmp-dialog .dg-rule { display: none; }
+#cmp-dialog .dir-b .dg-rule { display: block; height: 4px; }
+#cmp-dialog .dg-body { display: grid; gap: 11px; padding: 11px 22px 22px; }
+  </style>
+  <script>
+/* Craft: 1 a rare click; opened with Enter or closed with Escape it is instant. 2 A in 200 ms, out 120 ms in 2 steps; B in
+  240 ms, out 180 ms; C dissolve in 200, out 180. 3 stepped inside, no ease-in. 4 the trigger presses to scale(0.97); the panel
+  opens from a 2 px line at its centre (clipped, never scaled from zero) and stays centred; its content is already there.
+  5 A and B are clip-path and opacity transitions; C keeps the stepped mask (a one-shot). 6 clip-path, opacity and the mask
+  levels. 7 motion off: it appears and goes at once. */
+Dir.component("cmp-dialog", (col, dir, api) => {
+  const trigger = col.querySelector(".dg-open");
+  const dg = col.querySelector(".dg");
+  const x = col.querySelector(".dg-x");
+  api.icon(col.querySelector(".dg-xi"), "close", { cell: 3 });
+  x.dataset.marker = dir === "b" ? "under" : "left";
+  api.placeholder(col.querySelector(".dg-ph"));
+  dg.style.setProperty("--switch", dir === "b" ? "240ms" : "200ms");
+  let busy = false;
+  const show = (event) => {
+    if (dg.open) return;
+    const quick = event.detail === 0 || !Dir.motionActive();
+    if (dir === "c") { dg.showModal(); if (!quick) api.open(dg); return; }
+    dg.classList.toggle("is-shut", !quick);
+    dg.showModal();
+    void dg.offsetWidth;
+    dg.classList.remove("is-shut");
+  };
+  const hide = (quick) => {
+    if (!dg.open || busy) return;
+    const done = () => { dg.close(); dg.classList.remove("is-closing", "is-shut"); busy = false; trigger.focus(); };
+    if (quick || !Dir.motionActive()) { done(); return; }
+    busy = true;
+    if (dir === "c") { api.leave(dg, { hide: false }).then(done); return; }
+    let fired = false;
+    const end = () => { if (!fired) { fired = true; done(); } };
+    dg.addEventListener("transitionend", end, { once: true });
+    api.timeout(end, 320);
+    dg.classList.add("is-closing", ...(dir === "a" ? ["is-shut"] : []));
+  };
+  trigger.addEventListener("click", show);
+  x.addEventListener("click", (event) => hide(event.detail === 0));
+  dg.addEventListener("cancel", (event) => { event.preventDefault(); hide(true); });
+  dg.addEventListener("click", (event) => {
+    if (event.target !== dg) return;
+    const r = dg.getBoundingClientRect();
+    if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) hide(false);
+  });
+  api.cleanup(() => { if (dg.open) dg.close(); });
+});
+  </script>
+</article>
+
+<article class="cmp" id="cmp-skip" data-name="Skip link" data-group="Chrome" data-num="7"
+  data-baseline="Not on the site today. Proposed: a Skip to content link, first in the tab order, hidden until it has focus.">
+  <template data-markup>
+    <div class="sk-demo">
+      <button class="demo-link sk-start" type="button">Focus the skip link</button>
+      <div class="sk-frame">
+        <a class="sk" href="#sk-main" data-marker="left"><span data-label-step>Skip to content</span></a>
+        <div class="sk-bar" aria-hidden="true"><span class="logo-mark"></span><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="sk-main" id="sk-main" tabindex="-1"><p class="reason">The page content starts here.</p></div>
+      </div>
+      <p class="demo-label">Or click above the frame and press Tab. It appears at once, in this direction's secondary button style.</p>
+    </div>
+  </template>
+  <style>
+#cmp-skip .sk-demo { display: grid; gap: 11px; justify-items: start; }
+#cmp-skip .sk-frame { position: relative; width: 100%; border: var(--hairline) solid var(--line); }
+#cmp-skip .sk { position: absolute; top: 8px; left: 8px; z-index: 2; display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border: var(--hairline) solid var(--ink); background: var(--paper); color: var(--ink); font: 500 15px / 1 var(--sans); text-decoration: none; }
+#cmp-skip :is(.dir-b, .dir-c) .sk { min-height: 48px; }
+#cmp-skip .dir-b .sk:focus::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 5px); mask: var(--dither-3) 0 0 / 4px 4px; }
+#cmp-skip .sk:not(:focus) { width: 1px; height: 1px; min-height: 0; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#cmp-skip .sk-bar { display: flex; align-items: center; gap: 16px; height: 64px; padding: 0 16px; border-bottom: var(--hairline) solid var(--line); }
+#cmp-skip .sk-bar .logo-mark { width: 24px; height: 24px; margin-right: auto; }
+#cmp-skip .sk-bar i { width: 28px; height: 6px; background: var(--line); }
+#cmp-skip .sk-main { padding: 22px 16px 33px; }
+  </style>
+  <script>
+/* Craft: 1 keyboard only, so it appears at once and never waits. 2 no entry or exit time. 3 none. 4 scale(0.97) on press,
+  120 ms. 5 nothing to interrupt. 6 transform only. 7 motion off: no press scale; it still appears. */
+Dir.component("cmp-skip", (col, dir, api) => {
+  const sk = col.querySelector(".sk");
+  const main = col.querySelector(".sk-main");
+  col.querySelector(".sk-start").addEventListener("click", () => sk.focus());
+  sk.addEventListener("click", (event) => { event.preventDefault(); main.focus(); });
+});
+  </script>
+</article>
+</section>

@@ -11,6 +11,11 @@ import "./segmented.js";
 import "./cell-range.js";
 import "./video-cells.js";
 import "./point-refresh.js";
+import "./edge-marker.js";
+import "./tooltip.js";
+import "./disclosure.js";
+
+export { loader } from "./loader.js";
 
 const rotatorObservers = new Map();
 const rotatorTimers =
@@ -297,7 +302,28 @@ function syncMotionState() {
   caseVideos.forEach(syncCaseVideo);
 }
 
+// Status lines (picks, B): a polite region marked data-status-snap swaps its words with the B snap
+// (280 ms, one step) when its owner rewrites them; never scrambled, one update per change.
+const statusLines = new WeakSet();
+function initStatusSnap() {
+  document.querySelectorAll('[aria-live="polite"][data-status-snap]').forEach((line) => {
+    if (statusLines.has(line)) return;
+    statusLines.add(line);
+    let last = line.textContent;
+    new MutationObserver(() => {
+      if (line.textContent === last) return;
+      last = line.textContent;
+      line.classList.remove("is-snapping");
+      if (!isMotionActive() || !last?.trim()) return;
+      void line.offsetWidth;
+      line.classList.add("is-snapping");
+    }).observe(line, { childList: true, characterData: true, subtree: true });
+    line.addEventListener("animationend", () => line.classList.remove("is-snapping"));
+  });
+}
+
 function initializeMotion() {
+  initStatusSnap();
   initScramble();
   initMotionMedia();
   initCaseVideos();

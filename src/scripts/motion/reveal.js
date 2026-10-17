@@ -41,6 +41,10 @@ function decorateStandalone(root = document) {
   });
 }
 
+// Group stagger (picks, A): cumulative gaps of 70, 55, 45, 40, 35, 30 ms, so the first item gets the
+// most time and the whole group lands inside the 400 ms budget. Capped at seven steps.
+const STAGGER_DELAYS = [0, 70, 125, 170, 210, 245, 275];
+
 function decorateGroups(root = document) {
   root.querySelectorAll("[data-reveal-group]").forEach((group) => {
     Array.from(group.children).forEach((child, index) => {
@@ -49,8 +53,20 @@ function decorateGroups(root = document) {
       }
 
       if (!child.hasAttribute("data-reveal-delay")) {
-        child.dataset.revealDelay = String(Math.min(index, 6) * 60);
+        child.dataset.revealDelay = String(STAGGER_DELAYS[Math.min(index, STAGGER_DELAYS.length - 1)]);
       }
+    });
+  });
+}
+
+// Image grids (picks, A): each card sweeps in (six bands, 300 ms) in reading order, on the same
+// stagger, so a grid lands inside 400 ms. Galleries swap one image per theme and are left alone.
+function decorateImageGrids(root = document) {
+  root.querySelectorAll(".case-image-grid:not(.case-gallery) > .case-image-grid__items").forEach((items) => {
+    Array.from(items.children).forEach((card, index) => {
+      if (!card.matches(".case-image-card") || card.hasAttribute("data-reveal")) return;
+      card.dataset.reveal = "scan";
+      card.dataset.revealDelay = String(STAGGER_DELAYS[Math.min(index, STAGGER_DELAYS.length - 1)]);
     });
   });
 }
@@ -96,6 +112,7 @@ export function initReveal() {
   pageEnterElements = [];
   decorateStandalone();
   decorateGroups();
+  decorateImageGrids();
   initScramble();
 
   if (!isMotionActive() || isHistoryRestore()) {

@@ -1,10 +1,15 @@
-// Round 3 case index (motion plan §8). The inline script in CaseStudyPage owns the semantics:
-// which link is aria-current, the hash, the compact toggle. This module only draws on top of it:
-// one dithered reading cell per section, "28% read", and on phones a strip with the section number,
-// a title that resolves through ░ ▓, a Contents/Close word, 30 progress cells and a sheet that
-// switches on. Link text is never changed, so the private template and no-JS stay identical.
-import { createCells, curves, runField, setLevel } from "./motion/cells.js";
+// Case index (picks batch 3). The inline script in CaseStudyPage owns the semantics: which link is
+// aria-current, the hash, the compact toggle. This module only draws on top of it.
+// Desktop rail (hybrid A + C): "On this case" and "28% read" in Departure 11 over one 4 × 17 reading
+// cell per section; at 901–1180 only the cells show and each title moves into the A tooltip.
+// Phone strip and sheet (hybrid C + A): the section number, a title that resolves through the dither
+// mask (2 → 4 → 6 → none, 50 ms a step), a Contents/Close word on an A soft rule, a 12-cell progress
+// row, and a sheet that resolves from a line (240 ms) over a level-2 ink scrim and leaves with the
+// afterglow (180 ms; instant from the keyboard). Link text is never changed, so the private template
+// and no-JS stay identical.
+import { createCells, setLevel } from "./motion/cells.js";
 import { isMotionActive } from "./motion/lifecycle.js";
+import { initTooltips } from "./motion/tooltip.js";
 
 const pad2 = (value) => String(value).padStart(2, "0");
 
@@ -46,63 +51,102 @@ function initCaseIndex(toc) {
   word.textContent = "Contents";
   const progress = make("case-toc__progress");
   if (toggle instanceof HTMLElement) toggle.append(number, word, progress);
-  const progressCells = createCells(progress, 30, { clear: true });
+  const progressCells = createCells(progress, 12, { clear: true });
 
-  // Phone strip title: when the inline script names a new section, it resolves through ░ ▓.
-  let writing = false;
-  let stopTitle = () => {};
-  const resolveTitle = (text) => {
-    stopTitle();
-    if (!(current instanceof HTMLElement) || !compact.matches || !isMotionActive()) return;
-    const chars = [...text];
-    stopTitle = runField({
-      values: chars.map((_, index) => index / Math.max(1, chars.length - 1)),
-      total: 220,
-      curve: curves.out,
-      steps: 2,
-      stepMs: 30,
-      render: (stepAt) => {
-        writing = true;
-        current.textContent = chars
-          .map((char, index) => (char === " " ? " " : stepAt(index) < 0 ? " " : stepAt(index) >= 2 ? char : stepAt(index) === 0 ? "░" : "▓"))
-          .join("");
-        writing = false;
-      },
-      done: () => {
-        writing = true;
-        current.textContent = text;
-        writing = false;
-      }
+  // Phone strip title: when the inline script names a new section, it resolves through the dither
+  // mask (data-level 2 → 4 → 6, then plain). The text itself is never rewritten here.
+  let titleTimers = [];
+  const resolveTitle = () => {
+    titleTimers.forEach((timer) => window.clearTimeout(timer));
+    titleTimers = [];
+    if (!(current instanceof HTMLElement)) return;
+    delete current.dataset.level;
+    if (!compact.matches || !isMotionActive()) return;
+    [2, 4, 6].forEach((level, step) => {
+      titleTimers.push(window.setTimeout(() => (current.dataset.level = String(level)), step * 50));
     });
+    titleTimers.push(window.setTimeout(() => delete current.dataset.level, 150));
   };
   if (current instanceof HTMLElement) {
     let lastTitle = current.textContent?.trim() || "";
     new MutationObserver(() => {
-      // Observer callbacks run after the write, so frames of our own animation are recognised by
-      // their shade characters rather than by a flag.
       const next = current.textContent?.trim() || "";
-      if (writing || /[░▓]/.test(next) || !next.replace(/\s/g, "")) return;
-      if (next !== lastTitle) {
-        lastTitle = next;
-        resolveTitle(next);
-      }
+      if (!next || next === lastTitle) return;
+      lastTitle = next;
+      resolveTitle();
     }).observe(current, { childList: true, characterData: true, subtree: true });
   }
 
-  // Contents / Close, and the sheet switching on from the strip.
+  // Narrow desktop (901–1180): cells only; the title moves into the A tooltip. Elsewhere the
+  // tooltip is emptied, so it never shows over a visible title.
+  const narrow = window.matchMedia("(min-width: 901px) and (max-width: 1180px)");
+  const syncTips = () => {
+    links.forEach((link) => {
+      const text = link.textContent?.trim() || "";
+      if (narrow.matches) {
+        link.dataset.tooltip = text;
+        link.setAttribute("title", text);
+      } else if (link.dataset.tooltipReady === "true") {
+        delete link.dataset.tooltip;
+        link.setAttribute("title", "");
+      }
+    });
+    if (narrow.matches) initTooltips(toc);
+  };
+  syncTips();
+  narrow.addEventListener?.("change", syncTips);
+
+  // Contents / Close, and the sheet: it resolves from a 2 px line through the dither (240 ms) over a
+  // scrim; a pointer close leaves with the afterglow (180 ms), Escape and keyboard close at once.
   if (toggle instanceof HTMLElement && list instanceof HTMLElement) {
+    const scrim = document.createElement("span");
+    scrim.className = "case-toc__scrim";
+    scrim.setAttribute("aria-hidden", "true");
+    scrim.hidden = true;
+    document.body.append(scrim);
+
+    let pointerClose = false;
+    const notePointer = (event) => {
+      pointerClose = event.type === "pointerdown" || (event.type === "click" && event.detail > 0);
+    };
+    document.addEventListener("pointerdown", notePointer, true);
+    document.addEventListener("keydown", () => (pointerClose = false), true);
+
+    let closeTimer = 0;
+    const clearSheet = () => {
+      window.clearTimeout(closeTimer);
+      list.classList.remove("is-sheet-on", "is-sheet-off");
+    };
+
+    let wasOpen = false;
     new MutationObserver(() => {
       const open = toggle.getAttribute("aria-expanded") === "true";
       word.textContent = open ? "Close" : "Contents";
-      if (!open) return;
-      const active = list.querySelector('[aria-current="location"]')?.closest("li");
-      if (active instanceof HTMLElement) list.scrollTop = Math.max(0, active.offsetTop - list.clientHeight / 3);
-      if (!isMotionActive()) return;
-      list.classList.remove("is-sheet-on");
-      void list.offsetWidth;
-      list.classList.add("is-sheet-on");
+      if (open === wasOpen) return;
+      wasOpen = open;
+      const animate = pointerClose && isMotionActive() && compact.matches;
+      pointerClose = false;
+      if (open) {
+        clearSheet();
+        const strip = tools instanceof HTMLElement ? tools.getBoundingClientRect().bottom : toggle.getBoundingClientRect().bottom;
+        scrim.style.setProperty("--strip-bottom", `${Math.max(0, Math.round(strip))}px`);
+        scrim.hidden = !compact.matches;
+        const active = list.querySelector('[aria-current="location"]')?.closest("li");
+        if (active instanceof HTMLElement) list.scrollTop = Math.max(0, active.offsetTop - list.clientHeight / 3);
+        if (!animate) return;
+        void list.offsetWidth;
+        list.classList.add("is-sheet-on");
+        return;
+      }
+      scrim.hidden = true;
+      clearSheet();
+      if (!animate) return;
+      list.classList.add("is-sheet-off");
+      closeTimer = window.setTimeout(() => list.classList.remove("is-sheet-off"), 180);
     }).observe(toggle, { attributes: true, attributeFilter: ["aria-expanded"] });
-    list.addEventListener("animationend", () => list.classList.remove("is-sheet-on"));
+    list.addEventListener("animationend", (event) => {
+      if (event.target === list) list.classList.remove("is-sheet-on");
+    });
   }
 
   let lastActive = -2;
@@ -159,6 +203,23 @@ function initCaseIndex(toc) {
   paint();
 }
 
-const start = () => document.querySelectorAll(".case-toc").forEach(initCaseIndex);
+// Sibling nav (C): the marker leaves through 6 → 3 → 0 (80 ms) after a pointer leaves the half.
+function initSiblingMarkers() {
+  document.querySelectorAll(".case-sibling-nav a").forEach((link) => {
+    if (!(link instanceof HTMLElement) || link.dataset.markerReady === "true") return;
+    link.dataset.markerReady = "true";
+    link.addEventListener("pointerenter", () => link.classList.remove("is-marker-out"));
+    link.addEventListener("pointerleave", (event) => {
+      if (event.pointerType === "touch" || !isMotionActive()) return;
+      link.classList.add("is-marker-out");
+    });
+    link.addEventListener("animationend", () => link.classList.remove("is-marker-out"));
+  });
+}
+
+const start = () => {
+  document.querySelectorAll(".case-toc").forEach(initCaseIndex);
+  initSiblingMarkers();
+};
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
 else start();

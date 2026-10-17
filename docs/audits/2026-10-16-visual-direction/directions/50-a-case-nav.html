@@ -1,0 +1,272 @@
+<section class="group" id="g-case-nav">
+<h2>Case navigation</h2>
+<style>.b5-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);font:500 15px/1 var(--sans);text-decoration:none;cursor:pointer}.b5-btn{transition:transform 120ms cubic-bezier(0.19,1,0.22,1)}.b5-btn:not([aria-disabled="true"]):active{transform:scale(0.97)}html[data-motion="off"] .b5-btn:active{transform:none}@media (prefers-reduced-motion:reduce){.b5-btn:active{transform:none !important}}.dir-a .b5-btn{min-height:44px}.b5-btn--p{min-width:184px}.dir-a .b5-btn--p{min-width:176px}.dir-b .b5-btn--s.is-hot::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 5px);mask:var(--dither-3) 0 0/var(--dither-size)}.b5-q{display:inline-grid;align-content:center;gap:4px;min-height:44px;font:500 15px/1.2 var(--sans);text-decoration:none}.b5-q i{display:inline-block;font:400 15px/1 var(--mono);font-style:normal}.b5-q:hover .rule-soft,.b5-q:focus-visible .rule-soft{mask:none}.b5-q:hover i{transform:translateX(3px)}.dir-a .b5-q:hover i{transition:transform 120ms steps(2,jump-start)}.dir-b .b5-q:hover i{transition:transform 90ms steps(3,jump-start)}.b5-sc{display:flex;align-items:center;gap:12px;min-height:44px;margin-top:11px;font:500 13px/1 var(--sans);color:var(--muted)}.b5-sc input{flex:1;min-width:0;accent-color:var(--ink)}.b5-h{font:400 var(--type-h2)/1.1 var(--font-pixel);margin:0}.cx{padding:16px 16px 240px}.cx-m{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--muted)}.cx-t{font:400 var(--type-px-22)/1.2 var(--font-pixel);margin:6px 0 16px}.cx-s{padding-top:22px}.cx-h{font:500 15px/1.3 var(--sans);margin-bottom:11px}.cx-l{display:block;height:6px;margin:0 0 8px;background:var(--ink);mask:var(--dither-2) 0 0/8px 8px}.cx-p{display:block;aspect-ratio:16/9;margin:8px 0 16px;border:1px solid var(--line)}.b5-dot::before{content:"";position:absolute;inset:0;border:1px solid var(--ink);mask:var(--dither-4) 0 0/var(--dither-size);pointer-events:none}</style><article class="cmp" id="cmp-sibling" data-name="Sibling nav" data-group="Case pages" data-num="37"
+data-baseline="A hairline above two links, a small label and a 22 px title each; hover brings a 6 px left marker in three steps. An empty side says more case studies are coming.">
+<template data-markup>
+<nav class="sn" aria-label="More case studies">
+<a class="sn-half sn-prev" href="#cmp-sibling" data-marker="left"><i class="sn-a" aria-hidden="true">←</i><span class="sn-in" data-label-step><span class="sn-l">Previous case<span class="sn-n" aria-hidden="true"> · 01</span></span><span class="sn-t">Designing Pave</span><span class="sn-r" aria-hidden="true"></span></span></a>
+<a class="sn-half sn-next" href="#cmp-sibling" data-marker="right"><span class="sn-in" data-label-step><span class="sn-l">Next case<span class="sn-n" aria-hidden="true"> · 03</span></span><span class="sn-t">Pave, a new look</span><span class="sn-r" aria-hidden="true"></span></span><i class="sn-a" aria-hidden="true">→</i></a>
+<p class="sn-half sn-empty b5-dot" hidden>More case studies coming soon</p>
+</nav>
+<button class="demo-link" type="button" data-t>Show the last case</button>
+</template>
+<style>#cmp-sibling{.sn{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}.sn-half{position:relative;display:flex;align-items:center;gap:11px;min-height:88px;padding:11px 16px;text-decoration:none}.sn-next{justify-content:flex-end;text-align:right}.sn-in{display:grid;gap:6px;min-width:0}.sn-l{font:500 13px/1.2 var(--sans);color:var(--muted)}.sn-n{display:none}.sn-t{font:400 var(--type-px-22)/1.15 var(--font-pixel)}.sn-a{font:400 15px/1 var(--mono);font-style:normal}.sn-empty{font:400 13px/1.4 var(--sans);color:var(--muted)}.dir-a .sn-prev.is-hot .sn-a{transform:translateX(-3px);transition:transform 120ms steps(2,jump-start)}.dir-a .sn-next.is-hot .sn-a{transform:translateX(3px);transition:transform 120ms steps(2,jump-start)}.sn-r{display:none}.dir-b .sn{border-top:0;padding-top:3px;background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 5px) 0 0/100% 3px no-repeat}.dir-b .sn-half{min-height:96px}.dir-b .sn-l{font:400 var(--type-px-11)/1.2 var(--font-pixel)}.dir-b .sn-n{display:inline}.dir-b .sn-r{display:flex;gap:1px;height:3px}.dir-b .sn-r .cell{flex:1;width:auto;height:3px}.dir-c .sn{border-top:2px solid var(--ink)}.dir-c .sn-half{min-height:99px}.dir-c .sn-l{font:400 var(--type-px-11)/1.2 var(--font-pixel)}.dir-c .sn-t{font-size:var(--type-px-33)}@container col (max-width:400px){.sn{grid-template-columns:1fr}.dir-a .sn-half{min-height:66px}.dir-c .sn-t{font-size:var(--type-px-22)}}}</style><script>
+/* Craft: 1 hover; B rule empties at once 2 in ≤120, out 0 3 steps in, linear across 4 none 5 runField retargets 6 levels 7 off: snaps */
+Dir.component("cmp-sibling",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);
+col.querySelectorAll(".sn a").forEach((a)=>a.addEventListener("click",(e)=>e.preventDefault()));
+if(dir==="b")col.querySelectorAll(".sn-r").forEach((r)=>{
+const host=r.closest("a"),cs=api.cells(r,30,{level:3}),rev=host.classList.contains("sn-prev");
+let stop=()=>{};
+const go=(on)=>{stop();if(!on){cs.forEach((c)=>api.setLevel(c,3));return;}stop=Dir.runField({values:cs.map((_,i)=>(rev?1-i/29:i/29)),total:100,curve:Dir.curves.linear,steps:1,stepMs:20,render:(at)=>cs.forEach((c,i)=>{if(at(i)>=0)api.setLevel(c,8);})});};
+host.addEventListener("pointerenter",()=>go(1));
+host.addEventListener("pointerleave",()=>go(0));
+host.addEventListener("focus",()=>go(1));
+host.addEventListener("blur",()=>go(0));
+});
+const t=$("[data-t]"),nx=$(".sn-next"),em=$(".sn-empty");
+t.addEventListener("click",()=>{
+const last=!nx.hidden;
+nx.hidden=last;em.hidden=!last;
+t.textContent=last?"Show both cases":"Show the last case";
+});
+});
+</script></article>
+<article class="cmp" id="cmp-contact-prompt" data-name="Contact prompt" data-group="Case pages" data-num="38"
+data-baseline="An aside with a 33 px heading and a sentence, a primary Write to me and a secondary Book a call.">
+<template data-markup>
+<aside class="cp" aria-labelledby="cp-h">
+<h4 class="cp-h" id="cp-h">Working on something similar?</h4>
+<i class="rule-soft cp-r" aria-hidden="true"></i>
+<p class="cp-s">If your product has the same kind of problem, I’m happy to talk it through.</p>
+<div class="cp-a">
+<a class="b5-btn b5-btn--p" href="#cmp-contact-prompt" data-press="primary" data-marker="left"><span data-label-step>Write to me</span></a>
+<a class="b5-btn b5-btn--s" href="#cmp-contact-prompt" data-booking-modal-open data-press="secondary" data-marker="left"><span data-label-step>Book a call</span></a>
+</div>
+</aside>
+</template>
+<style>#cmp-contact-prompt{.cp{display:grid;gap:16px;padding-top:22px}.cp-h{font:400 var(--type-px-33)/1.1 var(--font-pixel)}.cp-s{font-size:var(--read-size);max-width:46ch}.cp-a{display:flex;flex-wrap:wrap;gap:11px}.dir-a .cp{border-top:1px solid var(--line)}.dir-a .cp-r{display:none}.dir-b .cp-h{font-size:var(--type-px-22)}.dir-b .cp-r{height:2px;margin-top:-8px}.dir-b .cp-a{gap:8px}.dir-c .cp-h{font-size:var(--type-px-44)}.dir-c .cp-r{margin-top:-5px}@container col (max-width:400px){.dir-a .cp-h{font-size:var(--type-px-22)}.dir-c .cp-h{font-size:var(--type-px-33)}.cp-a{flex-direction:column}}}</style><script>
+/* Craft: 1 click 2 press ≤180, shorter out 3 steps in, ease-out across 4 scale .97 5 fill retargets 6 transform, levels 7 off: no scale or fill */
+Dir.component("cmp-contact-prompt",(col)=>{
+col.querySelectorAll(".cp a").forEach((a)=>a.addEventListener("click",(e)=>e.preventDefault()));
+});
+</script></article>
+<article class="cmp" id="cmp-index-rail" data-name="Case index, desktop rail" data-group="Case pages" data-num="39"
+data-baseline="On this case and a percent read on a hairline; rows of a 6 × 17 reading cell, a counter and the title. The current cell fills as you read; read rows settle to a light shade.">
+<template data-markup>
+<div class="ix">
+<div class="ix-sc"><div class="cx"></div></div>
+<nav class="ix-rail" aria-label="On this case">
+<div class="ix-hd"><span>On this case</span><span class="ix-pc">0% read</span><span class="cells ix-mt" style="--cells:24;--cell-size:4px;--cell-gap:1px" aria-hidden="true"></span></div>
+<ol class="ix-ol"></ol>
+</nav>
+<p class="ix-tip" aria-hidden="true" hidden></p>
+</div>
+<label class="b5-sc">Scrub through the case <input type="range" min="0" max="100" value="0"></label>
+<button class="demo-link" type="button" data-n aria-pressed="false">Show the narrow rail</button>
+</template>
+<style>#cmp-index-rail{.ix{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 190px;height:340px;border:1px solid var(--line);overflow:hidden}.ix-sc{position:relative;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.ix-rail{position:relative;display:flex;flex-direction:column;min-height:0;border-left:1px solid var(--line)}.ix-hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;padding:12px;border-bottom:1px solid var(--line);font:500 13px/1.3 var(--sans)}.ix-pc{color:var(--muted)}.ix-mt{display:none}.ix-ol{list-style:none;margin:0;padding:6px 0 12px;overflow-y:auto;min-height:0;scrollbar-width:none}.ix-r{display:grid;grid-template-columns:auto 2.4ch minmax(0,1fr);gap:10px;align-items:start;min-height:33px;padding:8px 12px;font:400 13px/17px var(--sans);color:var(--muted);text-decoration:none}.ix-r .cell{width:var(--ixc);height:17px}.ix-n{font:400 var(--type-px-11)/17px var(--font-pixel)}.ix-t{position:relative}.ix-r.is-read{color:var(--text-soft)}.ix-r[aria-current]{color:var(--ink);font-weight:500}.ix-r:hover{color:var(--ink)}.ix-tip{position:absolute;z-index:2;right:64px;padding:6px 11px;background:var(--ink);color:var(--paper);font:500 13px/1.3 var(--sans);white-space:nowrap;pointer-events:none}.is-nar{grid-template-columns:minmax(0,1fr) auto}.is-nar .ix-hd>span:not(.ix-mt){position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.is-nar .ix-hd{min-height:44px}.is-nar .ix-t{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.is-nar .ix-r{grid-template-columns:auto auto}.dir-a{--ixc:4px}.dir-a .ix-n{display:none}.dir-a .ix-r{grid-template-columns:auto minmax(0,1fr);font-size:14px}.dir-a .is-nar .ix-r{grid-template-columns:auto}.dir-b{--ixc:7px}.dir-b .ix-r{min-height:32px;padding-block:7px 8px}.dir-b .ix-hd>span:first-child,.dir-c .ix-hd{font:400 var(--type-px-11)/1.3 var(--font-pixel)}.dir-b .ix-pc{display:none}.dir-b .ix-mt{display:inline-grid}.dir-b .ix-r.is-read .ix-t::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 5px);mask:var(--dither-3) 0 0/var(--dither-size)}.dir-c{--ixc:12px}.dir-c .ix-rail{border-left:0;padding-left:4px}.dir-c .ix-rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ink);mask:var(--dither-2) 0 0/var(--dither-size)}.dir-c .is-nar .ix-n{display:none}.dir-c .is-nar .ix-r{grid-template-columns:auto}@container col (max-width:400px){.ix{grid-template-columns:minmax(0,1fr) 160px}}}</style><script>
+/* Craft: 1 scroll: follows at once, row kept in view instantly; keyboard jump instant 2 none 3 none 4 none 5 rAF 6 levels 7 same */
+Dir.component("cmp-index-rail",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);
+const T=["Summary","Where it started","One workspace","Preview for engineers","Safe to build","Email gets an editor","A rebrand before launch","Plan before pixels","What shipped","What I would do next"];
+const mk=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+const fr=$(".ix"),sc=$(".ix-sc"),doc=$(".cx"),ol=$(".ix-ol");
+const pc=$(".ix-pc"),mt=api.cells($(".ix-mt"),24),sb=$("input"),tip=$(".ix-tip");
+let sd=7;const rnd=()=>(sd=(sd*9301+49297)%233280)/233280;
+doc.innerHTML='<p class="cx-m">Launched · 12 min read</p><p class="cx-t">Designing Pave</p>';
+const secs=T.map((t,i)=>{
+const s=mk("section","cx-s"),h=mk("p","cx-h");h.textContent=t;s.append(h);
+const n=4+Math.floor(rnd()*6);
+for(let k=0;k<n;k+=1){const l=mk("i","cx-l");l.style.width=`${k === n - 1 ? 30 + rnd() * 40 : 82 + rnd() * 18}%`;s.append(l);}
+if(i%3===1)s.append(mk("i","cx-p"));
+doc.append(s);return s;
+});
+const go=(top,e)=>sc.scrollTo({top,behavior:Dir.motionActive()&&e.detail?"smooth":"auto"});
+const rows=T.map((t,i)=>{
+const li=mk("li"),a=mk("a","ix-r");a.href="#";
+api.cells(a,1);
+a.insertAdjacentHTML("beforeend",`<span class="ix-n" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span><span class="ix-t">${t}</span>`);
+a.addEventListener("click",(e)=>{e.preventDefault();go(secs[i].offsetTop-8,e);});
+const show=()=>{if(!fr.classList.contains("is-nar"))return;tip.textContent=t;tip.style.top=`${a.getBoundingClientRect().top - fr.getBoundingClientRect().top + 4}px`;tip.hidden=false;};
+a.addEventListener("pointerenter",show);a.addEventListener("focus",show);
+a.addEventListener("pointerleave",()=>{tip.hidden=true;});a.addEventListener("blur",()=>{tip.hidden=true;});
+li.append(a);ol.append(li);return a;
+});
+let last=-2,drag=false;
+const measure=()=>{
+const line=sc.scrollTop+24;
+let act=-1;secs.forEach((s,i)=>{if(s.offsetTop<=line)act=i;});
+const s=secs[act],nx=secs[act+1],end=nx?nx.offsetTop:s?s.offsetTop+s.offsetHeight:0;
+const p=s?Math.max(0,Math.min(1,(line-s.offsetTop)/Math.max(1,end-s.offsetTop))):0;
+const all=Math.max(0,Math.min(1,sc.scrollTop/Math.max(1,sc.scrollHeight-sc.clientHeight)));
+rows.forEach((r,i)=>{
+r.classList.toggle("is-read",i<act);
+if(i===act)r.setAttribute("aria-current","location");else r.removeAttribute("aria-current");
+api.setLevel(r.firstChild,i<act?3:i===act?1+Math.round(p*7):0);
+});
+pc.textContent=`${Math.round(all * 100)}% read`;
+mt.forEach((c,i)=>{const x=all*24-i;api.setLevel(c,x>=1?8:x<=0?0:Math.ceil(x*8));});
+if(!drag)sb.value=Math.round(all*100);
+if(act!==last&&act>=0){
+const li=rows[act].parentElement,top=li.offsetTop-ol.offsetTop;
+if(top<ol.scrollTop+24||top+li.offsetHeight>ol.scrollTop+ol.clientHeight-24)ol.scrollTop=top-ol.clientHeight/3;
+}
+last=act;
+};
+let raf=0;
+sc.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;measure();});},{passive:true});
+sb.addEventListener("input",()=>{drag=true;sc.scrollTop=(sb.value/100)*(sc.scrollHeight-sc.clientHeight);measure();drag=false;});
+const nb=$("[data-n]");
+nb.addEventListener("click",()=>{
+const on=fr.classList.toggle("is-nar");
+nb.setAttribute("aria-pressed",String(on));
+nb.textContent=on?"Show the full rail":"Show the narrow rail";
+tip.hidden=true;
+});
+measure();
+});
+</script></article>
+<article class="cmp" id="cmp-index-phone" data-name="Case index, phone strip and sheet" data-group="Case pages" data-num="40" data-phone-only
+data-baseline="A sticky strip with the section number, the current title, a Contents word and a 30-cell progress row; Contents switches on a sheet of 48 px rows, opened at the current one.">
+<template data-markup>
+<div class="ip">
+<div class="ip-sc">
+<div class="ip-st">
+<div class="ip-row">
+<span class="ip-n" aria-hidden="true"></span>
+<span class="ip-t">10 sections</span>
+<button class="ip-b" type="button" aria-expanded="false" aria-controls="ip-sh"><span>Contents</span><i class="rule-soft" aria-hidden="true"></i></button>
+</div>
+<div class="ip-pr" aria-hidden="true"><i></i></div>
+</div>
+<div class="cx"></div>
+</div>
+<div class="ip-scrim" hidden></div>
+<nav class="ip-sh" id="ip-sh" aria-label="On this case"><ol></ol></nav>
+</div>
+<label class="b5-sc">Scrub through the case <input type="range" min="0" max="100" value="0"></label>
+</template>
+<style>#cmp-index-phone{.ip{position:relative;height:560px;border:1px solid var(--line);overflow:hidden;--h:46px;--top:48px}.ip-sc{height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.ip-st{position:sticky;top:0;z-index:2;background:var(--paper)}.ip-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;height:var(--h);padding-left:16px;border-bottom:1px solid var(--line)}.ip-n{font:400 var(--type-px-22)/1 var(--font-pixel);min-width:2ch}.ip-t{display:block;font:500 14px/1.25 var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ip-b{display:grid;align-content:center;gap:4px;height:100%;min-height:44px;padding:0 16px;border:0;border-left:1px solid var(--line);background:none;font:500 14px/1 var(--sans);cursor:pointer}.ip-b[aria-expanded="true"] .rule-soft{mask:none}.ip-pr{display:flex;gap:1px}.ip-pr .cell{flex:1;width:auto;height:4px}.ip-scrim{position:absolute;inset:var(--top) 0 0;z-index:3}.ip-sh{position:absolute;top:var(--top);left:0;right:0;z-index:4;max-height:calc(100% - var(--top) - 48px);overflow-y:auto;background:var(--paper);border-bottom:1px solid var(--ink);clip-path:inset(0 0 100% 0);visibility:hidden;transition:clip-path 180ms steps(2,jump-end),visibility 0s 180ms}.ip-sh.is-open{clip-path:inset(0);visibility:visible;transition:clip-path 280ms steps(4,jump-start),visibility 0s}.ip-sh.no-t{transition:none}.ip-sh ol{list-style:none;margin:0;padding:0}.ip-r{display:grid;grid-template-columns:auto 2.4ch minmax(0,1fr);align-items:center;gap:12px;min-height:48px;padding:0 16px;border-bottom:1px solid var(--line);font:400 15px/1.3 var(--sans);text-decoration:none}.ip-r[aria-current]{font-weight:500}.ip-r .cell{width:var(--cell-size);height:22px}.ip-k{font:400 var(--type-px-11)/1 var(--font-pixel);color:var(--muted)}.dir-a .ip-n{font:500 14px/1 var(--sans);color:var(--muted);min-width:0;white-space:nowrap}.dir-a .ip-pr{height:2px;background:var(--line)}.dir-a .ip-pr i{display:block;height:2px;width:var(--p,0%);background:var(--ink)}.dir-a .ip-r{grid-template-columns:minmax(0,1fr)}.dir-a .ip-r .cell,.dir-a .ip-k{display:none}.dir-a .ip-scrim{background:var(--paper-50)}.dir-b .ip{--h:52px;--top:56px}.dir-b .ip-scrim{background:var(--ink-46)}.dir-c .ip{--h:43px;--top:55px}.dir-c .ip-pr{gap:2px}.dir-c .ip-pr .cell{height:12px}.dir-c .ip-t.is-entering{animation-duration:150ms}.dir-c .ip-scrim{background:var(--ink);mask:var(--dither-2) 0 0/12px 12px}}</style><script>
+/* Craft: 1 scroll instant; sheet by pointer animates, keyboard and Escape instant 2 in 280, out 180 3 steps 4 clipped from the strip, rows already there 5 transition, guarded levels 6 clip-path, levels 7 off: instant */
+Dir.component("cmp-index-phone",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);const M=Dir.motionActive;
+const T=["Summary","Where it started","One workspace","Preview for engineers","Safe to build","Email gets an editor","A rebrand before launch","Plan before pixels","What shipped","What I would do next"];
+const mk=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+const play=(el,c="is-entering")=>new Promise((r)=>{if(!M())return r();el.classList.remove(c);void el.offsetWidth;el.classList.add(c);const e=()=>{clearTimeout(t);el.classList.remove(c);r();},t=setTimeout(e,1500);el.onanimationend=(v)=>{if(v.target===el)e();};});
+const fr=$(".ip"),sc=$(".ip-sc"),st=$(".ip-st"),doc=$(".cx");
+const num=$(".ip-n"),ttl=$(".ip-t"),btn=$(".ip-b"),sh=$(".ip-sh"),scrim=$(".ip-scrim");
+const pr=$(".ip-pr"),sb=$("input");
+const prog=dir==="a"?[]:api.cells(pr,dir==="b"?30:12);
+let sd=7;const rnd=()=>(sd=(sd*9301+49297)%233280)/233280;
+doc.innerHTML='<p class="cx-m">Launched · 12 min read</p><p class="cx-t">Designing Pave</p>';
+const secs=T.map((t,i)=>{
+const s=mk("section","cx-s"),h=mk("p","cx-h");h.textContent=t;s.append(h);
+const n=4+Math.floor(rnd()*6);
+for(let k=0;k<n;k+=1){const l=mk("i","cx-l");l.style.width=`${k === n - 1 ? 30 + rnd() * 40 : 82 + rnd() * 18}%`;s.append(l);}
+if(i%3===1)s.append(mk("i","cx-p"));
+doc.append(s);return s;
+});
+const rows=T.map((t,i)=>{
+const li=mk("li"),a=mk("a","ip-r");a.href="#";
+api.cells(a,1);
+a.insertAdjacentHTML("beforeend",`<span class="ip-k" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span><b class="ip-x">${t}</b>`);
+a.lastChild.style.fontWeight="inherit";
+a.addEventListener("click",(e)=>{e.preventDefault();setSheet(false,!e.detail);sc.scrollTo({top:secs[i].offsetTop-st.offsetHeight-4,behavior:M()&&e.detail?"smooth":"auto"});});
+li.append(a);sh.firstChild.append(li);return a;
+});
+let tok=0,stopT=()=>{};
+const setTitle=(text)=>{
+stopT();const k=(tok+=1);
+if(dir!=="b"||!M()){ttl.textContent=text;if(dir==="c")play(ttl);return;}
+const ch=[...text];
+stopT=Dir.runField({values:ch.map((_,i)=>i/Math.max(1,ch.length-1)),total:220,steps:2,stepMs:30,
+render:(s)=>{if(k===tok)ttl.textContent=ch.map((c,i)=>(c===" "?" ":s(i)<0?" ":s(i)>=2?c:s(i)===0?"░":"▓")).join("");},
+done:()=>{if(k===tok)ttl.textContent=text;}});
+};
+let last=-2,drag=false;
+const measure=()=>{
+const line=sc.scrollTop+st.offsetHeight+8;
+let act=-1;secs.forEach((s,i)=>{if(s.offsetTop<=line)act=i;});
+const s=secs[act],nx=secs[act+1],end=nx?nx.offsetTop:s?s.offsetTop+s.offsetHeight:0;
+const p=s?Math.max(0,Math.min(1,(line-s.offsetTop)/Math.max(1,end-s.offsetTop))):0;
+const all=Math.max(0,Math.min(1,sc.scrollTop/Math.max(1,sc.scrollHeight-sc.clientHeight)));
+pr.style.setProperty("--p",`${all * 100}%`);
+prog.forEach((c,i)=>{const x=all*prog.length-i;api.setLevel(c,x>=1?8:x<=0?0:Math.ceil(x*8));});
+rows.forEach((r,i)=>api.setLevel(r.firstChild,i<act?3:i===act?1+Math.round(p*7):0));
+if(!drag)sb.value=Math.round(all*100);
+if(act!==last){
+rows.forEach((r,i)=>{if(i===act)r.setAttribute("aria-current","location");else r.removeAttribute("aria-current");api.marker(r,"left").hold(i===act);});
+num.textContent=act<0?"":dir==="a"?`${act + 1} of ${T.length}`:String(act+1).padStart(2,"0");
+setTitle(act<0?"10 sections":T[act]);
+}
+last=act;
+};
+let raf=0;
+sc.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;measure();});},{passive:true});
+sb.addEventListener("input",()=>{drag=true;sc.scrollTop=(sb.value/100)*(sc.scrollHeight-sc.clientHeight);measure();drag=false;});
+let open=false,lt=0;
+const lv=(path,ms)=>{const k=(lt+=1);path.forEach((l,i)=>api.timeout(()=>{if(k!==lt)return;if(l)sh.dataset.level=l;else delete sh.dataset.level;},i*ms));};
+function setSheet(on,kb){
+if(on===open)return;
+open=on;
+btn.setAttribute("aria-expanded",String(on));
+btn.firstChild.textContent=on?"Close":"Contents";
+scrim.hidden=!on;
+const anim=M()&&!kb;
+sh.classList.toggle("no-t",!anim);
+sh.classList.toggle("is-open",on);
+if(dir==="c")lv(anim?(on?[2,4,6,0]:[4,2,0]):[0],on?70:60);
+if(on)sh.scrollTop=rows[Math.max(0,last)].parentElement.offsetTop-sh.clientHeight/3;
+}
+btn.addEventListener("click",(e)=>setSheet(!open,!e.detail));
+scrim.addEventListener("click",()=>setSheet(false));
+fr.addEventListener("keydown",(e)=>{if(e.key==="Escape"&&open){setSheet(false,true);btn.focus();}});
+measure();
+});
+</script></article>
+<article class="cmp" id="cmp-walkthrough" data-name="Walkthrough trigger" data-group="Case pages" data-num="41"
+data-baseline="A small poster, a pixel label and a line of copy that opens the walkthrough dialog.">
+<template data-markup>
+<button class="wt" type="button" aria-haspopup="dialog" aria-controls="wt-d" data-marker="left">
+<span class="wt-po" aria-hidden="true"><span class="tex" data-level="1"></span><span class="wt-pl"></span></span>
+<span class="wt-c" data-label-step><span class="wt-k">Walkthrough</span><span class="wt-t">Watch the walkthrough</span></span>
+<span class="wt-du">4 min</span>
+</button>
+<dialog class="wt-d" id="wt-d" aria-labelledby="wt-h">
+<div class="wt-p">
+<div class="wt-hd"><h4 class="wt-h" id="wt-h">Walkthrough</h4><button class="wt-x" type="button" aria-label="Close"><span></span></button></div>
+<i class="rule-soft wt-r" aria-hidden="true"></i>
+<div class="wt-b"><div class="wt-ph"></div><p>A four minute tour of the case, with sound.</p></div>
+</div>
+</dialog>
+</template>
+<style>#cmp-walkthrough{.wt{position:relative;display:flex;align-items:center;gap:12px;min-height:48px;padding:0 16px;border:1px solid var(--line);background:var(--paper);text-align:left;cursor:pointer}.wt-po{position:relative;display:grid;place-items:center;flex:none}.wt-po .tex{display:none;position:absolute;inset:0}.wt-c{display:grid;gap:2px}.wt-k,.wt-du{font:400 var(--type-px-11)/1.2 var(--font-pixel);color:var(--muted)}.wt-t{font:500 16px/1.2 var(--sans)}.dir-a .wt{min-height:44px;padding:0 20px;border-color:var(--ink);gap:8px}.dir-a .wt-k{display:none}.dir-a .wt-t,.dir-a .wt-du{font:500 15px/1 var(--sans);color:var(--ink)}.dir-a .wt-du::before{content:"· "}.dir-a .fill-label{gap:8px}.dir-b .wt{width:100%}.dir-b .wt-du{margin-left:auto}.dir-c .wt{width:100%;min-height:66px;padding:11px 16px;border:2px solid var(--ink);gap:16px}.dir-c .wt-po{width:44px;height:44px}.dir-c .wt-po .tex{display:block}.dir-c .wt-pl{position:relative;padding:4px;background:var(--paper)}.dir-c .wt-t{font-size:18px}.dir-c .wt-du{margin-left:auto}.wt-d{width:min(560px,calc(100vw - 32px));max-height:80vh;padding:0;border:0;background:none;color:var(--ink);overflow:visible}.wt-p{position:relative;background:var(--paper);border:1px solid var(--line)}.wt-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 0 16px}.wt-h{font:400 var(--type-px-22)/1.2 var(--font-pixel)}.wt-x{display:grid;place-items:center;width:48px;height:48px;border:0;background:none;cursor:pointer}.wt-r{display:none}.wt-b{display:grid;gap:11px;padding:0 16px 16px;font-size:var(--read-size)}.dir-a .wt-d::backdrop{background:var(--paper-50)}.wt-d.is-in{animation:wt-in 200ms steps(4,jump-start) both}.dir-b .wt-d.is-in{animation-duration:240ms}.wt-d.is-out{animation:wt-out 140ms steps(2,jump-end) both}.dir-b .wt-d.is-out{animation:afterglow-3 180ms steps(1,jump-end) both}.dir-c .wt-d.is-in{animation:dissolve-c 200ms steps(1,jump-end) both}.dir-c .wt-d.is-out{animation:afterglow-c 180ms steps(1,jump-end) both}.dir-a .wt{transition:transform 120ms cubic-bezier(0.19,1,0.22,1)}.dir-a .wt:active{transform:scale(0.97)}.dir-b .wt-p{border-color:var(--ink)}.dir-b .wt-h{font-size:var(--type-px-11)}.dir-b .wt-r{display:block;height:4px;margin-bottom:16px}.dir-b .wt-d::backdrop{background:var(--ink-46)}.dir-c .wt-d{padding:6px}.dir-c .wt-d::before{content:"";position:absolute;inset:0;background:var(--ink);mask:var(--dither-1) 0 0/var(--dither-size)}.dir-c .wt-p{border:2px solid var(--ink)}.dir-c .wt-d::backdrop{background:var(--ink);mask:var(--dither-2) 0 0/12px 12px}}html[data-motion="off"] #cmp-walkthrough .dir-a .wt:active{transform:none}@keyframes wt-in{from{clip-path:inset(50% 0 50% 0)}to{clip-path:inset(0)}}@keyframes wt-out{from{clip-path:inset(0)}to{clip-path:inset(50% 0 50% 0)}}</style><script>
+/* Craft: 1 rare; keyboard open and Escape instant 2 in 200–240, out 140–180 3 steps 4 clipped from its centre line; A press .97 5 modal 6 clip-path, opacity, masks 7 off: instant */
+Dir.component("cmp-walkthrough",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);
+const play=(el,c)=>new Promise((r)=>{if(!Dir.motionActive())return r();el.classList.remove(c);void el.offsetWidth;el.classList.add(c);const e=()=>{clearTimeout(t);el.classList.remove(c);r();},t=setTimeout(e,1500);el.onanimationend=(v)=>{if(v.target===el)e();};});
+const btn=$(".wt"),d=$("dialog");
+api.icon($(".wt-pl"),"play",{cell:dir==="a"?2:3});
+api.icon($(".wt-x span"),"close",{cell:3});
+api.placeholder($(".wt-ph"),16,9,"play");
+if(dir==="a")api.press(btn,{role:"secondary"});
+btn.addEventListener("click",(e)=>{
+if(d.open)return;
+d.showModal();
+if(e.detail)play(d,"is-in");
+});
+let closing=false;
+const shut=(kb)=>{
+if(closing||!d.open)return;
+if(kb){d.classList.remove("is-in");d.close();return;}
+closing=true;
+play(d,"is-out").then(()=>{d.close();closing=false;});
+};
+d.addEventListener("cancel",(e)=>{e.preventDefault();shut(true);});
+d.addEventListener("click",(e)=>{if(e.target===d)shut();});
+$(".wt-x").addEventListener("click",(e)=>shut(!e.detail));
+return()=>{if(d.open)d.close();};
+});
+</script></article>
+</section>

@@ -1,0 +1,636 @@
+<section class="group" id="g-lists">
+<h2>Lists and Home</h2>
+<style>
+/* Batch 3 shared. Phone = column ≤ 400 px (desktop columns are 440 px, phone view 375 px). */
+.l3-rule { position: relative; }
+.l3-rule::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); pointer-events: none; }
+.dir-a .l3-rule--soft::after { height: 2px; background: var(--ink); mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size); }
+.dir-b .l3-rule::after { height: 3px; background: repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 5px); mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size); }
+.dir-c .l3-rule::after { height: 4px; background: var(--ink); mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size); }
+html[data-theme="dark"] .dir-b .l3-rule::after { mask-size: 4px 4px; }
+@media (prefers-color-scheme: dark) { html:not([data-theme]) .dir-b .l3-rule::after { mask-size: 4px 4px; } }
+.l3-px { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); }
+.l3-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border: var(--hairline) solid var(--ink); background: var(--paper); color: var(--ink); font: 500 15px / 1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; }
+.dir-a .l3-btn { min-height: 44px; }
+.l3-q { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font: 500 15px / 1 var(--sans); text-decoration: none; }
+.l3-q > .rule-soft { position: absolute; left: 0; right: 0; bottom: 8px; }
+.l3-arr { display: inline-block; font-family: var(--mono); }
+:is(a:hover, a:focus-visible) .l3-q > .rule-soft, a.l3-q:is(:hover, :focus-visible) > .rule-soft { mask: none; }
+:is(a:hover, a:focus-visible) .l3-q .l3-arr, a.l3-q:is(:hover, :focus-visible) .l3-arr { transform: translateX(var(--label-step)); }
+.dir-a :is(a:hover, a:focus-visible) .l3-arr { transition: transform 120ms steps(2, jump-start); }
+.dir-b :is(a:hover, a:focus-visible) .l3-arr { transition: transform 30ms steps(1, jump-end); }
+.dir-c :is(a:hover, a:focus-visible) .l3-arr { transition: transform 100ms steps(1, jump-end); }
+.l3-prf { position: absolute; inset: 0; z-index: 2; display: grid; grid-template-columns: repeat(var(--n), var(--s)); grid-auto-rows: var(--s); pointer-events: none; overflow: hidden; }
+.l3-prf .cell { width: var(--s); height: var(--s); }
+.l3-prf .cell:not([data-level="0"]) { background: var(--paper); }
+.dir-c .l3-prf { --dither-size: 12px; }
+.l3-gut { display: none; }
+/* craft pass: press is felt (scale 0.97, never lower); keyboard focus never animates the marker or the step aside */
+.l3-btn, .we-play { transition: transform 140ms var(--ease-out-expo); }
+.l3-btn:active, .we-play:active { transform: scale(0.97); }
+#g-lists :focus-visible > .marker, #g-lists :focus-visible [data-label-step], #g-lists :focus-visible .l3-arr { transition: none !important; }
+</style>
+<script>
+window.L3 = (() => {
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const live = () => Dir.motionActive();
+const fine = matchMedia("(hover: hover) and (pointer: fine)");
+/* A newer call cancels the older one without its callback. */
+const play = (el, cls, done) => {
+if (el._stop) el._stop();
+if (!live()) { if (done) done(); return; }
+el.classList.remove(cls);
+void el.offsetWidth;
+el.classList.add(cls);
+let guard = 0;
+const stop = () => { clearTimeout(guard); el.removeEventListener("animationend", end); el.classList.remove(cls); el._stop = null; };
+function end(event) { if (event && event.target !== el) return; stop(); if (done) done(); }
+el.addEventListener("animationend", end);
+guard = setTimeout(end, 1500);
+el._stop = stop;
+};
+/* Entrance: gaps shrink 70 → 30 ms (first item gets the most time); C in dither order. */
+const GAPS = [70, 55, 45, 40, 35, 30];
+const stagger = (list, dir) => {
+const rank = list.map((_, i) => i);
+if (dir === "c") rank.sort((x, y) => BAYER[x % 16] - BAYER[y % 16]);
+let at = 0;
+rank.forEach((index, k) => {
+if (k) at += GAPS[Math.min(k - 1, 5)];
+list[index].style.setProperty("--enter-delay", `${at}ms`);
+play(list[index], "is-entering");
+});
+};
+/* Step an element's data-level through a path: first step now, then one per ms. No ms or no motion: last level at once. */
+const steps = (el, path, ms) => {
+(el._steps || []).forEach(clearTimeout);
+el._steps = [];
+if (!live() || !ms) { el.dataset.level = String(path[path.length - 1]); return; }
+path.forEach((level, index) => el._steps.push(setTimeout(() => { el.dataset.level = String(level); }, index * ms)));
+};
+/* cb(on, keyboard): focus arrivals are instant (keyboard is high-frequency). */
+const hover = (el, cb) => {
+el.addEventListener("pointerenter", () => cb(true, false));
+el.addEventListener("pointerleave", () => { if (!el.matches(":focus-visible, :has(:focus-visible)")) cb(false); });
+el.addEventListener("focusin", () => { const active = document.activeElement; if (active && active.matches(":focus-visible")) cb(true, true); });
+el.addEventListener("focusout", () => cb(false));
+};
+/* Row markers: in ≤ 120 ms, out at once, instant on focus. A = runtime marker. B = cell column 3 → 8 (2 × 30 ms over
+a 60 ms spread) or a cell rule in reading order (120 ms). C = levels 3 → 6 → 8 at 40 ms. */
+const mark = (host, api, edge = "left") => {
+if (api.dir === "a") return api.marker(host, edge);
+if (getComputedStyle(host).position === "static") host.style.position = "relative";
+const el = document.createElement("span");
+el.className = `marker marker--${edge}`;
+el.setAttribute("aria-hidden", "true");
+host.append(el);
+const c = api.dir === "c";
+const under = edge === "under";
+if (c) el.dataset.level = "0";
+let on = false;
+let stop = () => {};
+const set = (want, now) => {
+if (want === on) return;
+on = want;
+host.classList.toggle("is-hot", want);
+stop();
+stop = () => {};
+const quick = now || !live();
+if (c) { steps(el, want ? [3, 6, 8] : [0], want && !quick ? 40 : 0); return; }
+if (!want) { [...el.children].forEach((cell) => api.setLevel(cell, 0)); return; }
+el.textContent = "";
+const list = api.cells(el, Math.max(1, under ? Math.ceil(host.clientWidth / 5) : Math.ceil(host.clientHeight / 8)), { clear: true });
+if (quick) { list.forEach((cell) => api.setLevel(cell, 8)); return; }
+const n = list.length;
+stop = Dir.runField({
+values: list.map((_, i) => (under ? Math.floor((i * 7) / n) / 6 : i / Math.max(1, n - 1))),
+total: under ? 100 : 60, curve: under ? Dir.curves.linear : Dir.curves.out, steps: under ? 1 : 2, stepMs: under ? 20 : 30,
+render: (at) => list.forEach((cell, i) => { const k = at(i); if (k >= 0) api.setLevel(cell, under ? 8 : [3, 8][Math.min(k, 1)]); })
+});
+};
+return { el, arrive: (now) => set(true, now), leave: () => set(false) };
+};
+const bind = (host, api, edge) => { const m = mark(host, api, edge); hover(host, (on, key) => (on ? m.arrive(key) : m.leave())); return m; };
+const noNav = (scope) => scope.addEventListener("click", (event) => { if (event.target.closest("a[href^='#']")) event.preventDefault(); });
+/* Point refresh (58): fine pointers and motion only; never catches the pointer. */
+const SPEC = { a: [12, [3, 1], 160], b: [8, [5, 3, 1], 360], c: [16, [6, 4, 2], 360] };
+const refresh = (host, api, rule) => {
+const [size, path, total] = SPEC[api.dir];
+let busy = false;
+host.addEventListener("pointerenter", (event) => {
+if (busy || !fine.matches || !live()) return;
+const rect = host.getBoundingClientRect();
+if (rect.width < 40 || rect.height < 40) return;
+busy = true;
+const cols = Math.ceil(rect.width / size);
+const rows = Math.ceil(rect.height / size);
+const layer = document.createElement("span");
+layer.className = "l3-prf";
+layer.setAttribute("aria-hidden", "true");
+layer.style.cssText = `--n:${cols};--s:${size}px`;
+host.append(layer);
+const list = api.cells(layer, cols * rows, { clear: true });
+const origin = { x: (event.clientX - rect.left) / rect.width, y: (event.clientY - rect.top) / rect.height };
+const n = path.length;
+Dir.runField({
+values: list.map((_, index) => Dir.order("point", index % cols, Math.floor(index / cols), cols, rows, origin)),
+total, steps: n + 1, stepMs: 40,
+render: (at) => list.forEach((cell, index) => { const k = at(index); api.setLevel(cell, k >= 0 && k < n ? path[k] : 0); }),
+done: () => { layer.remove(); setTimeout(() => { busy = false; }, 300); }
+});
+if (rule) {
+const count = Math.max(8, Math.floor(rule.clientWidth / 5));
+if (rule.children.length !== count) { rule.textContent = ""; api.cells(rule, count); }
+const marks = [...rule.children];
+const span = Math.max(origin.x, 1 - origin.x) || 1;
+marks.forEach((cell) => api.setLevel(cell, 0));
+Dir.runField({
+values: marks.map((_, index) => Math.abs(index / (count - 1) - origin.x) / span),
+total: 120, curve: Dir.curves.linear, steps: 1, stepMs: 20,
+render: (at) => marks.forEach((cell, index) => { if (at(index) >= 0) api.setLevel(cell, 8); })
+});
+}
+});
+if (rule) host.addEventListener("pointerleave", () => [...rule.children].forEach((cell) => api.setLevel(cell, 0)));
+};
+return { play, stagger, steps, hover, mark, bind, noNav, refresh };
+})();
+</script>
+
+<article class="cmp" id="cmp-notes-rows" data-name="Notes rows, search, count and empty state" data-group="Lists" data-num="21"
+data-baseline="One link per row: title, date and read time, a hairline, an arrow. Hover: a 6 px marker in three steps, the title steps aside. Search fades out rows that stop matching and updates the count.">
+<template data-markup>
+<div class="nr">
+<details class="nr-search" open>
+<summary>Search notes</summary>
+<label class="vh" for="nq">Search notes</label>
+<div class="nr-field"><input id="nq" type="search" autocomplete="off" spellcheck="false"><span class="nr-line" aria-hidden="true"></span></div>
+<p class="nr-count"><output aria-live="polite" data-count>6 notes</output><span class="cells nr-meter" data-meter></span></p>
+</details>
+<ol class="nr-list">
+<li class="nr-row l3-rule"><a href="#cmp-notes-rows"><span class="nr-title" data-label-step>The internet feels dead</span><span class="nr-meta"><time datetime="2026-08-18">18 Aug 2026</time> · 2 min</span><span class="nr-arr" aria-hidden="true">→</span></a></li>
+<li class="nr-row l3-rule"><a href="#cmp-notes-rows"><span class="nr-title" data-label-step>What an AI product designer owns in an enterprise product</span><span class="nr-meta"><time datetime="2026-08-14">14 Aug 2026</time> · 4 min</span><span class="nr-arr" aria-hidden="true">→</span></a></li>
+<li class="nr-row l3-rule"><a href="#cmp-notes-rows"><span class="nr-title" data-label-step>Design outside design</span><span class="nr-meta"><time datetime="2026-07-31">31 Jul 2026</time> · 2 min</span><span class="nr-arr" aria-hidden="true">→</span></a></li>
+<li class="nr-row l3-rule"><a href="#cmp-notes-rows"><span class="nr-title" data-label-step>On digital art</span><span class="nr-meta"><time datetime="2026-07-28">28 Jul 2026</time> · 2 min</span><span class="nr-arr" aria-hidden="true">→</span></a></li>
+<li class="nr-row l3-rule"><a href="#cmp-notes-rows"><span class="nr-title" data-label-step>What’s the actual point of titles?</span><span class="nr-meta"><time datetime="2026-07-26">26 Jul 2026</time> · 2 min</span><span class="nr-arr" aria-hidden="true">→</span></a></li>
+<li class="nr-row l3-rule"><a href="#cmp-notes-rows"><span class="nr-title" data-label-step>Prompting is not taste</span><span class="nr-meta"><time datetime="2026-07-25">25 Jul 2026</time> · 2 min</span><span class="nr-arr" aria-hidden="true">→</span></a></li>
+</ol>
+<div class="nr-empty" hidden data-empty>
+<span class="cells nr-icon" aria-hidden="true" data-icon></span>
+<div><p class="nr-et">Nothing here yet</p><p class="nr-es">No notes match that. Try a shorter word.</p></div>
+</div>
+<div class="demo-row">
+<button class="demo-link" type="button" data-q="design">Search for “design”</button>
+<button class="demo-link" type="button" data-q="weather">Search with no match</button>
+<button class="demo-link" type="button" data-q="">Clear the search</button>
+</div>
+</div>
+</template>
+<style>
+#cmp-notes-rows summary { min-height: 44px; padding: 12px 0; font: 500 14px / 20px var(--sans); cursor: pointer; }
+.nr-field { position: relative; display: flex; height: 44px; }
+#cmp-notes-rows :is(.dir-b, .dir-c) .nr-field { height: 48px; }
+#cmp-notes-rows input { width: 100%; padding: 0; border: 0; background: none; font-size: var(--read-size); }
+.nr-line { position: absolute; left: 0; right: 0; bottom: 0; pointer-events: none; }
+.dir-a .nr-line { height: 1px; background: var(--line); }
+.dir-a .nr-line::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--ink); clip-path: inset(0 100% 0 0); transition: clip-path 160ms steps(4, jump-end); }
+.dir-a .nr-field:focus-within .nr-line::after { clip-path: inset(0); }
+.dir-b .nr-line { display: flex; gap: 1px; height: 2px; }
+.dir-b .nr-line .cell { flex: 1 1 0; width: auto; height: 100%; }
+.dir-c .nr-line { height: 3px; background: var(--ink); }
+.nr-count { display: flex; align-items: center; gap: 8px; min-height: 33px; font: 500 13px / 1.4 var(--sans); color: var(--muted); }
+#cmp-notes-rows :is(.dir-b, .dir-c) .nr-count { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); }
+.dir-b .nr-meter { --cells: 24; --cell-size: 4px; --cell-gap: 1px; }
+.dir-b .nr-meter .cell { height: 7px; }
+.nr-list { margin: 0 0 11px; padding: 0; list-style: none; counter-reset: n; }
+.nr-row:not([hidden]) { counter-increment: n; }
+.nr-row a { display: grid; grid-template-columns: minmax(0, 1fr) auto 22px; grid-template-areas: "t m a"; align-items: center; gap: 4px 16px; min-height: 66px; padding: 11px 0 11px 10px; text-decoration: none; }
+.dir-b .nr-row a { grid-template-columns: 2.4ch minmax(0, 1fr) auto 22px; grid-template-areas: "n t m a"; gap: 4px 12px; min-height: 64px; padding: 8px 0 8px 14px; }
+.dir-b .nr-row a::before { content: counter(n, decimal-leading-zero); grid-area: n; font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--muted); }
+.dir-c .nr-row a { padding-left: 12px; }
+.nr-title { grid-area: t; font: 400 var(--type-px-22) / 1.15 var(--font-pixel); }
+.nr-meta { grid-area: m; font: 500 13px / 1.4 var(--sans); color: var(--muted); white-space: nowrap; }
+#cmp-notes-rows :is(.dir-b, .dir-c) .nr-meta { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); }
+.nr-arr { grid-area: a; font: 400 22px / 1 var(--mono); text-align: right; }
+.nr-empty { display: flex; align-items: flex-start; gap: 16px; padding: 22px 0; }
+.nr-et { margin-bottom: 6px; font: 400 var(--type-px-22) / 1.2 var(--font-pixel); }
+.dir-c .nr-et { font-size: var(--type-px-33); }
+.dir-a .nr-icon .cell { height: 16px; }
+.dir-b .nr-icon { --cells: 5; --cell-size: 7px; --cell-gap: 1px; }
+.dir-c .nr-icon { --cells: 6; --cell-size: 12px; --cell-gap: 2px; }
+@container col (max-width: 400px) {
+.nr-row a { grid-template-columns: minmax(0, 1fr) 22px; grid-template-areas: "t a" "m a"; min-height: 88px; }
+.dir-b .nr-row a { grid-template-columns: 2.4ch minmax(0, 1fr) 22px; grid-template-areas: "n t a" "n m a"; min-height: 64px; }
+.dir-c .nr-row a { min-height: 66px; }
+}
+</style>
+<script>
+/* Craft 1 hover frequent: marker ≤ 120 ms in, out at once, instant on focus; typing filters next frame. 2 afterglow 120/180 out, rows 200–280 in. 3 steps inside, ease-out gaps across. 4 no press. 5 markers and line retarget; a returning row cancels its exit. 6 opacity, clip-path, level swaps. 7 off: instant swaps, count and empty still change, breathing rests mid-wave. */
+Dir.component("cmp-notes-rows", (col, dir, api) => {
+const body = api.body;
+const $ = (sel) => body.querySelector(sel);
+const input = $("input");
+const out = $("[data-count]");
+const empty = $("[data-empty]");
+const icon = $("[data-icon]");
+const line = $(".nr-line");
+const rows = [...body.querySelectorAll(".nr-row")];
+L3.noNav(body);
+rows.forEach((row) => L3.bind(row.querySelector("a"), api, "left"));
+
+const meter = dir === "b" ? api.cells($("[data-meter]"), 24, { level: 8 }) : [];
+if (dir === "a") api.cells(icon, 1, { level: 1 });
+if (dir === "c") api.cells(icon, 24, { level: 1 });
+if (dir === "b") {
+const list = api.cells(icon, 15);
+const wave = [1, 2, 3, 2, 1, 1, 1, 1];
+const draw = (tick) => list.forEach((cell, index) => api.setLevel(cell, wave[(((tick - (index % 5) - Math.floor(index / 5)) % 8) + 8) % 8]));
+draw(3);
+api.tick(icon, draw, () => draw(3));
+}
+
+/* the field's line: A draws 2 px ink in four steps (CSS), B fills its cell rule in reading order, C resolves 4 → 6 → 8 */
+let lineCells = [];
+let stopLine = () => {};
+if (dir === "b") lineCells = api.cells(line, 40, { level: 3 });
+if (dir === "c") line.dataset.level = "4";
+input.addEventListener("focus", () => {
+if (dir === "b") stopLine = Dir.runField({ values: lineCells.map((_, i) => Math.floor((i * 7) / 40) / 6), total: 120, curve: Dir.curves.linear, steps: 1, stepMs: 20, render: (at) => lineCells.forEach((cell, i) => { if (at(i) >= 0) api.setLevel(cell, 8); }) });
+if (dir === "c") L3.steps(line, [6, 8], 50);
+});
+input.addEventListener("blur", () => {
+stopLine();
+lineCells.forEach((cell) => api.setLevel(cell, 3));
+if (dir === "c") L3.steps(line, [4], 0);
+});
+
+rows.forEach((row) => { row._hit = true; });
+const apply = () => {
+const word = input.value.trim().toLowerCase();
+const back = [];
+let n = 0;
+rows.forEach((row) => {
+const hit = !word || row.querySelector(".nr-title").textContent.toLowerCase().includes(word);
+if (hit) n += 1;
+if (hit === row._hit) return;
+row._hit = hit;
+if (hit) { row.hidden = false; back.push(row); }
+else L3.play(row, "is-leaving", () => { if (!row._hit) row.hidden = true; });
+});
+L3.stagger(back, dir);
+out.textContent = n === 0 ? "No notes match" : n === 1 ? "1 note" : `${n} notes`;
+const lit = Math.round((24 * n) / rows.length);
+meter.forEach((cell, i) => api.setLevel(cell, i < lit ? 8 : 0));
+if (n) { empty.hidden = true; return; }
+api.timeout(() => {
+if (rows.some((row) => row._hit) || !empty.hidden) return;
+empty.hidden = false;
+L3.stagger([empty], dir);
+}, Dir.motionActive() ? api.ms("--afterglow") : 0);
+};
+input.addEventListener("input", apply);
+body.querySelectorAll("[data-q]").forEach((button) => button.addEventListener("click", () => { input.value = button.dataset.q; apply(); }));
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-labs-rows" data-name="Labs rows" data-group="Lists" data-num="22"
+data-baseline="A two-column grid of links: a 16:10 screen in a hairline frame, title, one sentence, Open. Hover: a 3 px marker under the screen, ink frame, arrow nudge. Screens sweep in.">
+<template data-markup>
+<ol class="lr">
+<li><a class="lr-link" href="#cmp-labs-rows"><span class="lr-num l3-px"><span class="rule-soft"></span>01</span><span class="lr-screen" data-enter="media"><span class="tex l3-gut" data-level="1" aria-hidden="true"></span><span class="lr-ph"></span></span><span class="lr-copy"><span class="lr-title">Turntable Playground</span><span class="lr-body">Push, lift and scatter the ASCII turntables from the case studies, then copy the settings.</span><span class="lr-open l3-q">Open <span class="l3-arr" aria-hidden="true">→</span><span class="rule-soft"></span></span></span></a></li>
+<li><a class="lr-link" href="#cmp-labs-rows"><span class="lr-num l3-px"><span class="rule-soft"></span>02</span><span class="lr-screen" data-enter="media"><span class="tex l3-gut" data-level="1" aria-hidden="true"></span><span class="lr-ph"></span></span><span class="lr-copy"><span class="lr-title">SVG → 3D ASCII</span><span class="lr-body">Drop in a logo, turn it into a spinning ASCII object, pick a look and download it.</span><span class="lr-open l3-q">Open <span class="l3-arr" aria-hidden="true">→</span><span class="rule-soft"></span></span></span></a></li>
+<li><a class="lr-link" href="#cmp-labs-rows"><span class="lr-num l3-px"><span class="rule-soft"></span>03</span><span class="lr-screen" data-enter="media"><span class="tex l3-gut" data-level="1" aria-hidden="true"></span><span class="lr-ph"></span></span><span class="lr-copy"><span class="lr-title">ASCII Banner Studio</span><span class="lr-body">Make a moving ASCII banner at the right size for LinkedIn, X, YouTube or your own format, then save it.</span><span class="lr-open l3-q">Open <span class="l3-arr" aria-hidden="true">→</span><span class="rule-soft"></span></span></span></a></li>
+<li><a class="lr-link" href="#cmp-labs-rows"><span class="lr-num l3-px"><span class="rule-soft"></span>04</span><span class="lr-screen" data-enter="media"><span class="tex l3-gut" data-level="1" aria-hidden="true"></span><span class="lr-ph"></span></span><span class="lr-copy"><span class="lr-title">Presentations in Code</span><span class="lr-body">Try camera zooms, live notes and exploded interfaces. Take ten reusable skills.</span><span class="lr-open l3-q">Open <span class="l3-arr" aria-hidden="true">→</span><span class="rule-soft"></span></span></span></a></li>
+</ol>
+</template>
+<style>
+.lr-screen { --enter-delay: 0ms !important; }
+li:nth-child(2) .lr-screen { --enter-delay: 60ms !important; }
+li:nth-child(3) .lr-screen { --enter-delay: 110ms !important; }
+li:nth-child(4) .lr-screen { --enter-delay: 150ms !important; }
+.dir-c li:nth-child(2) .lr-screen { --enter-delay: 110ms !important; }
+.dir-c li:nth-child(3) .lr-screen { --enter-delay: 60ms !important; }
+.lr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 33px 16px; margin: 0; padding: 0; list-style: none; }
+.lr-link { position: relative; display: grid; align-content: start; gap: 11px; height: 100%; text-decoration: none; }
+.lr-num { display: none; }
+.dir-b .lr-num { display: grid; gap: 8px; color: var(--muted); }
+.lr-screen { position: relative; display: block; }
+#cmp-labs-rows .ph { background: var(--paper); }
+.lr-link:is(:hover, :focus-visible) .ph, #cmp-labs-rows .dir-b .ph { border-color: var(--ink); }
+.dir-b .lr-screen { padding-bottom: 6px; }
+.dir-c .lr-screen { padding: 6px; border: var(--hairline) solid var(--line); }
+.dir-c .l3-gut { display: block; position: absolute; inset: 0; }
+.lr-copy { display: grid; justify-items: start; gap: 6px; }
+.lr-title { font: 400 var(--type-px-22) / 1.2 var(--font-pixel); }
+.lr-body { max-width: 46ch; color: var(--text-soft); }
+.dir-a .lr { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.dir-a .lr-link { grid-template-columns: 132px minmax(0, 1fr); gap: 16px; padding: 16px 0 16px 12px; border-bottom: var(--hairline) solid var(--line); }
+.dir-a .lr-open { margin-top: 0; }
+@container col (max-width: 400px) {
+.lr, .dir-a .lr-link { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+<script>
+/* Craft 1 hover frequent: marker ≤ 120 ms, out at once, instant on focus; refresh once per entry, fine pointers. 2 screens enter once, 40–60 ms gaps, first first; gutter up 100 ms, down at once. 3 steps inside, curves across. 4 no press. 5 retargets. 6 clip-path, opacity, levels. 7 off: no entrance or refresh; marker and ink frame stay. */
+Dir.component("cmp-labs-rows", (col, dir, api) => {
+L3.noNav(api.body);
+api.body.querySelectorAll(".lr-link").forEach((link) => {
+const screen = link.querySelector(".lr-screen");
+const shot = link.querySelector(".lr-ph");
+const gutter = link.querySelector(".l3-gut");
+api.placeholder(shot, 16, 10);
+/* A: marker on the row's left edge. B: a cell rule under the screen, filled in reading order. C: an under-band through levels. */
+const mark = L3.mark(dir === "a" ? link : screen, api, dir === "a" ? "left" : "under");
+L3.hover(link, (on, key) => {
+if (on) mark.arrive(key); else mark.leave();
+if (dir === "c") L3.steps(gutter, on ? [2, 3] : [1], on && !key ? 50 : 0);
+});
+L3.refresh(shot, api);
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-item-rows" data-name="Published items and experience rows" data-group="Lists" data-num="23"
+data-baseline="Rows with a date column, a title and a short body, and a secondary button where there is a link (Visit, Read). The row itself is not a link and never fills on hover.">
+<template data-markup>
+<ol class="ir">
+<li class="ir-row l3-rule">
+<p class="ir-date">July 2023 – now</p>
+<div><h4 class="ir-title">Quickbase, UX Team Lead</h4><p class="ir-body">I lead UX work at Quickbase while staying involved in product design, and run critiques.</p></div>
+</li>
+<li class="ir-row l3-rule">
+<p class="ir-date">April 2017 – April 2018</p>
+<div><h4 class="ir-title">Canbrowser, UI/UX Designer</h4><p class="ir-body">Redesigned a complex private software initiative supporting the CAN industry.</p></div>
+<a class="l3-btn" href="#cmp-item-rows" data-press="secondary"><span data-label-step>Visit</span> <span aria-hidden="true">↗</span></a>
+</li>
+<li class="ir-row l3-rule">
+<p class="ir-date">Interview</p>
+<div><h4 class="ir-title">A conversation with Mode Remote</h4><p class="ir-body">An interview about my path into product design and the work behind the work.</p></div>
+<a class="l3-btn" href="#cmp-item-rows" data-press="secondary"><span data-label-step>Read</span> <span aria-hidden="true">↗</span></a>
+</li>
+</ol>
+<p class="reason">Only the buttons take a marker; the rows stay still.</p>
+</template>
+<style>
+.ir { margin: 0 0 11px; padding: 0; list-style: none; counter-reset: i; }
+.ir-row { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; align-items: start; gap: 6px 16px; padding: 22px 0; counter-increment: i; }
+.dir-b .ir-row { grid-template-columns: 2.4ch 88px minmax(0, 1fr) auto; gap: 8px 12px; padding: 16px 0; }
+.dir-b .ir-row::before { content: counter(i, decimal-leading-zero); padding-top: 5px; font: 400 var(--type-px-11) / 1.4 var(--font-pixel); color: var(--muted); }
+.ir-date { padding-top: 5px; font: 400 var(--type-px-11) / 1.5 var(--font-pixel); color: var(--muted); }
+.ir-title { margin: 0 0 6px; font: 400 var(--type-px-22) / 1.2 var(--font-pixel); }
+.ir-body { color: var(--text-soft); }
+@container col (max-width: 400px) {
+.ir-row { grid-template-columns: minmax(0, 1fr); }
+.dir-b .ir-row { grid-template-columns: 2.4ch minmax(0, 1fr); }
+.dir-b .ir-row > * { grid-column: 2; }
+.ir-row > .l3-btn { justify-self: start; }
+}
+</style>
+<script>
+/* Craft 1 marker on the button only: ≤ 120 ms in, out at once, instant on focus. 2 press under 300 ms, out shorter. 3 no ease-in. 4 scale(0.97). 5 fill retargets. 6 transform, levels. 7 off: no fill, marker stays. */
+Dir.component("cmp-item-rows", (col, dir, api) => {
+L3.noNav(api.body);
+api.body.querySelectorAll(".l3-btn").forEach((button) => L3.bind(button, api, "left"));
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-entry-rail" data-name="Home entry rail" data-group="Lists" data-num="24"
+data-baseline="A sticky rail of links, each with a 6 by 16 px cell: current solid, earlier at level 3, later empty. On narrow screens it becomes a strip of 48 px pills.">
+<template data-markup>
+<div class="er">
+<nav aria-label="Homepage contents">
+<ol>
+<li><a href="#cmp-entry-rail" aria-current="location"><span class="er-cell" aria-hidden="true"></span><span class="er-label">Latest · Breathing grids</span></a></li>
+<li><a href="#cmp-entry-rail"><span class="er-cell" aria-hidden="true"></span><span class="er-label">Pave loading</span></a></li>
+<li><a href="#cmp-entry-rail"><span class="er-cell" aria-hidden="true"></span><span class="er-label">Pave</span></a></li>
+<li><a href="#cmp-entry-rail"><span class="er-cell" aria-hidden="true"></span><span class="er-label">SynapseSys</span></a></li>
+<li><a href="#cmp-entry-rail"><span class="er-cell" aria-hidden="true"></span><span class="er-label">Pipelines</span></a></li>
+<li><a href="#cmp-entry-rail"><span class="er-cell" aria-hidden="true"></span><span class="er-label">Connection Central</span></a></li>
+</ol>
+</nav>
+<label class="er-scrub"><span class="demo-label">Scrub the reading position</span><input type="range" min="0" max="599" value="30"></label>
+<p class="reason">Choosing an entry moves the page, never the rail.</p>
+</div>
+</template>
+<style>
+.er ol { position: relative; display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; counter-reset: e; }
+.er li { counter-increment: e; }
+.er a { display: flex; align-items: center; gap: 12px; min-height: 44px; color: var(--muted); font: 400 14px / 1.35 var(--sans); text-decoration: none; }
+.er a:is(:hover, [aria-current]) { color: var(--ink); }
+.er a[aria-current] { font-weight: 500; }
+.er-cell.cell { width: 4px; height: 16px; }
+.dir-b .er-cell { display: grid; gap: 1px; }
+.dir-b .er-cell .cell { width: 7px; height: 7px; }
+.dir-c .er-cell.cell { width: 12px; height: 22px; }
+.er-label { position: relative; }
+.dir-b .er-label::before { content: counter(e, decimal-leading-zero); margin-right: 8px; font: 400 var(--type-px-11) / 1 var(--font-pixel); color: var(--muted); }
+.dir-c .er-label { padding-left: 11px; }
+.er-scrub { display: grid; gap: 2px; margin: 22px 0 6px; }
+.er-scrub input { width: 100%; min-height: 44px; margin: 0; accent-color: var(--ink); }
+@container col (max-width: 400px) {
+.er ol { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+.er a { min-height: 48px; padding: 0 14px; border: var(--hairline) solid var(--line); white-space: nowrap; }
+}
+</style>
+<script>
+/* Craft 1 scroll and range are high-frequency: cells and current swap next frame; hover B 90 ms, C 120 ms, out at once. 2 ≤ 120 ms. 3 steps only. 4 no press. 5 level swaps, overridden by the next position. 6 levels only. 7 off: same states, no in-betweens. */
+Dir.component("cmp-entry-rail", (col, dir, api) => {
+const body = api.body;
+const range = body.querySelector("input");
+const list = body.querySelector("ol");
+const links = [...body.querySelectorAll(".er a")];
+const levels = [];
+const cellsOf = links.map((link) => {
+const host = link.querySelector(".er-cell");
+if (dir === "b") return api.cells(host, 3);
+host.classList.add("cell");
+return [host];
+});
+/* The page is six sections; the range stands in for scrolling. C lifts the next entry 1 → 3 → 5 as its section nears the reading line. */
+const render = () => {
+const position = Number(range.value);
+const current = Math.floor(position / 100);
+const part = (position % 100) / 100;
+links.forEach((link, i) => {
+let level = i < current ? 3 : i === current ? 8 : 0;
+if (dir === "c" && i === current + 1) level = part >= 0.85 ? 5 : part >= 0.7 ? 3 : part >= 0.5 ? 1 : 0;
+levels[i] = level;
+if (!link._hot) cellsOf[i].forEach((cell) => api.setLevel(cell, level));
+if (i === current) link.setAttribute("aria-current", "location"); else link.removeAttribute("aria-current");
+});
+if (list.scrollWidth > list.clientWidth + 1) list.scrollLeft = Math.max(0, links[current].parentNode.offsetLeft - 16);
+};
+links.forEach((link, i) => {
+const mark = dir === "c" ? L3.mark(link.querySelector(".er-label"), api, "left") : null;
+let stop = () => {};
+L3.hover(link, (on, key) => {
+link._hot = on;
+if (mark) { if (on) mark.arrive(key); else mark.leave(); }
+if (dir !== "b") return;
+stop();
+const stack = cellsOf[i];
+if (on && !key) stop = Dir.runField({ values: [0, 0.5, 1], total: 60, curve: Dir.curves.linear, steps: 1, stepMs: 30, render: (at) => stack.forEach((cell, k) => { if (at(k) >= 0) api.setLevel(cell, 8); }) });
+else stack.forEach((cell) => api.setLevel(cell, on ? 8 : levels[i]));
+});
+link.addEventListener("click", (event) => { event.preventDefault(); range.value = String(i * 100); render(); });
+});
+range.addEventListener("input", render);
+render();
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-work-entry" data-name="Home work entry" data-group="Lists" data-num="25"
+data-baseline="Date, title, summary, lead video with a 48-cell strip and a 44 px play square, caption label, background and problem, impact, Read full case study. Media sweeps in and refreshes under the pointer.">
+<template data-markup>
+<div class="we">
+<p class="we-date" data-enter><time datetime="2026-07-20">20 Jul 2026</time> / Pave</p>
+<h4 class="we-title" data-enter>Designing Pave</h4>
+<p class="we-sum" data-enter>Designing Pave’s enterprise AI app builder, planning flows, direct editing and navigation.</p>
+<figure class="we-fig">
+<div class="we-shell" data-enter="media"><span class="tex l3-gut" data-level="1" aria-hidden="true"></span><div class="we-frame"><div class="we-media"></div></div></div>
+<span class="we-prule" aria-hidden="true"></span>
+<div class="we-player"><button class="we-play" type="button"><span class="we-ico"></span></button><span class="we-prog" aria-hidden="true"></span><span class="we-time">0:09 / 0:26</span></div>
+<figcaption class="we-cap" data-enter>Product overview · includes an early workflow prototype</figcaption>
+</figure>
+<dl class="we-ctx" data-enter>
+<div class="l3-rule l3-rule--soft"><dt>Background</dt><dd>I joined an engineer-built AI app builder as its first product designer, working across product structure, interaction design and implementation.</dd></div>
+<div class="l3-rule l3-rule--soft"><dt>Problem</dt><dd>The prompt-to-app loop worked. Planning, precise edits, recovery and navigation still needed to feel like one product.</dd></div>
+</dl>
+<div class="we-impact" data-enter>
+<p class="we-ih">Impact</p>
+<dl class="we-imp">
+<div class="l3-rule"><dt>Public launch</dt><dd>Pave grew from an early alpha into a publicly launched product.</dd></div>
+<div class="l3-rule"><dt>Shipped capabilities</dt><dd>Plan Mode and Direct Edit reached the public product.</dd></div>
+</dl>
+</div>
+<a class="l3-q we-link" href="#cmp-work-entry" data-enter>Read full case study <span class="l3-arr" aria-hidden="true">→</span><span class="rule-soft"></span></a>
+</div>
+</template>
+<style>
+.we-title, .we-date { --enter-delay: 0ms !important; }
+.we-shell { --enter-delay: 50ms !important; }
+.we-sum { --enter-delay: 120ms !important; }
+.we-cap { --enter-delay: 170ms !important; }
+.we-ctx { --enter-delay: 210ms !important; }
+.we-impact { --enter-delay: 245ms !important; }
+.we-link { --enter-delay: 275ms !important; }
+.we { display: grid; justify-items: start; gap: 16px; }
+.we > * { max-width: 100%; }
+.we-date, .we-cap, #cmp-work-entry dt, .we-time { font: 500 13px / 1.4 var(--sans); color: var(--muted); }
+#cmp-work-entry :is(.dir-b, .dir-c) :is(.we-date, .we-cap, dt, .we-time, .we-ih) { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); color: var(--muted); }
+.dir-b .we-date::before { content: "01"; margin-right: 12px; }
+.we-title { margin: 0; font: 400 var(--type-px-33) / 1.1 var(--font-pixel); }
+.dir-b .we-title { font-size: var(--type-px-22); }
+.dir-c .we-title { position: relative; padding-bottom: 15px; font-size: var(--type-px-44); }
+.dir-c .we-title::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--ink); mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size); }
+.we-sum { max-width: 64ch; color: var(--text-soft); }
+.we-fig { display: grid; gap: 8px; width: 100%; margin: 0; }
+.we-shell, .we-frame { position: relative; }
+.dir-c .we-shell { padding: 6px; }
+.dir-c .l3-gut { display: block; position: absolute; inset: 0; }
+#cmp-work-entry .ph { background: var(--paper); }
+#cmp-work-entry .dir-b .ph { border-color: var(--ink); }
+.we-strip { position: absolute; left: 1px; right: 1px; bottom: 1px; z-index: 3; display: flex; gap: 1px; height: 4px; pointer-events: none; }
+.we-strip .cell, .we-prule .cell { flex: 1 1 0; width: auto; height: 100%; }
+.we-prule { display: none; }
+.dir-b .we-prule { display: flex; gap: 1px; height: 4px; }
+.we-player { display: flex; align-items: center; gap: 12px; }
+.we-play { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: var(--hairline) solid var(--ink); background: var(--paper); cursor: pointer; }
+#cmp-work-entry :is(.dir-b, .dir-c) .we-play { width: 48px; height: 48px; }
+.we-prog { display: inline-flex; gap: 2px; }
+.dir-a .we-prog .cell { width: 4px; height: 16px; }
+.dir-c .we-prog .cell { width: 12px; height: 12px; }
+.we-time { margin-left: auto; font-variant-numeric: tabular-nums; }
+.we-ctx, .we-imp { display: grid; width: 100%; margin: 0; }
+#cmp-work-entry dl > div { padding: 11px 0 14px; }
+#cmp-work-entry dd { margin: 4px 0 0; }
+.we-impact { width: 100%; }
+.we-ih { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); color: var(--muted); }
+.we-imp dd { font-size: 15px; color: var(--text-soft); }
+.dir-a .we-imp { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 8px; padding: 6px 0; border-block: var(--hairline) solid var(--line); }
+.dir-a .we-imp > div::after { display: none; }
+#cmp-work-entry .dir-a .we-imp dt { font: 400 var(--type-px-22) / 1.2 var(--font-pixel); color: var(--ink); }
+.dir-c .we-imp dd { font-size: var(--read-size); }
+@container col (max-width: 400px) {
+.dir-c .we-title { font-size: var(--type-px-33); }
+.dir-a .we-imp { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+<script>
+/* Craft 1 entrance once; play is a click, icon morph 120 ms; refresh once per entry. 2 gaps 30–70 ms, title then media; refresh 240–360 ms (rare, large). 3 steps inside, ease-out across. 4 play presses to 0.97. 5 morph starts from current cells. 6 clip-path, opacity, levels. 7 off: video pauses on its frame, no refresh. */
+Dir.component("cmp-work-entry", (col, dir, api) => {
+const body = api.body;
+const $ = (sel) => body.querySelector(sel);
+const media = $(".we-media");
+const button = $(".we-play");
+const glyph = $(".we-ico");
+const time = $(".we-time");
+const prog = $(".we-prog");
+L3.noNav(body);
+api.placeholder(media, 16, 9);
+/* A: one 4 × 16 progress cell beside the toggle. B: the 48-cell strip on the frame's bottom edge. C: a 12-cell row. */
+let bar;
+if (dir === "b") {
+const strip = document.createElement("span");
+strip.className = "we-strip";
+strip.setAttribute("aria-hidden", "true");
+$(".we-frame").append(strip);
+bar = api.cells(strip, 48);
+prog.remove();
+} else bar = api.cells(prog, dir === "a" ? 1 : 12);
+const length = 26000;
+let at = 9000;
+let playing = Dir.motionActive();
+const draw = () => {
+const share = at / length;
+if (dir === "a") api.setLevel(bar[0], Math.round(share * 8));
+else bar.forEach((cell, i) => api.setLevel(cell, i < Math.round(share * bar.length) ? 8 : 0));
+time.textContent = `0:${String(Math.floor(at / 1000)).padStart(2, "0")} / 0:26`;
+};
+const label = () => button.setAttribute("aria-label", `${playing ? "Pause" : "Play"} Pave in 26 seconds`);
+api.icon(glyph, playing ? "pause" : "play", { cell: 4 });
+label();
+draw();
+button.addEventListener("click", () => { playing = !playing; api.morph(glyph, playing ? "pause" : "play"); label(); });
+api.tick(media, () => { if (!playing) return; at = (at + 40) % length; draw(); }, draw);
+api.cleanup(Dir.onMotion((active) => { if (!active && playing) { playing = false; api.icon(glyph, "play", { cell: 4 }); label(); } }));
+L3.refresh(media, api, dir === "b" ? $(".we-prule") : null);
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-private-work" data-name="Private work link" data-group="Lists" data-num="26"
+data-baseline="A quiet block, hidden until private work is configured: a hairline on top, a small kicker, a 22 px heading, one sentence and a secondary button. No box.">
+<template data-markup>
+<aside class="pw" aria-label="Private work">
+<span class="rule-soft"></span>
+<p class="pw-k">Private work</p>
+<h4 class="pw-h">Password required</h4>
+<p class="pw-p">Selected work is available with a shared password.</p>
+<a class="l3-btn" href="#cmp-private-work" data-press="secondary"><span data-label-step>Open private access</span> <span aria-hidden="true">→</span></a>
+</aside>
+</template>
+<style>
+.pw { position: relative; display: grid; justify-items: start; gap: 11px; padding-top: 22px; }
+.pw > .rule-soft { position: absolute; top: 0; left: 0; right: 0; }
+.dir-a .pw { border-top: var(--hairline) solid var(--line); }
+.dir-a .pw > .rule-soft { display: none; }
+.pw-k { font: 500 13px / 1.4 var(--sans); color: var(--muted); }
+#cmp-private-work :is(.dir-b, .dir-c) .pw-k { font: 400 var(--type-px-11) / 1.4 var(--font-pixel); }
+.pw-h { margin: 0; font: 400 var(--type-px-22) / 1.2 var(--font-pixel); }
+.dir-c .pw-h { font-size: var(--type-px-33); }
+.pw-p { max-width: 52ch; margin-bottom: 11px; }
+</style>
+<script>
+/* Craft 1 rare hover: marker ≤ 120 ms, out at once, instant on focus. 2 press under 300 ms. 3 no ease-in. 4 scale(0.97). 5 fill retargets. 6 transform, levels. 7 off: still and complete. */
+Dir.component("cmp-private-work", (col, dir, api) => {
+L3.noNav(api.body);
+L3.bind(api.body.querySelector(".l3-btn"), api, "left");
+});
+</script>
+</article>
+</section>

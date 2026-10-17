@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Component directions</title>
+<!-- Built by directions/build.mjs from the partials in directions/. Self-contained: fonts and the logo are embedded. -->
+<script>
+(function () {
+  var root = document.documentElement, prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem("traykov-directions-review") || "{}") || {}; } catch (error) {}
+  if (prefs.theme === "light" || prefs.theme === "dark") root.dataset.theme = prefs.theme;
+  root.dataset.motion = prefs.motion === "off" ? "off" : "on";
+  root.dataset.view = prefs.view === "phone" ? "phone" : "desktop";
+  // Which directions show: all three side by side, or one at a time (the default on a phone).
+  var narrow = window.matchMedia("(max-width: 700px)").matches;
+  root.dataset.one = /^(all|a|b|c)$/.test(prefs.one || "") ? prefs.one : (narrow ? "a" : "all");
+  window.Dir = { _q: [], component: function (id, fn) { this._q.push([id, fn]); } };
+})();
+</script>
+__STYLE__
+</head>
+<body>
+<header class="bar">
+  <span class="bar-title"><span class="logo-mark" aria-hidden="true"></span><span class="bar-title-text"> Component directions</span></span>
+  <div class="bar-group bar-group--one" role="group" aria-labelledby="bar-one">
+    <span class="bar-label" id="bar-one">Show</span>
+    <div class="seg">
+      <button class="btn bar-all" type="button" data-set="one" value="all" aria-pressed="false">All</button>
+      <button class="btn" type="button" data-set="one" value="a" aria-pressed="false" aria-label="A · Ruled paper">A</button>
+      <button class="btn" type="button" data-set="one" value="b" aria-pressed="false" aria-label="B · Cell grid">B</button>
+      <button class="btn" type="button" data-set="one" value="c" aria-pressed="false" aria-label="C · Printed dither">C</button>
+    </div>
+  </div>
+  <button class="btn btn--box bar-more-toggle" type="button" aria-expanded="false" aria-controls="bar-more" data-bar-more>Settings</button>
+  <div class="bar-more" id="bar-more">
+  <div class="bar-group" role="group" aria-labelledby="bar-theme">
+    <span class="bar-label" id="bar-theme">Theme</span>
+    <div class="seg">
+      <button class="btn" type="button" data-set="theme" value="auto" aria-pressed="false">Auto</button>
+      <button class="btn" type="button" data-set="theme" value="light" aria-pressed="false">Light</button>
+      <button class="btn" type="button" data-set="theme" value="dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
+  <div class="bar-group" role="group" aria-labelledby="bar-motion" aria-describedby="motion-note">
+    <span class="bar-label" id="bar-motion">Motion</span>
+    <div class="seg">
+      <button class="btn" type="button" data-set="motion" value="on" aria-pressed="false">On</button>
+      <button class="btn" type="button" data-set="motion" value="off" aria-pressed="false">Off</button>
+    </div>
+    <span class="bar-note" id="motion-note" aria-live="polite"></span>
+  </div>
+  <div class="bar-group" role="group" aria-labelledby="bar-view">
+    <span class="bar-label" id="bar-view">View</span>
+    <div class="seg">
+      <button class="btn" type="button" data-set="view" value="desktop" aria-pressed="false">Desktop</button>
+      <button class="btn" type="button" data-set="view" value="phone" aria-pressed="false">Phone</button>
+    </div>
+  </div>
+  <button class="btn btn--box" type="button" data-replay-all>Replay all</button>
+  <details class="jump">
+    <summary>Sections</summary>
+    <ul data-jump></ul>
+  </details>
+  </div>
+  <a class="bar-count" href="#your-picks" data-pick-count>No picks yet</a>
+</header>
+<main id="top">
+<section class="intro">
+  <h1>Component directions</h1>
+  <p>Every component on traykov.cc, drawn three ways side by side. The three directions share the same marks, the same density scale and the same clock. They differ in how much of the grid shows, how dense the marks are and how motion reads.</p>
+  <ul class="intro-dirs">
+    <li><b>A · Ruled paper</b><span>A quiet editorial page. Hairlines and type do the work; cells appear only where they mean something. Motion is one snap.</span></li>
+    <li><b>B · Cell grid</b><span>The 8 px lattice made visible. Rules, markers and meters are rows of counted cells. Motion counts in steps on the clock.</span></li>
+    <li><b>C · Printed dither</b><span>A coarse 12 px dither as the material. Fills, rules and entrances are visibly dotted. Motion is a dissolve held for a beat.</span></li>
+  </ul>
+  <p>Hover, press Tab and click inside each column. Switch theme, motion and view in the bar above; Replay runs a component's entrance again. Choose a direction under each component. Your picks stay in this browser and export as plain text at the end of the page.</p>
+</section>

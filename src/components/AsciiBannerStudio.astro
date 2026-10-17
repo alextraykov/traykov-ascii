@@ -239,7 +239,7 @@ const { displayOnly = false, initialPreset = "vortex" } = Astro.props as Props;
   )}
 
   {!displayOnly && (
-  <p class="ascii-banner-studio__status" role="status" aria-live="polite" data-ascii-banner-status>
+  <p class="ascii-banner-studio__status" role="status" aria-live="polite" data-ascii-banner-status data-status-snap>
     Drag the shader directly or use Position X/Y. Export renders at the selected native size.
   </p>
   )}
@@ -247,4 +247,25 @@ const { displayOnly = false, initialPreset = "vortex" } = Astro.props as Props;
 
 <script>
   import "../scripts/ascii-banner-studio.js";
+  import { isMotionActive } from "../scripts/motion/lifecycle.js";
+
+  // Export quality list (picks, A select): a pointer open switches the list on from the trigger
+  // edge (four steps, 200 ms); keyboard opens are instant.
+  document.querySelectorAll<HTMLButtonElement>("[data-ascii-banner-quality-trigger]").forEach((trigger) => {
+    const list = document.getElementById(trigger.getAttribute("aria-controls") || "");
+    if (!list) return;
+    let pointer = false;
+    trigger.addEventListener("click", (event) => { pointer = event.detail > 0; }, true);
+    trigger.addEventListener("keydown", () => { pointer = false; }, true);
+    new MutationObserver(() => {
+      const opened = trigger.getAttribute("aria-expanded") === "true";
+      list.classList.remove("is-switching-a");
+      if (opened && pointer && isMotionActive()) {
+        void list.offsetWidth;
+        list.classList.add("is-switching-a");
+      }
+      pointer = false;
+    }).observe(trigger, { attributes: true, attributeFilter: ["aria-expanded"] });
+    list.addEventListener("animationend", () => list.classList.remove("is-switching-a"));
+  });
 </script>

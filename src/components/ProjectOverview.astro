@@ -39,14 +39,14 @@ const leadCaptionId = `${overviewId}-lead-caption`;
 
   <header class="project-overview__header">
     <div class="project-overview__copy">
-      <h3 id={`${overviewId}-title`} data-project-overview-title data-case-id={study.id}>
+      <h3 id={`${overviewId}-title`} data-project-overview-title data-case-id={study.id} data-reveal="rise">
         <a href={study.href}>{study.title}</a>
       </h3>
-      <p class="project-overview__summary">{study.summary}</p>
+      <p class="project-overview__summary" data-reveal="rise" data-reveal-delay="120">{study.summary}</p>
     </div>
   </header>
 
-  <dl class="project-overview__context">
+  <dl class="project-overview__context" data-reveal="rise" data-reveal-delay="210">
     <div>
       <dt>Background</dt>
       <dd>{background}</dd>
@@ -87,7 +87,7 @@ const leadCaptionId = `${overviewId}-lead-caption`;
   </div>
 
   <footer class="project-overview__footer">
-    <div class="project-overview__impact">
+    <div class="project-overview__impact" data-reveal="rise" data-reveal-delay="245">
       <p>Impact</p>
       <dl>
         {impact.map((item) => (
@@ -98,7 +98,7 @@ const leadCaptionId = `${overviewId}-lead-caption`;
         ))}
       </dl>
     </div>
-    <a class="project-overview__link" href={study.href} data-project-overview-link data-ascii-action="text">
+    <a class="project-overview__link" href={study.href} data-project-overview-link data-ascii-action="text" data-reveal="rise" data-reveal-delay="275">
       Read full case study <span aria-hidden="true">→</span>
     </a>
   </footer>

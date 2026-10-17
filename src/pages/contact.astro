@@ -101,6 +101,7 @@ const bookingPageUrl = (() => {
                 required
               ></textarea>
             </label>
+            <p class="contact-form__count" aria-live="polite" data-contact-count>0 / 5000</p>
 
             <label class="contact-form__trap" aria-hidden="true">
               <span>Leave this field empty</span>
@@ -204,6 +205,17 @@ const bookingPageUrl = (() => {
         ) {
           return;
         }
+
+        // The textarea's character count under its line (A field): "120 / 5000".
+        const messageField = form.querySelector("textarea[name='message']");
+        const count = form.querySelector("[data-contact-count]");
+        const syncCount = () => {
+          if (!(messageField instanceof HTMLTextAreaElement) || !(count instanceof HTMLElement)) return;
+          count.textContent = `${messageField.value.length} / ${messageField.maxLength > 0 ? messageField.maxLength : 5000}`;
+        };
+        messageField?.addEventListener("input", syncCount);
+        form.addEventListener("reset", () => requestAnimationFrame(syncCount));
+        syncCount();
 
         const setStatus = (message: string, state: "idle" | "error" | "success") => {
           status.textContent = message;

@@ -69,8 +69,11 @@ const orderValue = (order, x, y, cols, rows, origin) => {
   return (x + y) / Math.max(1, cols + rows - 2);
 };
 
-// The dither fill behind a control (the press). The element gets .is-filled when solid so no seams show.
-export function fillLayer(element, { size = 12 } = {}) {
+// The dither fill behind a control (the press). The element gets .is-filled when solid so no seams show,
+// and .is-inverted while the mean level is at or above invertAt (default 6): the label inverts only
+// once enough ink sits behind it. `levels` is an explicit level path (each cell walks it one step per
+// stepMs, e.g. [2, 4, 6, 8]); without it the cell interpolates from its current level in 8 steps.
+export function fillLayer(element, { size = 12, invertAt: defaultInvertAt = 6 } = {}) {
   const layer = document.createElement("span");
   layer.className = "fill-layer";
   layer.setAttribute("aria-hidden", "true");
@@ -92,14 +95,22 @@ export function fillLayer(element, { size = 12 } = {}) {
     levels = cells.map(() => 0);
   };
 
-  const to = (level, { order = "diagonal", origin = null, total = 240, done } = {}) => {
+  let invertAt = defaultInvertAt;
+  const mark = () => {
+    const mean = levels.reduce((sum, value) => sum + value, 0) / (levels.length || 1);
+    element.classList.toggle("is-inverted", mean > 0 && mean >= invertAt);
+  };
+
+  const to = (level, { order = "diagonal", origin = null, total = 240, levels: path, stepMs = 16, invertAt: nextInvertAt, done } = {}) => {
     const rect = element.getBoundingClientRect();
     if (!cells.length || Math.ceil(rect.width / size) !== cols || Math.ceil(rect.height / size) !== rows) build();
     stop();
     const current = (token += 1);
+    if (nextInvertAt != null) invertAt = nextInvertAt;
     element.classList.remove("is-filled");
     element.classList.add("is-filling");
     const from = levels.slice();
+    const steps = path && path.length ? path.length : 8;
     const finish = () => {
       cells.forEach((cell, index) => {
         levels[index] = level;
@@ -107,23 +118,32 @@ export function fillLayer(element, { size = 12 } = {}) {
       });
       if (level === 8) element.classList.add("is-filled");
       if (level === 0) element.classList.remove("is-filling");
+      mark();
       if (done) done();
     };
     stop = runField({
       values: cells.map((_, index) => orderValue(order, index % cols, Math.floor(index / cols), cols, rows, origin)),
       total,
-      steps: 8,
-      stepMs: 16,
+      steps,
+      stepMs,
       render: (stepAt) => {
         if (current !== token) return;
         cells.forEach((cell, index) => {
-          const progress = Math.min(1, Math.max(0, stepAt(index) + 1) / 8);
-          const value = Math.round(from[index] + (level - from[index]) * progress);
+          const at = stepAt(index);
+          let value;
+          if (path && path.length) {
+            if (at < 0) return;
+            value = path[Math.min(at, steps - 1)];
+          } else {
+            const progress = Math.min(1, Math.max(0, at + 1) / 8);
+            value = Math.round(from[index] + (level - from[index]) * progress);
+          }
           if (levels[index] !== value) {
             levels[index] = value;
             setLevel(cell, value);
           }
         });
+        mark();
       },
       done: () => {
         if (current === token) finish();
@@ -131,7 +151,12 @@ export function fillLayer(element, { size = 12 } = {}) {
     });
   };
 
-  return { to };
+  return {
+    to,
+    get level() {
+      return levels.reduce((sum, value) => sum + value, 0) / (levels.length || 1);
+    }
+  };
 }
 
 // 5×5 (or 5×3) cell icons. "#" solid, "+" 5, ":" 3, "." empty.

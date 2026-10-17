@@ -1,0 +1,824 @@
+<section class="group ce" id="g-case-evidence">
+<h2>Case evidence</h2>
+<style>
+.ce figure{margin:0}
+.ce .chip{display:inline-flex;align-items:center;gap:6px}
+.ce .chip-c{display:inline-flex;gap:1px}
+.ce .dir-a .chip .cell{width:8px;height:8px}
+.ce .dir-a .chip{font:500 13px/1.3 var(--sans);color:var(--muted)}
+.ce :is(.dir-b,.dir-c) .chip{font:400 var(--type-px-11)/1.3 var(--font-pixel)}
+.ce .sw{display:flex;flex-wrap:wrap;column-gap:4px;border-bottom:var(--hairline) solid var(--line)}
+.ce .sw button{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:0;background:none;font:500 14px/1 var(--sans);color:var(--muted);cursor:pointer}
+.ce :is(.dir-b,.dir-c) .sw button{min-height:48px}
+.ce .dir-b .sw button{font:400 var(--type-px-11)/1 var(--font-pixel)}
+.ce .sw [aria-pressed="true"]{color:var(--ink)}
+.ce .sw [aria-pressed="true"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--marker-height);background:var(--ink)}
+.ce .dir-b .sw [aria-pressed="true"]::after{background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 5px)}
+.ce .sw-n{display:none;font-style:normal;color:var(--muted)}
+.ce .dir-b .sw-n{display:inline}
+.ce .cap{position:relative;display:grid;gap:4px;margin-top:11px;padding-top:11px}
+.ce .dir-a .cap{border-top:var(--hairline) solid var(--line)}
+.ce :is(.dir-b,.dir-c) .cap::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 5px);mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size)}
+.ce .dir-c .cap::before{height:4px;background:var(--ink);mask-image:var(--dither-4)}
+.ce .cap strong{font:400 var(--type-px-11)/1.4 var(--font-pixel)}
+.ce .dir-a .cap strong{font:500 13px/1.4 var(--sans)}
+.ce .dir-b .col-body{counter-reset:fig}
+.ce .dir-b figure{counter-increment:fig}
+.ce .dir-b .cap strong::before{content:"Fig. " counter(fig,decimal-leading-zero) " · " / "";color:var(--muted)}
+.ce .cap em{font:400 15px/1.45 var(--sans);font-style:normal;color:var(--text-soft)}
+.ce .dir-a .cap em{color:var(--muted)}
+.ce .dir-c .gut{position:relative;padding:6px;border:var(--hairline) solid var(--line)}
+.ce .dir-c .gut::before{content:"";position:absolute;inset:0;background:var(--ink);mask:var(--dither-1) 0 0 / var(--dither-size) var(--dither-size)}
+.ce .gut>*{position:relative;background:var(--paper)}
+.ce .stk{display:grid}
+.ce .stk>*{grid-area:1 / 1;visibility:hidden}
+.ce .stk>.is-prev{visibility:visible}
+.ce .stk>.is-cur{visibility:visible;z-index:1}
+.ce .dir-b .stk>*{clip-path:inset(0 0 100% 0)}
+.ce .dir-b .stk>:is(.is-cur,.is-prev){clip-path:inset(0)}
+.ce .dir-b .stk>.is-cur{transition:clip-path 240ms steps(10,jump-start)}
+.ce .stk.is-instant>*{transition:none}
+.ce .btn2{position:relative;min-height:44px;padding:0 16px;border:var(--hairline) solid var(--ink);background:var(--paper);font:500 14px/1 var(--sans);cursor:pointer;transition:transform 120ms var(--ease-out-expo)}
+.ce :is(.dir-b,.dir-c) .btn2{min-height:48px}
+.ce .dir-b .btn2{font:400 var(--type-px-11)/1 var(--font-pixel)}
+.ce .dir-c .btn2{border-width:2px}
+.ce :is(.btn2,.ibtn):active{transform:scale(0.97)}
+.ce .ibtn{position:relative;flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:var(--hairline) solid var(--ink);background:var(--paper);cursor:pointer;transition:transform 120ms var(--ease-out-expo)}
+.ce :is(.dir-b,.dir-c) .ibtn{width:48px;height:48px}
+.ce .dir-c .ibtn{border-width:2px}
+.ce .px11{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--muted)}
+.ce .dir-a .px11{font:500 13px/1.4 var(--sans)}
+@media (prefers-color-scheme:dark){html:not([data-theme]) .ce .dir-c .is-entering[data-enter="media"]{--enter-tile:12px}}
+</style>
+<script>
+window.CE4={
+play(el,cls="is-entering"){
+if(!Dir.motionActive())return;
+el.style.setProperty("--enter-delay","0ms");
+el.classList.remove(cls);
+void el.offsetWidth;
+el.classList.add(cls);
+const end=(e)=>{if(e.target===el){el.classList.remove(cls);el.removeEventListener("animationend",end);}};
+el.addEventListener("animationend",end);
+},
+ph(scope,api){
+scope.querySelectorAll("[data-ph]").forEach((el)=>{
+api.placeholder(el,16,10,el.dataset.ph||"block");
+if(el.dataset.tex)el.querySelector(".tex").dataset.level=el.dataset.tex;
+});
+},
+ic(host,name,cell){
+Object.assign(Dir.ICONS,{pair:[".#.#.","#...#",".#.#."],expand:["##.##","#...#",".....","#...#","##.##"]});
+return Dir.icon(host,name,{cell});
+},
+chip(host,status,api){
+const one={launched:8,"closed beta":5,prototype:3,archived:1},three={launched:[8,8,8],"closed beta":[8,5,0],prototype:[3,0,0],archived:[1,0,0]},key=status.toLowerCase(),levels=api.dir==="b"?three[key]||[-1]:[key in one?one[key]:-1],c=document.createElement("span");
+c.className="chip-c";
+c.setAttribute("aria-hidden","true");
+levels.forEach((l)=>{const[cell]=api.cells(c,1,{level:Math.max(0,l),clear:l<0});if(l<0)cell.classList.add("is-dotted");});
+host.classList.add("chip");
+host.replaceChildren(c,status);
+return c;
+},
+res(el,levels,ms=50,done){
+(el._rv||[]).forEach(clearTimeout);
+el._rv=[];
+if(!levels.length||!Dir.motionActive()){delete el.dataset.level;if(done)done();return;}
+levels.forEach((l,k)=>el._rv.push(setTimeout(()=>{el.dataset.level=l;},k*ms)));
+el._rv.push(setTimeout(()=>{delete el.dataset.level;if(done)done();},levels.length*ms));
+},
+seg(group,onPick){
+const bs=[...group.querySelectorAll("button")];
+let cur=Math.max(0,bs.findIndex((b)=>b.getAttribute("aria-pressed")==="true"));
+const pick=(i,kbd)=>{
+if(i===cur)return;
+cur=i;
+bs.forEach((b,k)=>{b.setAttribute("aria-pressed",String(k===i));b.tabIndex=k===i?0:-1;});
+if(kbd)bs[i].focus();
+onPick(i,kbd);
+};
+bs.forEach((b,k)=>{b.tabIndex=k===cur?0:-1;b.addEventListener("click",(e)=>pick(k,e.detail===0));});
+group.addEventListener("keydown",(e)=>{const d={ArrowRight:1,ArrowLeft:-1}[e.key];if(d){e.preventDefault();pick((cur+d+bs.length)%bs.length,true);}});
+},
+swap(stage,i,dir,kbd){
+const ps=[...stage.children],cur=ps[i],still=kbd||!Dir.motionActive();
+stage.classList.add("stk");
+stage.classList.toggle("is-instant",still||dir==="a");
+ps.forEach((p)=>{p.classList.toggle("is-prev",p!==cur&&p.classList.contains("is-cur"));p.classList.remove("is-cur");if(p!==cur)CE4.res(p,[]);});
+void cur.offsetWidth;
+cur.classList.add("is-cur");
+if(dir==="c"&&!still)CE4.res(cur,[2,4,6],60);
+clearTimeout(stage._t);
+stage._t=setTimeout(()=>ps.forEach((p)=>p.classList.remove("is-prev")),still||dir==="a"?0:260);
+}
+};
+</script>
+
+<article class="cmp" id="cmp-hero" data-name="Hero" data-group="Case pages" data-num="27" data-wide
+data-baseline="Back link on a soft rule, a meta line with one status cell, the word and the read time, the title in Departure 66, the summary.">
+<template data-markup>
+<div class="hero">
+<p data-enter><a class="hero-crumb" href="#cmp-hero"><span>← Work</span><span class="rule-soft"></span></a></p>
+<p class="hero-meta" data-enter><span class="hero-chip"></span><span class="hero-sep" aria-hidden="true"></span><span>15 min read</span></p>
+<h1 class="hero-h" id="case-title" data-enter>Designing Pave</h1>
+<p class="hero-sum" data-enter>I joined an early AI app builder made by engineers and helped turn it into Pave, a public product with a clear builder, version control, planning mode, direct editing and a new navigation system.</p>
+<span class="rule-soft hero-band"></span>
+</div>
+<p class="demo-label hero-note">Every status word. Choose one to show it in the meta line.</p>
+<div class="sw hero-st" role="group" aria-label="Status">
+<button type="button" aria-pressed="true" data-marker="under"><span></span></button>
+<button type="button" aria-pressed="false" data-marker="under"><span></span></button>
+<button type="button" aria-pressed="false" data-marker="under"><span></span></button>
+<button type="button" aria-pressed="false" data-marker="under"><span></span></button>
+<button type="button" aria-pressed="false" data-marker="under"><span></span></button>
+</div>
+</template>
+<style>
+.hero-crumb{display:inline-grid;align-content:center;gap:4px;min-height:44px;font:500 14px/1.3 var(--sans);text-decoration:none}
+.hero-crumb:hover .rule-soft{mask:none}
+.hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:var(--unit);font:500 13px/1.4 var(--sans);color:var(--muted)}
+:is(.dir-b,.dir-c) .hero-meta{font:400 var(--type-px-11)/1.4 var(--font-pixel)}
+.hero-sep::before{content:"·"}
+.dir-b .hero-sep{width:7px;height:7px;background:var(--muted)}
+.dir-b .hero-sep::before{content:none}
+.hero-h{font-size:var(--type-h1);line-height:1.05;margin-top:44px}
+.dir-b .hero-h{line-height:1.1;margin-top:32px}
+.dir-c .hero-h{margin-top:66px}
+.hero-sum{max-width:64ch;margin-top:22px}
+:is(.dir-b,.dir-c) .hero-sum{max-width:62ch}
+.dir-b .hero-sum{margin-top:16px}
+.hero-band{display:none;margin-top:22px}
+.dir-c .hero-band{display:block}
+.hero-note{margin-top:44px}
+.ce .hero-st{border:0}
+@container col (max-width:640px){
+.hero-h{font-size:var(--type-px-44)}
+.dir-b .hero-h{font-size:var(--type-px-33)}
+}
+</style>
+<script>
+/* Motion check · 1 entrance once; status keys instant. 2 each step ≤280 ms, stagger ≤600 (rare hero). 3 steps in, ease-out across. 4 no scale. 5 status is a state swap. 6 opacity, mask. 7 off: all shown, meter full. */
+Dir.component("cmp-hero",(col,dir,api)=>{
+const S=["Launched","Closed beta","Prototype","Archived","Concept"],meta=col.querySelector(".hero-meta"),host=col.querySelector(".hero-chip");
+col.querySelectorAll(".hero-st button > span").forEach((s,i)=>CE4.chip(s,S[i],api));
+let cells=CE4.chip(host,S[0],api);
+const fillIn=()=>{
+if(dir!=="b"||!Dir.motionActive())return;
+const list=[...cells.children],want=list.map((c)=>c.dataset.level);
+list.forEach((c,i)=>{c.dataset.level="0";api.timeout(()=>{c.dataset.level=want[i];},30*(i+1));});
+};
+meta.addEventListener("animationstart",(e)=>{if(e.target===meta)fillIn();});
+CE4.seg(col.querySelector(".hero-st"),(i,kbd)=>{cells=CE4.chip(host,S[i],api);if(!kbd)fillIn();});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-facts" data-name="Facts list" data-group="Case pages" data-num="28"
+data-baseline="A list after the summary: Departure 11 term and a value on a level-4 dither rule, no boxes.">
+<template data-markup>
+<ul class="facts">
+<li><span class="rule-soft"></span><strong>Role</strong><span>Founding product designer, then interim design manager</span></li>
+<li><span class="rule-soft"></span><strong>Timeline</strong><span>December 2025 to today</span></li>
+<li><span class="rule-soft"></span><strong>Scope</strong><span>Research, product structure, coded prototypes, interaction models and handoff</span></li>
+<li><span class="rule-soft"></span><strong>Result</strong><span>Pave launched publicly; the new navigation shipped on 16 July 2026</span></li>
+</ul>
+</template>
+<style>
+.ce .facts{list-style:none;margin:0;padding:0}
+.ce .facts li{display:grid;grid-template-columns:120px minmax(0,1fr);column-gap:11px;align-items:baseline;min-height:44px;padding-bottom:11px}
+.ce .facts .rule-soft{grid-column:1 / -1;margin-bottom:11px}
+.ce .facts strong{font:500 13px/1.4 var(--sans);color:var(--muted)}
+.ce :is(.dir-b,.dir-c) .facts strong{font:400 var(--type-px-11)/1.6 var(--font-pixel)}
+.ce :is(.dir-b,.dir-c) .facts li{grid-template-columns:96px minmax(0,1fr)}
+.ce .dir-b .facts li{padding-bottom:8px}
+.ce .dir-b .facts .rule-soft{margin-bottom:8px}
+.ce .dir-c .facts li:first-child .rule-soft{height:2px;mask:none}
+</style>
+</article>
+
+<article class="cmp" id="cmp-caption" data-name="Figure captions" data-group="Case pages" data-num="29"
+data-baseline="A hairline under the media, a Departure 11 lead in ink and a 15 px note.">
+<template data-markup>
+<figure class="gut-f"><div class="gut"><div data-ph></div></div><figcaption class="cap"><strong>Blinq builder</strong><em>One workspace for app selection, conversation, build activity and preview.</em></figcaption></figure>
+<figure class="gut-f"><div class="gut"><div data-ph="menu"></div></div><figcaption class="cap"><strong>Pave v1 builder</strong><em>The global rail and the split chat and preview stayed while the product changed underneath.</em></figcaption></figure>
+</template>
+<style>
+.ce .gut-f + .gut-f{margin-top:33px}
+.ce .dir-c .gut-f{position:relative;padding:6px;border:var(--hairline) solid var(--line)}
+.ce .dir-c .gut-f::before{content:"";position:absolute;inset:0;background:var(--ink);mask:var(--dither-1) 0 0 / var(--dither-size) var(--dither-size)}
+.ce .dir-c .gut-f>*{position:relative;background:var(--paper)}
+.ce .dir-c .gut-f .gut{padding:0;border:0}
+.ce .dir-c .gut-f .gut::before{content:none}
+.ce .dir-c .gut-f .cap{margin-top:6px;padding:11px 6px 6px}
+</style>
+<script>
+/* Motion check · static; nothing moves. */
+Dir.component("cmp-caption",(col,dir,api)=>{CE4.ph(col,api);});
+</script>
+</article>
+
+<article class="cmp" id="cmp-compare" data-name="Compare, drag slider and lens" data-group="Case pages" data-num="30"
+data-baseline="A switch over a stage, a before and after slider with a 48 px grip over a real range, and a 240 px lens that follows the pointer.">
+<template data-markup>
+<div class="cp">
+<p class="demo-label">Compare switch</p>
+<div class="sw" role="group" aria-label="Show" hidden>
+<button type="button" aria-pressed="true" data-marker="under"><i class="sw-n" aria-hidden="true">01</i>Before</button>
+<button type="button" aria-pressed="false" data-marker="under"><i class="sw-n" aria-hidden="true">02</i>After</button>
+</div>
+<div class="cp-stage"><div><div data-ph></div></div><div><div data-ph="menu" data-tex="3"></div></div></div>
+<p class="reason">Without scripts both panels show, one under the other, and the switch stays hidden.</p>
+<p class="demo-label cp-h">Drag slider</p>
+<div class="sl">
+<div data-ph></div>
+<div class="sl-after"><div data-ph="menu" data-tex="3"></div></div>
+<span class="sl-div"><span class="sl-grip"></span></span>
+<span class="sl-tag">Before</span><span class="sl-tag sl-tag--r">After</span>
+<input type="range" min="0" max="100" value="50" aria-label="Compare before and after">
+</div>
+<span class="sl-row"></span>
+<p class="demo-label cp-h">Layers lens</p>
+<div class="ln">
+<div data-ph></div>
+<div class="ln-x"><div data-ph="menu" data-tex="3"></div></div>
+<span class="ln-dim tex" data-level="1"></span>
+<span class="ln-f"><span class="ln-t">Layers</span></span>
+</div>
+<button class="demo-link" type="button" data-lens-full aria-pressed="false">Show all layers</button>
+</div>
+</template>
+<style>
+.cp{display:grid;gap:11px}
+.cp .demo-link{justify-self:start}
+.cp-h{margin-top:22px}
+.cp-stage:not(.stk){display:grid;gap:11px}
+.ce :is(.sl,.ln){position:relative;overflow:hidden}
+.ce :is(.sl-after,.ln-x,.ln-dim){position:absolute;inset:0}
+.sl-after{clip-path:inset(0 0 0 var(--x,50%))}
+.sl-div{position:absolute;top:0;bottom:0;left:var(--x,50%);width:1px;margin-left:-0.5px;background:var(--ink);pointer-events:none}
+.dir-b .sl-div{width:3px;margin-left:-1.5px;background:repeating-linear-gradient(180deg,var(--ink) 0 4px,transparent 4px 5px)}
+.dir-c .sl-div{width:2px;margin-left:-1px}
+.dir-c .sl-div::after{content:"";position:absolute;left:100%;top:0;bottom:0;width:6px;background:var(--ink);mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size)}
+.sl-grip{position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);display:grid;place-items:center;background:var(--paper);border:var(--hairline) solid var(--ink)}
+:is(.dir-b,.dir-c) .sl-grip{width:48px;height:48px}
+.dir-c .sl-grip{border-width:2px}
+.sl-tag{position:absolute;top:8px;left:8px;padding:2px 6px;background:var(--paper);font:400 var(--type-px-11)/1.4 var(--font-pixel);pointer-events:none}
+.dir-a .sl-tag{font:500 13px/1.4 var(--sans);border:var(--hairline) solid var(--line)}
+.sl-tag--r{left:auto;right:8px}
+.sl input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
+.sl:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.sl-row{display:none;gap:1px}
+.dir-b .sl-row{display:flex}
+.sl-row .cell{flex:1;width:auto;height:7px}
+.ln{cursor:crosshair}
+.ce :is(.ln-x,.ln-f,.ln-dim){display:none}
+.ln.is-on :is(.ln-x,.ln-f),.dir-c .ln.is-on .ln-dim,.ln.is-full .ln-x{display:block}
+.ln.is-full .ln-x{clip-path:none !important}
+.ln-f{position:absolute;border:2px solid var(--ink);pointer-events:none}
+.dir-a .ln-f{border-width:1px}
+.dir-b .ln-f{background:linear-gradient(var(--ink),var(--ink)) 0 0 / 8px 8px no-repeat,linear-gradient(var(--ink),var(--ink)) 100% 0 / 8px 8px no-repeat,linear-gradient(var(--ink),var(--ink)) 0 100% / 8px 8px no-repeat,linear-gradient(var(--ink),var(--ink)) 100% 100% / 8px 8px no-repeat}
+.ln-t{display:none;position:absolute;top:0;left:0;padding:2px 6px;background:var(--paper);font:500 13px/1.4 var(--sans)}
+.dir-a .ln-t{display:block}
+</style>
+<script>
+/* Motion check · 1 click plays the change, keys swap at once; slider and lens track 1:1, keys instant. 2 A 1 step, B 240 ms, C 180 ms; no exit. 3 steps only. 4 no scale. 5 retargets (clip-path transition, cancellable levels). 6 clip-path, mask. 7 off: instant swaps. */
+Dir.component("cmp-compare",(col,dir,api)=>{
+CE4.ph(col,api);
+const q=(s)=>col.querySelector(s),stage=q(".cp-stage"),sw=q(".cp .sw");
+sw.hidden=false;
+CE4.swap(stage,0,dir,true);
+CE4.seg(sw,(i,kbd)=>CE4.swap(stage,i,dir,kbd));
+const sl=q(".sl"),range=sl.querySelector("input"),row=dir==="b"?api.cells(q(".sl-row"),24):[];
+CE4.ic(q(".sl-grip"),"pair",dir==="a"?3:4);
+const split=()=>{
+const v=+range.value;
+sl.style.setProperty("--x",`${v}%`);
+range.setAttribute("aria-valuetext",`Split at ${v}%`);
+row.forEach((c,i)=>api.setLevel(c,i<Math.round((v*24)/100)?8:0));
+};
+range.addEventListener("input",split);
+split();
+const ln=q(".ln"),x=q(".ln-x"),frame=q(".ln-f"),dim=q(".ln-dim"),full=q("[data-lens-full]"),S=dir==="a"?220:240;
+let first=true;
+const at=(e)=>{
+const b=ln.getBoundingClientRect();
+let px=e.clientX-b.left;
+let py=e.clientY-b.top;
+if(dir==="b"){px=Math.round(px/8)*8;py=Math.round(py/8)*8;}
+const l=px-S/2,t=py-S/2;
+frame.style.cssText=`left:${l}px;top:${t}px;width:${S}px;height:${S}px`;
+x.style.clipPath=`inset(${t}px ${b.width - l - S}px ${b.height - t - S}px ${l}px)`;
+dim.style.clipPath=`polygon(evenodd,0 0,100% 0,100% 100%,0 100%,0 0,${l}px ${t}px,${l + S}px ${t}px,${l + S}px ${t + S}px,${l}px ${t + S}px,${l}px ${t}px)`;
+};
+ln.addEventListener("pointerenter",(e)=>{
+if(e.pointerType==="touch"||ln.classList.contains("is-full"))return;
+ln.classList.add("is-on");
+at(e);
+if(dir==="c"&&first){first=false;CE4.res(x,[2,4,6],50);}
+});
+ln.addEventListener("pointermove",(e)=>{if(ln.classList.contains("is-on"))at(e);});
+ln.addEventListener("pointerleave",()=>ln.classList.remove("is-on"));
+full.addEventListener("click",()=>{
+const on=!ln.classList.contains("is-full");
+ln.classList.toggle("is-full",on);
+ln.classList.remove("is-on");
+full.setAttribute("aria-pressed",String(on));
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-video" data-name="Video player and overview strip" data-group="Case pages" data-num="31"
+data-baseline="A 44 px play square, a 48-cell track over a real range and the time in Departure 11; overview videos keep a toggle and a 48-cell strip.">
+<template data-markup>
+<div class="vd">
+<div class="vd-f"><div data-ph="play"></div><span class="vd-cover tex" data-level="4" hidden></span></div>
+<p class="vd-load px11" hidden><span class="vd-spin"></span><span>Loading video</span></p>
+<div class="vd-bar">
+<button class="ibtn vd-pb" type="button" aria-pressed="false" aria-label="Play" data-marker="under"><span></span></button>
+<div class="vd-track"><div class="vd-cells"></div><span class="vd-thumb"></span><input type="range" min="0" max="90" value="0" aria-label="Seek"></div>
+<span class="vd-time">0:00 / 1:30</span>
+</div>
+<span class="vh" aria-live="polite"></span>
+<button class="demo-link" type="button" data-load>Simulate loading</button>
+<p class="demo-label vd-h">Overview video, looping</p>
+<div class="ov">
+<div class="ov-f"><div data-ph></div><span class="ov-strip"></span></div>
+<span class="ov-row"></span>
+<div class="ov-bar"><button class="ibtn ov-t" type="button" aria-pressed="false" aria-label="Pause the loop" data-marker="under"><span></span></button><i class="cell ov-cell" data-level="0" aria-hidden="true"></i></div>
+</div>
+</div>
+</template>
+<style>
+.ce :is(.vd-f,.ov-f){position:relative}
+.vd-cover{position:absolute;inset:0}
+.vd-load{display:flex;align-items:center;gap:8px;margin-top:8px}
+.dir-c .vd-spin{display:none}
+.ce :is(.vd-bar,.ov-bar){display:flex;align-items:center;gap:11px;margin-top:8px}
+.vd-track{position:relative;flex:1;min-width:0;height:44px;display:flex;align-items:center}
+.vd-cells{flex:1;display:grid;grid-template-columns:repeat(48,minmax(0,1fr));gap:1px}
+.dir-c .vd-cells{grid-template-columns:repeat(24,minmax(0,12px));gap:2px}
+.vd-cells .cell{width:auto;height:12px}
+.dir-a .vd-track::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.dir-a .vd-cells{height:2px;background:linear-gradient(90deg,var(--ink) 0 var(--p),var(--line) var(--p) var(--b),transparent var(--b))}
+.vd-thumb{display:none}
+.dir-a .vd-thumb{display:block;position:absolute;left:var(--p);top:50%;width:4px;height:12px;margin:-6px 0 0 -2px;background:var(--ink)}
+.vd-track input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.vd-track:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.vd-time{flex:none;font:400 var(--type-px-11)/1 var(--font-pixel);font-variant-numeric:tabular-nums}
+.dir-a .vd-time{font:500 13px/1 var(--sans);font-variant-numeric:tabular-nums}
+.vd-h{margin-top:22px}
+.ce :is(.ov-strip,.ov-row,.ov-cell){display:none}
+.dir-a .ov-cell{display:inline-block;width:4px;height:16px}
+.dir-b .ov-strip{display:flex;gap:1px;position:absolute;left:0;right:0;bottom:0;height:4px}
+.ov-strip .cell{flex:1;width:auto;height:4px}
+.dir-c .ov-row{display:flex;gap:2px;margin-top:6px}
+</style>
+<script>
+/* Motion check · 1 play/pause frequent: morph cancelled and retargeted; seek 1:1. 2 morph 120 ms, cover out 120 ms. 3 steps only. 4 press 0.97. 5 interruptible. 6 transform, levels. 7 off: playback works, loops rest on head frame or level 2, overview starts paused. */
+Dir.component("cmp-video",(col,dir,api)=>{
+CE4.ph(col,api);
+const q=(s)=>col.querySelector(s),D=90,fmt=(s)=>`${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`,btn=q(".vd-pb"),icon=btn.firstElementChild,range=q(".vd-track input"),track=q(".vd-track"),live=q(".vd > .vh"),n=dir==="b"?48:24,list=dir==="a"?[]:api.cells(q(".vd-cells"),n);
+let t=0;let buf=18;let timer=0;let breath=2;let stopMorph=()=>{};
+api.icon(icon,"play",{cell:dir==="a"?3:4});
+const draw=()=>{
+const p=t/D;
+track.style.setProperty("--p",`${p * 100}%`);
+track.style.setProperty("--b",`${(buf / D) * 100}%`);
+list.forEach((c,i)=>{const f=p*n-i;api.setLevel(c,f>=1?8:f>0?Math.max(1,Math.round(f*8)):i/n<buf/D?breath:0);});
+range.value=t;
+range.setAttribute("aria-valuetext",`${fmt(t)} of ${fmt(D)}`);
+q(".vd-time").textContent=`${fmt(t)} / ${fmt(D)}`;
+};
+const morph=(host,name)=>{stopMorph();stopMorph=api.morph(host,name);};
+const stop=()=>{clearInterval(timer);timer=0;btn.setAttribute("aria-pressed","false");morph(icon,"play");};
+const play=()=>{
+if(t>=D)t=0;
+btn.setAttribute("aria-pressed","true");
+morph(icon,"pause");
+timer=setInterval(()=>{t=Math.min(D,t+1);buf=Math.min(D,Math.max(buf,t+18));draw();if(t>=D){stop();live.textContent="Ended";}},250);
+};
+btn.addEventListener("click",()=>{if(timer){stop();live.textContent="Paused";}else{play();live.textContent="Playing";}});
+range.addEventListener("input",()=>{t=+range.value;buf=Math.max(buf,Math.min(D,t+6));draw();});
+if(dir==="b")api.tick(track,(k)=>{if(!timer)return;const b=Math.floor(k/10)%2?3:2;if(b!==breath){breath=b;draw();}},()=>{breath=2;draw();});
+api.cleanup(()=>clearInterval(timer));
+draw();
+const load=q(".vd-load"),cover=q(".vd-cover");
+let busy=false;
+q("[data-load]").addEventListener("click",()=>{
+if(busy)return;
+busy=true;
+if(timer)stop();
+load.hidden=false;
+live.textContent="Loading video";
+let stopLoader=()=>{};
+if(dir==="c"){cover.hidden=false;CE4.res(cover,[]);cover.dataset.level="4";}
+else stopLoader=api.loader(q(".vd-spin"),dir==="a"?"quarter":"sweep",dir==="a"?{cell:4}:{n:12});
+api.timeout(()=>{
+stopLoader();
+busy=false;
+load.hidden=true;
+live.textContent="Video ready";
+if(dir==="c"){cover.dataset.level="4";CE4.res(cover,[4,2],60,()=>{cover.hidden=true;});}
+},1800);
+});
+const ov=q(".ov"),toggle=q(".ov-t"),oi=toggle.firstElementChild,cellA=q(".ov-cell"),strip=dir==="b"?api.cells(q(".ov-strip"),48):dir==="c"?api.cells(q(".ov-row"),12):[];
+let paused=!Dir.motionActive();let k=0;let stopOv=()=>{};
+api.icon(oi,paused?"play":"pause",{cell:3});
+toggle.setAttribute("aria-pressed",String(paused));
+const ovDraw=()=>{
+const p=(k%650)/650;
+if(dir==="a")api.setLevel(cellA,Math.round(p*8));
+strip.forEach((c,i)=>api.setLevel(c,i<Math.floor(p*strip.length)?8:0));
+};
+api.tick(ov,()=>{if(!paused){k+=1;ovDraw();}},ovDraw);
+toggle.addEventListener("click",()=>{
+paused=!paused;
+toggle.setAttribute("aria-pressed",String(paused));
+stopOv();
+stopOv=api.morph(oi,paused?"play":"pause");
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-grid" data-name="Image grid and gallery" data-group="Case pages" data-num="32"
+data-baseline="Two or three columns of captioned figures with a band sweep on entry; the gallery swaps one image per theme with a tag switch.">
+<template data-markup>
+<div class="gr">
+<figure><div class="gut"><div data-ph data-enter="media"></div></div><figcaption class="cap"><strong>Flint to Blinq</strong><em>The earliest builder shell already carries the Blinq name.</em></figcaption></figure>
+<figure><div class="gut"><div data-ph="menu" data-enter="media"></div></div><figcaption class="cap"><strong>Blinq builder</strong><em>Selection, conversation and preview in one place.</em></figcaption></figure>
+<figure><div class="gut"><div data-ph="play" data-enter="media"></div></div><figcaption class="cap"><strong>Pave v1 builder</strong><em>The rail and split view stayed.</em></figcaption></figure>
+<figure><div class="gut"><div data-ph="check" data-enter="media"></div></div><figcaption class="cap"><strong>New navigation</strong><em>Build and Manage reorganised the same builder.</em></figcaption></figure>
+</div>
+<p class="demo-label gr-h">Gallery with a theme switch</p>
+<div class="sw" role="group" aria-label="Theme">
+<button type="button" aria-pressed="true" data-marker="under"><i class="sw-n" aria-hidden="true">01</i>Light</button>
+<button type="button" aria-pressed="false" data-marker="under"><i class="sw-n" aria-hidden="true">02</i>Dark</button>
+</div>
+<figure class="ga"><div class="gut"><div class="ga-s"><div data-ph></div><div data-ph data-tex="6"></div></div></div><figcaption class="cap"><strong>Builder home</strong><em>Shown in the light theme.</em></figcaption></figure>
+</template>
+<style>
+.gr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 11px}
+.dir-b .gr{gap:16px 8px}
+.ce .dir-b :is(.gr,.ga) .ph{border-color:var(--ink)}
+.gr-h{margin:33px 0 4px}
+.ga{margin-top:11px}
+.ga-s:not(.stk)>* + *{margin-top:11px}
+@container col (max-width:400px){.ce .gr{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+/* Motion check · 1 entrance once (rare media); switch click animates, keys instant. 2 sweeps 300/360 ms, C 480 ms; switch ≤240 ms. 3 steps in, ease-out across. 4 no scale. 5 switch retargets. 6 clip-path, mask. 7 off: all shown. */
+Dir.component("cmp-grid",(col,dir,api)=>{
+CE4.ph(col,api);
+const stage=col.querySelector(".ga-s"),note=col.querySelector(".ga em");
+CE4.swap(stage,0,dir,true);
+CE4.seg(col.querySelector(".sw"),(i,kbd)=>{CE4.swap(stage,i,dir,kbd);note.textContent=`Shown in the ${i ? "dark" : "light"} theme.`;});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-live" data-name="Live embed" data-group="Case pages" data-num="33"
+data-baseline="A hairline frame with a lazy demo, a 48 px corner full-screen button and status tags as chips.">
+<template data-markup>
+<div class="lv">
+<div class="gut"><div class="lv-f">
+<div class="lv-ph" data-ph="menu" data-enter="media"></div>
+<p class="lv-load px11" hidden><span class="lv-spin"></span><span>Loading demo</span></p>
+<span class="lv-cover tex" data-level="2" hidden></span>
+<a class="ibtn lv-fs" href="#cmp-live" aria-label="Open full screen" title="Open full screen" data-marker="under"><span></span></a>
+</div></div>
+<span class="lv-rule"></span>
+<p class="lv-below px11" hidden>Loading demo</p>
+<div class="demo-row lv-tags"><span data-chip="Prototype"></span><span data-chip="Closed beta"></span></div>
+<span class="vh" aria-live="polite"></span>
+<button class="demo-link" type="button" data-reload>Load the demo again</button>
+</div>
+</template>
+<style>
+.ce .lv-f{position:relative;border:var(--hairline) solid var(--line)}
+.ce .dir-b .lv-f{border-color:var(--ink)}
+.ce .lv-f .ph{border:0}
+.ce .lv-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--paper)}
+.ce .lv-cover{position:absolute;inset:0}
+.ce .lv-fs{position:absolute;top:0;right:0;z-index:1;border-width:0 0 var(--hairline) var(--hairline)}
+.ce .dir-c .lv-fs{border-width:0 0 2px 2px}
+.ce .lv-rule{display:none}
+.ce .dir-b .lv-rule{display:grid;grid-template-columns:repeat(var(--cells),minmax(0,1fr));margin-top:2px}
+.ce .lv-rule .cell{width:auto;height:3px}
+.ce .lv-below{margin-top:8px}
+.ce .lv-tags{margin-top:11px}
+</style>
+<script>
+/* Motion check · 1 loads once when seen, or on request. 2 A/B sweep, C cover out 120 ms. 3 steps only. 4 press 0.97. 5 repeat requests ignored while loading. 6 clip-path, transform, levels. 7 off: loaders rest on a still frame, demo shows at once. */
+Dir.component("cmp-live",(col,dir,api)=>{
+CE4.ph(col,api);
+const q=(s)=>col.querySelector(s),frame=q(".lv-f"),load=q(".lv-load"),cover=q(".lv-cover"),below=q(".lv-below"),rule=q(".lv-rule"),live=q(".lv > .vh");
+col.querySelectorAll("[data-chip]").forEach((el)=>CE4.chip(el,el.dataset.chip,api));
+CE4.ic(q(".lv-fs span"),"expand",dir==="a"?3:4);
+q(".lv-fs").addEventListener("click",(e)=>e.preventDefault());
+let busy=false;
+const run=()=>{
+if(busy)return;
+busy=true;
+live.textContent="Loading demo";
+load.hidden=dir==="c";
+below.hidden=cover.hidden=dir!=="c";
+CE4.res(cover,[]);
+cover.dataset.level="2";
+let stopLoader=()=>{};
+if(dir==="a")stopLoader=api.loader(q(".lv-spin"),"quarter");
+if(dir==="b")stopLoader=api.loader(rule,"sweep",{cell:4,n:Math.max(8,Math.floor(frame.clientWidth/5)),band:[8,8,8,8]});
+api.timeout(()=>{
+stopLoader();
+busy=false;
+load.hidden=below.hidden=true;
+live.textContent="Demo ready";
+if(dir==="b")[...rule.children].forEach((c)=>api.setLevel(c,3));
+if(dir==="c"){cover.dataset.level="2";CE4.res(cover,[2,1],60,()=>{cover.hidden=true;});}
+else CE4.play(q(".lv-ph"));
+},1800);
+};
+const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.disconnect();run();}});
+io.observe(frame);
+api.cleanup(()=>io.disconnect());
+q("[data-reload]").addEventListener("click",run);
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-quote" data-name="Pull quote and quotes carousel" data-group="Case pages" data-num="34"
+data-baseline="Pull quote with a 2 px ink left border. Carousel: one quote at a time, meters filling over 5.2 s and a Next button.">
+<template data-markup>
+<figure class="pq">
+<span class="rule-soft pq-r"></span>
+<blockquote>Very differentiated, and creates significant distance between us and the “create anything” vendors.</blockquote>
+<figcaption><span class="pq-n" aria-hidden="true">01 · </span>Marketing team</figcaption>
+<span class="rule-soft pq-r"></span>
+</figure>
+<section class="qc" aria-roledescription="carousel" aria-label="What people said">
+<ol class="qc-s" aria-live="off">
+<li><blockquote>Reviewed the blueprint and light mode. Just kudos to the team for this. I love it.</blockquote><p class="qc-by">Product</p></li>
+<li><blockquote>The builder has a lighter, more streamlined design with refreshed surfaces and colors, so it’s easier to stay focused on what you’re building.</blockquote><p class="qc-by">Product release note, 15 Oct</p></li>
+<li><blockquote>I have legitimately been playing on rocks for like 20 minutes with this new look.</blockquote><p class="qc-by">Customer experience</p></li>
+<li><blockquote>The new design and background is money. Great work.</blockquote><p class="qc-by">Sales</p></li>
+</ol>
+<div class="qc-c" hidden>
+<div class="qc-m"></div>
+<button class="btn2" type="button" data-next data-marker="under">Next<span class="qc-k"></span></button>
+<button class="btn2" type="button" data-pause aria-pressed="false" data-marker="under">Pause</button>
+</div>
+</section>
+</template>
+<style>
+.pq{position:relative;display:grid;gap:11px;margin-bottom:44px}
+.ce blockquote{margin:0;font:400 22px/1.4 var(--sans)}
+.ce .dir-b blockquote{font-size:20px;line-height:1.5}
+.ce .dir-c blockquote{font-size:24px;line-height:1.35}
+.ce :is(.pq figcaption,.qc-by){font:500 13px/1.4 var(--sans);color:var(--muted)}
+.ce :is(.dir-b,.dir-c) :is(.pq figcaption,.qc-by){font:400 var(--type-px-11)/1.4 var(--font-pixel)}
+.pq-n{display:none}
+.dir-b .pq-n{display:inline}
+:is(.dir-b,.dir-c) .pq{padding-left:22px}
+:is(.dir-b,.dir-c) .pq-r{display:none}
+:is(.dir-b,.dir-c) .pq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:repeating-linear-gradient(180deg,var(--ink) 0 7px,transparent 7px 8px);mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size)}
+.dir-c .pq::before{width:6px;background:var(--ink);mask-image:var(--dither-4)}
+.qc{border-top:var(--hairline) solid var(--line);padding-top:22px}
+.qc-s{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.qc-s li{display:grid;gap:11px;align-content:start}
+.qc.is-js .qc-s li{grid-area:1 / 1}
+.qc-s .is-off{visibility:hidden}
+.qc-c{display:flex;flex-wrap:wrap;align-items:center;gap:8px 11px;margin-top:22px}
+.qc-m{display:flex;gap:6px;flex:1 1 100%}
+.qc-mb{flex:1;min-width:0;min-height:44px;padding:0;border:0;background:none;display:flex;align-items:center;cursor:pointer}
+.qc-v{display:block;width:100%}
+.dir-a .qc-v{height:2px;background:linear-gradient(var(--ink),var(--ink)) 0 0 / var(--w,0%) 100% no-repeat,var(--line)}
+.dir-b .qc-v{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1px}
+.dir-b .qc-v .cell{width:auto;height:7px}
+.dir-c .qc-v{height:4px;background:var(--ink)}
+.qc-k{display:none;margin-left:8px;color:var(--muted)}
+.dir-b .qc-k{display:inline}
+@container col (max-width:400px){
+.ce .dir-a blockquote{font-size:18px}
+.ce .dir-c blockquote{font-size:20px}
+}
+</style>
+<script>
+/* Motion check · 1 autoplay 5.2 s (ambient, pauses off-screen); Next by mouse enters only, by keys swaps at once. 2 exit afterglow ≤ entry. 3 steps only. 4 press 0.97. 5 a click mid-change cancels it. 6 opacity, mask, stepped meter. 7 off: quote and meters still, Next works. */
+Dir.component("cmp-quote",(col,dir,api)=>{
+const q=(s)=>col.querySelector(s),slides=[...col.querySelectorAll(".qc-s > li")],N=slides.length,stage=q(".qc-s"),pause=q("[data-pause]");
+let cur=0;let k=0;let paused=false;let token=0;
+q(".qc").classList.add("is-js");
+q(".qc-c").hidden=false;
+const meters=slides.map((_,i)=>{
+const b=document.createElement("button");
+b.type="button";
+b.className="qc-mb";
+b.setAttribute("aria-label",`Quote ${i + 1} of ${N}`);
+const v=document.createElement("span");
+v.className="qc-v";
+b.append(v);
+if(dir==="b")api.cells(v,12);
+q(".qc-m").append(b);
+b.addEventListener("click",(e)=>go(i,e.detail===0?"key":"click"));
+return v;
+});
+const paint=()=>meters.forEach((v,i)=>{
+const p=i<cur?1:i>cur?0:k/130;
+if(dir==="a")v.style.setProperty("--w",`${(Math.floor(p * 13) / 13) * 100}%`);
+else if(dir==="b")[...v.children].forEach((c,j)=>api.setLevel(c,j<Math.floor(p*12+1e-6)?8:0));
+else v.dataset.level=String(p>=1?8:[2,4,6,8][Math.floor(p*4)]);
+v.parentNode.setAttribute("aria-current",String(i===cur));
+});
+const show=()=>{slides.forEach((s,j)=>s.classList.toggle("is-off",j!==cur));};
+const go=(i,how)=>{
+i=(i+N)%N;
+if(i===cur)return;
+const old=slides[cur],mine=(token+=1);
+cur=i;k=0;
+stage.setAttribute("aria-live",how==="auto"?"off":"polite");
+slides.forEach((s)=>s.classList.remove("is-leaving","is-entering"));
+q(".qc-k").textContent=`${cur + 1} / ${N}`;
+paint();
+if(how==="auto"&&Dir.motionActive()){
+api.leave(old,{hide:false}).then(()=>{if(mine===token){show();CE4.play(slides[cur]);}});
+}else{show();if(how==="click")CE4.play(slides[cur]);}
+};
+show();
+q(".qc-k").textContent=`1 / ${N}`;
+q("[data-next]").addEventListener("click",(e)=>go(cur+1,e.detail===0?"key":"click"));
+pause.addEventListener("click",()=>{paused=!paused;pause.setAttribute("aria-pressed",String(paused));});
+api.tick(stage,()=>{if(paused)return;k+=1;if(k>=130)go(cur+1,"auto");else paint();},paint);
+paint();
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-stat" data-name="Stat row" data-group="Case pages" data-num="35"
+data-baseline="Three columns on a hairline: a Departure 44 numeral counting once on a curve and a short label.">
+<template data-markup>
+<div class="st">
+<div class="st-i"><strong data-v="20">20</strong><span class="st-r rule-soft"></span><span class="st-l">days from the first audit to live for every user</span></div>
+<div class="st-i"><strong data-v="60" data-u="%">60%</strong><span class="st-r rule-soft"></span><span class="st-l">of sampled layout cells had a squashed column</span><span class="st-k">At the start, before the layout rules.</span></div>
+<div class="st-i"><strong data-v="8" data-d="1">8.0</strong><span class="st-r rule-soft"></span><span class="st-l">out of 10 for the pre-production build</span><span class="st-k">Measured against the spec.</span></div>
+</div>
+</template>
+<style>
+.st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 11px}
+.dir-a .st{padding:22px 0;border-block:var(--hairline) solid var(--line)}
+.st-i{display:grid;align-content:start;gap:8px}
+.st strong{font:400 var(--type-px-44)/1 var(--font-pixel);font-variant-numeric:tabular-nums}
+.dir-c .st strong{font-size:var(--type-px-66)}
+.st-l{font:400 15px/1.4 var(--sans);color:var(--muted)}
+.dir-b .st-l{font:400 var(--type-px-11)/1.5 var(--font-pixel)}
+.st-k{font:400 13px/1.4 var(--sans);color:var(--muted)}
+.dir-c .st-k{font:400 var(--type-px-11)/1.4 var(--font-pixel)}
+.dir-a .st-r{display:none}
+.dir-b .st-r{display:flex;gap:1px;mask:none;background:none}
+.st-r .cell{flex:1;width:auto;height:3px}
+@container col (max-width:400px){
+.st{grid-template-columns:repeat(2,minmax(0,1fr))}
+.st strong{font-size:var(--type-px-33)}
+.dir-c .st strong{font-size:var(--type-px-44)}
+}
+</style>
+<script>
+/* Motion check · 1 once at half in view (rare). 2 A 600 ms in 12 steps, B ≤24 ticks, C 150 ms. 3 ease-out across steps, no ease-in. 4 no scale. 5 one-shot; Replay restarts. 6 text and mask swaps. 7 off: final figures at once. */
+Dir.component("cmp-stat",(col,dir,api)=>{
+const items=[...col.querySelectorAll(".st-i")].map((el)=>{
+const n=el.querySelector("strong"),share=n.dataset.u==="%"?+n.dataset.v/100:1,rule=dir==="b"?api.cells(el.querySelector(".st-r"),16):[],lightRule=(p)=>rule.forEach((c,j)=>api.setLevel(c,j<Math.round(share*16*p)?8:0));
+lightRule(1);
+return{n,v:+n.dataset.v,d:+(n.dataset.d||0),u:n.dataset.u||"",lightRule};
+});
+const run=()=>{
+if(!Dir.motionActive())return;
+items.forEach(({n,v,d,u,lightRule})=>{
+if(dir==="c"){CE4.res(n,[2,4,6],50);return;}
+const steps=dir==="a"?12:Math.min(24,Math.ceil(v));
+for(let i=0;i<=steps;i+=1){
+api.timeout(()=>{
+const p=dir==="a"?Dir.curves.out(i/steps):i/steps;
+n.textContent=(v*p).toFixed(d)+u;
+lightRule(p);
+},i*(dir==="a"?50:40));
+}
+});
+};
+const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.disconnect();run();}},{threshold:0.5});
+io.observe(col.querySelector(".st"));
+api.cleanup(()=>io.disconnect());
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-timeline" data-name="Day-cell timeline" data-group="Case pages" data-num="36"
+data-baseline="A rail of 8 px day cells and 12 px event marks; the current mark blinks on the clock and entries appear when reached.">
+<template data-markup>
+<ol class="tl">
+<li data-d="0"><div class="tl-e"><p class="tl-w"><time>25 Sep</time><span class="tl-rel">Start</span></p><p class="tl-t">Light mode audit</p><p class="tl-b">22 pages and 3 dialogs measured against Replit.</p></div></li>
+<li data-d="4"><div class="tl-e"><p class="tl-w"><time>29 Sep</time><span class="tl-rel">4 days later</span></p><p class="tl-t">24 grid variants, then 10, then 6</p><p class="tl-b">The product lead picks the blueprint.</p></div></li>
+<li data-d="7"><div class="tl-e"><p class="tl-w"><time>2 Oct</time><span class="tl-rel">3 days later</span></p><p class="tl-t">Light mode handoff</p><p class="tl-b">Plus 29 sign-in, account and error states.</p></div></li>
+<li data-d="13"><div class="tl-e"><p class="tl-w"><time>8 Oct</time><span class="tl-rel">6 days later</span></p><p class="tl-t">Light surfaces in testing</p><p class="tl-b">One release covering 135 files.</p></div></li>
+<li data-d="20"><div class="tl-e"><p class="tl-w"><time>15 Oct</time><span class="tl-rel">7 days later</span></p><p class="tl-t">Live for every Pave user</p><p class="tl-b">The blueprint home, sign-in, account pages and light mode, together.</p></div></li>
+</ol>
+<label class="tl-s"><span class="demo-label">Reading position, drag to reach the events</span><input type="range" min="0" max="20" value="9"></label>
+</template>
+<style>
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:12px minmax(0,1fr);column-gap:16px}
+.tl-r{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:6px}
+.dir-c .tl-r{gap:2px}
+.tl-r::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--line)}
+.dir-b .tl-r::before{background:var(--ink);mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size)}
+.dir-c .tl-r::before{content:none}
+.tl-m{position:relative;width:12px;height:12px}
+.dir-a .tl-m{width:4px}
+.tl-days{position:relative;display:flex;flex-direction:column;gap:inherit}
+.tl-e{display:grid;gap:4px;padding-bottom:22px;transition:opacity 120ms steps(1,jump-start)}
+.dir-b .tl-e{transition:opacity 160ms steps(3,jump-start)}
+.ce .is-wait .tl-e{opacity:0;transition:none}
+.tl-w{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;font:500 13px/1.4 var(--sans);color:var(--muted)}
+.ce :is(.dir-b,.dir-c) time{font:400 var(--type-px-22)/1.1 var(--font-pixel);color:var(--ink)}
+.tl-rel{display:none;font:400 var(--type-px-11)/1 var(--font-pixel)}
+.dir-b .tl-rel{display:inline}
+.tl-t{font:500 var(--read-size)/1.35 var(--sans)}
+.tl-b{color:var(--text-soft)}
+.tl-s{display:grid;gap:4px;margin-top:11px}
+.tl-s input{width:100%;min-height:44px;margin:0;accent-color:var(--ink)}
+</style>
+<script>
+/* Motion check · 1 scrub-driven (frequent): reveals short and cancellable, back hides at once. 2 A 1 step, B 160 ms, C 150 ms; day cells 30 ms apart. 3 steps only. 4 no scale. 5 transitions and cancellable levels. 6 opacity, mask. 7 off: all shown, marks solid, blink rests solid. */
+Dir.component("cmp-timeline",(col,dir,api)=>{
+const items=[...col.querySelectorAll(".tl > li")],range=col.querySelector(".tl-s input"),ds=items.map((li)=>+li.dataset.d);
+items.forEach((li)=>li.insertAdjacentHTML("afterbegin",'<span class="tl-r" aria-hidden="true"><i class="cell tl-m"></i><span class="tl-days"></span></span>'));
+const marks=items.map((li)=>li.querySelector(".tl-m")),off=dir==="c"?1:0,days=items.map((li,i)=>(dir==="a"||i===items.length-1?[]:api.cells(li.querySelector(".tl-days"),ds[i+1]-ds[i],{level:off})));
+let pos=+range.value;let cur=-1;
+const update=()=>{
+const v=+range.value,still=!Dir.motionActive(),ahead=v>pos;
+let queue=0;
+pos=v;
+range.setAttribute("aria-valuetext",`Day ${v} of 20`);
+days.forEach((list,i)=>list.forEach((c,j)=>{
+const day=ds[i]+j+1;
+if(day<=v&&+c.dataset.level===off&&dir==="b"&&ahead&&!still){queue+=1;api.timeout(()=>{if(+range.value>=day)api.setLevel(c,3);},30*queue);}
+else api.setLevel(c,day<=v?3:off);
+}));
+cur=-1;
+items.forEach((li,i)=>{
+if(ds[i]<=v)cur=i;
+const reached=still||ds[i]<=v,entry=li.querySelector(".tl-e");
+if(reached&&li.classList.contains("is-wait")&&dir==="c")CE4.res(entry,[2,4,6],50);
+if(!reached)CE4.res(entry,[]);
+li.classList.toggle("is-wait",!reached);
+api.setLevel(marks[i],reached?8:3);
+li.removeAttribute("aria-current");
+});
+if(cur>=0)items[cur].setAttribute("aria-current","step");
+};
+range.addEventListener("input",update);
+api.cleanup(Dir.onMotion(update));
+update();
+api.tick(col.querySelector(".tl"),(t)=>{
+if(cur<0||dir==="a")return;
+api.setLevel(marks[cur],dir==="b"?(Math.floor(t/10)%2?3:8):t%10<2?6:8);
+},()=>{if(cur>=0)api.setLevel(marks[cur],8);});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-cover" data-name="Case cover entrance" data-group="Case pages" data-num="42"
+data-baseline="Featured images arrive through a paper cover dissolving in diagonal order, 480 ms in 16 px cells, once per visit.">
+<template data-markup>
+<figure class="cv"><div class="cv-m" data-ph data-enter="media"></div><span class="cv-r"></span></figure>
+<p class="reason cv-note"></p>
+<button class="demo-link" type="button" data-play>Play the entrance</button>
+</template>
+<style>
+.cv-note{margin-top:11px}
+.cv-r{display:none;gap:1px;margin-top:8px}
+.dir-b .cv-r{display:flex}
+.cv-r .cell{flex:1;width:auto;height:3px}
+</style>
+<script>
+/* Motion check · 1 once per visit or on request (rare, big). 2 A 300, B 360 + 140 ms rule, C 480 ms. 3 steps in, reading order across. 4 no scale; size fixed from frame one. 5 one-shot keyframes. 6 clip-path, mask. 7 off: image and rule at once. */
+Dir.component("cmp-cover",(col,dir,api)=>{
+CE4.ph(col,api);
+const media=col.querySelector(".cv-m");
+col.querySelector(".cv-note").textContent={
+a:"Six bands in 300 ms, then still. No dissolve: A has one gesture.",
+b:"Ten bands in 360 ms, then the rule under the image fills in reading order as a settled mark.",
+c:"The paper cover dissolves away in 480 ms through 16 px cells (12 px in dark)."
+}[dir];
+col.querySelector("[data-play]").addEventListener("click",()=>api.enter(col.querySelector(".cv")));
+if(dir!=="b")return;
+const rule=col.querySelector(".cv-r"),cells=api.cells(rule,Math.max(8,Math.floor(rule.clientWidth/5)),{level:8}),settle=()=>Dir.runField({
+values:cells.map((_,i)=>i/(cells.length-1)),total:120,curve:Dir.curves.linear,steps:1,stepMs:20,
+render:(at)=>cells.forEach((c,i)=>{if(at(i)>=0)api.setLevel(c,8);})
+});
+media.addEventListener("animationstart",()=>cells.forEach((c)=>api.setLevel(c,0)));
+media.addEventListener("animationend",settle);
+media.addEventListener("animationcancel",()=>cells.forEach((c)=>api.setLevel(c,8)));
+});
+</script>
+</article>
+</section>

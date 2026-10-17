@@ -1,6 +1,8 @@
 <!--
-  SVG → 3D ASCII studio (round 3). The render engine (studio.js) reads the data-* hooks below;
-  studio-ui.js only draws the step strip and the cell tracks over the real range inputs.
+  SVG → 3D ASCII studio (round 3, picks batch 3). The render engine (studio.js) reads the data-*
+  hooks below; studio-ui.js only draws the step strip, the cell tracks over the real range inputs,
+  the drop zone's cell icon and drag-over state, the colour swatches (radios that write into the
+  native colour inputs) and the export working/done ladder.
 -->
 <main class="studio2" data-studio data-view="ascii" data-source-state="empty">
   <header class="s2-head">
@@ -34,9 +36,12 @@
       <div class="solid-preview" data-render-host aria-hidden="true"></div>
       <pre class="ascii-preview" data-ascii-output aria-label="ASCII turntable output"></pre>
       <div class="stage-empty s2-empty" data-stage-empty data-stage-drop-target>
-        <i class="s2-upload" aria-hidden="true"></i>
-        <b class="s2-empty-title">Drop your logo here</b>
-        <button class="s2-link" type="button" data-stage-browse>or choose an SVG file</button>
+        <div class="s2-drop">
+          <i class="s2-upload" aria-hidden="true"></i>
+          <b class="s2-empty-title">Drop an SVG here</b>
+          <button class="s2-link" type="button" data-stage-browse>or choose a file</button>
+          <p class="s2-drop-hint">SVG files only. Filled shapes work best.</p>
+        </div>
         <strong class="s2-engine-copy"></strong>
         <span class="s2-engine-copy"></span>
         <div class="s2-samples" role="group" aria-label="Sample marks">
@@ -50,7 +55,6 @@
           <textarea data-svg-paste spellcheck="false" aria-label="SVG code" placeholder="<svg viewBox=&quot;0 0 320 320&quot;>…</svg>"></textarea>
           <button type="button" data-load-paste>Use this code</button>
         </details>
-        <p class="s2-hint">Filled shapes and outlined text work best.</p>
       </div>
     </div>
 
@@ -123,9 +127,21 @@
           <fieldset>
             <legend>Colour and material</legend>
             <div class="s2-colors">
-              <label><input type="color" value="#080808" data-control="frontColor" /><span>Face</span></label>
-              <label><input type="color" value="#747064" data-control="sideColor" /><span>Sides</span></label>
-              <label><input type="color" value="#fbfbf8" data-control="backgroundColor" /><span>Ground</span></label>
+              <div class="s2-swatch-row" data-swatches="frontColor">
+                <span class="s2-swatch-name" id="s2-swatch-frontColor">Face</span>
+                <div class="s2-swatches" role="radiogroup" aria-labelledby="s2-swatch-frontColor" hidden></div>
+                <label class="s2-other"><input type="color" value="#080808" data-control="frontColor" /><span>Other<span class="s2-vh"> face colour</span>…</span></label>
+              </div>
+              <div class="s2-swatch-row" data-swatches="sideColor">
+                <span class="s2-swatch-name" id="s2-swatch-sideColor">Sides</span>
+                <div class="s2-swatches" role="radiogroup" aria-labelledby="s2-swatch-sideColor" hidden></div>
+                <label class="s2-other"><input type="color" value="#747064" data-control="sideColor" /><span>Other<span class="s2-vh"> sides colour</span>…</span></label>
+              </div>
+              <div class="s2-swatch-row" data-swatches="backgroundColor">
+                <span class="s2-swatch-name" id="s2-swatch-backgroundColor">Ground</span>
+                <div class="s2-swatches" role="radiogroup" aria-labelledby="s2-swatch-backgroundColor" hidden></div>
+                <label class="s2-other"><input type="color" value="#fbfbf8" data-control="backgroundColor" /><span>Other<span class="s2-vh"> ground colour</span>…</span></label>
+              </div>
             </div>
             <label><span>Shine <output data-output="metalness">0.08</output></span><input type="range" min="0" max="1" step="0.01" value="0.08" data-control="metalness" /></label>
             <label><span>Roughness <output data-output="roughness">0.42</output></span><input type="range" min="0.05" max="1" step="0.01" value="0.42" data-control="roughness" /></label>

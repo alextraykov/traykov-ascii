@@ -86,7 +86,7 @@ const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
         <header class="note-header" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
           <div class="note-header__utility">
             <nav class="note-page__back" aria-label="Notes">
-              <a href="/notes/">← All notes</a>
+              <a href="/notes/"><span class="back-link__arrow" aria-hidden="true">←</span> All notes</a>
             </nav>
             <div class="note-header__meta">
               <time datetime={note.publishedAt}>{published}</time>

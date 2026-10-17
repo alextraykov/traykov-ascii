@@ -33,7 +33,7 @@ const skills = await Promise.all(definitions.map(async (skill) => ({ ...skill, s
     <SiteNav active="labs" />
     <main id="top" class="pc-shell section-shell">
       <header class="pc-hero">
-        <div class="pc-kicker"><a href="/labs/" data-scramble>← All labs</a><span>Open source · 10 skills · MIT</span></div>
+        <div class="pc-kicker"><a href="/labs/" data-scramble><span class="back-link__arrow" aria-hidden="true">←</span> <span data-scramble-visual>All labs</span></a><span>Open source · 10 skills · MIT</span></div>
         <div class="pc-hero__intro"><h1>Presentations<br />in code.</h1><div><p class="pc-lead">Camera moves, live annotations and exploded views. Built on the interface itself.</p><p>Try the techniques here. Take the skills and use them on your own screen.</p><div class="pc-actions"><a class="pc-button" data-ascii-action="primary" href="#camera">Try the techniques <span aria-hidden="true">↓</span></a><a data-ascii-action="text" href="#skills">Get the skills <span aria-hidden="true">→</span></a></div></div></div>
         <figure class="pc-demo pc-demo--hero" data-pc-demo="hero">
           <div class="pc-demo__bar"><span class="pc-label">One component. Two states.</span><div class="pc-controls" data-pc-controls hidden role="group" aria-label="Hero interface state"><button type="button" data-pc-action="theme" aria-pressed="false">Dark screen</button></div></div>

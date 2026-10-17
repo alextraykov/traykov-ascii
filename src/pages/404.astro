@@ -22,6 +22,7 @@ import "../styles/global.css";
 
     <main id="top" class="not-found section-shell">
       <div class="not-found__field cells" aria-hidden="true" data-not-found-field></div>
+      <span class="not-found__rule" aria-hidden="true"></span>
       <p class="visually-hidden">Error 404</p>
       <h1>This page isn’t here.</h1>
       <p class="not-found__lede">The link may be old. The work and the notes are a good place to start.</p>
@@ -37,7 +38,8 @@ import "../styles/global.css";
     <script>
       import { createCells, runField, setLevel, curves } from "../scripts/motion/cells.js";
 
-      // "404" drawn in block cells (5×7 glyphs). It resolves through the dither, left to right.
+      // "404" drawn in 5 × 7 glyphs on 23 columns of 7 px cells (8 px pitch). It resolves in reading
+      // order, one column per 40 ms tick (about 0.9 s); with motion off the final frame shows at once.
       const GLYPHS = {
         "4": ["1...1", "1...1", "1...1", "11111", "....1", "....1", "....1"],
         "0": [".111.", "1...1", "1...1", "1...1", "1...1", "1...1", ".111."]
@@ -45,22 +47,23 @@ import "../styles/global.css";
       const host = document.querySelector("[data-not-found-field]");
       if (host instanceof HTMLElement) {
         const rows = 7;
-        const pattern = Array.from({ length: rows }, (_, row) =>
+        const cols = 23;
+        const glyphs = Array.from({ length: rows }, (_, row) =>
           ["4", "0", "4"].map((char) => GLYPHS[char][row]).join(".")
         );
-        const cols = pattern[0].length;
+        const pad = Math.floor((cols - glyphs[0].length) / 2);
+        const pattern = glyphs.map((line) => line.padStart(line.length + pad, ".").padEnd(cols, "."));
         host.style.setProperty("--cells", String(cols));
         const cells = createCells(host, cols * rows, { clear: true });
         const on = cells.map((_, index) => pattern[Math.floor(index / cols)][index % cols] === "1");
         runField({
-          values: cells.map((_, index) => ((index % cols) + Math.floor(index / cols)) / (cols + rows - 2)),
-          total: 600,
-          curve: curves.out,
-          steps: 4,
-          stepMs: 30,
+          values: cells.map((_, index) => (index % cols) / (cols - 1)),
+          total: 880,
+          curve: curves.linear,
+          steps: 1,
+          stepMs: 40,
           render: (stepAt) => cells.forEach((cell, index) => {
-            if (!on[index]) return;
-            setLevel(cell, Math.max(0, Math.min(8, (stepAt(index) + 1) * 2)));
+            if (on[index] && stepAt(index) >= 0) setLevel(cell, 8);
           }),
           done: () => cells.forEach((cell, index) => setLevel(cell, on[index] ? 8 : 0))
         });

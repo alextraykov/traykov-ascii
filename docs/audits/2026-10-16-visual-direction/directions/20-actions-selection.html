@@ -1,0 +1,747 @@
+<section class="group" id="g-actions">
+<h2>Actions</h2>
+<style>
+.col{--as-row:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 5px)}
+.as-stack{display:grid;gap:11px;justify-items:start}
+.as-h{font:400 var(--type-px-11) / 1.4 var(--font-pixel);color:var(--muted);margin-top:11px}
+.as-err{font:400 13px / 1.4 var(--sans);color:var(--signal-fail)}
+.as-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 20px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);font:500 15px / 1.2 var(--sans);cursor:pointer}
+.dir-a .as-btn{min-height:44px}
+.as-btn--p{min-width:180px}
+.dir-a .as-btn--p{min-width:176px}
+.dir-b .as-btn--p{min-width:184px}
+@container col (max-width:400px){.as-btn--p,.as-btn--s{width:100%}
+}
+.as-ib{position:relative;display:inline-grid;place-items:center;width:48px;height:48px;padding:0;border:1px solid var(--ink);background:var(--paper);color:var(--ink);font:400 var(--type-px-22) / 1 var(--font-pixel);cursor:pointer}
+.dir-a .as-ib{width:44px;height:44px}
+.as-ib .cell-icon .cell:not([data-level="0"]){background:currentColor}
+@media (prefers-reduced-motion:no-preference){html:not([data-motion="off"]) :is(.as-btn,.as-ib){transition:transform 140ms cubic-bezier(0.19,1,0.22,1)}
+html:not([data-motion="off"]) :is(.as-btn,.as-ib):not([aria-disabled="true"]):active{transform:scale(0.97)}
+}
+.as-n{display:none;font:400 var(--type-px-11) / 1 var(--font-pixel);color:var(--muted);margin-right:8px}
+.dir-b .as-n{display:inline}
+.as-ar{display:inline-block;font-family:var(--mono);font-weight:400}
+.as-q{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--ink);font:500 15px / 1.2 var(--sans);text-decoration:none;cursor:pointer;--dx:1}
+.as-q--back{--dx:-1;font-size:14px}
+.as-q > .rule-soft{position:absolute;left:0;right:0;bottom:9px}
+.dir-b .as-q > .rule-soft{height:2px;mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size)}
+.dir-c .as-q > .rule-soft{height:3px}
+.dir-b .as-q::after{content:"";position:absolute;left:0;right:0;bottom:9px;height:2px;background:var(--as-row);clip-path:inset(0 100% 0 0)}
+.dir-b .as-q--back::after{clip-path:inset(0 0 0 100%)}
+.dir-a .as-q:is(:hover,:focus-visible):not([aria-disabled]) > .rule-soft{mask:none}
+.as-q:is(:hover,:focus-visible):not([aria-disabled]) .as-ar{transform:translateX(calc(3px * var(--dx)))}
+.dir-a .as-q:is(:hover,:focus-visible):not([aria-disabled]) .as-ar{animation:as-nudge-a 120ms steps(1,jump-end)}
+.dir-b .as-q:is(:hover,:focus-visible):not([aria-disabled])::after,.dir-b details[open] > .as-q::after{clip-path:inset(0);transition:clip-path 140ms steps(7,jump-start)}
+.dir-b .as-q:is(:hover,:focus-visible):not([aria-disabled]) .as-ar{animation:as-nudge-b 90ms steps(1,jump-end)}
+.dir-c .as-q:is(:hover,:focus-visible):not([aria-disabled]) > .rule-soft{mask-image:none;animation:as-resolve 100ms steps(1,jump-end)}
+.dir-c .as-q:is(:hover,:focus-visible):not([aria-disabled]) .as-ar{animation:as-nudge-c 200ms steps(1,jump-end)}
+.dir-a .as-q.is-down > .rule-soft{height:3px;mask:none}
+.dir-b .as-q.is-down::after{clip-path:inset(0);transition:none}
+.dir-c .as-q.is-down > .rule-soft{mask-image:none;animation:none}
+.dir-c .as-q.is-up > .rule-soft{mask-image:var(--dither-6);animation:none}
+.as-q[aria-disabled]{color:var(--muted);cursor:not-allowed}
+.as-q[aria-disabled] > .rule-soft{mask-image:var(--dither-2)}
+@keyframes as-nudge-a{0%{transform:translateX(calc(2px * var(--dx)))}
+50%,100%{transform:translateX(calc(3px * var(--dx)))}
+}
+@keyframes as-nudge-b{0%{transform:translateX(calc(2px * var(--dx)))}
+33%{transform:translateX(calc(4px * var(--dx)))}
+66%,100%{transform:translateX(calc(3px * var(--dx)))}
+}
+@keyframes as-nudge-c{0%{transform:translateX(calc(4px * var(--dx)))}
+50%,100%{transform:translateX(calc(3px * var(--dx)))}
+}
+@keyframes as-resolve{0%{mask-image:var(--dither-6)}
+50%,100%{mask-image:none}
+}
+</style>
+<script>
+/* Batch 2 helpers (declarations only). as2Down: the quiet press (A rule 3 px for 100 ms, B row solid 200 ms, C band solid 200 ms then back through 6). */
+function as2Down(el, dir, api) {
+if (!Dir.motionActive()) return;
+el.classList.add("is-down");
+api.timeout(() => {
+el.classList.remove("is-down");
+if (dir === "c") { el.classList.add("is-up"); api.timeout(() => el.classList.remove("is-up"), 60); }
+}, dir === "a" ? 100 : 200);
+}
+/* as2Walk: step cells through frames of levels; a newer call wins mid-flight; only the last frame when motion is off. */
+function as2Walk(owner, list, frames, ms) {
+const id = (owner._as2 = (owner._as2 || 0) + 1);
+const run = Dir.motionActive() ? frames : frames.slice(-1);
+run.forEach((frame, i) => setTimeout(() => { if (owner._as2 === id) list.forEach((cell, j) => Dir.setLevel(cell, frame[j % frame.length])); }, i * ms));
+return run.length * ms;
+}
+/* as2Show: a panel or list arriving. A and B are clipped open from the trigger edge (clip-path transition, steps
+inside); C resolves through dither levels 2, 4, 6 by attribute swap. ms 0, keyboard or motion off: at once. */
+function as2Show(el, dir, ms, steps) {
+const id = (el._as2s = (el._as2s || 0) + 1);
+el.style.transition = "none";
+el.style.clipPath = "";
+delete el.dataset.level;
+if (!ms || !Dir.motionActive()) return;
+if (dir === "c") {
+[2, 4, 6, 0].forEach((lv, i) => setTimeout(() => { if (el._as2s !== id) return; if (lv) el.dataset.level = String(lv); else delete el.dataset.level; }, (i * ms) / 4));
+return;
+}
+el.style.clipPath = "inset(0 0 100% 0)";
+void el.offsetWidth;
+el.style.transition = `clip-path ${ms}ms steps(${steps}, jump-start)`;
+el.style.clipPath = "inset(0)";
+}
+</script>
+
+<article class="cmp" id="cmp-primary" data-name="Primary button" data-group="Actions" data-num="8"
+data-baseline="48 px tall, 180 px minimum, ink border on paper. A 6 px marker on hover, a diagonal dither press, then a quarter turn with Sending and a green check with Sent.">
+<template data-markup>
+<div class="as-stack">
+<button class="as-btn as-btn--p" type="button" data-press="primary" data-marker="left" data-go><span data-label-step>Send message</span></button>
+<div class="demo-row"><button class="demo-link" type="button" data-sim>Simulate send</button><button class="demo-link" type="button" data-err>Show error</button></div>
+<p class="as-err" data-err-line hidden>That did not send. Check the connection and try again.</p>
+<p class="as-h">Disabled</p>
+<button class="as-btn as-btn--p is-dotted" type="button" aria-disabled="true" aria-describedby="pri-why">Send message</button>
+<p class="reason" id="pri-why">Add a message first.</p>
+</div>
+</template>
+<script>
+/* Motion check: 1 click, rare: animates 2 in 150-180, out 160-220 3 steps, no ease-in 4 scale .97 5 runtime fill 6 levels+transform 7 off: Sending, Sent, check still show */
+Dir.component("cmp-primary", (col, dir, api) => {
+const btn = col.querySelector("[data-go]");
+const line = col.querySelector("[data-err-line]");
+const go = () => { btn.classList.remove("is-error"); line.hidden = true; api.simulate(btn, { working: "Sending", done: "Sent" }); };
+btn.addEventListener("click", () => { if (!btn.dataset.state) api.timeout(go, Dir.motionActive() ? api.ms("--press-in") : 0); });
+col.querySelector("[data-sim]").addEventListener("click", () => btn.click());
+col.querySelector("[data-err]").addEventListener("click", () => { if (btn.dataset.state) return; line.hidden = false; api.flash(btn); });
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-secondary" data-name="Secondary button" data-group="Actions" data-num="9"
+data-baseline="The primary box without the minimum width; the press is the same diagonal fill.">
+<template data-markup>
+<div class="as-stack">
+<div class="demo-row">
+<button class="as-btn as-btn--p" type="button" data-press="primary" data-marker="left"><span data-label-step>Send message</span></button>
+<button class="as-btn as-btn--s" type="button" data-press="secondary" data-marker="left"><span data-label-step>Save draft</span></button>
+</div>
+<p class="reason" data-note></p>
+<p class="as-h">Disabled</p>
+<button class="as-btn as-btn--s is-dotted" type="button" aria-disabled="true" aria-describedby="sec-why">Save draft</button>
+<p class="reason" id="sec-why">Nothing has changed since the last save.</p>
+</div>
+</template>
+<style>
+.dir-b .as-btn--s::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--as-row);mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);visibility:hidden}
+.dir-b .as-btn--s.is-hot::after{visibility:visible}
+</style>
+<script>
+/* Motion check: 1 click 2 as primary 3 steps 4 scale .97 5 runtime fill 6 levels+transform 7 off: rest frame */
+Dir.component("cmp-secondary", (col, dir) => {
+col.querySelector("[data-note]").textContent = {
+a: "Press fills in reading order to solid, holds, then steps out.",
+b: "Press fills on the diagonal. While hovered, a soft cell row along the bottom edge marks it as secondary.",
+c: "Press stops at level 6 and holds there; secondary never goes solid."
+}[dir];
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-quiet" data-name="Quiet action" data-group="Actions" data-num="10"
+data-baseline="A word in 15 px with a soft 2 px rule under it; hover makes the rule solid and nudges the arrow over 240 ms.">
+<template data-markup>
+<div class="as-stack">
+<a class="as-q" href="#cmp-quiet">See all notes <span class="as-ar" aria-hidden="true">→</span><span class="rule-soft"></span></a>
+<a class="as-q" href="#cmp-quiet">Read the case <span class="as-ar" aria-hidden="true">→</span><span class="rule-soft"></span></a>
+<p class="as-h">Disabled</p>
+<a class="as-q" role="link" aria-disabled="true" aria-describedby="q-why" tabindex="0">Load more <span class="as-ar" aria-hidden="true">→</span><span class="rule-soft"></span></a>
+<p class="reason" id="q-why">Every note is already showing.</p>
+</div>
+</template>
+<script>
+/* Motion check: 1 hover: in 90-140, out at once 2 press 100-200 3 steps 4 no box, rule thickens 5 clip transition, class swap 6 transform, clip, mask 7 off: solid at once */
+Dir.component("cmp-quiet", (col, dir, api) => {
+col.querySelectorAll(".as-q").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); if (!a.hasAttribute("aria-disabled")) as2Down(a, dir, api); }));
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-inline-link" data-name="Inline link in prose" data-group="Actions" data-num="11"
+data-baseline="Ink text with a dotted 2 px underline at a 4 px offset; hover makes it solid.">
+<template data-markup>
+<p class="as-prose">The first round of <a class="as-il" href="#cmp-inline-link">research notes</a> set the brief. The team then tested <a class="as-il" href="#cmp-inline-link">the live prototype<span class="as-ar" aria-hidden="true"> ↗</span></a> with twelve drivers before the launch, and kept what held up.</p>
+</template>
+<style>
+.as-prose{max-width:62ch}
+.as-il{color:var(--ink)}
+.dir-a .as-il{text-decoration:underline dotted 2px;text-underline-offset:4px}
+.dir-a .as-il:is(:hover,:focus-visible){text-decoration-style:solid}
+.dir-b .as-il,.dir-c .as-il{position:relative;text-decoration:none;white-space:nowrap}
+.dir-b .as-il::before,.dir-b .as-il::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--as-row)}
+.dir-b .as-il::after{background:var(--ink);clip-path:inset(0 100% 0 0)}
+.dir-b .as-il:is(:hover,:focus-visible)::after{clip-path:inset(0);transition:clip-path 140ms steps(7,jump-start)}
+.dir-c .as-il::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:var(--ink);mask:var(--dither-4) 0 0 / var(--dither-size) var(--dither-size)}
+.dir-c .as-il:is(:hover,:focus-visible)::after{mask-image:none;animation:as-resolve 100ms steps(1,jump-end)}
+</style>
+<script>
+/* Motion check: 1 hover: in 100-140, out at once 2 ok 3 steps 4 none 5 B clip transition 6 clip, mask (B row is a pseudo) 7 off: solid at once */
+Dir.component("cmp-inline-link", (col) => {
+col.querySelectorAll("a").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-arrows" data-name="Arrows and back links" data-group="Actions" data-num="12"
+data-baseline="Arrows in Geist Mono: forward inside the site, up-right for other sites, back. The breadcrumb back link is 14 px with a soft rule that goes solid on hover.">
+<template data-markup>
+<div class="as-stack">
+<a class="as-q as-q--back" href="#cmp-arrows"><span class="as-ar" aria-hidden="true">←</span> Work<span class="rule-soft"></span></a>
+<a class="as-q" href="#cmp-arrows">Next case <span class="as-ar" aria-hidden="true">→</span><span class="rule-soft"></span></a>
+<a class="as-q" href="#cmp-arrows">Open the live site <span class="as-ar" aria-hidden="true">↗</span><span class="rule-soft"></span></a>
+<p class="reason" data-note></p>
+</div>
+</template>
+<script>
+/* Motion check: 1 hover: in 90-140, out at once 2 ok 3 steps 4 the arrow moves, not the link 5 clip transition 6 transform, clip, mask 7 off: solid at once */
+Dir.component("cmp-arrows", (col, dir, api) => {
+col.querySelectorAll(".as-q").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); as2Down(a, dir, api); }));
+col.querySelector("[data-note]").textContent = {
+a: "The back arrow nudges left in two steps; the rule goes solid in one.",
+b: "The back rule fills right to left, the way the link points.",
+c: "The band resolves to solid; the back arrow steps 4 px left and settles at 3."
+}[dir];
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-icon-button" data-name="Icon button" data-group="Actions" data-num="13"
+data-baseline="44 px square, ink border, a 5 by 5 cell icon at 3 px cells. Hover is an under marker or an inset left marker; the full-screen button inverts on hover.">
+<template data-markup>
+<div class="demo-row">
+<span class="as-gut"><button class="as-ib" type="button" aria-pressed="false" aria-label="Play video"><span class="fill-label"><span class="as-ic"></span></span></button><span class="as-tip" aria-hidden="true">Play video</span></span>
+<span class="as-gut"><button class="as-ib" type="button" aria-label="Close"><span class="as-ic"></span></button><span class="as-tip" aria-hidden="true">Close</span></span>
+<span class="as-gut"><button class="as-ib is-dotted" type="button" aria-label="Play the next video" aria-disabled="true" aria-describedby="ib-why"><span class="as-ic"></span></button><span class="as-tip" id="ib-why">Nothing to play next yet</span></span>
+</div>
+<p class="reason as-ib-note">Play toggles to pause and stays pressed. Hover or focus shows the name.</p>
+</template>
+<style>
+.as-gut{position:relative;display:inline-block;line-height:0}
+.dir-c .as-gut{padding:4px}
+.dir-c .as-gut::before{content:"";position:absolute;inset:0;background:var(--ink);mask:var(--dither-1) 0 0 / var(--dither-size) var(--dither-size)}
+.as-tip{position:absolute;left:0;top:calc(100% + 6px);z-index:3;padding:4px 8px;border:1px solid var(--ink);background:var(--paper);font:500 13px / 1.3 var(--sans);white-space:nowrap;visibility:hidden}
+.as-gut:hover .as-tip,.as-gut:focus-within .as-tip{visibility:visible}
+.as-ib-note{margin-top:44px}
+</style>
+<script>
+/* Motion check: 1 click toggle, tooltip instant 2 in 160-180, out shorter, morph 120 3 steps 4 scale .97 5 fill+morph retarget 6 levels+transform 7 off: solid at once */
+Dir.component("cmp-icon-button", (col, dir, api) => {
+const buttons = [...col.querySelectorAll(".as-ib")];
+const icons = buttons.map((b) => b.querySelector(".as-ic"));
+buttons.forEach((b, i) => { b.dataset.marker = dir === "b" ? "under" : "left"; api.icon(icons[i], i === 1 ? "close" : "play"); });
+const play = buttons[0];
+const tip = play.parentNode.querySelector(".as-tip");
+const surface = api.fill(play, { size: dir === "c" ? 12 : 8 });
+const IN = { a: { order: "reading", levels: [2, 4, 6, 8], stepMs: 20, total: 80 }, b: { order: "diagonal", total: 52 }, c: { order: "bayer", levels: [2, 4, 6], stepMs: 50, total: 0, holdAt: 6, holdMs: 120 } }[dir];
+const OUT = { a: { levels: [0], stepMs: 1, total: 0 }, b: { order: "diagonal", total: 92 }, c: { order: "bayer", levels: [4, 2, 0], stepMs: 60, total: 0 } }[dir];
+play.addEventListener("click", () => {
+const on = play.getAttribute("aria-pressed") !== "true";
+const name = on ? "Pause video" : "Play video";
+play.setAttribute("aria-pressed", String(on));
+play.setAttribute("aria-label", name);
+tip.textContent = name;
+api.morph(icons[0], on ? "pause" : "play");
+surface.to(on ? 8 : 0, on ? IN : OUT);
+});
+api.press(buttons[1]);
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-case-link" data-name="The one big link in a case" data-group="Actions" data-num="14"
+data-baseline="Departure 33 in link blue with a 2 px underline at 6 px; hover fills blue with paper text. A caption line beneath.">
+<template data-markup>
+<div class="as-cl">
+<p class="as-lbl" aria-hidden="true">Link</p>
+<a href="#cmp-case-link"><span class="as-cl-t">Open the prototype <span class="as-ar" aria-hidden="true">↗</span></span></a>
+<p class="as-cap">The working build, as it shipped to the first drivers.</p>
+</div>
+</template>
+<template data-markup="c">
+<div class="as-stack">
+<p class="as-h">C-1 · band only</p>
+<div class="as-cl"><a href="#cmp-case-link"><span class="as-cl-t">Open the prototype <span class="as-ar" aria-hidden="true">↗</span></span></a><p class="as-cap">The working build, as it shipped to the first drivers.</p></div>
+<p class="as-h">C-2 · inversion on hover</p>
+<div class="as-cl as-cl--inv"><a href="#cmp-case-link"><span class="as-cl-t">Open the prototype <span class="as-ar" aria-hidden="true">↗</span></span></a><p class="as-cap">The working build, as it shipped to the first drivers.</p></div>
+</div>
+</template>
+<style>
+.as-cl{display:grid;gap:11px;justify-items:start}
+.as-cl a{color:var(--ink);font:400 var(--type-px-33) / 1.3 var(--font-pixel)}
+.as-cap{font:400 15px / 1.5 var(--sans);color:var(--muted)}
+.as-lbl{display:none;font:400 var(--type-px-11) / 1 var(--font-pixel);color:var(--muted)}
+.dir-b .as-lbl{display:block}
+.as-cl a:is(:hover,:focus-visible) .as-ar{transform:translateX(3px)}
+.dir-a .as-cl a{text-decoration:underline solid 2px;text-underline-offset:6px}
+.dir-a .as-cl a:is(:hover,:focus-visible){text-decoration-thickness:4px}
+.dir-a .as-cl a:is(:hover,:focus-visible) .as-ar{transition:transform 120ms steps(2,jump-start)}
+.dir-b .as-cl a{text-decoration:none;padding-bottom:6px;background:var(--as-row) 0 100% / 100% 4px no-repeat;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.dir-b .as-cl a:is(:hover,:focus-visible){background-size:100% 8px}
+.dir-c .as-cl a{position:relative;padding-bottom:12px;font-size:var(--type-px-44);line-height:1.2;text-decoration:none}
+.dir-c .as-cl a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--ink);mask:var(--dither-6) 0 0 / var(--dither-size) var(--dither-size)}
+.dir-c .as-cl a:is(:hover,:focus-visible)::after{mask-image:none}
+.dir-c .as-cl--inv a:is(:hover,:focus-visible) .as-cl-t{background:var(--ink);color:var(--paper);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.dir-c .as-cap{font:400 var(--type-px-11) / 1.5 var(--font-pixel)}
+@container col (max-width:400px){.as-cl a{font-size:var(--type-px-22)}
+.dir-c .as-cl a{font-size:var(--type-px-33)}
+}
+</style>
+<script>
+/* Motion check: 1 hover, rare: one step, out at once 2 arrow 120 3 steps(2) 4 none 5 swaps 6 arrow transform only 7 off: state shows, no nudge */
+Dir.component("cmp-case-link", (col) => {
+col.querySelectorAll("a").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+});
+</script>
+</article>
+</section>
+
+<section class="group" id="g-selection">
+<h2>Selection</h2>
+
+<article class="cmp" id="cmp-segmented" data-name="Tabs and segmented controls" data-group="Selection" data-num="15"
+data-baseline="One ink-ruled group with 44 px options; the selected option is solid ink with paper text. The fill hands over in reading order, the panel sweeps in, and arrow keys move.">
+<template data-markup>
+<div class="as-seg-w">
+<div class="as-seg" role="tablist" aria-label="Case sections">
+<button class="as-tab" type="button" role="tab" id="tab1" aria-controls="tabp" data-marker="under" data-text="What the product does and who it serves."><span class="fill-label"><span class="as-n" aria-hidden="true">1</span>Overview</span></button>
+<button class="as-tab" type="button" role="tab" id="tab2" aria-controls="tabp" data-marker="under" data-text="Forty interviews, three patterns, one brief."><span class="fill-label"><span class="as-n" aria-hidden="true">2</span>Research</span></button>
+<button class="as-tab" type="button" role="tab" id="tab3" aria-controls="tabp" data-marker="under" data-text="Six rounds in code, each tested with drivers."><span class="fill-label"><span class="as-n" aria-hidden="true">3</span>Prototype</span></button>
+<button class="as-tab" type="button" role="tab" id="tab4" aria-controls="tabp" data-marker="under" data-text="Shipped to every market in one quarter."><span class="fill-label"><span class="as-n" aria-hidden="true">4</span>Outcome</span></button>
+</div>
+<span class="as-seg-pos" aria-hidden="true"><i></i></span>
+</div>
+<p class="as-panel" role="tabpanel" id="tabp" tabindex="0"></p>
+<p class="reason">Click to see the hand-over. Arrow keys, Home and End move at once.</p>
+</template>
+<style>
+.as-seg{display:flex;width:max-content;max-width:100%;border:1px solid var(--line)}
+.dir-b .as-seg{border-color:var(--ink)}
+.dir-c .as-seg{border:2px solid var(--ink)}
+.as-tab{position:relative;min-height:44px;padding:0 16px;border:0;background:var(--paper);font:500 14px / 1 var(--sans);cursor:pointer}
+.dir-b .as-tab,.dir-c .as-tab{min-height:48px}
+.dir-b .as-tab + .as-tab{border-left:1px solid var(--ink)}
+.as-tab:focus-visible{outline-offset:-4px;z-index:2}
+.as-seg-pos{display:none}
+.dir-b .as-seg-pos{position:relative;display:block;height:3px;margin-top:4px;background:repeating-linear-gradient(90deg,var(--cell-empty) 0 4px,transparent 4px 5px)}
+.as-seg-pos i{position:absolute;inset:0;background:var(--as-row);transition:clip-path 240ms cubic-bezier(0.645,0.045,0.355,1)}
+.as-panel{margin-top:22px;min-height:3em;max-width:40ch}
+@container col (max-width:400px){.as-seg{flex-wrap:wrap}
+.dir-b .as-seg-w{overflow-x:auto;padding-bottom:4px}
+.dir-b .as-seg{flex-wrap:nowrap;max-width:none}
+}
+</style>
+<script>
+/* Motion check: 1 click hands over; arrows, Home, End instant 2 in 160-240, out shorter; panel A 0, B 240, C 200 3 steps inside, B rule ease-in-out 4 panel clipped, not from zero 5 fill+clip retarget 6 levels, clip (no left/width) 7 off: selected still solid */
+Dir.component("cmp-segmented", (col, dir, api) => {
+const tabs = [...col.querySelectorAll("[role=tab]")];
+const seg = col.querySelector(".as-seg");
+const pos = col.querySelector(".as-seg-pos");
+const bar = pos.firstElementChild;
+const panel = col.querySelector("[role=tabpanel]");
+const fills = tabs.map((t) => api.fill(t, { size: dir === "c" ? 12 : 8 }));
+const IN = { a: { order: "reading", levels: [2, 4, 6, 8], stepMs: 20, total: 80 }, b: { order: "reading", total: 112 }, c: { order: "bayer", levels: [2, 4, 6], stepMs: 50, total: 0, holdAt: 6, holdMs: 120 } }[dir];
+const OUT = { a: { levels: [0], stepMs: 1, total: 0 }, b: { order: "reading", total: 72 }, c: { order: "bayer", levels: [4, 0], stepMs: 120, total: 0 } }[dir];
+const now = (lv) => ({ levels: [lv], stepMs: 1, total: 0 });
+let cur = -1;
+const place = (instant) => {
+if (dir !== "b" || cur < 0) return;
+const w = seg.offsetWidth;
+const t = tabs[cur];
+pos.style.width = `${w}px`;
+bar.style.transition = instant ? "none" : "";
+bar.style.clipPath = `inset(0 ${w - t.offsetLeft - t.offsetWidth}px 0 ${t.offsetLeft}px)`;
+};
+const select = (i, key) => {
+if (key) tabs[i].focus();
+if (i === cur) return;
+const instant = key || cur < 0;
+tabs.forEach((t, k) => { t.setAttribute("aria-selected", String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+if (cur >= 0) fills[cur].to(0, instant ? now(0) : OUT);
+fills[i].to(8, instant ? now(8) : IN);
+as2Show(panel, dir, instant || dir === "a" ? 0 : dir === "b" ? 240 : 200, 10);
+cur = i;
+panel.textContent = tabs[i].dataset.text;
+panel.setAttribute("aria-labelledby", tabs[i].id);
+place(instant);
+};
+tabs.forEach((t, i) => t.addEventListener("click", () => select(i)));
+seg.addEventListener("keydown", (e) => {
+const n = tabs.length;
+const next = { ArrowRight: cur + 1, ArrowDown: cur + 1, ArrowLeft: cur - 1, ArrowUp: cur - 1, Home: 0, End: n - 1 }[e.key];
+if (next == null) return;
+e.preventDefault();
+select((next + n) % n, true);
+});
+select(0);
+const ro = new ResizeObserver(() => place(true));
+ro.observe(seg);
+return () => ro.disconnect();
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-select" data-name="Select" data-group="Selection" data-num="16"
+data-baseline="A native select with the arrow turned off, 40 px, ink border, a 6 px chevron and 40 px kept clear at the end. The banner tool uses its own list box.">
+<template data-markup>
+<div class="as-stack as-sel-w">
+<label class="as-h" for="seln">Native select</label>
+<span class="as-sel" data-marker="left"><select id="seln"><option>Playground</option><option>Banner maker</option><option>SVG studio</option><option selected>Presentations in Code</option></select><span class="as-chev"></span><span class="as-rule" aria-hidden="true"></span></span>
+<span class="as-h" id="lbl">List box</span>
+<div class="as-lb">
+<button class="as-sel as-lb-b" type="button" data-marker="left" aria-haspopup="listbox" aria-expanded="false" aria-controls="lbx" aria-labelledby="lbl lbv"><span class="as-lb-v" id="lbv">Presentations in Code</span><span class="as-chev"></span><span class="as-rule" aria-hidden="true"></span></button>
+<ul class="as-lb-l" role="listbox" id="lbx" tabindex="-1" aria-labelledby="lbl" hidden>
+<li role="option" id="o1"><span class="fill-label"><span class="as-n" aria-hidden="true">1</span>Playground</span></li>
+<li role="option" id="o2"><span class="fill-label"><span class="as-n" aria-hidden="true">2</span>Banner maker</span></li>
+<li role="option" id="o3"><span class="fill-label"><span class="as-n" aria-hidden="true">3</span>SVG studio</span></li>
+<li role="option" id="o4"><span class="fill-label"><span class="as-n" aria-hidden="true">4</span>Presentations in Code</span></li>
+</ul>
+</div>
+<p class="reason">A click opens it on this direction's switch. Enter, Space or the down arrow opens it at once; arrows move, Enter picks, Escape closes.</p>
+</div>
+</template>
+<style>
+.as-sel-w{max-width:320px;justify-items:stretch}
+.as-sel{position:relative;display:block;width:100%;padding:0;border:0;background:none;text-align:left;cursor:pointer}
+.as-sel select,.as-lb-b{width:100%;min-height:48px;padding:0 44px 0 12px;border:1px solid var(--ink);background:var(--paper);font:500 14px / 1.2 var(--sans);appearance:none;cursor:pointer}
+.dir-a .as-sel select,.dir-a .as-lb-b{min-height:44px;border-color:var(--line)}
+.dir-c .as-sel select,.dir-c .as-lb-b{border-width:2px}
+.as-lb-b{display:flex;align-items:center}
+.as-lb-v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.as-sel .as-chev{position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none}
+.as-rule{display:none}
+.dir-b .as-rule{position:absolute;left:0;right:0;bottom:0;display:block;height:3px;background:var(--as-row);mask:var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);pointer-events:none}
+.dir-b .as-sel:focus-within .as-rule,.dir-b [aria-expanded="true"] .as-rule{mask:none}
+.as-lb{position:relative}
+.as-lb-l{position:absolute;left:0;right:0;top:100%;z-index:5;margin:0;padding:0;list-style:none;border:1px solid var(--ink);border-top:0;background:var(--paper)}
+.dir-a .as-lb-l{border-color:var(--line)}
+.dir-c .as-lb-l{border-width:2px}
+.as-lb-l:focus-visible{outline-offset:-2px}
+.as-lb-l [role="option"]{position:relative;display:flex;align-items:center;min-height:48px;padding:0 12px;font:500 14px / 1.2 var(--sans);cursor:pointer}
+.dir-a .as-lb-l [role="option"]{min-height:44px}
+.dir-b .as-lb-l [role="option"] + [role="option"]{border-top:1px solid var(--line)}
+.dir-a .as-lb-l [aria-selected="true"]{box-shadow:inset 4px 0 0 var(--ink)}
+.dir-a .as-lb-l .is-act{box-shadow:inset 0 -2px 0 var(--ink)}
+.dir-a .as-lb-l [aria-selected="true"].is-act{box-shadow:inset 4px 0 0 var(--ink),inset 0 -2px 0 var(--ink)}
+.dir-b .as-lb-l .is-act::after,.dir-c .as-lb-l .is-act::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--marker-width);background:var(--ink)}
+</style>
+<script>
+/* Motion check: 1 click opens on the switch; keys, Escape, highlight, pick instant 2 open 200-240, close instant 3 steps(4) 4 clipped from the trigger edge 5 clip+levels retarget 6 clip, level 7 off: instant, selection shows */
+Dir.component("cmp-select", (col, dir, api) => {
+col.querySelectorAll(".as-chev").forEach((c) => api.icon(c, "chevron"));
+const wrap = col.querySelector(".as-lb");
+const btn = wrap.querySelector("button");
+const list = wrap.querySelector("[role=listbox]");
+const value = wrap.querySelector(".as-lb-v");
+const opts = [...list.children];
+const size = dir === "c" ? 12 : 8;
+const lv = dir === "b" ? 8 : 6;
+let sel = 3;
+let act = 3;
+const activate = (i) => {
+opts.forEach((o, k) => o.classList.toggle("is-act", k === i));
+act = i;
+list.setAttribute("aria-activedescendant", opts[i].id);
+};
+const paint = () => {
+opts.forEach((o, k) => o.setAttribute("aria-selected", String(k === sel)));
+if (dir !== "a") opts.forEach((o, k) => api.fill(o, { size }).to(k === sel ? lv : 0, { levels: [k === sel ? lv : 0], stepMs: 1, total: 0 }));
+};
+const open = (animate) => {
+if (!list.hidden) return;
+list.hidden = false;
+btn.setAttribute("aria-expanded", "true");
+paint();
+activate(sel);
+as2Show(list, dir, animate ? api.ms("--switch") : 0, 4);
+list.focus();
+};
+const close = (focus) => {
+if (list.hidden) return;
+list.hidden = true;
+btn.setAttribute("aria-expanded", "false");
+if (focus) btn.focus();
+};
+const choose = (i) => { sel = i; value.textContent = opts[i].textContent.replace(/^\d/, ""); paint(); close(true); };
+opts.forEach((o, i) => {
+o.addEventListener("pointerenter", () => activate(i));
+o.addEventListener("click", () => choose(i));
+});
+btn.addEventListener("click", (e) => { if (e.detail === 0) return; if (list.hidden) open(true); else close(false); });
+btn.addEventListener("keydown", (e) => { if (["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) { e.preventDefault(); open(false); } });
+list.addEventListener("keydown", (e) => {
+const n = opts.length;
+const next = { ArrowDown: Math.min(n - 1, act + 1), ArrowUp: Math.max(0, act - 1), Home: 0, End: n - 1 }[e.key];
+if (next != null) { e.preventDefault(); activate(next); }
+else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(act); }
+else if (e.key === "Escape") { e.preventDefault(); close(true); }
+else if (e.key === "Tab") close(false);
+});
+wrap.addEventListener("focusout", (e) => { if (!wrap.contains(e.relatedTarget)) close(false); });
+paint();
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-checkbox" data-name="Checkbox and switch" data-group="Selection" data-num="17"
+data-baseline="An 18 px square with an ink border; checked is ink with a 3 px paper inset. The tool toggle is a label around the same box.">
+<template data-markup>
+<div class="as-stack">
+<label class="as-ck"><input type="checkbox" checked><span class="as-box" aria-hidden="true"></span>Show the grid<span class="as-oo" aria-hidden="true"></span></label>
+<label class="as-ck"><input type="checkbox" role="switch"><span class="as-sw" aria-hidden="true"></span>Loop the video<span class="as-oo" aria-hidden="true"></span></label>
+<p class="as-h">Disabled</p>
+<label class="as-ck as-ck--off"><input type="checkbox" aria-disabled="true" aria-describedby="ck-why"><span class="as-box is-dotted" aria-hidden="true"></span>Snap to cells</label>
+<p class="reason" id="ck-why">Turn on the grid first.</p>
+</div>
+</template>
+<style>
+.as-ck{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:44px;font:400 14px / 1.3 var(--sans);cursor:pointer}
+.as-ck input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit}
+.as-ck--off{color:var(--muted);cursor:not-allowed}
+.as-box{position:relative;display:inline-grid;place-items:center;flex:none;width:18px;height:18px;border:1px solid var(--ink)}
+.dir-b .as-box{width:16px;height:16px}
+.dir-c .as-box{width:24px;height:24px}
+.as-box > .cell{position:absolute;inset:0;width:auto;height:auto}
+.as-box > .cell-icon{position:relative;visibility:hidden}
+.as-box.is-on > .cell-icon{visibility:visible}
+.dir-b .as-box > .cell-icon{display:none}
+.as-box .cell-icon .cell:not([data-level="0"]){background:var(--paper)}
+.as-sw{display:inline-flex;flex:none;gap:1px;padding:1px;border:1px solid var(--ink)}
+.dir-a .as-sw .cell{width:18px;height:18px}
+.dir-b .as-sw{border-color:var(--line)}
+.dir-c .as-sw{gap:0}
+.as-oo{display:none;font:400 var(--type-px-11) / 1 var(--font-pixel);color:var(--muted)}
+.dir-b .as-oo{display:inline}
+.as-ck input:focus-visible ~ :is(.as-box,.as-sw){outline:2px solid var(--ink);outline-offset:2px}
+</style>
+<script>
+/* Motion check: 1 click or Space 2 in 60-200, out shorter 3 level steps 4 none 5 newer toggle cancels the walk 6 levels 7 off: last frame, check shows */
+Dir.component("cmp-checkbox", (col, dir, api) => {
+const ms = { a: 40, b: 30, c: 50 }[dir];
+const BOX = { a: [[[0]], [[3], [6], [8]]], b: [[[4], [0]], [[4], [8]]], c: [[[4], [0]], [[2], [4], [6], [8]]] }[dir];
+const SW = { a: [[[4, 4], [8, 0]], [[4, 4], [0, 8]]], b: [[[8, 0], [0, 0]], [[8, 0], [8, 8]]], c: [[[4, 4], [0, 0]], [[4, 4], [8, 8]]] }[dir];
+col.querySelectorAll(".as-ck").forEach((row) => {
+const input = row.querySelector("input");
+const box = row.querySelector(".as-box");
+const word = row.querySelector(".as-oo");
+let list;
+if (box) {
+list = api.cells(box, 1, { clear: true });
+const check = document.createElement("span");
+box.append(check);
+api.icon(check, "check", { cell: dir === "a" ? 2 : 3 });
+} else list = api.cells(row.querySelector(".as-sw"), 2, { clear: dir !== "b" });
+if (input.getAttribute("aria-disabled") === "true") input.addEventListener("click", (e) => e.preventDefault());
+const paint = (animate) => {
+const on = input.checked;
+const frames = (box ? BOX : SW)[on ? 1 : 0];
+if (input.getAttribute("role") === "switch") input.setAttribute("aria-checked", String(on));
+if (word) word.textContent = on ? "On" : "Off";
+if (box && !on) box.classList.remove("is-on");
+const after = as2Walk(row, list, animate ? frames : frames.slice(-1), ms);
+if (box && on) api.timeout(() => { if (input.checked) box.classList.add("is-on"); }, animate ? after : 0);
+};
+paint(false);
+input.addEventListener("change", () => paint(true));
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-slider" data-name="Slider" data-group="Selection" data-num="18"
+data-baseline="24 cells, 14 px tall, filling to the value with a dithered leading cell. The real range input sits on top, invisible, with the focus ring on the track.">
+<template data-markup>
+<div class="as-stack">
+<div class="as-sl"><label for="sl1">Grid size</label><output for="sl1">40</output>
+<div class="as-sl-t"><span class="as-sl-g"><span class="as-sl-line"></span><span class="as-sl-c"></span><span class="as-sl-th"></span></span><input type="range" id="sl1" min="0" max="100" step="1" value="40" aria-valuetext="40 percent"></div>
+</div>
+<div class="as-sl is-off"><label for="sl2">Snap strength</label><output for="sl2">60</output>
+<div class="as-sl-t"><span class="as-sl-g"><span class="as-sl-line"></span><span class="as-sl-c"></span><span class="as-sl-th"></span></span><input type="range" id="sl2" min="0" max="100" step="1" value="60" aria-disabled="true" aria-describedby="sl-why" aria-valuetext="60 percent"></div>
+</div>
+<p class="reason" id="sl-why">Turn on snapping to change its strength.</p>
+</div>
+</template>
+<style>
+#cmp-slider .as-stack{justify-items:stretch;max-width:360px}
+.as-sl{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 11px}
+.as-sl label{font:400 13px / 1.3 var(--sans)}
+.as-sl output{font:400 var(--type-px-11) / 1 var(--font-pixel)}
+.as-sl-t{grid-column:1 / -1;position:relative;display:flex;align-items:center;height:44px}
+.as-sl-t input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.as-sl-t:focus-within{outline:2px solid var(--ink);outline-offset:2px}
+.as-sl-g{position:relative;display:block;width:100%}
+.as-sl-c{display:none}
+.as-sl-th{display:none;position:absolute;left:0;background:var(--ink)}
+.dir-a .as-sl-line{display:block;height:2px;background:linear-gradient(90deg,var(--ink) var(--v),var(--line) var(--v))}
+.dir-a .as-sl-th{display:block;top:-7px;width:4px;height:16px;margin-left:-2px}
+.dir-a .is-off .as-sl-line{opacity:0.45}
+.dir-a .is-off .as-sl-th{mask:var(--dither-4) 0 0 / var(--dither-size) var(--dither-size)}
+.dir-b .as-sl-c,.dir-c .as-sl-c{display:grid;grid-template-columns:repeat(24,7px);gap:1px;width:max-content}
+.dir-b .as-sl-c .cell{height:12px}
+.dir-c .as-sl-c{grid-template-columns:repeat(12,12px);gap:2px}
+.dir-c .as-sl-g{width:max-content}
+.dir-c .as-sl-th{display:block;top:-3px;width:2px;height:18px;margin-left:-1px}
+.as-sl.is-off :is(label,output){color:var(--muted)}
+.as-sl.is-off input{cursor:not-allowed}
+</style>
+<script>
+/* Motion check: 1 drag and keys, very frequent: next frame, no transition 2-3 none 4 none 5 nothing to interrupt 6 thumb transform, cell levels 7 off: same */
+Dir.component("cmp-slider", (col, dir, api) => {
+const n = dir === "b" ? 24 : 12;
+col.querySelectorAll(".as-sl").forEach((sl) => {
+const input = sl.querySelector("input");
+const out = sl.querySelector("output");
+const thumb = sl.querySelector(".as-sl-th");
+const g = sl.querySelector(".as-sl-g");
+const off = input.getAttribute("aria-disabled") === "true";
+const list = dir === "a" ? [] : api.cells(sl.querySelector(".as-sl-c"), n);
+if (off && dir !== "a") sl.querySelector(".as-sl-c").classList.add("is-dotted");
+if (dir === "b") input.step = "any";
+let hot = 0;
+let last = input.value;
+const draw = (words) => {
+const v = Number(input.value);
+sl.style.setProperty("--v", `${v}%`);
+thumb.style.transform = `translateX(${(g.offsetWidth * v) / 100}px)`;
+if (words) { out.textContent = String(Math.round(v)); input.setAttribute("aria-valuetext", `${Math.round(v)} percent`); }
+const f = (v / 100) * n;
+const whole = Math.floor(f);
+const part = f - whole;
+const lead = dir === "b" ? Math.min(8, Math.round(part * 8) + hot) : part > 0.01 ? 2 + Math.round(part * 5) : 0;
+list.forEach((c, i) => api.setLevel(c, off ? 1 : i < whole ? 8 : i === whole ? lead : 0));
+};
+input.addEventListener("input", () => {
+if (off) { input.value = last; return; }
+last = input.value;
+draw(dir !== "a");
+});
+input.addEventListener("change", () => { if (!off) draw(true); });
+if (dir === "b" && !off) {
+const t = sl.querySelector(".as-sl-t");
+t.addEventListener("pointerenter", () => { hot = 1; draw(false); });
+t.addEventListener("pointerleave", () => { hot = 0; draw(false); });
+input.addEventListener("keydown", (e) => {
+const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+if (!d) return;
+e.preventDefault();
+const cell = 100 / n;
+input.value = String(Math.max(0, Math.min(100, (Math.round(Number(input.value) / cell) + d) * cell)));
+last = input.value;
+draw(true);
+});
+}
+draw(true);
+const ro = new ResizeObserver(() => draw(false));
+ro.observe(g);
+api.cleanup(() => ro.disconnect());
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-stepper" data-name="Stepper" data-group="Selection" data-num="19"
+data-baseline="Under live embeds: two 48 px buttons, Previous and Next in Departure 11, and a count such as 3 / 12. The minus, value and plus stepper is only in the plan so far.">
+<template data-markup>
+<div class="as-stack">
+<div class="as-st">
+<button class="as-ib" type="button" data-press="secondary" aria-label="Previous slide">−</button>
+<output class="as-st-v" aria-live="polite"><span class="as-st-n">1</span> / 12</output>
+<button class="as-ib" type="button" data-press="secondary" aria-label="Next slide">+</button>
+</div>
+<span class="as-st-pos cells" aria-hidden="true"></span>
+<p class="reason" id="st-why"></p>
+</div>
+</template>
+<style>
+.as-st{display:flex;align-items:center;gap:11px}
+.dir-c .as-st .as-ib{border-width:2px}
+.as-st-v{min-width:5ch;text-align:center;font:400 var(--type-px-22) / 1 var(--font-pixel)}
+.dir-c .as-st-v{font-size:var(--type-px-33)}
+.as-st-pos{--cells:12}
+.dir-a .as-st-pos{display:none}
+.dir-b .as-st-pos .cell{height:3px}
+#cmp-stepper .reason:empty::before{content:"Between the ends both buttons work."}
+</style>
+<script>
+/* Motion check: 1 click, repeatable: value at once (B glyphs 60) 2 press under 300, out shorter 3 steps 4 scale .97 5 runtime fill 6 levels+transform 7 off: instant, ends still dotted */
+Dir.component("cmp-stepper", (col, dir, api) => {
+const [prev, next] = col.querySelectorAll(".as-ib");
+const num = col.querySelector(".as-st-n");
+const why = col.querySelector(".reason");
+const list = api.cells(col.querySelector(".as-st-pos"), 12);
+let at = 1;
+const set = (v, animate) => {
+at = v;
+if (dir === "b" && animate && Dir.motionActive()) {
+num.textContent = "░";
+api.timeout(() => { num.textContent = "▓"; }, 30);
+api.timeout(() => { num.textContent = String(at); }, 60);
+} else num.textContent = String(at);
+list.forEach((c, i) => api.setLevel(c, i < at ? 8 : 0));
+[[prev, at === 1], [next, at === 12]].forEach(([b, end]) => {
+b.setAttribute("aria-disabled", String(end));
+b.classList.toggle("is-dotted", end);
+if (end) b.setAttribute("aria-describedby", why.id); else b.removeAttribute("aria-describedby");
+});
+why.textContent = at === 1 ? "First slide" : at === 12 ? "Last slide" : "";
+};
+[[prev, -1], [next, 1]].forEach(([b, d]) => b.addEventListener("click", () => { if (b.getAttribute("aria-disabled") !== "true") set(at + d, true); }));
+set(1, false);
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-disclosure" data-name="Disclosure" data-group="Selection" data-num="20"
+data-baseline="A native details element with a summary line; the Presentations in Code page draws a pixel chevron, and More controls in the studio is the same pattern.">
+<template data-markup>
+<div class="as-stack as-dcs">
+<details class="as-dc">
+<summary class="as-q"><span class="as-n" aria-hidden="true">1</span>Read and copy the skill <span class="as-chev"></span><span class="rule-soft"></span></summary>
+<p class="as-dc-p">The skill is a short text file. Copy it into your project and the tools will follow the same rules this page does.</p>
+</details>
+<details class="as-dc">
+<summary class="as-q"><span class="as-n" aria-hidden="true">2</span>More controls <span class="as-chev"></span><span class="rule-soft"></span></summary>
+<p class="as-dc-p">Cell size, gap and the dither tile. Each one changes the preview as you move it.</p>
+</details>
+</div>
+</template>
+<style>
+.as-dcs{justify-items:stretch}
+.as-dc summary{list-style:none;width:max-content;max-width:100%}
+.as-dc summary::-webkit-details-marker{display:none}
+.as-dc .as-chev{margin-left:4px}
+.dir-b .as-dc summary > .rule-soft,.dir-b .as-dc summary::after{height:3px}
+.dir-c .as-dc[open] > summary > .rule-soft{mask-image:none}
+.as-dc-p{max-width:52ch;padding:11px 0 22px;font-size:15px;line-height:1.55;color:var(--text-soft)}
+.dir-a .as-dc-p{border-top:1px solid var(--line)}
+.dir-c .as-dc-p{position:relative;padding-left:17px}
+.dir-c .as-dc-p::before{content:"";position:absolute;left:0;top:0;bottom:11px;width:6px;background:var(--ink);mask:var(--dither-1) 0 0 / var(--dither-size) var(--dither-size)}
+</style>
+<script>
+/* Motion check: 1 click opens on the switch; Enter or Space instant 2 open 200-240, close instant 3 steps(4), morph 120 4 clipped from the summary 5 clip+levels retarget 6 clip, level 7 off: instant, chevron and rule show state */
+Dir.component("cmp-disclosure", (col, dir, api) => {
+col.querySelectorAll("details").forEach((d) => {
+const sum = d.querySelector("summary");
+const chev = d.querySelector(".as-chev");
+const panel = d.querySelector(".as-dc-p");
+let pointer = false;
+api.icon(chev, "chevron");
+sum.addEventListener("click", (e) => { pointer = e.detail > 0; });
+d.addEventListener("toggle", () => {
+const name = d.open ? "chevronUp" : "chevron";
+if (pointer) api.morph(chev, name); else api.icon(chev, name);
+if (d.open) as2Show(panel, dir, pointer ? api.ms("--switch") : 0, 4);
+pointer = false;
+});
+});
+});
+</script>
+</article>
+</section>

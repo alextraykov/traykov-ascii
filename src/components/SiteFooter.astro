@@ -80,7 +80,7 @@ const bookingEmbedUrl = (() => {
           type="button"
           data-theme-toggle
           aria-label="Automatic color theme. Activate to switch theme."
-        >Theme <span class="site-footer__setting-value" data-theme-value>Auto</span></button>
+        >Theme <i class="site-footer__theme-cell" aria-hidden="true"></i><span class="site-footer__setting-value" data-theme-value>Auto</span></button>
         <MotionToggle variant="footer" />
         <slot name="actions" />
       </div>
@@ -102,6 +102,7 @@ const bookingEmbedUrl = (() => {
     <dialog class="footer-booking-modal" aria-labelledby="footer-booking-modal-title" data-footer-booking-modal>
       <div class="footer-booking-modal__header">
         <div>
+          <p class="footer-booking-modal__kicker" aria-hidden="true">Booking</p>
           <h2 id="footer-booking-modal-title">Pick a time that works.</h2>
         </div>
         <button
@@ -110,7 +111,7 @@ const bookingEmbedUrl = (() => {
           aria-label="Close booking calendar"
           data-footer-booking-close
         >
-          <span aria-hidden="true">×</span>
+          <span data-cell-icon="close" aria-hidden="true">×</span>
         </button>
       </div>
       <div class="footer-booking__body">
@@ -132,30 +133,71 @@ const bookingEmbedUrl = (() => {
 
 <script>
   import "../scripts/motion/index.js";
-  import { createCells, setLevel } from "../scripts/motion/cells.js";
+  import { createCells, createIcon, runField, setLevel } from "../scripts/motion/cells.js";
+  import { isMotionActive } from "../scripts/motion/lifecycle.js";
 
-  // Back to top shows how far down the page you are, as cells.
+  // Back to top (picks, A): one 6 × 16 cell whose level is how far down the page you are (0–8).
+  // A pointer click empties it in 8 steps of 30 ms while the page returns; Enter empties it at once.
   document.querySelectorAll("[data-back-to-top-cells]").forEach((host) => {
     if (!(host instanceof HTMLElement) || host.dataset.ready === "true") return;
     host.dataset.ready = "true";
-    const count = 16;
-    host.style.setProperty("--cells", String(count));
-    const cells = createCells(host, count);
+    host.style.setProperty("--cells", "1");
+    const [cell] = createCells(host, 1);
+    const link = host.closest("[data-back-to-top]");
     let frame = 0;
+    let returning = false;
+    let stop = () => {};
     const paint = () => {
       frame = 0;
+      if (returning) return;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-      cells.forEach((cell, index) => {
-        const fill = progress * count - index;
-        setLevel(cell, fill >= 1 ? 8 : fill <= 0 ? 0 : Math.ceil(fill * 8));
-      });
-      const pct = host.closest("[data-back-to-top]")?.querySelector("[data-back-to-top-pct]");
-      if (pct) pct.textContent = ` · ${Math.round(progress * 100)}% down`;
+      setLevel(cell, Math.round(progress * 8));
     };
     window.addEventListener("scroll", () => { if (!frame) frame = requestAnimationFrame(paint); }, { passive: true });
+    link?.addEventListener("click", (event) => {
+      stop();
+      if (!(event instanceof MouseEvent) || event.detail === 0 || !isMotionActive()) {
+        setLevel(cell, 0);
+        return;
+      }
+      const from = Number(cell.dataset.level || 0);
+      returning = true;
+      stop = runField({
+        values: [0],
+        total: 0,
+        steps: 8,
+        stepMs: 30,
+        render: (stepAt) => {
+          const at = stepAt(0);
+          if (at >= 0) setLevel(cell, from * (1 - Math.min(8, at + 1) / 8));
+        },
+        done: () => {
+          returning = false;
+          paint();
+        }
+      });
+    });
     paint();
   });
+
+  // Dialog motion (picks, B): a pointer open switches the panel on from a 2 px line at its centre in
+  // four steps over 240 ms; a pointer close leaves with the 180 ms afterglow while focus returns at
+  // once. Keyboard opens, Escape, backdrop clicks and motion off are instant.
+  const openDialog = (dialog: HTMLDialogElement, event: Event) => {
+    const quick = !(event instanceof MouseEvent) || event.detail === 0 || !isMotionActive();
+    dialog.classList.remove("is-instant", "is-opening");
+    if (!quick) {
+      dialog.classList.add("is-opening");
+      dialog.addEventListener("animationend", () => dialog.classList.remove("is-opening"), { once: true });
+    }
+    dialog.showModal();
+  };
+  const closeDialog = (dialog: HTMLDialogElement, instant: boolean) => {
+    dialog.classList.remove("is-opening");
+    dialog.classList.toggle("is-instant", instant || !isMotionActive());
+    dialog.close();
+  };
 
   document.querySelectorAll("[data-footer-booking-modal]").forEach((modal) => {
     if (!(modal instanceof HTMLDialogElement) || modal.dataset.bookingReady === "true") return;
@@ -164,17 +206,21 @@ const bookingEmbedUrl = (() => {
     if (!(closeButton instanceof HTMLButtonElement)) return;
 
     modal.dataset.bookingReady = "true";
+    closeButton.querySelectorAll<HTMLElement>("[data-cell-icon]").forEach((icon) => {
+      createIcon(icon, icon.dataset.cellIcon || "close", { cell: 3 });
+    });
     let activeTrigger: HTMLElement | null = null;
     document.querySelectorAll<HTMLElement>("[data-booking-modal-open]").forEach((trigger) => {
       trigger.addEventListener("click", (event) => {
         event.preventDefault();
         activeTrigger = trigger;
-        modal.showModal();
+        openDialog(modal, event);
       });
     });
-    closeButton.addEventListener("click", () => modal.close());
+    closeButton.addEventListener("click", (event) => closeDialog(modal, event.detail === 0));
+    modal.addEventListener("cancel", () => modal.classList.add("is-instant"));
     modal.addEventListener("click", (event) => {
-      if (event.target === modal) modal.close();
+      if (event.target === modal) closeDialog(modal, true);
     });
     modal.addEventListener("close", () => activeTrigger?.focus());
   });

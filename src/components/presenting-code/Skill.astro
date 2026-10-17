@@ -10,7 +10,7 @@ const { skill, index } = Astro.props;
   <details class="pc-disclosure">
     <summary>Read &amp; copy skill</summary>
     <div class="pc-skill__source">
-      <div class="pc-actions"><button type="button" data-pc-copy={skill.name} hidden>Copy skill</button><a href={`/labs/presenting-in-code/skills/${skill.name}/SKILL.md`} download={`${skill.name}-SKILL.md`}>Download SKILL.md ↓</a><span data-pc-copy-status aria-live="polite"></span></div>
+      <div class="pc-actions"><button type="button" data-pc-copy={skill.name} hidden>Copy skill</button><a href={`/labs/presenting-in-code/skills/${skill.name}/SKILL.md`} download={`${skill.name}-SKILL.md`}>Download SKILL.md ↓</a><span data-pc-copy-status data-status-snap aria-live="polite"></span></div>
       <pre tabindex="0" aria-label={`${skill.name} source`}><code data-pc-skill-source={skill.name}>{skill.source}</code></pre>
     </div>
   </details>

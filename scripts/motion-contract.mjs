@@ -550,12 +550,11 @@ async function main() {
         activeAnimations: document.getAnimations().map((animation) => animation.animationName || "").filter(Boolean)
       };
     });
-    record("project-title-continuity", transitionState);
-    if (!transitionState.transport && !transitionState.mainAnimation) {
-      fail("project-title-continuity", "Project title navigation did not expose an incoming transition state.", transitionState);
-    }
-    if (transitionState.transport === "fallback" && !transitionState.mainAnimation.includes("motion-editorial-in")) {
-      fail("project-title-continuity", "Fallback editorial navigation did not animate its incoming page.", transitionState);
+    record("project-title-instant", transitionState);
+    // Pages swap instantly: no view transition, no arrival animation on main.
+    const pageAnimation = /page-continuity|motion-editorial/;
+    if (transitionState.transport || transitionState.arriving || pageAnimation.test(transitionState.mainAnimation) || transitionState.activeAnimations.some((name) => pageAnimation.test(name))) {
+      fail("project-title-instant", "Project title navigation still ran a page transition.", transitionState);
     }
     await page.goBack({ waitUntil: "networkidle" });
     const historyVisible = await waitFor(page, () => {

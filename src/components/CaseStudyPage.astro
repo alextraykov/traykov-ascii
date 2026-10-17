@@ -26,14 +26,17 @@ const usePaveLoadingProcess = study.id === "pave-loading-animation";
 const usePaveArtifactProcess = usePaveBreathingGridsProcess || usePaveLoadingProcess;
 const useSynapseTurntable = study.id === "synapse-sys";
 const hasTurntable = usePaveTurntable || useSynapseTurntable;
-const caseTheme = privateTemplate ? "pave" : ["designing-pave", "pave-blueprint", "pave-breathing-grids", "pave-loading-animation"].includes(study.id)
+// Pave's new look opens on the live drafting sheet from Pave's home page instead of the ASCII field.
+const useBlueprintHero = study.id === "pave-new-look" && !privateTemplate;
+const blueprintHeroSrc = "/case-studies/pave-blueprint/live/blueprint-sheet.html?v=4A&present=1&seed=7";
+const caseTheme = privateTemplate ? "pave" : ["designing-pave", "pave-blueprint", "pave-new-look", "pave-breathing-grids", "pave-loading-animation"].includes(study.id)
   ? "pave"
   : ["synapse-sys", "designing-synapse-sys"].includes(study.id)
     ? "synapse"
     : undefined;
 const caseBreadcrumb = parentStudy
-  ? { href: caseHref(parentStudy), label: `← ${parentStudy.title}` }
-  : { href: "/#work", label: "← Work" };
+  ? { href: caseHref(parentStudy), label: parentStudy.title }
+  : { href: "/#work", label: "Work" };
 // Status as density: the denser the cell, the further the work shipped.
 const caseStatusLevel = (() => {
   const status = (study.status || "").toLowerCase();
@@ -157,8 +160,12 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
     <SiteNav active="work" variant="case" />
 
     <main id="top" class="case-page">
-      {!parentStudy && <section class:list={["case-hero", hasTurntable && "case-hero--turntable"]} aria-labelledby="case-title">
-        {usePaveTurntable ? (
+      {!parentStudy && <section class:list={["case-hero", hasTurntable && "case-hero--turntable", useBlueprintHero && "case-hero--sheet"]} aria-labelledby="case-title">
+        {useBlueprintHero ? (
+          <div class="case-hero-sheet" aria-hidden="true">
+            <iframe title="" tabindex="-1" data-blueprint-hero-src={blueprintHeroSrc}></iframe>
+          </div>
+        ) : usePaveTurntable ? (
           <PaveTurntable
             class="case-hero-turntable"
             asciiClass="case-hero-turntable__ascii"
@@ -179,15 +186,15 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
           </div>
         )}
 
-        <div class="case-hero-copy section-shell" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
-          <nav class="case-breadcrumb" aria-label="Breadcrumb">
-            <a href={caseBreadcrumb.href}>{caseBreadcrumb.label}</a>
+        <div class="case-hero-copy section-shell">
+          <nav class="case-breadcrumb" aria-label="Breadcrumb" data-reveal="rise" data-reveal-page-enter="true">
+            <a href={caseBreadcrumb.href}><span class="case-breadcrumb__arrow" aria-hidden="true">←</span> {caseBreadcrumb.label}</a>
           </nav>
           {privateTemplate ? (
-            caseMeta && <p class="case-hero-meta">{caseMeta}</p>
+            caseMeta && <p class="case-hero-meta" data-reveal="rise" data-reveal-page-enter="true" data-reveal-delay="70">{caseMeta}</p>
           ) : (
             (study.status || study.readTime) && (
-              <p class="case-hero-meta">
+              <p class="case-hero-meta" data-reveal="rise" data-reveal-page-enter="true" data-reveal-delay="70">
                 {study.status && (
                   <span class="case-status" data-status-level={caseStatusLevel}>
                     <i class="cell" data-level={String(caseStatusLevel)} aria-hidden="true"></i>
@@ -199,8 +206,8 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
               </p>
             )
           )}
-          <h1 id="case-title">{study.title}</h1>
-          {study.summary && <p class="case-hero-summary">{study.summary}</p>}
+          <h1 id="case-title" data-reveal="rise" data-reveal-page-enter="true" data-reveal-delay="125">{study.title}</h1>
+          {study.summary && <p class="case-hero-summary" data-reveal="rise" data-reveal-page-enter="true" data-reveal-delay="170">{study.summary}</p>}
         </div>
       </section>}
 
@@ -230,9 +237,11 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
                     class="case-walkthrough__trigger"
                     href={study.walkthroughVideo}
                     data-case-walkthrough-open
+                    data-ascii-action="secondary"
                     aria-haspopup="dialog"
                     aria-label={`Play ${walkthroughLabel}`}
                   >
+                    <span class="cell-icon case-walkthrough__play" aria-hidden="true"><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i></span>
                     <span class="case-walkthrough__avatar" aria-hidden="true">
                       <video
                         src={walkthroughPreviewVideo}
@@ -243,8 +252,7 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
                       ></video>
                     </span>
                     <span class="case-walkthrough__copy">
-                      <span>Skip read</span>
-                      <strong>{walkthroughLabel}</strong>
+                      <strong>Watch the walkthrough</strong>
                     </span>
                   </a>
                 </div>
@@ -285,7 +293,7 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
 
           <div class="case-body">
             {study.image && !usePaveTurntable && !parentStudy && (
-              <figure class="case-cover">
+              <figure class="case-cover" data-reveal="scan" data-reveal-page-enter="true" data-reveal-delay="210">
                 <img
                   src={study.image}
                   alt=""
@@ -306,9 +314,12 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
         {study.walkthroughVideo && (
           <dialog class="case-walkthrough-modal" aria-labelledby="case-walkthrough-modal-title" data-case-walkthrough-modal>
             <div class="case-walkthrough-modal__header">
-              <h2 id="case-walkthrough-modal-title">{walkthroughLabel}</h2>
+              <div>
+                <p class="case-walkthrough-modal__kicker" aria-hidden="true">Walkthrough</p>
+                <h2 id="case-walkthrough-modal-title">{walkthroughLabel}</h2>
+              </div>
               <button class="case-walkthrough-modal__close" type="button" data-case-walkthrough-close aria-label="Close video">
-                x
+                <span class="cell-icon case-walkthrough-modal__icon" aria-hidden="true"><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="0"></i><i class="cell" data-level="8"></i></span>
               </button>
             </div>
             <video
@@ -365,6 +376,22 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
         import { initializeOverviewVideos } from "../scripts/overview-video.js";
 
         initializeOverviewVideos();
+      </script>
+    )}
+    {useBlueprintHero && (
+      <script>
+        // The hero sheet follows the site theme.
+        const frame = document.querySelector<HTMLIFrameElement>("[data-blueprint-hero-src]");
+        if (frame) {
+          const sync = () => {
+            const dark = document.documentElement.dataset.theme === "dark"
+              || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+            const next = `${frame.dataset.blueprintHeroSrc}&t=${dark ? "dark" : "light"}`;
+            if (frame.getAttribute("src") !== next) frame.setAttribute("src", next);
+          };
+          sync();
+          new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+        }
       </script>
     )}
     <script>
@@ -578,8 +605,18 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
           });
         }
 
+        // Dialog motion (picks, B): a pointer open switches the panel on from a line, a pointer close
+        // leaves with the afterglow; keyboard, Escape, backdrop clicks and motion off are instant.
+        const walkthroughMotion = () => Boolean(window.__traykovMotion?.isActive?.());
+
         walkthroughTrigger?.addEventListener("click", (event) => {
           if (!(walkthroughModal instanceof HTMLDialogElement)) return;
+          const quick = event.detail === 0 || !walkthroughMotion();
+          walkthroughModal.classList.remove("is-instant", "is-opening");
+          if (!quick) {
+            walkthroughModal.classList.add("is-opening");
+            walkthroughModal.addEventListener("animationend", () => walkthroughModal.classList.remove("is-opening"), { once: true });
+          }
           try {
             walkthroughModal.showModal();
           } catch {
@@ -589,12 +626,18 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
           walkthroughVideo?.play().catch(() => {});
         });
 
-        walkthroughClose?.addEventListener("click", () => {
-          if (walkthroughModal instanceof HTMLDialogElement) walkthroughModal.close();
+        walkthroughClose?.addEventListener("click", (event) => {
+          if (!(walkthroughModal instanceof HTMLDialogElement)) return;
+          walkthroughModal.classList.remove("is-opening");
+          walkthroughModal.classList.toggle("is-instant", event.detail === 0 || !walkthroughMotion());
+          walkthroughModal.close();
         });
+
+        walkthroughModal?.addEventListener("cancel", () => walkthroughModal.classList.add("is-instant"));
 
         walkthroughModal?.addEventListener("click", (event) => {
           if (event.target === walkthroughModal && walkthroughModal instanceof HTMLDialogElement) {
+            walkthroughModal.classList.add("is-instant");
             walkthroughModal.close();
           }
         });

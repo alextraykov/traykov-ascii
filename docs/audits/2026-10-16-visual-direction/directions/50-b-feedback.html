@@ -1,0 +1,369 @@
+<section class="group" id="g-feedback">
+<h2>Feedback</h2>
+<article class="cmp" id="cmp-loaders" data-name="Loaders" data-group="Feedback" data-num="43"
+data-baseline="A quarter turn inside buttons, buffered cells under the video, and the model skeleton fading to 58 %. No sweep, breathing cells or mosaic poster yet.">
+<template data-markup>
+<ul class="ld">
+<li class="ld-r" data-d="abc"><span class="ld-v" data-k="quarter"></span><span class="ld-w" aria-live="polite">Loading video</span></li>
+<li class="ld-r" data-d="a"><span class="ld-v" aria-hidden="true"><i class="cell ld-one" data-level="0"></i></span><span class="ld-w" aria-live="polite">Loading the clip</span></li>
+<li class="ld-r" data-d="bc"><span class="ld-v cells ld-bar" aria-hidden="true"></span><span class="ld-w" aria-live="polite">Buffering</span></li>
+<li class="ld-r" data-d="b"><span class="ld-v" data-k="sweep"></span><span class="ld-w" aria-live="polite">Waiting for the preview</span></li>
+<li class="ld-r ld-col" data-d="c"><span class="ld-wait" aria-hidden="true"><span class="tex" data-level="2"></span></span><span class="ld-w" aria-live="polite">Waiting for the preview</span></li>
+<li class="ld-r ld-col" data-d="bc"><span class="ld-po" aria-hidden="true"></span><span class="ld-w" aria-live="polite">Loading the poster</span><button class="demo-link" type="button" data-po>Load the poster again</button></li>
+<li class="ld-r ld-col" data-d="abc"><span class="ld-tt" aria-hidden="true"><span class="tex" data-level="1"></span><span class="ld-br"></span></span><span class="ld-w" aria-live="polite">Loading the model</span></li>
+</ul>
+<p class="reason ld-note"></p>
+</template>
+<style>#cmp-loaders{.ld{display:grid;gap:22px;margin:0 0 11px;padding:0;list-style:none}.ld-r{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.ld-col{flex-direction:column;align-items:start;gap:8px}.dir-a .ld-r:not([data-d*="a"]),.dir-b .ld-r:not([data-d*="b"]),.dir-c .ld-r:not([data-d*="c"]){display:none}.ld-w{font:500 13px/1.3 var(--sans);color:var(--muted)}.ld-v{line-height:0}.ld-one{width:5px;height:16px}.ld-bar{--cells:12}.dir-b .ld-bar{--cell-gap:1px}.ld-wait,.ld-tt{position:relative;display:grid;place-items:center;width:100%;height:66px}.ld-tt{height:auto;aspect-ratio:16/9;border:1px solid var(--line)}.tex{position:absolute;inset:0}.dir-a .ld-tt,.dir-b .ld-tt .tex{display:none}.dir-c .ld-br{display:none}.ld-po{width:100%}.dir-b .ld-po{--cells:24;width:auto}}</style><script>
+/* Craft: 1 loops on the 40 ms clock 2 poster 4 × 120 once 3 steps 4 none 5 one clock 6 levels 7 off: quarter with tail, bar 42%, sweep and breathing at 3, poster whole */
+Dir.component("cmp-loaders",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);const M=Dir.motionActive;
+const q=$("[data-k=quarter]");
+api.loader(q,"quarter",dir==="c"?{cell:12}:{});
+if(dir==="b"){api.loader($("[data-k=sweep]"),"sweep");api.loader($(".ld-br"),"breathe");}
+const one=$(".ld-one"),bar=api.cells($(".ld-bar"),12);
+const draw=(f)=>{
+api.setLevel(one,Math.round(f*8));
+bar.forEach((c,i)=>{const x=f*12-i;api.setLevel(c,x>=1?8:x<=0?0:Math.ceil(x*8));});
+};
+draw(0.42);
+api.tick($(dir==="a"?".ld-one":".ld-bar"),(n)=>draw((n%240)/240),()=>draw(0.42));
+const po=$(".ld-po");
+let run=()=>{};
+if(dir==="b"){
+po.classList.add("cells");
+const W=24,H=15,cs=api.cells(po,W*H);
+const P=(x,y)=>(x>=5&&x<19&&y>=4&&y<13?(x===5||x===18||y===4||y===12?8:y<7?6:2):Math.hypot(x-19,y-3)<3?7:y>11?3:1);
+const at=(b)=>cs.forEach((c,i)=>{
+const x0=Math.floor((i%W)/b)*b,y0=Math.floor(Math.floor(i/W)/b)*b;
+let s=0,n=0;
+for(let y=y0;y<Math.min(H,y0+b);y+=1)for(let x=x0;x<Math.min(W,x0+b);x+=1){s+=P(x,y);n+=1;}
+api.setLevel(c,s/n);
+});
+run=()=>{
+if(!M())return at(1);
+cs.forEach((c)=>api.setLevel(c,0));
+[8,4,2,1].forEach((b,k)=>api.timeout(()=>at(b),600+k*120));
+};
+}else if(dir==="c"){
+api.placeholder(po,16,10);
+run=()=>{
+if(!M()){delete po.dataset.level;return;}
+po.dataset.level="2";
+[4,6,0].forEach((l,k)=>api.timeout(()=>{if(l)po.dataset.level=String(l);else delete po.dataset.level;},900+k*120));
+};
+}
+run();
+$("[data-po]").addEventListener("click",run);
+$(".ld-note").textContent={
+a:"Only two loaders here: the quarter turn beside a word, and one cell whose shade is the known progress. The model shows a line of words, no texture.",
+b:"The full set, all on the shared clock. The poster is drawn coarse, then finer, in four steps.",
+c:"Everything is dither. Unknown waits are a texture with the word beneath; the poster resolves from level 2 to clear."
+}[dir];
+});
+</script></article>
+<article class="cmp" id="cmp-empty" data-name="Empty state" data-group="Feedback" data-num="44"
+data-baseline="A small cells icon, Nothing here yet in 22 px pixel type, and one sentence.">
+<template data-markup>
+<div class="em">
+<span class="em-v cells" aria-hidden="true"></span>
+<div class="em-c"><p class="em-h">Nothing here yet</p><p class="em-s">No notes match that. Try a shorter word.</p></div>
+</div>
+<button class="demo-link" type="button" data-t>Hide the empty state</button>
+</template>
+<style>#cmp-empty{.em{display:grid;gap:16px;justify-items:start;min-height:120px;align-content:start}.em-c{display:grid;gap:8px}.em-h{font:400 var(--type-px-22)/1.2 var(--font-pixel)}.em-s{font-size:var(--read-size);max-width:40ch}.dir-a .em-v .cell{width:4px;height:16px}.dir-b .em-v{--cells:5}.dir-c .em{grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}.dir-c .em-v{--cells:6}.dir-c .em-h{font-size:var(--type-px-33)}}</style><script>
+/* Craft: 1 rare 2 entrance in, afterglow out 3 steps 4 none 5 one-shot 6 opacity, masks 7 off: swaps; B cells rest 1·2·3 */
+Dir.component("cmp-empty",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);
+const play=(el)=>{if(!Dir.motionActive())return;el.classList.remove("is-entering");void el.offsetWidth;el.classList.add("is-entering");el.onanimationend=(v)=>{if(v.target===el)el.classList.remove("is-entering");};};
+const em=$(".em"),v=$(".em-v");
+const cs=api.cells(v,{a:1,b:15,c:24}[dir],{level:1});
+if(dir==="b"){
+const rest=()=>cs.forEach((c,i)=>api.setLevel(c,1+(((i%5)+Math.floor(i/5))%3)));
+const wave=[1,2,3,2];
+api.tick(v,(n)=>cs.forEach((c,i)=>api.setLevel(c,wave[(((Math.floor(n/3)-(i%5)-Math.floor(i/5))%4)+4)%4])),rest);
+rest();
+}
+const t=$("[data-t]");
+t.addEventListener("click",()=>{
+if(em.hidden){em.hidden=false;play(em);t.textContent="Hide the empty state";}
+else{api.leave(em);t.textContent="Show it again";}
+});
+});
+</script></article>
+<article class="cmp" id="cmp-toast" data-name="Toast" data-group="Feedback" data-num="45"
+data-baseline="None on the site. Proposed for confirmations a button cannot say itself, such as a copied link.">
+<template data-markup>
+<div class="to-st">
+<button class="b5-btn b5-btn--s" type="button" data-press="secondary" data-marker="left"><span data-label-step>Copy the link</span></button>
+<p class="demo-label">The frame stands in for the window. Escape dismisses.</p>
+<div class="to-live" role="status"><div class="to"><div class="to-in"><span class="to-ic"></span><span class="to-w"></span></div></div></div>
+</div>
+</template>
+<style>#cmp-toast{.to-st{position:relative;display:grid;align-content:start;justify-items:start;gap:11px;height:200px;padding:16px;border:1px solid var(--line)}.to-live{position:absolute;left:11px;bottom:11px}.to{position:relative;opacity:0;visibility:hidden;transition:opacity 80ms steps(2,jump-end),visibility 0s 80ms}.to.is-up{opacity:1;visibility:visible;transition:opacity 120ms steps(1,jump-start),visibility 0s}.dir-b .to{clip-path:inset(50% 0 50% 0);transition:opacity 120ms steps(3,jump-end),visibility 0s 120ms,clip-path 0s 120ms}.dir-b .to.is-up{clip-path:inset(0);transition:clip-path 160ms steps(4,jump-start),visibility 0s}.dir-c .to{transition:none}.to-in{position:relative;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 16px;background:var(--paper);border:1px solid var(--line);font:500 14px/1 var(--sans)}.dir-a .to-in{padding-left:20px}.dir-b .to-in{min-height:48px;border-color:var(--ink)}.to-cd{position:absolute;left:0;right:0;bottom:0;display:flex;gap:1px;height:3px}.to-cd .cell{flex:1;width:auto;height:3px}.dir-c .to{padding:6px}.dir-c .to::before{content:"";position:absolute;inset:0;background:var(--ink);mask:var(--dither-1) 0 0/var(--dither-size)}.dir-c .to-in{min-height:48px;border:2px solid var(--ink)}}</style><script>
+/* Craft: 1 repeatable: a second click keeps it up and restarts the hold; mid-exit it turns back 2 in ≤160, out ≤120 3 steps 4 clipped, never scale 0 5 transitions, guarded levels 6 opacity, clip-path, levels 7 off: instant, row stays full */
+Dir.component("cmp-toast",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);const M=Dir.motionActive;
+const to=$(".to"),inner=to.firstChild,ic=$(".to-ic"),w=$(".to-w");
+if(dir==="a"){ic.remove();api.marker(inner,"left").hold(true);}
+else{api.icon(ic,"check",{cell:dir==="c"?3:2});ic.classList.add("cell-icon--ok");}
+let cs=[];
+if(dir==="b"){const bar=document.createElement("span");bar.className="to-cd";inner.append(bar);cs=api.cells(bar,12,{level:8});}
+let up=false,hold=0,cd=0,lt=0;
+const lv=(path,ms,end)=>{const k=(lt+=1);path.forEach((l,i)=>{const f=()=>{if(k!==lt)return;if(l)to.dataset.level=l;else delete to.dataset.level;if(end&&i===path.length-1)end();};if(i)api.timeout(f,i*ms);else f();});};
+const drop=()=>{
+if(!up)return;
+up=false;clearTimeout(hold);clearInterval(cd);
+if(dir==="c"&&M())lv([4,2,0],40,()=>{if(!up)to.classList.remove("is-up");});
+else to.classList.remove("is-up");
+api.timeout(()=>{if(!up)w.textContent="";},200);
+};
+const show=()=>{
+clearTimeout(hold);clearInterval(cd);
+const cur=up?8:+(to.dataset.level||0),was=up;
+up=true;to.classList.add("is-up");
+if(was){w.textContent="";api.timeout(()=>{w.textContent="Copied";},30);}else w.textContent="Copied";
+if(dir==="c"&&M())lv([2,4,6,0].filter((l)=>!l||l>cur),40);
+if(dir==="b"){
+cs.forEach((c)=>api.setLevel(c,8));
+let k=12;
+if(M())cd=setInterval(()=>{k-=1;if(k>=0)api.setLevel(cs[k],0);},150);
+}
+hold=api.timeout(drop,dir==="c"?2000:1800);
+};
+$(".to-st button").addEventListener("click",show);
+const esc=(e)=>{if(e.key==="Escape")drop();};
+document.addEventListener("keydown",esc);
+return()=>{document.removeEventListener("keydown",esc);clearInterval(cd);};
+});
+</script></article>
+<article class="cmp" id="cmp-tooltip" data-name="Tooltip" data-group="Feedback" data-num="46"
+data-baseline="Title attributes only. Proposed: a small label above the control after a short hover, or at once on keyboard focus.">
+<template data-markup>
+<div class="tt-row">
+<span class="tt-w"><button class="tt-b" type="button" aria-label="Play the walkthrough" aria-describedby="tt-1"><span class="tt-i"></span></button><span class="tt" id="tt-1" role="tooltip">Four minutes, with sound</span></span>
+<span class="tt-w"><button class="b5-btn b5-btn--s" type="button" aria-describedby="tt-2">Copy link</button><span class="tt" id="tt-2" role="tooltip">Copies the address of this case</span></span>
+</div>
+<p class="demo-label">Hover for a moment, or Tab to a control. Escape hides it.</p>
+</template>
+<style>#cmp-tooltip{.tt-row{display:flex;flex-wrap:wrap;gap:16px;padding-top:48px;margin-bottom:11px}.tt-w{position:relative;display:inline-flex}.tt-b{display:grid;place-items:center;width:48px;height:48px;border:1px solid var(--ink);background:var(--paper);cursor:pointer}.dir-a .tt-b{width:44px;height:44px}.tt{position:absolute;left:0;bottom:calc(100% + 6px);z-index:2;padding:6px 11px;background:var(--ink);color:var(--paper);font:500 13px/1.3 var(--sans);white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:opacity 60ms steps(1,jump-end),visibility 0s 60ms}.tt.is-on{opacity:1;visibility:visible;transition:visibility 0s}.dir-b .tt.is-on{transition:opacity 120ms steps(2,jump-start),visibility 0s}.tt.no-t,.dir-c .tt{transition:none}.dir-b .tt{bottom:calc(100% + 8px)}.dir-b .tt::after{content:"";position:absolute;left:16px;top:100%;width:7px;height:7px;background:var(--ink)}.dir-c .tt{background:var(--paper);color:var(--ink);border:2px solid var(--ink)}}</style><script>
+/* Craft: 1 hover: 300 ms wait only for the first, next within 400 ms instant; focus instant 2 in ≤120, out ≤60 3 steps 4 no scale 5 transitions, guarded levels 6 opacity, levels 7 off: instant */
+Dir.component("cmp-tooltip",(col,dir,api)=>{
+api.icon(col.querySelector(".tt-i"),"play",{cell:3});
+const tips=[];
+let gone=0;
+col.querySelectorAll(".tt-w").forEach((w)=>{
+const b=w.querySelector("button"),tip=w.querySelector(".tt");
+let wait=0,lt=0;
+const show=(now)=>{
+clearTimeout(wait);
+if(tip.classList.contains("is-on"))return;
+const quick=now||Date.now()-gone<400||!Dir.motionActive();
+tip.classList.toggle("no-t",quick);
+tip.classList.add("is-on");
+if(dir==="c"&&!quick){const k=(lt+=1);[2,4,6,0].forEach((l,i)=>api.timeout(()=>{if(k!==lt)return;if(l)tip.dataset.level=l;else delete tip.dataset.level;},i*40));}
+};
+const hide=()=>{clearTimeout(wait);lt+=1;if(tip.classList.contains("is-on"))gone=Date.now();tip.classList.remove("is-on","no-t");delete tip.dataset.level;};
+b.addEventListener("pointerenter",()=>{wait=setTimeout(show,Date.now()-gone<400?0:300);});
+b.addEventListener("pointerleave",hide);
+b.addEventListener("focus",()=>{if(b.matches(":focus-visible"))show(true);});
+b.addEventListener("blur",hide);
+tips.push(hide);
+});
+const esc=(e)=>{if(e.key==="Escape")tips.forEach((h)=>h());};
+document.addEventListener("keydown",esc);
+return()=>document.removeEventListener("keydown",esc);
+});
+</script></article>
+<article class="cmp" id="cmp-field" data-name="Text field and textarea" data-group="Feedback" data-num="47"
+data-baseline="A 14 px label, a 48 px field with 17 px text on a 2 px line that turns ink on focus and red once the visitor has typed something wrong.">
+<template data-markup>
+<div class="fd">
+<div class="fd-f">
+<label class="fd-l" for="fd-n">Name</label>
+<span class="fd-x"><input id="fd-n" type="text" autocomplete="off" required><i class="fd-ln" aria-hidden="true"></i></span>
+<p class="fd-e" id="fd-ne" hidden>Add your name so I know who to reply to.</p>
+</div>
+<div class="fd-f">
+<label class="fd-l" for="fd-m">Message</label>
+<span class="fd-x"><textarea id="fd-m" rows="4" maxlength="600" aria-describedby="fd-mc"></textarea><i class="fd-ln" aria-hidden="true"></i></span>
+<p class="fd-c" id="fd-mc"><span class="cells" aria-hidden="true"></span><span>0 / 600</span></p>
+</div>
+</div>
+<button class="demo-link" type="button" data-err>Show error</button>
+</template>
+<style>#cmp-field{.fd{display:grid;gap:22px}.fd-f{display:grid;gap:6px}.fd-l{font:500 13px/1.3 var(--sans);color:var(--muted)}.fd-x{position:relative;display:block}.fd input,.fd textarea{display:block;width:100%;min-height:48px;padding:10px 0;border:0;background:none;font:400 var(--read-size)/1.4 var(--sans);resize:vertical}.dir-a .fd input{min-height:44px}.fd-ln{--c:var(--ink);--lc:var(--line);position:absolute;left:0;right:0;bottom:0;height:3px;pointer-events:none}.fd-ln::before,.fd-ln::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--c)}.fd-ln::after{clip-path:inset(0 100% 0 0)}.fd-x:focus-within .fd-ln::after{clip-path:inset(0)}.dir-a .fd-ln::before{height:1px;background:var(--lc)}.dir-a .fd-x:focus-within .fd-ln::after{transition:clip-path 160ms steps(4,jump-start)}.dir-b .fd-ln::before,.dir-b .fd-ln::after{background:repeating-linear-gradient(90deg,var(--c) 0 4px,transparent 4px 5px)}.dir-b .fd-ln::before{mask:var(--dither-3) 0 0/var(--dither-size)}.dir-b .fd-x:focus-within .fd-ln::after{transition:clip-path 140ms steps(7,jump-start)}.dir-c .fd-ln::before,.dir-c .fd-ln::after{height:3px}.dir-c .fd-ln::before{mask:var(--dither-4) 0 0/var(--dither-size)}.dir-c .fd-x:focus-within .fd-ln::after{animation:fd-res 100ms steps(1,jump-end) both}.kb .fd-ln::after{transition:none !important;animation:none !important}.is-err .fd-ln,.fd-x:has(:user-invalid) .fd-ln{--c:var(--signal-fail);--lc:var(--signal-fail)}.dir-a .is-err .fd-ln::before{height:2px}.dir-c .is-err .fd-ln::before{mask:none}.fd-e{font:400 13px/1.4 var(--sans);color:var(--signal-fail)}.fd-c{display:flex;justify-content:flex-end;align-items:center;gap:8px;font:400 13px/1 var(--sans);color:var(--muted)}.fd-c .cells{display:none;--cells:12;--cell-gap:1px}.dir-b .fd-c .cells{display:inline-grid}.dir-b .fd-l,.dir-c .fd-l,.dir-b .fd-c,.dir-c .fd-c{font:400 var(--type-px-11)/1.3 var(--font-pixel)}.dir-b .fd-e,.dir-c .fd-e{font-size:14px}}@keyframes fd-res{0%{mask:var(--dither-6) 0 0/var(--dither-size)}50%,100%{mask:none}}</style><script>
+/* Craft: 1 focus: drawn on pointer focus, instant by Tab 2 in ≤160, out 0 3 steps, reading order 4 none 5 clip-path transition 6 clip-path, levels 7 off: instant */
+Dir.component("cmp-field",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);
+const f=$(".fd-f"),inp=$("input"),er=$(".fd-e"),ta=$("textarea");
+const cnt=$(".fd-c span:last-child"),cs=api.cells($(".fd-c .cells"),12);
+const count=()=>{
+const n=ta.value.length,x=(n/600)*12;
+cnt.textContent=`${n} / 600`;
+cs.forEach((c,i)=>api.setLevel(c,x-i>=1?8:x-i<=0?0:Math.ceil((x-i)*8)));
+};
+ta.addEventListener("input",count);
+const setErr=(on)=>{
+er.hidden=!on;
+if(on){inp.setAttribute("aria-invalid","true");inp.setAttribute("aria-describedby",er.id);}
+else{inp.removeAttribute("aria-invalid");inp.removeAttribute("aria-describedby");f.classList.remove("is-err");}
+};
+$("[data-err]").addEventListener("click",()=>{
+inp.value="";setErr(true);
+if(!Dir.motionActive()){f.classList.add("is-err");return;}
+[0,120,240,360,480].forEach((at,i)=>api.timeout(()=>f.classList.toggle("is-err",i%2===0),at));
+});
+inp.addEventListener("input",()=>{if(inp.value.trim())setErr(false);});
+const fd=$(".fd"),kb=(e)=>fd.classList.toggle("kb",e.type==="keydown"&&e.key==="Tab");
+document.addEventListener("keydown",kb);document.addEventListener("pointerdown",kb);
+count();
+return()=>{document.removeEventListener("keydown",kb);document.removeEventListener("pointerdown",kb);};
+});
+</script></article>
+<article class="cmp" id="cmp-form-status" data-name="Form status line and the submit press" data-group="Feedback" data-num="48"
+data-baseline="A status line with a 10 px signal cell before the words; the submit runs the primary press, a quarter turn with Sending, then a check with Sent.">
+<template data-markup>
+<form class="fs" novalidate>
+<button class="b5-btn b5-btn--p" type="submit" data-press="primary" data-marker="left"><span data-label-step>Send message</span></button>
+<p class="reason" id="fs-r" hidden>Add a message first.</p>
+<p class="fs-st" role="status"><span class="fs-c cells" aria-hidden="true"></span><span class="fs-w"></span></p>
+</form>
+<div class="demo-row">
+<button class="demo-link" type="button" data-m="ok">Simulate send</button>
+<button class="demo-link" type="button" data-m="fail">Simulate a failure</button>
+<button class="demo-link" type="button" data-dis aria-pressed="false">Show disabled</button>
+</div>
+</template>
+<style>#cmp-form-status{.fs{display:grid;gap:11px;justify-items:start;margin-bottom:11px}.fs-st{display:flex;align-items:center;gap:10px;min-height:22px;font:400 15px/1.4 var(--sans)}.fs-st:empty,.fs-c:empty{display:none}.dir-a .fs-c .cell{width:4px;height:16px}.dir-b .fs-c{--cells:3;--cell-gap:1px}.dir-c .fs-st{font-size:18px}.is-red{color:var(--signal-fail)}@container col (max-width:400px){.b5-btn{width:100%}.fs{justify-items:stretch}}}</style><script>
+/* Craft: 1 submit 2 press ≤180; Sending, Sent held 1.5 s 3 steps 4 scale .97 5 fill retargets; resubmit ignored while working 6 transform, opacity, levels 7 off: words and cells still show */
+Dir.component("cmp-form-status",(col,dir,api)=>{
+const $=(q)=>col.querySelector(q);const M=Dir.motionActive;
+const form=$("form"),btn=form.querySelector("button"),c=$(".fs-c"),w=$(".fs-w"),why=$(".reason");
+let mode="ok";
+const say=(ok)=>{
+c.textContent="";
+const cs=api.cells(c,dir==="b"?3:1,{level:8});
+cs.forEach((x,i)=>{x.classList.add(ok?"cell--ok":"cell--fail");if(!ok&&i)api.setLevel(x,0);});
+w.textContent=ok?"Message sent. I’ll get back to you soon.":"The message could not be sent. Try again or email hi@traykov.cc.";
+w.classList.remove("is-red");
+if(M()&&dir!=="a"){w.classList.remove("is-entering");void w.offsetWidth;w.classList.add("is-entering");}
+if(!ok&&dir==="a"&&M())[0,120,240,360].forEach((at,i)=>api.timeout(()=>w.classList.toggle("is-red",i%2===0),at));
+};
+const fail=()=>{
+const ctl=btn._press,saved=[...ctl.label.childNodes],sp=document.createElement("span");
+btn.dataset.state="working";
+let stop;
+if(dir==="b"){sp.className="press-bar";btn.append(sp);stop=api.loader(sp,"sweep",{n:Math.max(6,Math.floor(btn.clientWidth/8)),band:[8,8,8,8],rest:8});ctl.label.replaceChildren("Sending");}
+else{
+ctl.label.replaceChildren(sp,"Sending");stop=api.loader(sp,"quarter");
+if(dir==="c"){btn._invertAt=5;ctl.fill.to(5,{order:"bayer",levels:[2,4,5],stepMs:50,total:0});}
+}
+api.timeout(()=>{
+stop();sp.remove();ctl.label.replaceChildren(...saved);
+if(dir==="c"){btn._invertAt=6;ctl.fill.to(0,{order:"bayer",levels:[4,2,0],stepMs:60,total:0});}
+delete btn.dataset.state;form.removeAttribute("aria-busy");
+api.flash(btn);say(false);
+},1200);
+};
+form.addEventListener("submit",(e)=>{
+e.preventDefault();
+if(btn.getAttribute("aria-disabled")==="true"||btn.dataset.state)return;
+btn.classList.remove("is-error");
+form.setAttribute("aria-busy","true");
+if(mode==="fail")fail();
+else{
+api.simulate(btn,{working:"Sending",done:"Sent"});
+api.timeout(()=>{form.removeAttribute("aria-busy");say(true);},1200);
+}
+mode="ok";
+});
+col.querySelectorAll("[data-m]").forEach((b)=>b.addEventListener("click",()=>{mode=b.dataset.m;btn.click();}));
+const dis=$("[data-dis]");
+dis.addEventListener("click",()=>{
+const on=dis.getAttribute("aria-pressed")!=="true";
+dis.setAttribute("aria-pressed",String(on));
+dis.textContent=on?"Enable again":"Show disabled";
+btn.classList.toggle("is-dotted",on);
+why.hidden=!on;
+if(on){btn.setAttribute("aria-disabled","true");btn.setAttribute("aria-describedby",why.id);}
+else{btn.removeAttribute("aria-disabled");btn.removeAttribute("aria-describedby");}
+});
+});
+</script></article>
+<article class="cmp" id="cmp-404" data-name="404" data-group="Feedback" data-num="49"
+data-baseline="A field of 12 px cells spelling 404 resolves left to right; a 22 px heading, one lede, Go to the work and Read the notes.">
+<template data-markup>
+<div class="nf">
+<div class="nf-f" aria-hidden="true"></div>
+<i class="rule-soft nf-r" aria-hidden="true"></i>
+<p class="vh">Error 404</p>
+<h4 class="nf-h" data-enter>This page isn’t here.</h4>
+<p class="nf-l" data-enter>The link may be old. The work and the notes are a good place to start.</p>
+<div class="demo-row" data-enter>
+<a class="b5-btn b5-btn--s" href="#cmp-404" data-press="secondary" data-marker="left"><span data-label-step>Go to the work</span></a>
+<a class="b5-q" href="#cmp-404"><span>Read the notes <i aria-hidden="true">→</i></span><span class="rule-soft"></span></a>
+</div>
+</div>
+</template>
+<style>#cmp-404{.nf{display:grid;gap:16px;justify-items:start}.nf-f,.nf-r{display:none}.nf-h{font:400 var(--type-px-22)/1.15 var(--font-pixel)}.nf-l{font-size:var(--read-size);color:var(--text-soft);max-width:46ch}.dir-a .nf-h{font-size:var(--type-px-66);line-height:1.05}.dir-b .nf-f{display:inline-grid;--cells:23}.dir-b .nf-r{display:block;width:100%;margin-top:-8px}.dir-c .nf-f{position:relative;display:grid;grid-template-columns:repeat(40,1fr);grid-template-rows:repeat(11,1fr);gap:2px;width:100%;aspect-ratio:40/11}.dir-c .nf-f .tex{position:absolute;inset:0}.dir-c .nf-f .cell{position:relative;width:auto;height:auto}.dir-c .nf-h{font-size:var(--type-px-33)}@container col (max-width:400px){.dir-a .nf-h{font-size:var(--type-px-44)}}}</style><script>
+/* Craft: 1 once, when seen 2 rare big moment: B 880, C 480 3 steps, reading or dither order 4 none 5 one-shot 6 opacity, levels 7 off: complete */
+Dir.component("cmp-404",(col,dir,api)=>{
+col.querySelectorAll(".nf a").forEach((a)=>a.addEventListener("click",(e)=>e.preventDefault()));
+if(dir==="a")return;
+const G={4:["1...1","1...1","1...1","11111","....1","....1","....1"],0:[".111.","1...1","1...1","1...1","1...1","1...1",".111."]};
+const pat=Array.from({length:7},(_,r)=>[4,0,4].map((k)=>G[k][r]).join("."));
+const host=col.querySelector(".nf-f");
+let run;
+if(dir==="b"){
+host.classList.add("cells");
+const cs=api.cells(host,23*7,{level:0});
+const on=cs.map((_,i)=>(pat[Math.floor(i/23)][(i%23)-3]||".")==="1");
+run=()=>{cs.forEach((c)=>api.setLevel(c,0));return Dir.runField({values:cs.map((_,i)=>(i%23)/22),total:880,curve:Dir.curves.linear,steps:1,stepMs:40,render:(at)=>cs.forEach((c,i)=>{if(on[i]&&at(i)>=0)api.setLevel(c,8);})});};
+}else{
+const tex=document.createElement("span");tex.className="tex";tex.dataset.level="1";host.append(tex);
+const cs=[];
+pat.forEach((row,y)=>[...row].forEach((ch,x)=>{
+if(ch!=="1")return;
+const c=api.cells(host,1)[0];
+c.style.gridArea=`${y + 3} / ${x + 12}`;c._x=x;c._y=y;cs.push(c);
+}));
+const path=[2,4,6,8];
+run=()=>{if(Dir.motionActive()){tex.classList.remove("is-entering");void tex.offsetWidth;tex.classList.add("is-entering");tex.dataset.enter="media";}
+return Dir.runField({values:cs.map((c)=>Dir.order("bayer",c._x,c._y,17,7)),total:280,curve:Dir.curves.linear,steps:4,stepMs:50,render:(at)=>cs.forEach((c,i)=>{const k=at(i);api.setLevel(c,k<0?0:path[Math.min(3,k)]);})});};
+}
+let stop=()=>{};
+const io=new IntersectionObserver((list)=>{if(list[0].isIntersecting){io.disconnect();stop=run();}});
+io.observe(host);
+return()=>{io.disconnect();stop();};
+});
+</script></article>
+<article class="cmp" id="cmp-status-line" data-name="Status lines and live regions" data-group="Feedback" data-num="50"
+data-baseline="The notes count, the copy status beside a snippet, the contact status and the theme value, each a polite live region in plain words.">
+<template data-markup>
+<ul class="sl">
+<li><span class="sl-c" aria-hidden="true"></span><output class="sl-w" aria-live="polite">24 notes</output><button class="demo-link" type="button" data-k="0">Filter the notes</button></li>
+<li><span class="sl-c" aria-hidden="true"></span><span class="sl-w" aria-live="polite">Ready to copy</span><button class="demo-link" type="button" data-k="1">Copy the snippet</button></li>
+<li><span class="sl-c" aria-hidden="true"></span><span class="sl-w" aria-live="polite">Theme · Auto</span><button class="demo-link" type="button" data-k="2">Change the theme</button></li>
+</ul>
+</template>
+<style>#cmp-status-line{.sl{display:grid;gap:11px;margin:0;padding:0;list-style:none}.sl li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;min-height:44px;border-bottom:1px solid var(--line)}.sl-w{flex:1 1 auto;font:500 13px/1.4 var(--sans);color:var(--muted)}.dir-b .sl-w,.dir-c .sl-w{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--ink)}.dir-a .sl-c,.sl-c:empty{display:none}.sl-c{line-height:0}}</style><script>
+/* Craft: 1 one update per change 2 A 1 step, B 280, C 200 3 steps; words never scrambled 4 none 5 a change is the new state 6 opacity, masks 7 off: swaps */
+Dir.component("cmp-status-line",(col,dir,api)=>{
+const S=[
+[["3 notes match “grid”"],["No notes match “gridd”",0],["24 notes"]],
+[["Copied",1],["Could not copy. Select the text and copy it.",0],["Ready to copy"]],
+[["Theme · Light"],["Theme · Dark"],["Theme · Auto"]]
+];
+const at=[0,0,0];
+col.querySelectorAll("[data-k]").forEach((b)=>b.addEventListener("click",()=>{
+const k=+b.dataset.k,li=b.closest("li"),w=li.querySelector(".sl-w"),c=li.querySelector(".sl-c");
+const[text,ok]=S[k][at[k]];at[k]=(at[k]+1)%3;
+c.textContent="";
+if(ok!=null){const x=api.cells(c,1,{level:8})[0];x.classList.add(ok?"cell--ok":"cell--fail");}
+w.textContent=text;
+if(dir!=="a"&&Dir.motionActive()){w.classList.remove("is-entering");void w.offsetWidth;w.classList.add("is-entering");w.onanimationend=()=>w.classList.remove("is-entering");}
+}));
+});
+</script></article>
+</section>

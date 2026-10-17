@@ -1,0 +1,795 @@
+<section class="group" id="g-tools">
+<h2>Labs tool panels</h2>
+
+<article class="cmp" id="cmp-tool-panel" data-name="Tool panel" data-group="Labs tool panels" data-num="51"
+data-baseline="Departure 11 labels and values, cell-range sliders, 36 px plain-word buttons with an inset marker, a 40 px chevron select, 18 px checkboxes, a read-only settings box and one solid Save PNG.">
+<template data-markup>
+<div class="tp-wrap">
+<div class="tp-stage" data-stage></div>
+<div class="tp-frame"><div class="tp-panel">
+<div class="tp-g">
+<h4 class="tp-h"><span class="tp-n">1</span>Shape</h4><span class="rule-soft tp-hr"></span>
+<div class="tp-f"><label class="tp-l" for="tp-size">Character size</label><output class="tp-v" for="tp-size"></output>
+<div class="tp-range"><span class="tp-track" aria-hidden="true"></span><input id="tp-size" type="range" min="4" max="22" value="9" data-name="Character size"></div></div>
+<div class="tp-f"><label class="tp-l" for="tp-con">Contrast</label><output class="tp-v" for="tp-con"></output>
+<div class="tp-range"><span class="tp-track" aria-hidden="true"></span><input id="tp-con" type="range" min="0" max="100" value="62" data-name="Contrast"></div></div>
+</div>
+<span class="rule-soft tp-sep"></span>
+<div class="tp-g">
+<h4 class="tp-h"><span class="tp-n">2</span>Look</h4><span class="rule-soft tp-hr"></span>
+<div class="tp-btns" role="group" aria-label="Look">
+<button class="t6-btn" type="button" data-look data-marker="left" aria-pressed="true"><span class="fill-label" data-label-step>Vortex</span></button>
+<button class="t6-btn" type="button" data-look data-marker="left" aria-pressed="false"><span class="fill-label" data-label-step>Flow</span></button>
+<button class="t6-btn" type="button" data-look data-marker="left" aria-pressed="false"><span class="fill-label" data-label-step>Cells</span></button>
+</div>
+<div class="tp-f"><label class="tp-l" for="tp-grain">Grain</label>
+<div class="tp-sel"><select id="tp-grain"><option>Fine grid</option><option selected>Grid</option><option>Noise</option><option>None</option></select><span class="tp-chev"></span><span class="rule-soft tp-selrule"></span></div></div>
+<label class="tp-check"><input class="vh" type="checkbox" data-check><span class="tp-box" aria-hidden="true"><i class="tp-dot" data-level="0"></i><span class="tp-tick"></span></span><span>Invert</span><span class="tp-onoff">Off</span></label>
+</div>
+<span class="rule-soft tp-sep"></span>
+<div class="tp-g">
+<h4 class="tp-h"><span class="tp-n">3</span>Output</h4><span class="rule-soft tp-hr"></span>
+<label class="tp-l" for="tp-out">Settings</label>
+<textarea class="tp-out" id="tp-out" rows="5" readonly spellcheck="false"></textarea>
+<div class="tp-btns">
+<button class="t6-btn" type="button" data-press="secondary" data-marker="left"><span data-label-step>New seed</span></button>
+<button class="t6-btn is-dotted" type="button" aria-disabled="true" aria-describedby="tp-why">Full screen</button>
+<button class="t6-btn t6-pri" type="button" data-press="primary" data-marker="left"><span data-label-step>Save PNG</span></button>
+</div>
+<p class="reason" id="tp-why">Full screen opens once a banner is drawn.</p>
+</div>
+</div></div>
+</div>
+</template>
+<style>
+.t6-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid var(--ink);background:var(--paper);font:500 13px/1 var(--sans);cursor:pointer}
+.dir-a .t6-btn{border-color:var(--line)}
+.t6-btn{transition:transform 140ms var(--ease-out-expo)}
+.t6-btn:not([aria-disabled="true"]):active{transform:scale(.97)}
+html[data-motion="off"] .t6-btn:active{transform:none}
+@media (prefers-reduced-motion:reduce){.t6-btn:active{transform:none!important}}
+.t6-big{min-height:48px;padding:0 20px;font-size:15px}
+.dir-a .t6-big{min-height:44px;border-color:var(--ink)}
+.t6-pri{border-color:var(--ink) !important}
+.t6-big.t6-pri{min-width:184px}
+.dir-a .t6-big.t6-pri{min-width:176px}
+#cmp-tool-panel{
+.tp-wrap{display:grid;gap:22px}
+@container col (min-width:641px){.tp-wrap{grid-template-columns:minmax(0,1fr) 320px;align-items:start}}
+.tp-panel{position:relative;display:grid;gap:22px;background:var(--paper)}
+.dir-c .tp-frame{position:relative;padding:6px}
+.dir-c .tp-frame::before{content:"";position:absolute;inset:0;background:var(--ink);mask:var(--dither-1) 0 0/var(--dither-size) var(--dither-size)}
+.dir-c .tp-panel{padding:16px;border:2px solid var(--ink)}
+.tp-g{display:grid;gap:11px}
+.dir-b .tp-g{gap:8px}
+.tp-h{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--ink)}
+.dir-a .tp-h{font:500 13px/1.4 var(--sans)}
+.tp-n{margin-right:8px;color:var(--muted)}
+.dir-a .tp-n,.dir-c .tp-n,.dir-a .tp-hr,.dir-b .tp-sep,.dir-c .tp-sep{display:none}
+.dir-b .tp-hr{height:2px}
+.tp-f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 11px}
+.tp-f>.tp-range,.tp-f>.tp-sel{grid-column:1/-1}
+.tp-l{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--muted)}
+.dir-a .tp-l{font:400 13px/1.4 var(--sans)}
+.tp-v{font:400 var(--type-px-11)/1 var(--font-pixel);text-align:right}
+.tp-range{position:relative;display:flex;align-items:center;height:36px;overflow:clip}
+.dir-b .tp-range,.dir-c .tp-range{width:max-content}
+.tp-range input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.tp-range:has(:focus-visible),.tp-sel:has(:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.tp-track{position:relative;display:flex;gap:1px}
+.dir-a .tp-track{width:100%;height:2px;background:var(--line)}
+.tp-fa,.tp-th,.tp-line{position:absolute;display:block;background:var(--ink)}
+.tp-fa{inset:0;transform-origin:0 50%;transform:scaleX(var(--f))}
+.tp-th,.tp-line{left:0;width:100%;background:none!important;transform:translateX(calc(var(--f) * (100% - var(--w))))}
+.tp-th::before,.tp-line::before{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--ink)}
+.tp-th{--w:4px;top:-7px;height:16px}
+.dir-b .tp-track .cell{width:7px;height:12px}
+.dir-c .tp-track{gap:2px}
+.dir-c .tp-track .cell{width:12px;height:12px}
+.tp-line{--w:2px;top:-4px;bottom:-4px}
+.dir-c [data-look][aria-pressed="true"] .fill-label{padding:3px 5px;background:var(--ink);color:var(--paper);mix-blend-mode:normal}
+.tp-btns{display:flex;flex-wrap:wrap;gap:8px}
+.tp-sel{position:relative}
+.tp-sel select{width:100%;height:40px;padding:0 44px 0 12px;border:1px solid var(--ink);background:var(--paper);font:500 14px/1 var(--sans);appearance:none;cursor:pointer;outline:none}
+.dir-a .tp-sel select{border-color:var(--line)}
+.dir-c .tp-sel select{border-width:2px}
+.tp-chev{position:absolute;right:14px;top:50%;margin-top:-4px;pointer-events:none}
+.tp-selrule{position:absolute;left:1px;right:1px;bottom:1px}
+.dir-a .tp-selrule,.dir-c .tp-selrule{display:none}
+.tp-check{display:inline-flex;align-items:center;gap:10px;min-height:36px;font:500 14px/1 var(--sans);cursor:pointer;justify-self:start}
+.tp-box{position:relative;display:grid;place-items:center;width:18px;height:18px;border:1px solid var(--ink)}
+.dir-b .tp-box{width:16px;height:16px}
+.dir-c .tp-box{width:24px;height:24px}
+.tp-check:has(:focus-visible) .tp-box{outline:2px solid var(--ink);outline-offset:2px}
+.tp-dot{position:absolute;inset:0;background:var(--ink)}
+.tp-dot[data-level="0"]{visibility:hidden}
+.tp-tick{position:relative}
+.tp-tick .cell:not([data-level="0"]){background:var(--paper)}
+.tp-box:not(.is-on) .tp-tick{visibility:hidden}
+.tp-onoff{font:400 var(--type-px-11)/1 var(--font-pixel);color:var(--muted)}
+.dir-a .tp-onoff,.dir-c .tp-onoff{display:none}
+.tp-out{width:100%;padding:8px 10px;border:1px solid var(--line);background:none;font:400 12px/1.5 var(--mono);resize:none}
+.dir-b .tp-out,.dir-c .tp-out{border-color:var(--ink)}
+
+}
+</style>
+<script>
+/* Motion craft: 1 drags and arrow keys move the thumb 1:1, no transition; keyboard picks are one frame; clicks keep the handoff. 2 marker 120, in up to 240, outs shorter. 3 steps inside, reading or Bayer across. 4 scale(0.97) on tool buttons. 5 fills retarget, checkbox continues from its level. 6 transform and level swaps. 7 reduced: solid and check at once. */
+Dir.component("cmp-tool-panel",(col,dir,api)=>{
+const $=(s)=>col.querySelector(s),$$=(s)=>[...col.querySelectorAll(s)];
+api.placeholder($("[data-stage]"),16,10);
+const out=$(".tp-out"),select=$("select"),check=$("[data-check]");
+let look="Vortex";
+const write=()=>{
+out.value=$$(".tp-range input").map((i)=>`${i.dataset.name}: ${i.value}`).join("\n")+`\nLook: ${look}\nGrain: ${select.value}\nInvert: ${check.checked ? "On" : "Off"}`;
+};
+$$(".tp-range").forEach((range)=>{
+const input=range.querySelector("input"),track=range.querySelector(".tp-track"),value=range.parentNode.querySelector("output");
+let list=[];
+if(dir==="a")track.innerHTML='<i class="tp-fa"></i><i class="tp-th"></i>';
+else{list=api.cells(track,dir==="b"?24:12);if(dir==="c")track.insertAdjacentHTML("beforeend",'<i class="tp-line"></i>');}
+let hot=false;
+const draw=()=>{
+const f=(input.value-input.min)/(input.max-input.min);
+track.querySelectorAll(".tp-fa,.tp-th,.tp-line").forEach((i)=>i.style.setProperty("--f",f));
+value.textContent=input.value;
+const x=f*list.length,full=Math.floor(x),frac=x-full;
+list.forEach((cell,i)=>{
+let level=i<full?8:0;
+if(i===full&&frac>0)level=dir==="b"?Math.max(1,Math.round(frac*8)):2+Math.round(frac*5);
+if(dir==="b"&&hot&&i===Math.min(full,list.length-1)&&level<8)level+=1;
+api.setLevel(cell,level);
+});
+};
+input.addEventListener("input",()=>{draw();write();});
+range.addEventListener("pointerenter",()=>{hot=true;draw();});
+range.addEventListener("pointerleave",()=>{hot=false;draw();});
+draw();
+});
+const looks=$$("[data-look]");
+const sel={
+a:[{order:"reading",levels:[2,4,6,8],stepMs:40,total:0},{levels:[0],stepMs:1,total:0},8],
+b:[{order:"reading",total:112,stepMs:16},{order:"reading",total:72,stepMs:16},8],
+c:[{order:"bayer",levels:[2,4,6],stepMs:80,total:0},{order:"bayer",levels:[3,0],stepMs:80,total:0},6]
+}[dir];
+const now={levels:[0],stepMs:1,total:0};
+let kb=false;
+col.addEventListener("keydown",()=>{kb=true;},true);
+col.addEventListener("pointerdown",()=>{kb=false;},true);
+looks.forEach((button)=>{
+const f=api.fill(button,{size:dir==="c"?12:6});
+if(button.getAttribute("aria-pressed")==="true")f.to(sel[2],{levels:[sel[2]],stepMs:1,total:0});
+button.addEventListener("click",(e)=>{
+if(button.getAttribute("aria-pressed")==="true")return;
+const kb=e.detail===0;
+looks.forEach((other)=>{if(other.getAttribute("aria-pressed")==="true"){other.setAttribute("aria-pressed","false");api.fill(other).to(0,kb?now:sel[1]);}});
+button.setAttribute("aria-pressed","true");
+f.to(sel[2],kb?{levels:[sel[2]],stepMs:1,total:0}:sel[0]);
+look=button.textContent.trim();
+write();
+});
+});
+api.icon($(".tp-chev"),"chevron",{cell:3});
+const rule=$(".tp-selrule");
+select.addEventListener("focus",()=>rule.classList.add("is-on"));
+select.addEventListener("blur",()=>rule.classList.remove("is-on"));
+select.addEventListener("change",write);
+const box=$(".tp-box"),dot=$(".tp-dot"),onoff=$(".tp-onoff");
+api.icon($(".tp-tick"),"check",{cell:dir==="c"?3:2});
+const path={a:[[3,6,8],[6,3,0],40],b:[[4,8],[4,0],30],c:[[2,4,6,8],[6,4,2,0],50]}[dir];
+let stop=()=>{};
+check.addEventListener("change",()=>{
+const on=check.checked,cur=Number(dot.dataset.level);
+let steps=path[on?0:1].filter((l)=>(on?l>cur:l<cur));
+if(kb||!steps.length)steps=[on?8:0];
+stop();
+box.classList.remove("is-on");
+onoff.textContent=on?"On":"Off";
+stop=Dir.runField({values:[0],total:0,steps:steps.length,stepMs:path[2],render:(at)=>{const k=at(0);if(k>=0)dot.dataset.level=steps[Math.min(k,steps.length-1)];},done:()=>box.classList.toggle("is-on",on)});
+write();
+});
+write();
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-tool-primary" data-name="Tool primary and export with progress" data-group="Labs tool panels" data-num="52"
+data-baseline="Save PNG is a 40 px solid ink primary; the studio exports are buttons that open in one tab, with no progress shown.">
+<template data-markup>
+<div class="ex">
+<div class="demo-row">
+<button class="t6-btn t6-big t6-pri" type="button" data-press="primary" data-marker="left" data-save><span data-label-step>Save PNG</span></button>
+<button class="t6-btn t6-big" type="button" data-marker="left" data-export><span class="fill-label" data-label-step><span class="ex-slot" data-slot>Export SVG</span></span></button>
+</div>
+<p class="reason" id="ex-why" hidden>The export stopped because the picture is too large. Try a smaller size.</p>
+<p class="reason" data-how></p>
+<p class="vh" aria-live="polite" data-live></p>
+<div class="demo-row">
+<button class="demo-link" type="button" data-sim-save>Simulate save</button>
+<button class="demo-link" type="button" data-sim-export>Simulate export</button>
+<button class="demo-link" type="button" data-err>Show error</button>
+</div>
+</div>
+</template>
+<style>
+#cmp-tool-primary{
+.ex{display:grid;gap:11px}
+.ex-slot{display:inline-flex;align-items:center;gap:8px}
+.ex-slot .px{font:400 var(--type-px-11)/1 var(--font-pixel)}
+.ex-bar{position:absolute;left:0;right:0;bottom:0;display:flex;gap:1px;height:4px;z-index:1}
+.ex-bar .cell{flex:1 1 0;width:auto;height:100%}
+@container col (max-width:640px){.t6-big{flex:1 1 100%}}
+
+}
+</style>
+<script>
+/* Motion craft: 1 occasional click; progress is system time. 2 press per direction; C fill out 120 against 150 in; Saved holds 1.5 s. 3 steps inside, order across. 4 scale(0.97). 5 fill retargets; clicks while working are ignored. 6 transform and level swaps. 7 reduced: words, figures and check still show; the quarter turn rests on head and tail. */
+Dir.component("cmp-tool-primary",(col,dir,api)=>{
+const $=(s)=>col.querySelector(s);
+const save=$("[data-save]"),btn=$("[data-export]"),slot=$("[data-slot]"),why=$("#ex-why-"+dir),live=$("[data-live]");
+$("[data-how]").textContent={
+a:"Export works with a quarter turn and one cell whose level is the real progress, then Saved with the check.",
+b:"Export fills a 12-cell bar along the bottom edge and counts the percentage, then Saved.",
+c:"Export holds the fill at level 5, raises it to 6, 7 and 8 by thirds, then Saved with the check."
+}[dir];
+$("[data-sim-save]").addEventListener("click",()=>api.simulate(save,{working:"Saving",done:"Saved"}));
+const word=(t)=>{const s=document.createElement("span");s.textContent=t;return s;};
+const f=dir==="c"?api.fill(btn,{size:12}):api.press(btn,{role:"secondary"}).fill;
+let timer=0;
+api.cleanup(()=>clearTimeout(timer));
+const run=()=>{
+if(btn.dataset.state)return;
+why.hidden=true;
+btn.classList.remove("is-error");
+btn.removeAttribute("aria-describedby");
+btn.dataset.state="working";
+btn.setAttribute("aria-busy","true");
+live.textContent="Exporting";
+let stopQ=()=>{},cell,bar,pct;
+slot.replaceChildren();
+if(dir==="a"){
+const q=document.createElement("span");stopQ=api.loader(q,"quarter");
+cell=api.cells(document.createElement("span"),1)[0];
+slot.append(q,word("Exporting"),cell);
+}else if(dir==="b"){
+pct=document.createElement("span");pct.className="px";pct.textContent="0%";
+slot.append(word("Exporting ·"),pct);
+bar=document.createElement("span");bar.className="ex-bar";bar.setAttribute("aria-hidden","true");
+btn.append(bar);bar=api.cells(bar,12);
+}else{
+btn._invertAt=5;
+f.to(5,{order:"bayer",levels:[2,4,5],stepMs:50,total:0});
+slot.append(word("Exporting"));
+}
+let step=0;
+const tick=()=>{
+step+=1;
+const p=step/10;
+if(cell)api.setLevel(cell,p*8);
+if(bar){const x=p*12;bar.forEach((c,i)=>api.setLevel(c,i<Math.floor(x)?8:i===Math.floor(x)?(x%1)*8:0));pct.textContent=`${Math.round(p * 100)}%`;}
+if(dir==="c"){const level=p>=1?8:p>=2/3?7:p>=1/3?6:5;if(level!==btn._lvl){btn._lvl=level;f.to(level,{order:"bayer",levels:[level],stepMs:1,total:0});}}
+if(step<10){timer=setTimeout(tick,150);return;}
+timer=setTimeout(()=>{
+stopQ();
+if(bar)bar[0].parentNode.remove();
+btn._lvl=0;
+if(dir==="c"){btn._invertAt=6;f.to(0,{order:"bayer",levels:[3,0],stepMs:60,total:0});}
+const ok=document.createElement("span");ok.className="cell-icon--ok";api.icon(ok,"check");
+slot.replaceChildren(ok,word("Saved"));
+btn.dataset.state="done";
+btn.removeAttribute("aria-busy");
+live.textContent="Saved";
+api.marker(btn,"left").hold(true);
+timer=setTimeout(()=>{slot.replaceChildren(word("Export SVG"));delete btn.dataset.state;api.marker(btn,"left").hold(false);},1500);
+},200);
+};
+timer=setTimeout(tick,150);
+};
+btn.addEventListener("click",run);
+$("[data-sim-export]").addEventListener("click",()=>btn.click());
+$("[data-err]").addEventListener("click",()=>{
+if(btn.dataset.state)return;
+why.hidden=false;
+btn.setAttribute("aria-describedby",why.id);
+live.textContent=why.textContent;
+api.flash(btn);
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-drop-zone" data-name="Drop zone" data-group="Labs tool panels" data-num="53"
+data-baseline="A hairline box with an upload cell icon, Drop an SVG here, a choose a file link and one hint; drag-over thickens the border and snaps in corner cells; loaded shows a green check and the file name.">
+<template data-markup>
+<div class="dz" data-dz>
+<span class="tex dz-tex" data-level="1" aria-hidden="true"></span>
+<span class="dz-c" aria-hidden="true"></span><span class="dz-c" aria-hidden="true"></span><span class="dz-c" aria-hidden="true"></span><span class="dz-c" aria-hidden="true"></span>
+<div class="dz-in" data-empty>
+<span class="dz-icon"></span>
+<p class="dz-t">Drop an SVG here</p>
+<label class="dz-pick">or choose a file<input class="vh" type="file" accept=".svg,image/svg+xml" aria-describedby="dz-hint" data-file></label>
+<p class="dz-hint" id="dz-hint">SVG files only. Filled shapes work best.</p>
+</div>
+<div class="dz-in dz-done" data-done hidden>
+<p class="dz-name"><span class="cell-icon--ok" data-ok></span><span data-name></span></p>
+<p class="dz-meter"><span class="cells" data-meter></span><span class="dz-read" data-read></span></p>
+</div>
+</div>
+<p class="reason dz-why" data-why hidden>That file is not an SVG. Choose a file that ends in .svg.</p>
+<p class="vh" aria-live="polite" data-live></p>
+<div class="demo-row">
+<button class="demo-link" type="button" data-over aria-pressed="false">Simulate drag over</button>
+<button class="demo-link" type="button" data-load>Simulate a dropped file</button>
+<button class="demo-link" type="button" data-err>Show error</button>
+<button class="demo-link" type="button" data-reset>Start over</button>
+</div>
+</template>
+<style>
+#cmp-drop-zone{
+.dz{position:relative;display:grid;place-items:center;min-height:176px;padding:16px;border:1px solid var(--line);text-align:center}
+.dir-b .dz{border-color:var(--ink)}
+.dir-c .dz{border:2px solid var(--ink)}
+.dir-a .dz.is-over{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.dz-tex{position:absolute;inset:0}
+.dir-a .dz-tex,.dir-b .dz-tex{display:none}
+.dz-c{position:absolute;display:grid;grid-template-columns:repeat(2,7px);gap:1px}
+.dz-c .cell{width:7px;height:7px}
+.dz-c:nth-of-type(2){left:3px;top:3px} .dz-c:nth-of-type(3){right:3px;top:3px}
+.dz-c:nth-of-type(4){left:3px;bottom:6px} .dz-c:nth-of-type(5){right:3px;bottom:6px}
+.dir-a .dz-c,.dir-c .dz-c{display:none}
+.dz-in{position:relative;display:grid;justify-items:center;gap:6px}
+.dir-c .dz-in{padding:11px 16px;background:var(--paper)}
+.dz-t{font:500 15px/1.3 var(--sans)}
+.dz-pick{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;font:500 15px/1 var(--sans);text-decoration:underline dotted 2px;text-underline-offset:4px;cursor:pointer}
+.dir-c .dz-pick{text-decoration-thickness:3px}
+.dz-pick:hover{text-decoration-style:solid}
+.dz-pick:has(:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.dz-hint{font:400 13px/1.4 var(--sans);color:var(--muted)}
+.dir-b .dz-hint,.dir-c .dz-hint{font:400 var(--type-px-11)/1.4 var(--font-pixel)}
+.dz-name{display:inline-flex;align-items:center;gap:10px;font:500 15px/1.3 var(--sans)}
+.dir-b .dz-name{font:400 var(--type-px-11)/1 var(--font-pixel)}
+.dz-meter{display:inline-flex;align-items:center;gap:8px;font:400 var(--type-px-11)/1 var(--font-pixel);color:var(--muted)}
+.dir-a .dz-meter,.dir-c .dz-meter{display:none}
+[data-meter]{--cells:12;--cell-size:7px;--cell-gap:1px}
+.dz-why{margin-top:8px}
+
+}
+</style>
+<script>
+/* Motion craft: 1 drag-over repeats, so in at most 120 and out in one step. 2 corners 120, texture 100 in, one step out, loaded afterglow 180. 3 corners in reading order. 4 no press, nothing from zero. 5 each change cancels the running field. 6 level and class swaps. 7 reduced: states swap at once. */
+Dir.component("cmp-drop-zone",(col,dir,api)=>{
+const $=(s)=>col.querySelector(s);
+const zone=$("[data-dz]"),tex=$(".dz-tex"),empty=$("[data-empty]"),done=$("[data-done]"),why=$("[data-why]"),live=$("[data-live]"),overBtn=$("[data-over]");
+api.icon($(".dz-icon"),"upload",{cell:{a:3,b:7,c:5}[dir]});
+api.icon($("[data-ok]"),"check");
+const corners=[...col.querySelectorAll(".dz-c")].map((c)=>api.cells(c,4,{clear:true}));
+const meter=api.cells($("[data-meter]"),12);
+const under=dir==="b"?api.marker(zone,"under"):null;
+const left=dir==="a"?api.marker(zone,"left"):null;
+let over=false,stop=()=>{};
+const setOver=(on)=>{
+if(on===over)return;
+over=on;
+overBtn.setAttribute("aria-pressed",String(on));
+zone.classList.toggle("is-over",on);
+stop();
+if(dir==="b"){
+if(on){under.arrive();stop=Dir.runField({values:[0,1/3,2/3,1],total:90,curve:Dir.curves.linear,steps:1,stepMs:30,render:(at)=>corners.forEach((list,i)=>{if(at(i)>=1)list.forEach((c)=>api.setLevel(c,8));})});}
+else{under.leave();corners.forEach((list)=>list.forEach((c)=>api.setLevel(c,0)));}
+}
+if(dir==="c"){const path=on?[2,3]:[1];stop=Dir.runField({values:[0],total:0,steps:path.length,stepMs:50,render:(at)=>{const k=at(0);if(k>=0)tex.dataset.level=path[Math.min(k,path.length-1)];}});}
+};
+const load=(name)=>{
+setOver(false);
+if(!/\.svg$/i.test(name)){showError();return;}
+why.hidden=true;
+zone.classList.remove("is-error");
+empty.hidden=true;
+done.hidden=false;
+$("[data-name]").textContent=name;
+live.textContent=`Loaded ${name}`;
+if(left)left.hold(true);
+if(dir==="c")api.leave(tex);
+if(dir==="b"){
+$("[data-read]").textContent="Reading";
+meter.forEach((c)=>api.setLevel(c,0));
+stop=Dir.runField({values:meter.map((_,i)=>i/11),total:330,curve:Dir.curves.linear,steps:2,stepMs:30,render:(at)=>meter.forEach((c,i)=>{const k=at(i);if(k>=0)api.setLevel(c,k?8:5);}),done:()=>{$("[data-read]").textContent="Read";}});
+}
+};
+const showError=()=>{why.hidden=false;live.textContent=why.textContent;api.flash(zone);};
+const reset=()=>{
+setOver(false);stop();
+empty.hidden=false;done.hidden=true;why.hidden=true;
+zone.classList.remove("is-error");
+tex.hidden=false;tex.dataset.level="1";
+if(left)left.hold(false);
+live.textContent="";
+};
+zone.addEventListener("dragenter",(e)=>{e.preventDefault();setOver(true);});
+zone.addEventListener("dragover",(e)=>e.preventDefault());
+zone.addEventListener("dragleave",(e)=>{if(!zone.contains(e.relatedTarget))setOver(false);});
+zone.addEventListener("drop",(e)=>{e.preventDefault();const file=e.dataTransfer&&e.dataTransfer.files[0];if(file)load(file.name);else setOver(false);});
+$("[data-file]").addEventListener("change",(e)=>{const file=e.target.files[0];if(file)load(file.name);});
+overBtn.addEventListener("click",()=>setOver(!over));
+$("[data-load]").addEventListener("click",()=>{reset();load("studio-mark.svg");});
+$("[data-err]").addEventListener("click",()=>{reset();showError();});
+$("[data-reset]").addEventListener("click",reset);
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-swatches" data-name="Swatches" data-group="Labs tool panels" data-num="54"
+data-baseline="The SVG studio uses native colour inputs; the plan proposes squares with a cell marker under the chosen one and an Other swatch for the native picker.">
+<template data-markup>
+<fieldset class="sw">
+<legend class="sw-lg">Face colour</legend>
+<div class="sw-row">
+<label class="sw-i"><input class="vh" type="radio" name="sw" value="Ink" checked><span class="sw-chip" style="--c: var(--ink)"></span><span class="sw-mk"></span><span class="vh">Ink</span></label>
+<label class="sw-i"><input class="vh" type="radio" name="sw" value="Stone"><span class="sw-chip" style="--c: var(--muted)"></span><span class="sw-mk"></span><span class="vh">Stone</span></label>
+<label class="sw-i"><input class="vh" type="radio" name="sw" value="Green"><span class="sw-chip" style="--c: var(--signal-ok)"></span><span class="sw-mk"></span><span class="vh">Green</span></label>
+<label class="sw-i"><input class="vh" type="radio" name="sw" value="Rust"><span class="sw-chip" style="--c: var(--signal-fail)"></span><span class="sw-mk"></span><span class="vh">Rust</span></label>
+<label class="sw-i"><input class="vh" type="radio" name="sw" value="Paper"><span class="sw-chip" style="--c: var(--paper)"></span><span class="sw-mk"></span><span class="vh">Paper</span></label>
+<label class="sw-i" data-own hidden><input class="vh" type="radio" name="sw" value="Your colour"><span class="sw-chip" data-own-chip></span><span class="sw-mk"></span><span class="vh">Your colour</span></label>
+</div>
+<span class="rule-soft sw-base"></span>
+<label class="sw-other"><span>Other…</span><span class="rule-soft"></span><input class="vh" type="color" value="#3a5a8c" data-picker></label>
+<p class="demo-label" aria-live="polite">Chosen: <span data-now>Ink</span></p>
+</fieldset>
+</template>
+<style>
+#cmp-swatches{
+.sw{margin:0;padding:0;border:0;display:grid;gap:11px;justify-items:start}
+.sw-lg{padding:0;margin-bottom:11px;font:500 13px/1.4 var(--sans);color:var(--muted)}
+.dir-b .sw-lg,.dir-c .sw-lg{font:400 var(--type-px-11)/1.4 var(--font-pixel)}
+.sw-row{display:flex;flex-wrap:wrap;gap:0 11px}
+.dir-b .sw-row{gap:0 8px}
+.sw-i{position:relative;display:grid;justify-items:center;align-content:center;gap:4px;min-width:44px;min-height:44px;cursor:pointer}
+.dir-c .sw-i{min-width:48px}
+.sw-chip{display:block;width:24px;height:24px;background:var(--c);border:1px solid var(--line)}
+.dir-b .sw-chip{border-color:var(--ink)}
+.dir-c .sw-chip{width:36px;height:36px;border-color:var(--ink)}
+.sw-i:has(:focus-visible) .sw-chip{outline:2px solid var(--ink);outline-offset:2px}
+.dir-a .sw-mk{display:block;width:24px;height:2px;background:var(--ink)}
+.dir-a .sw-mk[data-level="0"]{visibility:hidden}
+.dir-b .sw-mk{--cell-size:7px}
+.sw-base{width:100%;max-width:330px;margin-top:-8px}
+.dir-a .sw-base,.dir-c .sw-base{display:none}
+.sw-other{position:relative;display:inline-grid;align-content:center;gap:4px;min-height:44px;font:500 15px/1 var(--sans);cursor:pointer}
+.sw-other:hover .rule-soft{mask:none}
+.sw-other:has(:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.dir-c .sw-other .rule-soft{height:3px}
+
+}
+</style>
+<script>
+/* Motion craft: 1 arrow keys instant; clicks keep the cell handoff; hover one step in, instant out. 2 in 60 to 240, out 30 to 160. 3 steps inside one cell. 4 chips never scale. 5 continues from the current level. 6 level swaps. 7 reduced: chosen cell solid at once. */
+Dir.component("cmp-swatches",(col,dir,api)=>{
+const items=[...col.querySelectorAll(".sw-i")],now=col.querySelector("[data-now]");
+const marks=items.map((item)=>item.querySelector(".sw-mk"));
+if(dir!=="a")marks.forEach((m)=>{m.classList.add("cell");});
+const stops=new Map();
+const go=(mark,path)=>{
+(stops.get(mark)||(()=>{}))();
+stops.set(mark,Dir.runField({values:[0],total:0,steps:path.length,stepMs:dir==="c"?80:30,render:(at)=>{const k=at(0);if(k>=0)api.setLevel(mark,path[Math.min(k,path.length-1)]);}}));
+};
+const paths={a:[[8],[0]],b:[[4,8],[4,0]],c:[[2,6,8],[4,0]]}[dir];
+let kb=false;
+col.addEventListener("keydown",()=>{kb=true;},true);
+col.addEventListener("pointerdown",()=>{kb=false;},true);
+const sync=(animate)=>items.forEach((item,i)=>{
+const on=item.querySelector("input").checked,level=Number(marks[i].dataset.level||0);
+const path=paths[on?0:1].filter((l)=>(on?l>level:l<level));
+if(on?level!==8:level>3)animate&&!kb&&path.length?go(marks[i],path):go(marks[i],[on?8:0]);
+if(on)now.textContent=item.querySelector("input").value;
+});
+items.forEach((item,i)=>{
+api.setLevel(marks[i],0);
+item.addEventListener("pointerenter",()=>{if(marks[i].dataset.level!=="8")go(marks[i],[3]);});
+item.addEventListener("pointerleave",()=>{if(marks[i].dataset.level==="3")go(marks[i],[0]);});
+});
+col.querySelector(".sw-row").addEventListener("change",()=>sync(true));
+const picker=col.querySelector("[data-picker]"),own=col.querySelector("[data-own]");
+picker.addEventListener("input",()=>{
+own.hidden=false;
+col.querySelector("[data-own-chip]").style.setProperty("--c",picker.value);
+own.querySelector("input").checked=true;
+sync(true);
+});
+sync(false);
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-next-tool" data-name="Next tool row" data-group="Labs tool panels" data-num="55"
+data-baseline="A Next tool label in Departure 11 and a Departure 33 title link with a 3 px under-marker on hover and an arrow nudge.">
+<template data-markup>
+<nav class="nt" aria-label="Next tool">
+<p class="nt-k">Next tool<span class="nt-n"> · 03</span></p>
+<a class="nt-a" href="#cmp-next-tool" data-nt><span class="nt-t">Presenting in Code</span><span class="nt-ar" aria-hidden="true">→</span><span class="nt-band" data-level="4" aria-hidden="true"></span></a>
+</nav>
+</template>
+<style>
+#cmp-next-tool{
+.nt{display:grid;gap:11px;justify-items:start;padding-top:22px;border-top:1px solid var(--line)}
+.nt-k{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--muted)}
+.dir-a .nt-k{font:500 13px/1.4 var(--sans)}
+.dir-a .nt-n,.dir-c .nt-n{display:none}
+.nt-a{position:relative;display:inline-flex;align-items:baseline;gap:11px;min-height:44px;padding-bottom:8px;text-decoration:none;font:400 var(--type-px-33)/1.15 var(--font-pixel)}
+.dir-b .nt-a{font-size:var(--type-px-22)}
+.dir-c .nt-a{font-size:var(--type-px-44);padding-bottom:11px}
+.nt-ar{font:400 0.6em/1 var(--mono);display:inline-block}
+.nt-band{position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--ink)}
+.dir-a .nt-band,.dir-b .nt-band{display:none}
+.dir-a .nt-a.is-hot .nt-ar{transform:translateX(3px);transition:transform 120ms steps(2,jump-start)}
+.dir-b .nt-a.is-hot .nt-ar{transform:translateX(3px);transition:transform 90ms steps(3,jump-start)}
+.dir-c .nt-a.is-hot .nt-ar{transform:translateX(3px);transition:transform 100ms steps(1,jump-start)}
+html[data-motion="off"] & .nt-a.is-hot .nt-ar{transform:none}
+@media (prefers-reduced-motion:reduce){.nt-a.is-hot .nt-ar{transform:none}}
+@container col (max-width:640px){.dir-a .nt-a{font-size:var(--type-px-22)} .dir-c .nt-a{font-size:var(--type-px-33)}}
+
+}
+</style>
+<script>
+/* Motion craft: 1 hover and focus are frequent: in at most 120, out instant. 2 arrow 90 to 120, band 100 in, one step out. 3 stepped transitions, no ease-in. 4 the arrow moves, never the link. 5 transitions and the runtime marker. 6 transform and level swaps. 7 reduced: no nudge, the rule still marks hover. */
+Dir.component("cmp-next-tool",(col,dir,api)=>{
+const link=col.querySelector("[data-nt]"),band=col.querySelector(".nt-band");
+link.addEventListener("click",(e)=>e.preventDefault());
+let stop=()=>{};
+const on=(want)=>{
+link.classList.toggle("is-hot",want);
+if(dir!=="c"){const m=api.marker(link,"under");want?m.arrive():m.leave();return;}
+stop();
+const path=want?[6,8]:[4];
+stop=Dir.runField({values:[0],total:0,steps:path.length,stepMs:50,render:(at)=>{const k=at(0);if(k>=0)band.dataset.level=path[Math.min(k,path.length-1)];}});
+};
+link.addEventListener("pointerenter",()=>on(true));
+link.addEventListener("pointerleave",()=>on(false));
+link.addEventListener("focus",()=>{if(link.matches(":focus-visible"))on(true);});
+link.addEventListener("blur",()=>on(false));
+});
+</script>
+</article>
+</section>
+
+<section class="group" id="g-page">
+<h2>Page</h2>
+
+<article class="cmp" id="cmp-transition" data-name="Page transition" data-group="Page" data-num="56"
+data-baseline="The new page is drawn over the old through the dither at levels 2, 4 and 6, then solid, one step every 50 ms at an 8 px tile; the bar stays put; reduced or paused motion swaps at once.">
+<template data-markup>
+<div class="pt">
+<div class="pt-frame" aria-hidden="true" data-frame>
+<div class="pt-bar"><span class="logo-mark pt-logo"></span><span class="pt-ln" data-ln="work">Work<i class="pt-r"></i></span><span class="pt-ln" data-ln="notes">Notes<i class="pt-r"></i></span><span class="pt-ln">Labs<i class="pt-r"></i></span></div>
+<div class="pt-pages">
+<div class="pt-pg" data-pg="work"><p class="pt-h">Work</p><span class="pt-m" data-ph></span><span class="pt-l"></span><span class="pt-l pt-s"></span></div>
+<div class="pt-pg" data-pg="notes" hidden><p class="pt-h">Notes</p><span class="pt-row"><b>12 Oct</b><span class="pt-l"></span></span><span class="pt-row"><b>3 Sep</b><span class="pt-l pt-s"></span></span><span class="pt-row"><b>20 Aug</b><span class="pt-l"></span></span></div>
+</div>
+</div>
+<div class="demo-row">
+<button class="t6-btn t6-big" type="button" data-go data-marker="left"><span data-label-step data-go-word>Go to Notes</span></button>
+<label class="pt-slow"><input type="checkbox" data-slow>Play eight times slower</label>
+</div>
+<p class="reason" data-note></p>
+<p class="vh" aria-live="polite" data-live></p>
+</div>
+</template>
+<style>
+@keyframes pt-in{
+0%{mask:var(--dither-2) 0 0/var(--pt-tile) var(--pt-tile)}
+25%{mask:var(--dither-4) 0 0/var(--pt-tile) var(--pt-tile)}
+50%{mask:var(--dither-6) 0 0/var(--pt-tile) var(--pt-tile)}
+75%,100%{mask:none}
+}
+#cmp-transition{
+.pt{display:grid;gap:16px}
+.pt-frame{--pt-tile:8px;display:grid;grid-template-rows:30px 1fr;width:100%;max-width:320px;height:200px;border:1px solid var(--ink);overflow:hidden;background:var(--paper)}
+.dir-a .pt-frame{--pt-tile:4px}
+.dir-c .pt-frame{--pt-tile:var(--dither-size)}
+.pt-bar{position:relative;z-index:2;display:flex;align-items:center;gap:12px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--paper);font:500 11px/1 var(--sans)}
+.pt-logo{width:14px;height:14px;margin-right:auto}
+.pt-ln{position:relative;padding:6px 0}
+.pt-r{position:absolute;left:0;right:0;bottom:0;display:flex;gap:1px;height:2px;background:var(--ink);visibility:hidden;font-style:normal}
+.dir-c .pt-r{height:3px}
+.pt-ln.is-cur .pt-r{visibility:visible}
+.dir-b .pt-r{height:3px;background:none;visibility:visible;overflow:hidden}
+.dir-b .pt-r .cell{width:4px;height:3px}
+.pt-pages{display:grid;min-height:0}
+.pt-pg{grid-area:1/1;display:grid;align-content:start;gap:8px;padding:12px 14px;background:var(--paper);min-height:0;overflow:hidden}
+.pt-h{font:400 var(--type-px-22)/1 var(--font-pixel)}
+.pt-m{width:100%;max-height:64px}
+.pt-l{display:block;height:6px;background:var(--line)}
+.pt-s{width:60%}
+.pt-row{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
+.pt-row b{font:400 var(--type-px-11)/1 var(--font-pixel);color:var(--muted)}
+.pt-pg.is-arriving{z-index:1;animation:pt-in var(--pt-dur,200ms) steps(1,end) both}
+.pt-slow{display:inline-flex;align-items:center;gap:8px;min-height:44px;font:500 13px/1 var(--sans);color:var(--muted);cursor:pointer}
+.pt-slow input{width:18px;height:18px;margin:0;accent-color:var(--ink)}
+
+}
+</style>
+<script>
+/* Motion craft: 1 rare and big; the protected 200 ms plays on click and Enter, as on the site. 2 the old page is covered, no exit; slow mode is for review. 3 steps inside the mask, reading order in the bar. 4 scale(0.97) on the button; the page starts dotted, never from zero. 5 a second click finishes the change and continues. 6 mask levels in steps, as the protected rule. 7 reduced: instant swap. */
+Dir.component("cmp-transition",(col,dir,api)=>{
+const $=(s)=>col.querySelector(s);
+const frame=$("[data-frame]"),go=$("[data-go]"),goWord=$("[data-go-word]"),slow=$("[data-slow]"),live=$("[data-live]");
+const pages={work:$("[data-pg='work']"),notes:$("[data-pg='notes']")};
+const links={work:$("[data-ln='work']"),notes:$("[data-ln='notes']")};
+api.placeholder($("[data-ph]"),16,4);
+$("[data-note]").textContent={
+a:"Four steps of 50 ms at a 4 px tile, finer dots, so it reads as a soft fade in steps.",
+b:"Four steps of 50 ms at an 8 px tile, as today, with the cell rule in the bar handed over in the same 200 ms.",
+c:"Four steps of 50 ms at a 12 px tile, 8 px in dark. The dissolve is the arrival, so nothing else enters."
+}[dir];
+const rules={};
+if(dir==="b")Object.keys(links).forEach((k)=>{rules[k]=api.cells(links[k].querySelector(".pt-r"),Math.ceil(links[k].offsetWidth/5)||6);});
+let at="work",pending=0,stop=()=>{};
+const mark=(to,animate,dur)=>{
+if(dir!=="b"){Object.keys(links).forEach((k)=>links[k].classList.toggle("is-cur",k===to));return;}
+const from=to==="work"?"notes":"work",a=rules[to],b=rules[from],all=a.concat(b);
+if(!animate){a.forEach((c)=>api.setLevel(c,8));b.forEach((c)=>api.setLevel(c,0));return;}
+stop();
+stop=Dir.runField({values:a.map((_,i)=>i/Math.max(1,a.length-1)).concat(b.map((_,i)=>i/Math.max(1,b.length-1))),total:dur-40,curve:Dir.curves.linear,steps:1,stepMs:40,render:(f)=>all.forEach((c,i)=>{if(f(i)>=1)api.setLevel(c,i<a.length?8:0);})});
+};
+mark("work",false);
+go.addEventListener("click",()=>{
+if(pending)pending();
+const to=at==="work"?"notes":"work",from=at,dur=slow.checked?1600:200;
+at=to;
+goWord.textContent=to==="work"?"Go to Notes":"Back to Work";
+live.textContent=`Now on ${to === "work" ? "Work" : "Notes"}`;
+const finish=()=>{if(pending!==finish)return;pending=0;pages[from].hidden=true;pages[to].classList.remove("is-arriving");};
+pending=finish;
+pages[to].hidden=false;
+if(!Dir.motionActive()){mark(to,false);finish();return;}
+frame.style.setProperty("--pt-dur",`${dur}ms`);
+mark(to,true,dur);
+pages[to].classList.remove("is-arriving");
+void pages[to].offsetWidth;
+pages[to].classList.add("is-arriving");
+api.timeout(finish,dur+20);
+});
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-reveal" data-name="Reveal with stagger" data-group="Page" data-num="57"
+data-baseline="Text and blocks snap in over 280 ms with a blink at 30 and 50 percent, media band-sweep in 10 bands over 360 ms, staggered; motion off and no scripts show everything at rest.">
+<template data-markup>
+<div class="rv" data-scope>
+<p class="rv-k" data-enter>Labs</p>
+<h4 class="rv-h" data-enter>Small tools for type and texture</h4>
+<p class="rv-p" data-enter>Each tool runs in the page and saves what you make.</p>
+<div class="rv-m" data-enter="media" data-ph></div>
+<ul class="rv-list">
+<li data-enter><b>01</b>Banner studio</li>
+<li data-enter><b>02</b>SVG turntable</li>
+<li data-enter><b>03</b>Presenting in Code</li>
+</ul>
+</div>
+<div class="demo-row"><button class="demo-link" type="button" data-play>Play the entrance</button><span class="demo-label" data-time aria-live="polite"></span></div>
+</template>
+<style>
+#cmp-reveal{
+.rv{display:grid;gap:11px}
+.rv-k{font:400 var(--type-px-11)/1.4 var(--font-pixel);color:var(--muted)}
+.rv-h{font:400 var(--type-px-22)/1.2 var(--font-pixel)}
+.rv-p{font-size:var(--read-size);line-height:var(--read-line);color:var(--text-soft)}
+.rv-list{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.rv-list li{display:flex;align-items:center;gap:11px;min-height:44px;border-bottom:1px solid var(--line);font:500 15px/1.3 var(--sans)}
+.rv-list b{font:400 var(--type-px-11)/1 var(--font-pixel);color:var(--muted)}
+.dir-a .rv-list b{display:none}
+.rv-k,.rv-h{--enter-delay:0ms!important}
+.rv-p{--enter-delay:80ms!important}
+.rv-m{--enter-delay:140ms!important}
+.rv-list li:nth-child(1){--enter-delay:200ms!important}
+.rv-list li:nth-child(2){--enter-delay:230ms!important}
+.rv-list li:nth-child(3){--enter-delay:260ms!important}
+.dir-c{.rv-m{--enter-delay:50ms!important}.rv-k{--enter-delay:80ms!important}.rv-p{--enter-delay:110ms!important}.rv-list li:nth-child(1){--enter-delay:160ms!important}.rv-list li:nth-child(3){--enter-delay:190ms!important}}
+
+}
+</style>
+<script>
+/* Motion craft: 1 once per view and on Replay; never blocks clicks. 2 entries 120 to 480 by direction, settled within 900. 3 steps inside; gaps 30 to 80 ms, heading first, rows last and closest. 4 nothing from zero. 5 one-shot keyframes, allowed for entrances. 6 opacity, clip-path, mask level. 7 reduced: all shown at rest. */
+Dir.component("cmp-reveal",(col,dir,api)=>{
+const scope=col.querySelector("[data-scope]"),time=col.querySelector("[data-time]");
+api.placeholder(col.querySelector("[data-ph]"),16,7);
+const n=scope.querySelectorAll("[data-enter]").length;
+let start=0,ended=0;
+const rest=()=>{time.textContent=Dir.motionActive()?"":"Motion is off, so everything shows at once.";};
+scope.addEventListener("animationstart",()=>{if(!start){start=performance.now();ended=0;time.textContent="";}});
+scope.addEventListener("animationend",()=>{ended+=1;if(ended===n&&start){time.textContent=`Settled ${Math.round(performance.now() - start)} ms after the first mark`;start=0;}});
+col.querySelector("[data-play]").addEventListener("click",()=>{start=0;rest();api.enter(scope);});
+rest();
+api.cleanup(Dir.onMotion(rest));
+});
+</script>
+</article>
+
+<article class="cmp" id="cmp-point-refresh" data-name="Point refresh on hover" data-group="Page" data-num="58"
+data-baseline="Hovering a work entry's media or a Labs screen covers it in 12 px paper cells through levels 5, 3 and 1, outward from the pointer over 360 ms; fine pointers only.">
+<template data-markup>
+<div class="prf">
+<div class="prf-m" data-media></div>
+<span class="prf-rule" aria-hidden="true"></span>
+<p class="reason" data-note></p>
+<div class="demo-row"><button class="demo-link" type="button" data-play>Play from the centre</button></div>
+</div>
+</template>
+<style>
+#cmp-point-refresh{
+.prf{display:grid;gap:11px}
+.prf-m canvas{position:absolute;inset:0;z-index:2;width:100%;height:100%;pointer-events:none}
+.prf-rule{display:flex;gap:1px;height:4px;margin-top:-7px;overflow:hidden}
+.prf-rule .cell{width:4px;height:4px}
+.dir-a .prf-rule,.dir-c .prf-rule{display:none}
+
+}
+</style>
+<script>
+/* Motion craft: 1 on entering the picture only, at most once per 600 ms, fine pointers only. 2 240 to 480, decorative. 3 ease-out of distance across, steps inside. 4 no press. 5 a new run waits; motion off removes it. 6 a canvas that never catches the pointer. 7 reduced: nothing plays. */
+Dir.component("cmp-point-refresh",(col,dir,api)=>{
+const media=col.querySelector("[data-media]"),ruleHost=col.querySelector(".prf-rule");
+api.placeholder(media,16,10);
+const fine=matchMedia("(hover: hover) and (pointer: fine)");
+const P={a:{cell:12,pitch:12,levels:[3,1],spread:160},b:{cell:7,pitch:8,levels:[5,3,1],spread:360},c:{cell:16,pitch:16,levels:[6,4,2],spread:360}}[dir];
+const B=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+col.querySelector("[data-note]").textContent=(fine.matches?"Hover the picture. ":"This plays on hover with a mouse or trackpad; on touch nothing plays. ")+{
+a:"12 px cells, levels 3 then 1, 240 ms in all.",
+b:"8 px cells, levels 5, 3, 1 over 360 ms, and the rule below fills outward from the pointer.",
+c:"16 px cells, levels 6, 4, 2 over 360 ms, printed at the 12 px tile."
+}[dir];
+let rule=[];
+if(dir==="b")rule=api.cells(ruleHost,Math.floor(media.clientWidth/5)||60);
+let busy=false,last=0;
+const run=(px,py)=>{
+if(busy||performance.now()-last<600||!Dir.motionActive())return;
+last=performance.now();
+const rect=media.getBoundingClientRect();
+if(rect.width<40)return;
+busy=true;
+const canvas=document.createElement("canvas");
+canvas.setAttribute("aria-hidden","true");
+canvas.width=Math.ceil(rect.width);canvas.height=Math.ceil(rect.height);
+media.append(canvas);
+const ctx=canvas.getContext("2d"),paper=getComputedStyle(col).getPropertyValue("--paper").trim();
+const dot=dir==="c"?Math.max(1,parseFloat(getComputedStyle(col).getPropertyValue("--dither-size"))/4):1;
+const fills={};
+P.levels.forEach((level)=>{
+const tile=document.createElement("canvas");tile.width=tile.height=dot*4;
+const t=tile.getContext("2d");t.fillStyle=paper;
+B.forEach((th,i)=>{if(th<level*2)t.fillRect((i%4)*dot,Math.floor(i/4)*dot,dot,dot);});
+fills[level]=ctx.createPattern(tile,"repeat");
+});
+const cols=Math.ceil(rect.width/P.pitch),rows=Math.ceil(rect.height/P.pitch);
+const gx=(px-rect.left)/P.pitch,gy=(py-rect.top)/P.pitch;
+const far=Math.hypot(Math.max(gx,cols-gx),Math.max(gy,rows-gy))||1;
+const delays=[];
+for(let y=0;y<rows;y+=1)for(let x=0;x<cols;x+=1)delays.push(P.spread*Dir.curves.out(Math.hypot(x+0.5-gx,y+0.5-gy)/far));
+if(rule.length){
+const ox=((px-rect.left)/rect.width)*rule.length,span=Math.max(ox,rule.length-ox)||1;
+Dir.runField({values:rule.map((_,i)=>Math.abs(i-ox)/span),total:100,curve:Dir.curves.linear,steps:1,stepMs:40,render:(at)=>rule.forEach((c,i)=>{if(at(i)>=1)api.setLevel(c,8);})});
+}
+const end=P.spread+P.levels.length*40,t0=performance.now();
+const frame=(now)=>{
+const el=now-t0;
+if(!Dir.motionActive()||!canvas.isConnected){canvas.remove();rule.forEach((c)=>api.setLevel(c,0));busy=false;return;}
+ctx.clearRect(0,0,canvas.width,canvas.height);
+delays.forEach((d,i)=>{
+const k=Math.floor((el-d)/40);
+if(k<0||k>=P.levels.length)return;
+ctx.fillStyle=fills[P.levels[k]];
+ctx.fillRect((i%cols)*P.pitch,Math.floor(i/cols)*P.pitch,P.cell,P.cell);
+});
+if(el<end){requestAnimationFrame(frame);return;}
+canvas.remove();
+rule.forEach((c)=>api.setLevel(c,0));
+api.timeout(()=>{busy=false;},300);
+};
+requestAnimationFrame(frame);
+};
+media.addEventListener("pointerover",(e)=>{if(fine.matches&&!(e.relatedTarget&&media.contains(e.relatedTarget)))run(e.clientX,e.clientY);});
+col.querySelector("[data-play]").addEventListener("click",()=>{const r=media.getBoundingClientRect();run(r.left+r.width/2,r.top+r.height/2);});
+});
+</script>
+</article>
+</section>

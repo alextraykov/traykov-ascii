@@ -75,7 +75,7 @@ const labs = [
             labs.map((lab, index) => (
               <li id={`lab-${lab.id}`} class="labs-item" data-reveal="rise">
                 <a class="labs-item__link" href={lab.href}>
-                  <span class="labs-item__screen" data-motion-artwork>
+                  <span class="labs-item__screen" data-motion-artwork data-reveal="scan" data-reveal-delay={String([0, 70, 125, 170, 210, 245, 275][Math.min(index, 6)])}>
                     <img
                       src={`/labs/screens/${lab.id}.webp`}
                       alt=""

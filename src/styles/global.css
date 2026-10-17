@@ -25,6 +25,7 @@
 /* 06 HEROES · 07 WORK CARDS · 08 CASE HERO · 09 CASE BODY · 10 FIGURES */
 /* 11 FOOTER · 12 UTILITIES · 13 BREAKPOINTS 1180/900/820/700/640 · 14 REDUCED MOTION */
 :root {
+  --link-blue: #1f4bd8;
   --ink: #080808;
   --paper: #fbfbf8;
   --muted: #666660;
@@ -311,6 +312,7 @@
 }
 
 html[data-theme="dark"] {
+  --link-blue: #8fb0ff;
   --ink: #f4f2ea;
   --cell-empty: rgba(244, 242, 234, 0.09);
   --signal-ok: #4cc58f;
@@ -415,6 +417,7 @@ html[data-transition-incoming="true"] {
 @media (prefers-color-scheme: dark) {
   html:not([data-theme]) {
     color-scheme: dark;
+    --link-blue: #8fb0ff;
     --ink: #f4f2ea;
     --cell-empty: rgba(244, 242, 234, 0.09);
     --signal-ok: #4cc58f;
@@ -512,8 +515,9 @@ body::before {
   transform: translateX(-10%);
 }
 
+/* Page navigation is an instant swap: no cross-document view transition. */
 @view-transition {
-  navigation: auto;
+  navigation: none;
 }
 
 ::view-transition {
@@ -17543,83 +17547,7 @@ html[data-motion-state="active"] body[data-page-type="about"] .about-hero--trail
   }
 }
 
-/* 26 PAGE TRANSITIONS (round 3) ─ one dither dissolve across the whole viewport. The new page is
-   drawn over the old one through the ordered dither, 2 → 4 → 6 → solid, one step every 50ms, so the
-   old page shows through the gaps until it is gone: no blank frames, no slide, no fade. The snapshot
-   is the viewport itself (root), so leaving from any scroll position dissolves exactly what was on
-   screen. The bar is its own group and stays put. Reduced or paused motion swaps instantly. */
-:root[data-transition-transport="native"] main {
-  view-transition-name: none;
-}
-
-::view-transition-old(root) {
-  opacity: 1;
-  animation: none;
-}
-
-::view-transition-new(root) {
-  opacity: 1;
-  animation: page-continuity-in 200ms steps(1, end) both;
-}
-
-@keyframes page-continuity-in {
-  0% {
-    -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  25% {
-    -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  50% {
-    -webkit-mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  75%,
-  100% {
-    -webkit-mask: none;
-    mask: none;
-  }
-}
-
-/* Browsers without cross-document view transitions: the arriving page resolves through the same
-   dither from paper. */
-html:not([data-transition-transport="native"]) body.is-page-arriving main {
-  animation: motion-editorial-in 200ms steps(1, end) both;
-}
-
-@keyframes motion-editorial-in {
-  0% {
-    -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  25% {
-    -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  50% {
-    -webkit-mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  75%,
-  100% {
-    -webkit-mask: none;
-    mask: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root),
-  html body.is-page-arriving main {
-    animation: none !important;
-  }
-}
-
-html[data-motion-preference="paused"] ::view-transition-old(root),
-html[data-motion-preference="paused"] ::view-transition-new(root) {
-  animation: none !important;
-}
+/* 26 PAGE TRANSITIONS ─ removed: pages swap instantly (see @view-transition near the top). */
 
 /* The SVG studio scrolls, so its bar needs paper behind it (the full-screen tool pages keep a
    transparent bar over their stage). */
@@ -17911,6 +17839,1060 @@ html[data-motion-preference="paused"] ::view-transition-new(root) {
   }
 }
 
+/* 24 CASE EVIDENCE, ROUND 4 ─ the day-cell timeline, the comment pile, the drag compare, the x-ray
+   lens and scaled live demos with a corner full-screen button. First used by Pave's new look. */
+
+/* Live demos: the full-screen link is an icon button pinned to the frame's top right. */
+:root .case-live__frame .case-live__open {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: var(--z-inline-effect);
+  display: grid;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  border: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  transition: background-color var(--dur-1) steps(2), color var(--dur-1) steps(2);
+}
+
+:root .case-live__frame .case-live__open:is(:hover, :focus-visible) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:root .case-live__frame .case-live__open:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+:root .case-live > figcaption strong .case-tag {
+  margin-left: var(--space-1);
+  vertical-align: 2px;
+}
+
+/* A scaled demo keeps its desktop viewport and shrinks to the column. */
+:root .case-live__frame--scaled {
+  height: auto;
+  aspect-ratio: var(--case-live-width) / var(--case-live-vh);
+}
+
+:root .case-live__frame--scaled iframe {
+  inset: 0 auto auto 0;
+  width: calc(var(--case-live-width) * 1px);
+  height: calc(var(--case-live-vh) * 1px);
+  transform: scale(var(--case-live-scale, 1));
+  transform-origin: 0 0;
+}
+
+/* Timeline (component specimen 36 · B): each event's 12 px mark sits on its date line; under it
+   hangs one 7 px day cell per day until the next event (8 px pitch), on a dotted spine at level 3.
+   The spine starts at the first mark and stops at the last one. */
+:root .case-study-body .case-timeline {
+  margin: var(--space-6) 0;
+  padding: 0;
+  border: 0;
+}
+
+:root .case-study-body .case-timeline ol {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:root .case-study-body .case-timeline li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  column-gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+}
+
+:root .case-study-body .case-timeline li::before,
+:root .case-study-body .case-timeline li::marker {
+  content: none;
+}
+
+:root .case-study-body .case-timeline__rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 0 var(--space-3);
+}
+
+:root .case-study-body .case-timeline__rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root .case-study-body .case-timeline li:first-child .case-timeline__rail::before {
+  top: 6px;
+}
+
+:root .case-study-body .case-timeline li:last-child .case-timeline__rail::before {
+  bottom: auto;
+  height: 6px;
+}
+
+:root .case-study-body .case-timeline__mark {
+  --cell-size: 12px;
+  position: relative;
+}
+
+:root .case-study-body .case-timeline__days {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+:root .case-study-body .case-timeline__day {
+  --cell-size: 7px;
+}
+
+:root .case-study-body .case-timeline__entry {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding-bottom: var(--space-5);
+}
+
+:root .case-study-body .case-timeline__when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  justify-self: start;
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+
+:root .case-study-body .case-timeline time {
+  color: var(--ink);
+  font: 400 var(--type-px-22) / 1.1 var(--font-pixel);
+  text-transform: none;
+}
+
+:root .case-study-body .case-timeline__when > span {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .case-study-body .case-timeline__entry strong {
+  color: var(--ink);
+  font: 500 16px / 1.35 var(--sans);
+}
+
+:root .case-study-body .case-timeline__entry p:not(.case-timeline__when) {
+  justify-self: start;
+  width: auto;
+  max-width: 62ch;
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 16px / 1.5 var(--sans);
+}
+
+/* Until the reading line reaches an event, its entry waits; it steps in over 160 ms and leaves at once. */
+:root .case-study-body .case-timeline[data-case-timeline-ready] .case-timeline__entry {
+  transition: opacity 160ms steps(3, jump-start);
+}
+
+html[data-motion="ready"] .case-study-body .case-timeline[data-case-timeline-ready] li:not([data-reached]) .case-timeline__entry {
+  opacity: 0;
+  transition: none;
+}
+
+/* Quotes (component specimen 34 · A): a carousel on one hairline. One quote at a time, a quick
+   dither out and in, a 2 px meter per quote that fills in 13 steps over the dwell, and secondary
+   buttons. */
+:root .case-study-body .case-quotes {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-5);
+  margin: var(--space-6) 0;
+  padding: var(--space-5) 0 0;
+  border: 0;
+  border-top: var(--hairline) solid var(--line);
+  --quote-dwell: 5200ms;
+}
+
+:root .case-study-body .case-quotes__stage {
+  display: grid;
+  justify-self: stretch;
+  width: 100%;
+  max-width: none;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:root .case-study-body .case-quotes__slide {
+  display: grid;
+  justify-self: stretch;
+  width: 100%;
+  max-width: none;
+  align-content: start;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+}
+
+:root .case-study-body .case-quotes__slide::before,
+:root .case-study-body .case-quotes__slide::marker {
+  content: none;
+}
+
+:root .case-study-body .case-quotes__slide > * {
+  justify-self: start;
+  width: auto;
+}
+
+:root .case-study-body .case-quotes__slide blockquote {
+  max-width: 40ch;
+  margin: 0;
+  padding: 0;
+  color: var(--ink);
+  font: 400 22px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+
+:root .case-study-body .case-quotes__slide blockquote::before {
+  content: none;
+}
+
+:root .case-study-body .case-quotes__by {
+  margin: 0;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+}
+
+/* Ready: every quote shares one cell, so the height never jumps between quotes. */
+:root .case-study-body .case-quotes[data-case-quotes-ready] .case-quotes__slide {
+  grid-area: 1 / 1;
+}
+
+:root .case-study-body .case-quotes[data-case-quotes-ready] .case-quotes__slide[data-state="off"] {
+  visibility: hidden;
+}
+
+:root .case-study-body .case-quotes__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+:root .case-study-body .case-quotes__controls[hidden] {
+  display: none;
+}
+
+:root .case-study-body .case-quotes__meters {
+  display: flex;
+  flex: 1 1 240px;
+  gap: var(--space-1);
+  margin-right: var(--space-2);
+}
+
+:root .case-study-body .case-quotes__meter {
+  position: relative;
+  flex: 1;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+:root .case-study-body .case-quotes__meter::before,
+:root .case-study-body .case-quotes__meter span {
+  content: "";
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+}
+
+:root .case-study-body .case-quotes__meter::before {
+  background: var(--line);
+  -webkit-mask: none;
+  mask: none;
+}
+
+:root .case-study-body .case-quotes__meter span {
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+:root .case-study-body .case-quotes__meter[data-done] span {
+  transform: scaleX(1);
+}
+
+:root .case-study-body .case-quotes__meter[data-current] span {
+  animation: case-quote-meter var(--quote-dwell) steps(13, end) forwards;
+  animation-play-state: paused;
+}
+
+:root .case-study-body .case-quotes[data-playing] .case-quotes__meter[data-current] span {
+  animation-play-state: running;
+}
+
+@keyframes case-quote-meter {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+:root .case-study-body .case-quotes__meter:focus-visible,
+:root .case-study-body .case-quotes__step:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+:root .case-study-body .case-quotes__step {
+  min-width: 44px;
+  height: 44px;
+  padding: 0 var(--space-3);
+  border: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 14px / 1 var(--sans);
+  cursor: pointer;
+  transition: transform var(--dur-1) var(--ease-out-expo);
+}
+
+/* Hover: a 2 px marker on the bottom edge, never a fill behind the word. */
+:root .case-study-body .case-quotes__step:hover {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+
+:root .case-study-body .case-quotes__step:active {
+  transform: scale(0.97);
+}
+
+/* A single quote inside the story (component specimen 34 · A): no border, a soft dither rule above
+   and below, the quote in 22 px and the source in a quiet line. */
+:root .case-study-body .case-pull-quote {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root .case-study-body .case-pull-quote::before,
+:root .case-study-body .case-pull-quote::after {
+  content: "";
+  display: block;
+  height: 2px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root .case-study-body .case-pull-quote blockquote {
+  justify-self: start;
+  width: auto;
+  max-width: 40ch;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  color: var(--ink);
+  font: 400 22px / 1.4 var(--sans);
+}
+
+:root .case-study-body .case-pull-quote blockquote::before {
+  content: none;
+}
+
+:root .case-study-body .case-pull-quote figcaption {
+  display: block;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 640px) {
+  :root .case-study-body :is(.case-quotes__slide, .case-pull-quote) blockquote {
+    font-size: 18px;
+  }
+
+  :root .case-study-body .case-quotes__meters {
+    flex-basis: 100%;
+    margin-right: 0;
+  }
+}
+
+/* Key numbers: one row, no box. Each value is short enough to sit on one line at every width. */
+:root .case-study-body .case-stats {
+  width: 100%;
+  margin: var(--space-6) 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root .case-study-body .case-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--space-4);
+  border-top: var(--hairline) solid var(--ink);
+  background: transparent;
+}
+
+:root .case-study-body .case-stat {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-3) var(--space-3) var(--space-4) 0;
+  border: 0;
+  border-bottom: var(--hairline) solid var(--line);
+  background: transparent;
+  box-shadow: none;
+}
+
+:root .case-study-body .case-stat strong,
+:root .case-study-body .case-stat strong[data-count-up] {
+  color: var(--ink);
+  font: 400 var(--type-px-44) / 1 var(--font-pixel);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+:root .case-study-body .case-stat span {
+  color: var(--text-caption);
+  font: 400 0.94rem / 1.42 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* The one link a reader should follow: big, blue, unmistakably a link. */
+:root .case-study-body .case-link {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-5) 0;
+}
+
+:root .case-study-body .case-link .case-link__a {
+  justify-self: start;
+  color: var(--link-blue);
+  font: 400 var(--type-px-33) / 1.1 var(--font-pixel);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+}
+
+:root .case-study-body .case-link .case-link__a:is(:hover, :focus-visible) {
+  background: var(--link-blue);
+  color: var(--paper);
+  text-decoration-color: transparent;
+}
+
+:root .case-study-body .case-link .case-link__a:focus-visible {
+  outline: 2px solid var(--link-blue);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  :root .case-study-body .case-link .case-link__a {
+    font-size: var(--type-px-22);
+  }
+
+  :root .case-study-body .case-stats__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  :root .case-study-body .case-stat strong,
+  :root .case-study-body .case-stat strong[data-count-up] {
+    font-size: var(--type-px-33);
+  }
+}
+
+:root .case-study-body .case-link > span {
+  color: var(--text-caption);
+  font: 400 0.94rem / 1.45 var(--sans);
+}
+
+/* Deck embeds: the arrows are visible buttons under the frame. */
+:root .case-live__deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+:root .case-live__deck[hidden] {
+  display: none;
+}
+
+:root .case-live__deck output {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .case-live__deck button {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
+  border: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  cursor: pointer;
+  transition: background-color var(--dur-1) steps(2), color var(--dur-1) steps(2);
+}
+
+:root .case-live__deck button:is(:hover, :focus-visible) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:root .case-live__deck button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Evidence figures with a switch (component specimens 29 · B and 15 · A). The header row is the
+   B caption: one hairline above, "Fig. N" in its own Departure column, a bold lead and a soft
+   note. The A segmented control sits at the right end of the same row. Frames are hairlines; no
+   offset shadows. Pave's new look uses it for every figure; the drag compare and the x-ray lens
+   use it everywhere. */
+:root .case-study-body :is(.case-slider, .case-lens),
+body[data-case-id="pave-new-look"] .case-study-body :is(.case-compare, .case-gallery, .case-live) {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 0;
+  row-gap: var(--space-3);
+  margin: var(--space-6) 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root .case-study-body :is(.case-slider, .case-lens) > *,
+body[data-case-id="pave-new-look"] .case-study-body :is(.case-compare, .case-gallery, .case-live) > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+:root .case-study-body :is(.case-slider, .case-lens) > .case-figure-head,
+body[data-case-id="pave-new-look"] .case-study-body :is(.case-compare, .case-gallery, .case-live) > .case-figure-head {
+  grid-column: 1;
+  grid-row: 1;
+  max-width: none;
+}
+
+:root .case-study-body :is(.case-slider, .case-lens) > .case-figure-tools,
+body[data-case-id="pave-new-look"] .case-study-body :is(.case-compare, .case-gallery, .case-live) > .case-figure-tools {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: var(--space-2) 0 0 var(--space-4);
+  border-top: var(--hairline) solid var(--line);
+}
+
+/* The caption itself: the site's figure caption, here at the site caption size and flush with the
+   figure's left edge. */
+:root .case-study-body figure:is(.case-slider, .case-lens) > figcaption:has(> strong:first-child),
+body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has(> strong:first-child) {
+  margin: 0;
+  padding: var(--space-2) 0 0;
+  background: transparent;
+  color: var(--text-soft);
+  text-transform: none;
+}
+
+:root .case-study-body figure:is(.case-slider, .case-lens) > figcaption:has(> strong:first-child) > em,
+body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has(> strong:first-child) > em {
+  grid-column: 2;
+  justify-self: start;
+  max-width: 68ch;
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 15px / 1.45 var(--sans);
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Without scripts a switch has nothing to switch, so it stays hidden (every panel shows). */
+:root .case-study-body .case-switch[hidden] {
+  display: none;
+}
+
+/* Segmented control (component specimen 15 · A): one hairline group, no dividers, 44 px options,
+   the selected option solid ink, hover a 2 px under-marker. */
+:root .case-study-body :is(.case-slider, .case-lens) .case-switch,
+body[data-case-id="pave-new-look"] .case-study-body .case-switch {
+  border: var(--hairline) solid var(--line);
+}
+
+:root .case-study-body :is(.case-slider, .case-lens) .case-switch > button,
+body[data-case-id="pave-new-look"] .case-study-body .case-switch > button {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 0;
+  font: 500 14px / 1.2 var(--sans);
+  white-space: nowrap;
+}
+
+:root .case-study-body :is(.case-slider, .case-lens) .case-switch > button::after,
+body[data-case-id="pave-new-look"] .case-study-body .case-switch > button::after {
+  height: 2px;
+}
+
+@media (max-width: 640px) {
+  :root .case-study-body :is(.case-slider, .case-lens),
+  body[data-case-id="pave-new-look"] .case-study-body :is(.case-compare, .case-gallery, .case-live) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :root .case-study-body :is(.case-slider, .case-lens) > .case-figure-tools,
+  body[data-case-id="pave-new-look"] .case-study-body :is(.case-compare, .case-gallery, .case-live) > .case-figure-tools {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+    padding: 0;
+    border-top: 0;
+  }
+}
+
+/* Status tags (component specimen 27 · A): one 8 px cell at the status level and the word. */
+body[data-case-id="pave-new-look"] .case-study-body .case-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-tag::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-tag--live::before {
+  -webkit-mask: none;
+  mask: none;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body :is(.case-tag--concept, .case-tag--before)::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--ink);
+  -webkit-mask-image: var(--dither-4);
+  mask-image: var(--dither-4);
+}
+
+body[data-case-id="pave-new-look"] .case-study-body figcaption strong .case-tag {
+  margin-left: var(--space-2);
+}
+
+/* Compare switch: each panel's media at its own aspect ratio in a hairline frame, and its caption
+   flush with the frame. */
+body[data-case-id="pave-new-look"] .case-study-body .case-compare__panel {
+  gap: var(--space-2);
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-compare__media :is(img, video) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: fill;
+  border: var(--hairline) solid var(--line);
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-compare__caption {
+  display: block;
+  justify-self: stretch;
+  width: 100%;
+  max-width: 68ch;
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 15px / 1.45 var(--sans);
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-compare__caption > :is(.case-tag, .case-compare__label) {
+  margin-right: var(--space-2);
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-compare__label {
+  color: var(--ink);
+  font: 500 13px / 1.4 var(--sans);
+  text-transform: none;
+}
+
+/* Live demos: a hairline frame, the caption under it. */
+body[data-case-id="pave-new-look"] .case-study-body .case-live__frame {
+  border: var(--hairline) solid var(--line);
+  box-shadow: none;
+}
+
+/* Gallery (component specimen 32 · A): a plain grid of hairline-framed screens, 11 px gaps. */
+body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-grid__items {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  gap: var(--space-4) 11px;
+  overflow: visible;
+  padding: 0;
+  scroll-snap-type: none;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-card img {
+  aspect-ratio: auto;
+  height: auto;
+  object-fit: fill;
+  border: var(--hairline) solid var(--line);
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-card figcaption {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-transform: none;
+}
+
+body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-card figcaption span {
+  color: var(--ink);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 900px) {
+  body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-grid__items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Twenty-nine states stay an overview on phones: two columns rather than one long column. */
+@media (max-width: 640px) {
+  body[data-case-id="pave-new-look"] .case-study-body .case-gallery .case-image-grid__items {
+    gap: var(--space-3) var(--space-2);
+  }
+}
+
+/* Drag compare (component specimen 30 · B): both images at their real aspect ratio in a hairline
+   frame; the after image is clipped at the split. The divider is a column of 4 px cells, 3 px
+   wide, inverted against the picture so it reads on light and dark screens, with a 48 px paper
+   grip of cell chevrons. Corner labels are plain Departure words on paper. */
+:root .case-slider__stage {
+  position: relative;
+  overflow: hidden;
+  border: var(--hairline) solid var(--line);
+  background: transparent;
+  box-shadow: none;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+:root .case-study-body .case-slider__stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: fill;
+  border: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+:root .case-study-body .case-slider__after {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  clip-path: inset(0 0 0 var(--split));
+}
+
+:root .case-study-body .case-slider:not([data-case-slider-ready]) .case-slider__after {
+  position: static;
+  height: auto;
+  clip-path: none;
+}
+
+:root .case-slider__handle {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: var(--split);
+  width: 3px;
+  transform: translateX(-50%);
+  background: linear-gradient(var(--difference-ink) 0 4px, transparent 4px) 0 0 / 100% 5px repeat-y;
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+:root .case-slider__grip {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: var(--split);
+  display: grid;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  border: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  transform: translate(-50%, -50%);
+}
+
+:root .case-slider__grip .cell-icon .cell[data-level="8"] {
+  background: var(--ink);
+}
+
+:root .case-slider[data-dragging] .case-slider__grip {
+  background: var(--ink);
+}
+
+:root .case-slider[data-dragging] .case-slider__grip .cell-icon .cell[data-level="8"] {
+  background: var(--paper);
+}
+
+:root .case-slider:not([data-case-slider-ready]) :is(.case-slider__handle, .case-slider__grip, .case-slider__corner) {
+  display: none;
+}
+
+:root .case-slider__corner {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  padding: 2px 6px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+:root .case-slider__corner--before {
+  left: 8px;
+}
+
+:root .case-slider__corner--after {
+  right: 8px;
+}
+
+/* The divider never crosses a label: the label steps out while the split passes it. */
+:root .case-slider__corner[data-covered] {
+  visibility: hidden;
+}
+
+:root .case-slider__range {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+
+:root .case-slider__stage:has(.case-slider__range:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* X-ray lens (component specimen 30 · B): a 240 px window (smaller on phones) with a 2 px frame
+   and 8 px cell corners, inverted against the picture, moving on the 8 px lattice. Outside the window the picture is dimmed
+   with paper at 55 %, so the window reads; inside it the x-ray is clear. */
+:root .case-lens {
+  --lens: 240px;
+  --lens-l: 0px;
+  --lens-t: 0px;
+}
+
+:root .case-lens__stage {
+  position: relative;
+  overflow: hidden;
+  border: var(--hairline) solid var(--line);
+  background: transparent;
+  box-shadow: none;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+:root .case-study-body .case-lens__stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+:root .case-study-body .case-lens__xray {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  clip-path: inset(
+    var(--lens-t) calc(100% - var(--lens-l) - var(--lens)) calc(100% - var(--lens-t) - var(--lens)) var(--lens-l)
+  );
+}
+
+:root .case-study-body .case-lens:not([data-case-lens-ready]) .case-lens__xray {
+  position: static;
+  height: auto;
+  clip-path: none;
+}
+
+:root .case-study-body .case-lens[data-lens-full] .case-lens__xray {
+  clip-path: none;
+}
+
+:root .case-lens__dim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--paper) 55%, transparent);
+  clip-path: polygon(
+    evenodd,
+    0 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 0,
+    var(--lens-l) var(--lens-t),
+    calc(var(--lens-l) + var(--lens)) var(--lens-t),
+    calc(var(--lens-l) + var(--lens)) calc(var(--lens-t) + var(--lens)),
+    var(--lens-l) calc(var(--lens-t) + var(--lens)),
+    var(--lens-l) var(--lens-t)
+  );
+  pointer-events: none;
+}
+
+:root .case-lens__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--lens);
+  height: var(--lens);
+  border: 2px solid var(--difference-ink);
+  background:
+    linear-gradient(var(--difference-ink), var(--difference-ink)) 0 0 / 8px 8px no-repeat,
+    linear-gradient(var(--difference-ink), var(--difference-ink)) 100% 0 / 8px 8px no-repeat,
+    linear-gradient(var(--difference-ink), var(--difference-ink)) 0 100% / 8px 8px no-repeat,
+    linear-gradient(var(--difference-ink), var(--difference-ink)) 100% 100% / 8px 8px no-repeat;
+  mix-blend-mode: difference;
+  transform: translate(var(--lens-l), var(--lens-t));
+  opacity: 1;
+  pointer-events: none;
+}
+
+:root .case-lens:is(:not([data-case-lens-ready]), [data-lens-full]) :is(.case-lens__dim, .case-lens__frame) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .case-live__frame .case-live__open,
+  :root .case-study-body .case-quotes__step {
+    transition: none;
+  }
+}
+
+/* Pave's new look: the live drafting sheet runs behind the case title. */
+:root .case-hero-sheet {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+:root .case-hero-sheet iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+:root .case-hero--sheet .case-hero-copy {
+  position: relative;
+  pointer-events: none;
+}
+
+:root .case-hero--sheet .case-hero-copy > * {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--paper);
+  box-shadow: 0 0 0 var(--space-1) var(--paper);
+}
+
+:root .case-hero--sheet .case-hero-copy a {
+  pointer-events: auto;
+}
+
+:root .case-hero--sheet {
+  min-height: clamp(460px, 64vh, 680px);
+}
+
 /* Labs: the hero's rule already opens the list, so the list carries no second rule. */
 :root .labs-directory {
   border-top: 0;
@@ -17920,4 +18902,3565 @@ html[data-motion-preference="paused"] ::view-transition-new(root) {
 
 :root .labs-list {
   border-top: 0;
+}
+
+/* 28 PICKS · CHROME, ACTIONS AND MOTION ─ Alexander's picks of 17 October 2026 (component-picks.md),
+   batch 1 of site-picks-implementation.md. Nav and theme control are C (printed dither), the motion
+   control, dialog and slider are B (cell grid, with B underlines replaced by A rules), the footer is
+   the hybrid "cell grids but lighter", everything else is A (ruled paper). Appended after the round 4
+   block so it wins ties by order; the round 3 rules it supersedes stay in place for the cleanup pass.
+   Never drawn with repeating gradients: cell rows are masks or DOM cells. */
+
+/* ── tokens (picks §0.5) ── */
+:root {
+  --marker-a: 4px;
+  --rule-a: 2px;
+  --cell-b: 7px;
+  --gap-b: 1px;
+  --rule-b: 3px;
+  --marker-c: 6px;
+  --band-c: 4px;
+  --tile-c: 12px;
+  --label-a: 4px;
+  --label-b: 8px;
+  --label-c: 5px;
+  --snap-a: 120ms;
+  --sweep-a: 300ms;
+  --afterglow-a: 120ms;
+  --switch-a: 200ms;
+  --stagger-a: 400ms;
+  --snap-b: 280ms;
+  --afterglow-b: 180ms;
+  --switch-b: 240ms;
+  --switch-c: 240ms;
+  --level-c: 50ms;
+  --press-a-in: 160ms;
+  --press-a-hold: 200ms;
+  --press-a-out: 160ms;
+  --transition-tile: 4px;
+  --pick-ease-move: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --pick-press-scale: 0.97;
+  /* The 5-cell chevron (15 × 9) and the 5 × 5 check (2 px cells) as crisp images in ink and paper. */
+  --pick-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='9' viewBox='0 0 15 9' shape-rendering='crispEdges' fill='%23080808'%3E%3Cpath d='M0 0h3v3H0zM12 0h3v3h-3zM3 3h3v3H3zM9 3h3v3H9zM6 6h3v3H6z'/%3E%3C/svg%3E");
+  --pick-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' shape-rendering='crispEdges' fill='%23fbfbf8'%3E%3Cpath d='M8 0h2v2H8zM6 2h4v2H6zM0 4h2v2H0zM4 4h4v2H4zM0 6h6v2H0zM2 8h2v2H2z'/%3E%3C/svg%3E");
+  --site-nav-phone-height: 98px;
+}
+
+html[data-theme="dark"] {
+  --tile-c: 8px;
+  --pick-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='9' viewBox='0 0 15 9' shape-rendering='crispEdges' fill='%23f4f2ea'%3E%3Cpath d='M0 0h3v3H0zM12 0h3v3h-3zM3 3h3v3H3zM9 3h3v3H9zM6 6h3v3H6z'/%3E%3C/svg%3E");
+  --pick-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' shape-rendering='crispEdges' fill='%230c0c0b'%3E%3Cpath d='M8 0h2v2H8zM6 2h4v2H6zM0 4h2v2H0zM4 4h4v2H4zM0 6h6v2H0zM2 8h2v2H2z'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --tile-c: 8px;
+    --pick-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='9' viewBox='0 0 15 9' shape-rendering='crispEdges' fill='%23f4f2ea'%3E%3Cpath d='M0 0h3v3H0zM12 0h3v3h-3zM3 3h3v3H3zM9 3h3v3H9zM6 6h3v3H6z'/%3E%3C/svg%3E");
+    --pick-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' shape-rendering='crispEdges' fill='%230c0c0b'%3E%3Cpath d='M8 0h2v2H8zM6 2h4v2H6zM0 4h2v2H0zM4 4h4v2H4zM0 6h6v2H0zM2 8h2v2H2z'/%3E%3C/svg%3E");
+  }
+}
+
+/* ── shared keyframes ── */
+@keyframes pick-snap-a {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pick-switch-a {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+
+@keyframes band-c-in {
+  0% { visibility: visible; -webkit-mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); }
+  33.333% { visibility: visible; -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  66.666%, 100% { visibility: visible; -webkit-mask: none; mask: none; }
+}
+
+@keyframes band-c-out {
+  0% { visibility: visible; -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  50% { visibility: visible; -webkit-mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); }
+  100% { visibility: hidden; }
+}
+
+@keyframes pick-nudge-a {
+  0% { transform: translateX(calc(2px * var(--nudge-sign, 1))); }
+  50%, 100% { transform: translateX(calc(3px * var(--nudge-sign, 1))); }
+}
+
+/* ── 1.7 skip link (A) ── */
+:root .skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: calc(var(--z-nav) + 1);
+  display: inline-flex;
+  align-items: center;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  clip-path: inset(50%);
+  font: 500 15px / 1 var(--sans);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+:root .skip-link:focus {
+  width: auto;
+  height: auto;
+  min-height: 44px;
+  padding: 0 20px;
+  overflow: visible;
+  border: var(--hairline) solid var(--ink);
+  clip-path: none;
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: var(--focus-ring-offset);
+  transition: transform 140ms var(--ease-out-expo);
+}
+
+:root .skip-link:focus:active {
+  transform: scale(var(--pick-press-scale));
+}
+
+/* ── 1.7 tooltip (A) ── */
+:root .pick-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: calc(var(--z-nav) + 2);
+  max-width: min(320px, calc(100vw - 8px));
+  padding: 6px 11px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 13px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+:root .pick-tooltip[hidden] {
+  display: none;
+}
+
+/* ── 1.1 site nav (C) ── */
+:root .site-nav {
+  min-height: 66px;
+  border-bottom: 2px solid var(--ink);
+}
+
+body.is-nav-at-top .site-nav.site-nav {
+  border-bottom: 2px solid var(--ink);
+}
+
+:root .site-nav .brand::before {
+  width: 36px;
+  height: 36px;
+}
+
+:root .site-nav nav {
+  gap: 0;
+}
+
+:root .site-nav nav a {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--ink);
+  font: 500 14px / 1 var(--sans);
+}
+
+:root .site-nav nav a::after {
+  content: none;
+}
+
+:root .site-nav .site-nav__text {
+  position: relative;
+  display: inline-block;
+}
+
+:root .site-nav .site-nav__text::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -6px;
+  left: 0;
+  height: var(--rule-b);
+  background: var(--ink);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+:root .site-nav nav a[aria-current="page"] .site-nav__text::after {
+  visibility: visible;
+  -webkit-mask: none;
+  mask: none;
+}
+
+:root .site-nav nav a:hover:not([aria-current="page"]) .site-nav__text::after {
+  visibility: visible;
+  animation: band-c-in calc(var(--level-c) * 3) steps(1, end) both;
+}
+
+:root .site-nav nav a.is-band-out:not(:hover):not([aria-current="page"]) .site-nav__text::after {
+  animation: band-c-out 80ms steps(1, end) both;
+}
+
+:root .site-nav nav a:focus-visible .site-nav__text::after {
+  visibility: visible;
+  -webkit-mask: none;
+  mask: none;
+  animation: none;
+}
+
+/* Case reading line: a 4 px band at level 4 at the bar's bottom edge; the read part is solid,
+   resolved per 12 px cell. */
+:root .site-nav .case-progress {
+  top: auto;
+  bottom: 0;
+  height: var(--band-c);
+}
+
+:root .site-nav .case-progress::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+  mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+}
+
+:root .site-nav .case-progress span {
+  position: relative;
+  width: calc(var(--scroll-progress, 0) * 100%);
+  width: round(down, calc(var(--scroll-progress, 0) * 100%), var(--tile-c));
+  height: 100%;
+  background: var(--ink);
+  -webkit-mask: none;
+  mask: none;
+  transform: none;
+  will-change: auto;
+}
+
+@media (max-width: 640px) {
+  :root .site-nav {
+    grid-template-rows: 48px 48px;
+    row-gap: 0;
+    min-height: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: 0;
+  }
+
+  :root .site-nav nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+    font-size: 14px;
+  }
+
+  :root .site-nav nav a {
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 2px;
+    font-size: 14px;
+  }
+
+  :root .site-nav .site-nav__text::after {
+    bottom: -4px;
+  }
+
+  :root .case-reading-tools {
+    top: var(--site-nav-phone-height);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .site-nav nav a .site-nav__text::after {
+    animation: none !important;
+  }
+
+  :root .site-nav nav a.is-band-out:not([aria-current="page"]) .site-nav__text::after {
+    visibility: hidden;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .site-nav nav a .site-nav__text::after {
+  animation: none !important;
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .site-nav nav a.is-band-out:not([aria-current="page"]) .site-nav__text::after {
+  visibility: hidden;
+}
+
+/* ── 1.2 theme control (C) ── the nav icon is a 2 px outline square; its interior is the dither
+   at a 4 px tile: automatic level 4, light empty, dark solid. A pointer flip resolves 2 → 4 → 6 →
+   the new level in 50 ms steps; hover and focus raise it one level. */
+:root .theme-toggle .hn.hn-sun {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 15px;
+  margin: -7.5px 0 0 -7.5px;
+  border: 2px solid currentColor;
+  background: none;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  -webkit-mask: none;
+  mask: none;
+  animation: none;
+}
+
+:root .theme-toggle .hn.hn-moon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border: 0;
+  background: currentColor;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  -webkit-mask: var(--dither-4) 0 0 / 4px 4px;
+  mask: var(--dither-4) 0 0 / 4px 4px;
+  animation: none;
+}
+
+html[data-theme-preference="light"] .theme-toggle .hn.hn-moon {
+  visibility: hidden;
+}
+
+html[data-theme-preference="dark"] .theme-toggle .hn.hn-moon {
+  -webkit-mask: none;
+  mask: none;
+}
+
+html:not([data-theme-preference="light"]):not([data-theme-preference="dark"]) .theme-toggle:is(:hover, :focus-visible) .hn.hn-moon {
+  -webkit-mask: var(--dither-5) 0 0 / 4px 4px;
+  mask: var(--dither-5) 0 0 / 4px 4px;
+}
+
+html[data-theme-preference="light"] .theme-toggle:is(:hover, :focus-visible) .hn.hn-moon {
+  visibility: visible;
+  -webkit-mask: var(--dither-1) 0 0 / 4px 4px;
+  mask: var(--dither-1) 0 0 / 4px 4px;
+}
+
+html:not([data-theme-preference="light"]):not([data-theme-preference="dark"]) .theme-toggle.is-flipping .hn.hn-moon {
+  animation: theme-resolve-c-auto 200ms steps(1, end) both;
+}
+
+html[data-theme-preference="light"] .theme-toggle.is-flipping .hn.hn-moon {
+  animation: theme-resolve-c-light 200ms steps(1, end) both;
+}
+
+html[data-theme-preference="dark"] .theme-toggle.is-flipping .hn.hn-moon {
+  animation: theme-resolve-c-dark 200ms steps(1, end) both;
+}
+
+@keyframes theme-resolve-c-auto {
+  0% { -webkit-mask: var(--dither-2) 0 0 / 4px 4px; mask: var(--dither-2) 0 0 / 4px 4px; }
+  25% { -webkit-mask: var(--dither-4) 0 0 / 4px 4px; mask: var(--dither-4) 0 0 / 4px 4px; }
+  50% { -webkit-mask: var(--dither-6) 0 0 / 4px 4px; mask: var(--dither-6) 0 0 / 4px 4px; }
+  75%, 100% { -webkit-mask: var(--dither-4) 0 0 / 4px 4px; mask: var(--dither-4) 0 0 / 4px 4px; }
+}
+
+@keyframes theme-resolve-c-light {
+  0% { visibility: visible; -webkit-mask: var(--dither-2) 0 0 / 4px 4px; mask: var(--dither-2) 0 0 / 4px 4px; }
+  25% { visibility: visible; -webkit-mask: var(--dither-4) 0 0 / 4px 4px; mask: var(--dither-4) 0 0 / 4px 4px; }
+  50% { visibility: visible; -webkit-mask: var(--dither-6) 0 0 / 4px 4px; mask: var(--dither-6) 0 0 / 4px 4px; }
+  75%, 100% { visibility: hidden; }
+}
+
+@keyframes theme-resolve-c-dark {
+  0% { -webkit-mask: var(--dither-2) 0 0 / 4px 4px; mask: var(--dither-2) 0 0 / 4px 4px; }
+  25% { -webkit-mask: var(--dither-4) 0 0 / 4px 4px; mask: var(--dither-4) 0 0 / 4px 4px; }
+  50% { -webkit-mask: var(--dither-6) 0 0 / 4px 4px; mask: var(--dither-6) 0 0 / 4px 4px; }
+  75%, 100% { -webkit-mask: none; mask: none; }
+}
+
+/* The footer "Theme" setting: the word, a framed 12 px cell at the current level, the value. */
+:root .site-footer__theme-cell {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  padding: 1px;
+  border: var(--hairline) solid var(--ink);
+  vertical-align: middle;
+}
+
+:root .site-footer__theme-cell::before {
+  content: "";
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+  mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+}
+
+html[data-theme-preference="light"] .site-footer__theme-cell::before {
+  background: var(--cell-empty);
+  -webkit-mask: none;
+  mask: none;
+}
+
+html[data-theme-preference="dark"] .site-footer__theme-cell::before {
+  -webkit-mask: none;
+  mask: none;
+}
+
+html:not([data-theme-preference="light"]):not([data-theme-preference="dark"]) .site-footer__setting:is(:hover, :focus-visible) .site-footer__theme-cell::before {
+  -webkit-mask: var(--dither-5) 0 0 / var(--tile-c) var(--tile-c);
+  mask: var(--dither-5) 0 0 / var(--tile-c) var(--tile-c);
+}
+
+html[data-theme-preference="light"] .site-footer__setting:is(:hover, :focus-visible) .site-footer__theme-cell::before {
+  background: var(--ink);
+  -webkit-mask: var(--dither-1) 0 0 / var(--tile-c) var(--tile-c);
+  mask: var(--dither-1) 0 0 / var(--tile-c) var(--tile-c);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .theme-toggle.is-flipping .hn.hn-moon {
+    animation: none !important;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .theme-toggle.is-flipping .hn.hn-moon {
+  animation: none !important;
+}
+
+/* ── 1.3 motion control (B, static) ── "Motion", a 2-cell switch and the state word, all Departure
+   11. On 8·8, off 0·0, reduced: a dotted frame. No transform and no transition anywhere on it. */
+:root .motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  transform: none;
+  transition: none;
+}
+
+:root .motion-toggle[hidden] {
+  display: none;
+}
+
+:root .motion-toggle :is(.motion-toggle__name, .motion-toggle__state) {
+  display: inline-block;
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  letter-spacing: 0;
+  transform: none;
+  transition: none;
+}
+
+:root .motion-toggle.is-off .motion-toggle__state,
+:root .motion-toggle:disabled .motion-toggle__state {
+  color: var(--muted);
+}
+
+:root .motion-toggle .motion-toggle__switch {
+  --cells: 2;
+  --cell-size: 7px;
+  --cell-gap: 1px;
+  display: inline-grid;
+  flex: none;
+  grid-template-columns: repeat(2, 7px);
+  gap: 1px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 11px;
+  padding: 1px 2px;
+  border: var(--hairline) solid var(--line);
+  transform: none;
+  transition: none;
+}
+
+:root .motion-toggle .motion-toggle__switch .cell {
+  width: 7px;
+  height: 7px;
+}
+
+:root .motion-toggle .motion-toggle__switch.is-dotted {
+  border-color: transparent;
+}
+
+:root .motion-toggle:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+:root .motion-toggle:is(:hover, :focus-visible) {
+  background: none;
+}
+
+/* ── 1.4 back to top (A) ── the words, then one 6 × 16 cell at the page's progress. */
+:root .site-footer__top {
+  gap: 11px;
+  color: var(--text-soft);
+  font: 500 13px / 1 var(--sans);
+}
+
+:root .site-footer__top:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+:root .site-footer__top .site-footer__progress {
+  --cells: 1;
+  --cell-size: 6px;
+  --cell-gap: 0px;
+  order: 2;
+}
+
+:root .site-footer__top .site-footer__progress .cell {
+  width: 6px;
+  height: 16px;
+}
+
+:root .site-footer__top .site-footer__pct:empty {
+  display: none;
+}
+
+/* ── 1.5 footer (hybrid "cell grids but lighter") ── B's grid with less ink: Departure 11 muted
+   headings with no rule, soft sans rows that go ink, a light cell-column marker (edge-marker.js). */
+:root .site-footer {
+  border-top: var(--hairline) solid var(--line);
+}
+
+:root .site-footer__inner {
+  padding-top: 48px;
+  padding-bottom: 0;
+}
+
+:root .site-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 33px 22px;
+  padding-bottom: 0;
+}
+
+:root .site-footer :is(.footer-links, .site-footer__settings) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+:root .site-footer .site-footer__heading {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .site-footer :is(.footer-links a, .site-footer__setting) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 0 0 4px;
+  border: 0;
+  background: none;
+  color: var(--text-soft);
+  font: 500 15px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-align: left;
+  text-decoration: none;
+  text-transform: none;
+}
+
+:root .site-footer :is(.footer-links a, .site-footer__setting):is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+:root .site-footer .site-footer__setting-value {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .site-footer .motion-toggle {
+  align-self: flex-start;
+  width: auto;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 0 0 4px;
+}
+
+:root .site-footer .motion-toggle:not(:disabled):is(:hover, :focus-visible) .motion-toggle__name {
+  color: var(--ink);
+}
+
+:root .has-edge-marker .edge-marker__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+:root .has-edge-marker.is-hot .edge-marker__label {
+  transform: translateX(var(--label-b));
+}
+
+:root .edge-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: 4px;
+  grid-auto-rows: 7px;
+  row-gap: 1px;
+  align-content: start;
+  width: 4px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+:root .edge-marker .cell {
+  width: 4px;
+  height: 7px;
+}
+
+:root .site-footer__base {
+  margin-top: 44px;
+  padding: 11px 0;
+  border-top: var(--hairline) solid var(--line);
+  font: 400 13px / 1.4 var(--sans);
+}
+
+:root .site-footer__mark {
+  gap: 11px;
+  min-height: 44px;
+  color: var(--text-soft);
+  font: 400 13px / 1.4 var(--sans);
+}
+
+:root .site-footer__mark:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+:root .site-footer__mark .site-footer__mark-logo {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 820px) {
+  :root .site-footer__columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  :root .site-footer__columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── 1.6 dialog (B) ── paper, an ink hairline, no shadow and no blur. A pointer open switches the
+   panel on from a 2 px line at its centre (four steps, 240 ms); a pointer close leaves with the
+   180 ms afterglow while focus returns at once. Escape, backdrop and keyboard are instant. */
+:root :is(.footer-booking-modal, .case-walkthrough-modal) {
+  position: fixed;
+  inset: 0;
+  width: min(720px, calc(100vw - 32px));
+  max-width: none;
+  height: fit-content;
+  max-height: 80vh;
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--afterglow-b) steps(3, jump-start),
+    overlay var(--afterglow-b) allow-discrete,
+    display var(--afterglow-b) allow-discrete;
+}
+
+:root :is(.footer-booking-modal, .case-walkthrough-modal):not([open]) {
+  opacity: 0;
+}
+
+:root :is(.footer-booking-modal, .case-walkthrough-modal)::backdrop {
+  background: var(--ink-46);
+  backdrop-filter: none;
+  opacity: 1;
+  transition:
+    opacity var(--afterglow-b) steps(3, jump-start),
+    overlay var(--afterglow-b) allow-discrete,
+    display var(--afterglow-b) allow-discrete;
+}
+
+:root :is(.footer-booking-modal, .case-walkthrough-modal):not([open])::backdrop {
+  opacity: 0;
+}
+
+@starting-style {
+  :root :is(.footer-booking-modal, .case-walkthrough-modal)[open] {
+    opacity: 1;
+    transform: none;
+  }
+
+  :root :is(.footer-booking-modal, .case-walkthrough-modal)[open]::backdrop {
+    background: var(--ink-46);
+    backdrop-filter: none;
+    opacity: 1;
+  }
+}
+
+:root :is(.footer-booking-modal, .case-walkthrough-modal).is-instant,
+:root :is(.footer-booking-modal, .case-walkthrough-modal).is-instant::backdrop {
+  transition: none;
+}
+
+:root :is(.footer-booking-modal, .case-walkthrough-modal).is-opening {
+  animation: pick-dialog-on var(--switch-b) steps(4, jump-start) both;
+}
+
+@keyframes pick-dialog-on {
+  from { clip-path: inset(calc(50% - 1px) 0); }
+  to { clip-path: inset(0); }
+}
+
+:root :is(.footer-booking-modal__header, .case-walkthrough-modal__header) {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 11px;
+  min-height: 0;
+  padding: 11px 11px 11px 22px;
+  border-bottom: var(--hairline) solid var(--line);
+  font-family: var(--sans);
+}
+
+:root :is(.footer-booking-modal__header, .case-walkthrough-modal__header) > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+:root :is(.footer-booking-modal__kicker, .case-walkthrough-modal__kicker) {
+  margin: 0;
+  padding-top: 8px;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root :is(.footer-booking-modal__header, .case-walkthrough-modal__header) h2 {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  margin: 0;
+  color: var(--ink);
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root :is(.footer-booking-modal__header, .case-walkthrough-modal__header) :is(.footer-booking-modal__close, .case-walkthrough-modal__close) {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root :is(.footer-booking-modal, .case-walkthrough-modal),
+  :root :is(.footer-booking-modal, .case-walkthrough-modal)::backdrop {
+    transition: none;
+    animation: none !important;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.footer-booking-modal, .case-walkthrough-modal),
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.footer-booking-modal, .case-walkthrough-modal)::backdrop {
+  transition: none;
+  animation: none !important;
+}
+
+/* ── 1.12 icon button (A) ── 44 px square (48 in dialogs), ink hairline, paper, a 15 px cell icon.
+   Hover: the 4 px A marker inside the left edge in three steps; pressed/on: solid ink, paper icon. */
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close) {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  overflow: hidden;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+  color: var(--ink);
+  font: 400 15px / 1 var(--sans);
+  cursor: pointer;
+  transition: transform 140ms var(--ease-out-expo);
+}
+
+:root :is(.cell-player__play, .footer-booking-modal__close, .case-walkthrough-modal__close) {
+  position: relative;
+}
+
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close)[hidden] {
+  display: none;
+}
+
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-a);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close):is(:hover, :focus-visible) {
+  background: var(--paper);
+  box-shadow: none;
+  color: var(--ink);
+}
+
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close):hover::after {
+  transform: none;
+  transition: transform var(--snap-a) steps(3, jump-start);
+}
+
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close):focus-visible::after {
+  transform: none;
+  transition: none;
+}
+
+:root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(var(--pick-press-scale));
+}
+
+:root :is(.cell-player__play, .overview-video__toggle)[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:root :is(.cell-player__play, .overview-video__toggle)[aria-pressed="true"]::after {
+  display: none;
+}
+
+:root :is(.cell-player__play, .footer-booking-modal__close, .case-walkthrough-modal__close) .cell-icon {
+  --icon-cell: 3px;
+  --cell-size: 3px;
+}
+
+:root :is(.cell-player__play, .footer-booking-modal__close, .case-walkthrough-modal__close) .cell-icon .cell:not([data-level="0"]) {
+  background: currentColor;
+}
+
+:root .overview-video__toggle .overview-video__icon {
+  width: 15px;
+  height: 15px;
+}
+
+:root .overview-video__toggle svg {
+  fill: currentColor;
+}
+
+/* ── 1.8 primary and secondary buttons (A) ── 44 px, primary 176 px wide, ink hairline on paper.
+   Hover: the 4 px marker arrives in three steps; the label steps 4 px in two. Press: press.js
+   fills in reading order and the label inverts at level 6; scale 0.97 on :active. */
+:root [data-ascii-action]:is(a, button) {
+  min-height: 44px;
+  gap: 10px;
+  transition: transform 140ms var(--ease-out-expo);
+}
+
+:root [data-ascii-action="primary"]:is(a, button) {
+  min-width: 176px;
+}
+
+:root [data-ascii-action]:is(a, button)::after {
+  width: var(--marker-a);
+}
+
+:root [data-ascii-action]:is(a, button):hover::after {
+  transform: none;
+  transition: transform var(--snap-a) steps(3, jump-start);
+}
+
+:root [data-ascii-action]:is(a, button):focus-visible::after {
+  transform: none;
+  transition: none;
+}
+
+:root [data-ascii-action]:is(a, button) > .fill-label {
+  gap: 10px;
+  transition: none;
+}
+
+:root [data-ascii-action]:is(a, button):is(:hover, :focus-visible) > .fill-label {
+  transform: none;
+}
+
+:root [data-ascii-action]:is([data-ascii-action="primary"], [data-ascii-action="secondary"]):is(a, button):hover > .fill-label {
+  transform: translateX(var(--label-a));
+  transition: transform var(--snap-a) steps(2, jump-start);
+}
+
+:root [data-ascii-action]:is(a, button):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(var(--pick-press-scale));
+}
+
+:root [data-ascii-action]:is(a, button)[data-press-state="done"]::after {
+  transform: none;
+  transition: none;
+}
+
+/* The label inverts only once enough ink sits behind it (mean level 6, cells.js .is-inverted). */
+:root .has-fill.is-filling > .fill-label {
+  color: inherit;
+  mix-blend-mode: normal;
+}
+
+:root .has-fill:is(.is-inverted, .is-filled) > .fill-label {
+  color: var(--difference-ink);
+  mix-blend-mode: difference;
+}
+
+@media (forced-colors: active) {
+  :root .has-fill:is(.is-inverted, .is-filled) > .fill-label {
+    color: inherit;
+    mix-blend-mode: normal;
+  }
+}
+
+:root .press-loader {
+  --cell-size: 5px;
+}
+
+@media (max-width: 640px) {
+  :root main :is([data-ascii-action="primary"], [data-ascii-action="secondary"]):is(a, button):not(:is(.ascii-banner-studio__controls, .pc-shell) *) {
+    width: 100%;
+  }
+}
+
+/* ── 1.9 quiet action (A) ── a word with a 2 px soft rule (level 3) 10 px below; hover and focus
+   turn it solid in one step and nudge the arrow 2 then 3 px; pressed thickens it to 3 px. */
+:root [data-ascii-action="text"]:is(a, button)::after,
+:root .labs-item__link .labs-item__action::after {
+  content: "";
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: 10px;
+  left: 0;
+  display: block;
+  width: auto;
+  height: var(--rule-a);
+  background: var(--ink);
+  transform: none;
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  transition: none;
+  pointer-events: none;
+}
+
+:root .labs-item__link .labs-item__action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+:root [data-ascii-action="text"]:is(a, button):is(:hover, :focus-visible)::after,
+:root .labs-item__link:is(:hover, :focus-visible) .labs-item__action::after {
+  -webkit-mask: none;
+  mask: none;
+  transition: none;
+}
+
+:root [data-ascii-action="text"]:is(a, button):active::after {
+  height: 3px;
+  -webkit-mask: none;
+  mask: none;
+}
+
+:root [data-ascii-action="text"]:is(a, button):is(:disabled, [aria-disabled="true"])::after {
+  display: block;
+  -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root [data-ascii-action="text"]:is(a, button):is(:disabled, [aria-disabled="true"]) {
+  color: var(--muted);
+}
+
+:root [data-ascii-action="text"]:is(a, button):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: none;
+}
+
+:root [data-ascii-action="text"] span[aria-hidden="true"],
+:root .labs-item__link .labs-item__arrow {
+  display: inline-block;
+  transform: none;
+  animation: none;
+}
+
+:root [data-ascii-action="text"]:is(:hover, :focus-visible):not([aria-disabled="true"]) span[aria-hidden="true"],
+:root .labs-item__link:is(:hover, :focus-visible) .labs-item__arrow {
+  transform: translateX(3px);
+  animation: pick-nudge-a var(--snap-a) steps(1, end);
+}
+
+/* ── 1.10 inline link in prose (A) ── links to other sites get ↗ after the words (not read aloud). */
+:root :is(.case-study-body, .note-body, .about-page, .contact-hero, .published-item__body, .case-figure-head, figcaption, .labs-tool-hero) :is(p, li, em, span, figcaption) a:not([data-ascii-action]):not([class])[href^="http"]:not([href*="traykov.cc"])::after {
+  content: "↗" / "";
+  display: inline-block;
+  margin-left: 0.2em;
+  font-family: var(--mono);
+  font-weight: 400;
+  text-decoration: none;
+}
+
+/* ── 1.11 arrows and back links (A) ── "← Work" is 14 px with the A soft rule; the arrow nudges left. */
+:root :is(.case-breadcrumb a, .note-page__back a, .pc-shell .pc-kicker a) {
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-breadcrumb a .case-breadcrumb__arrow::before {
+  content: none;
+}
+
+:root :is(.case-breadcrumb__arrow, .back-link__arrow) {
+  --nudge-sign: -1;
+  display: inline-block;
+  font-family: var(--mono);
+  font-weight: 400;
+}
+
+:root :is(.case-breadcrumb a, .note-page__back a, .pc-shell .pc-kicker a):is(:hover, :focus-visible) :is(.case-breadcrumb__arrow, .back-link__arrow) {
+  transform: translateX(-3px);
+  animation: pick-nudge-a var(--snap-a) steps(1, end);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root [data-ascii-action]:is(a, button),
+  :root [data-ascii-action]:is(a, button)::after,
+  :root [data-ascii-action]:is(a, button) > .fill-label,
+  :root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close),
+  :root :is(.cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close)::after,
+  :root .skip-link {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  :root :is([data-ascii-action], .cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close, .skip-link):active {
+    transform: none !important;
+  }
+
+  :root [data-ascii-action]:is(a, button):hover > .fill-label,
+  :root [data-ascii-action="text"] span[aria-hidden="true"],
+  :root .labs-item__link .labs-item__arrow,
+  :root :is(.case-breadcrumb__arrow, .back-link__arrow) {
+    animation: none !important;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is([data-ascii-action], .cell-player__play, .overview-video__toggle, .footer-booking-modal__close, .case-walkthrough-modal__close, .skip-link):active {
+  transform: none !important;
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is([data-ascii-action] span[aria-hidden="true"], .labs-item__arrow, .case-breadcrumb__arrow, .back-link__arrow, [data-ascii-action] > .fill-label, [data-ascii-action]::after) {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ── 1.14 tabs and segmented controls (A) ── a hairline group with no dividers; 44 px options;
+   selected is solid ink filled in reading order (segmented.js); hover is a 2 px under-marker that
+   arrives in three steps and leaves in one. */
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+  width: fit-content;
+  max-width: 100%;
+  border: var(--hairline) solid var(--line);
+}
+
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button {
+  position: relative;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-right: 0;
+  font: 500 14px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button::before {
+  content: none;
+  animation: none;
+}
+
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button::after {
+  content: "";
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  height: var(--rule-a);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: none;
+  pointer-events: none;
+}
+
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.is-active):not(.is-filled)::after {
+  transform: none;
+  transition: transform var(--snap-a) steps(3, jump-start);
+}
+
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button:is(:hover, :focus-visible):not([aria-pressed="true"]):not([aria-selected="true"]):not(.is-active) {
+  color: var(--ink);
+}
+
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button:focus-visible {
+  z-index: 1;
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: -4px;
+}
+
+/* Before segmented.js runs (and without JS) the selected option is plain solid ink. */
+:root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls):not([data-segmented-ready]) > button:is([aria-pressed="true"], [aria-selected="true"], .is-active) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:root body [data-segmented-ready="true"][data-segmented-ready] > button.is-filled {
+  background: var(--ink);
+}
+
+:root body [data-segmented-ready="true"] > button > .fill-label {
+  gap: 8px;
+}
+
+:root .case-switch button small {
+  color: inherit;
+  opacity: 0.62;
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .is-snapping {
+  animation: pick-snap-a var(--snap-a) steps(1, end) both;
+  animation-delay: var(--mark-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .is-snapping,
+  :root body :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"], .playground-flip-tabs, .pave-turntable-tabs, .pc-shell .pc-controls) > button::after {
+    animation: none;
+    transition: none !important;
+  }
+}
+
+/* ── 1.15 select (A) ── the native select in tool panels: 40 px, a hairline, 44 px kept clear at the
+   end and a 15 × 9 cell chevron 14 px from the edge. The banner's quality list is the listbox form. */
+:root body :is(.playground-controls, .pave-turntable-controls) select {
+  min-height: 40px;
+  padding: 0 44px 0 12px;
+  padding-inline-end: 44px !important;
+  border: var(--hairline) solid var(--line);
+  background-color: var(--paper);
+  /* The global select rule draws its chevron with !important; the cell chevron has to match it. */
+  background-image: var(--pick-chevron) !important;
+  background-position: calc(100% - 14px) 50% !important;
+  background-size: 15px 9px !important;
+  background-repeat: no-repeat !important;
+  color: var(--ink);
+  font: 500 14px / 1.2 var(--sans);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-trigger {
+  position: relative;
+  min-height: 44px;
+  box-shadow: none;
+  padding: 0 44px 0 12px;
+  border: var(--hairline) solid var(--line);
+  background: var(--pick-chevron) calc(100% - 14px) 50% / 15px 9px no-repeat, var(--paper);
+  color: var(--ink);
+  font: 500 14px / 1.2 var(--sans);
+  text-align: left;
+  text-transform: none;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-trigger:is(:hover, :focus-visible),
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-trigger[aria-expanded="true"] {
+  background: var(--pick-chevron) calc(100% - 14px) 50% / 15px 9px no-repeat, var(--paper);
+  box-shadow: none;
+  color: var(--ink);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-trigger > span[aria-hidden="true"] {
+  display: none;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-trigger > [data-ascii-banner-quality-label] {
+  opacity: 1;
+  font: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox {
+  top: 100%;
+  border: var(--hairline) solid var(--line);
+  border-top: 0;
+  background: var(--paper);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox [role="option"] {
+  position: relative;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 14px / 1.2 var(--sans);
+  text-transform: none;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox [role="option"]:is(:hover, :focus-visible),
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox [role="option"][aria-selected="true"] {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox [role="option"][aria-selected="true"] {
+  box-shadow: inset var(--marker-a) 0 0 var(--ink);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox [role="option"]:is(:hover, :focus-visible) {
+  outline: 0;
+  box-shadow: inset 0 calc(var(--rule-a) * -1) 0 var(--ink);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__quality-picker .ascii-banner-studio__quality-listbox [role="option"][aria-selected="true"]:is(:hover, :focus-visible) {
+  box-shadow: inset var(--marker-a) 0 0 var(--ink), inset 0 calc(var(--rule-a) * -1) 0 var(--ink);
+}
+
+:root body .ascii-banner-studio__quality-listbox.is-switching-a {
+  animation: pick-switch-a var(--switch-a) steps(4, jump-start) both;
+}
+
+/* ── 1.16 checkbox (A) ── 18 px, ink hairline; checked fills through levels 3, 6, 8 (40 ms each),
+   then a paper check. Keyboard toggles land at once; unchecking is one step. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border: var(--hairline) solid var(--ink);
+  background: transparent;
+  box-shadow: none;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"]:checked {
+  background: var(--pick-check) 50% 50% / 10px 10px no-repeat, var(--ink);
+  box-shadow: none;
+  animation: check-fill-a calc(var(--snap-a)) steps(1, end);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"]:checked:focus-visible {
+  animation: none;
+}
+
+@keyframes check-fill-a {
+  0% { background: var(--ink); -webkit-mask: var(--dither-3) 0 0 / 4px 4px; mask: var(--dither-3) 0 0 / 4px 4px; }
+  33.333% { background: var(--ink); -webkit-mask: var(--dither-6) 0 0 / 4px 4px; mask: var(--dither-6) 0 0 / 4px 4px; }
+  66.666% { background: var(--ink); -webkit-mask: none; mask: none; }
+  100% { -webkit-mask: none; mask: none; }
+}
+
+:root .playground-controls .control-toggle {
+  min-height: 36px;
+  cursor: pointer;
+}
+
+/* ── 1.17 slider (B) ── 24 cells of 7 px on an 8 px pitch, 12 px tall, left-aligned. */
+:root .cell-range {
+  grid-template-columns: repeat(24, 7px);
+  gap: 1px;
+  width: max-content;
+  max-width: 100%;
+  height: 12px;
+  margin-block: 12px;
+}
+
+:root .cell-range .cell {
+  width: 7px;
+  height: 12px;
+}
+
+:root .cell-range:focus-within {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: 2px;
+}
+
+:root .cell-range.is-disabled {
+  opacity: 1;
+}
+
+/* ── 1.18 disclosure (A) ── the summary is a quiet action with a cell chevron (disclosure.js); the
+   panel switches on from the summary edge (four steps, 200 ms) on pointer opens. */
+:root :is(.notes-search, .pc-shell details.pc-disclosure) > summary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--ink);
+  font: 500 15px / 1.2 var(--sans);
+  letter-spacing: 0;
+  list-style: none;
+  text-transform: none;
+}
+
+:root :is(.notes-search, .pc-shell details.pc-disclosure) > summary::before {
+  content: none;
+}
+
+:root :is(.notes-search, .pc-shell details.pc-disclosure) > summary::after {
+  content: "";
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: 10px;
+  left: 0;
+  width: auto;
+  height: var(--rule-a);
+  background: var(--ink);
+  transform: none;
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  pointer-events: none;
+}
+
+:root :is(.notes-search, .pc-shell details.pc-disclosure) > summary:is(:hover, :focus-visible)::after,
+:root :is(.notes-search, .pc-shell details.pc-disclosure)[open] > summary::after {
+  -webkit-mask: none;
+  mask: none;
+}
+
+:root .pc-shell details.pc-disclosure[open] > summary::after {
+  transform: none;
+}
+
+:root .pick-disclosure__chevron {
+  flex: none;
+}
+
+:root .pick-disclosure__chevron .cell:not([data-level="0"]) {
+  background: currentColor;
+}
+
+:root .pc-shell details.pc-disclosure > summary ~ :is(p, .pc-skill__source) {
+  border-top: var(--hairline) solid var(--line);
+  padding-top: 11px;
+}
+
+:root .is-switching-a {
+  animation: pick-switch-a var(--switch-a) steps(4, jump-start) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .is-switching-a,
+  :root body .ascii-banner-studio__quality-listbox.is-switching-a,
+  :root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"]:checked {
+    animation: none;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.is-switching-a, .is-snapping, .playground-controls input[type="checkbox"], .pave-turntable-controls input[type="checkbox"], .ascii-banner-studio__controls input[type="checkbox"]) {
+  animation: none !important;
+}
+
+/* ── 1.20 reveal with stagger (A) ── text and blocks snap on in one step after their delay (no
+   blink, 120 ms); media and "scan" sweep in six bands over 300 ms. Groups stagger 0, 70, 125, 170,
+   210, 245, 275 ms (reveal.js). Reduced motion and no JS show everything at rest. */
+html[data-motion="ready"] [data-reveal][data-reveal-animate="true"] {
+  animation: pick-snap-a var(--snap-a) steps(1, end) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="ready"] [data-reveal="scan"][data-reveal-animate="true"],
+html[data-motion="ready"] [data-reveal][data-reveal-media][data-reveal-animate="true"] {
+  animation: mark-sweep var(--sweep-a) steps(6) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-motion="ready"] [data-reveal],
+  html[data-motion="ready"] [data-reveal][data-reveal-animate="true"],
+  html[data-motion="ready"] [data-reveal="scan"][data-reveal-animate="true"],
+  html[data-motion="ready"] [data-reveal][data-reveal-media][data-reveal-animate="true"] {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+  }
+}
+
+/* Footer: labels sit flush with their column headings; the cell marker hangs in the gutter.
+   The motion setting reads like the theme setting (sans label, Departure state). */
+:root .site-footer :is(.footer-links a, .site-footer__setting),
+:root .site-footer .motion-toggle {
+  padding-left: 0;
+}
+
+:root .site-footer .edge-marker {
+  left: -12px;
+}
+
+:root .site-footer .motion-toggle .motion-toggle__name {
+  color: var(--text-soft);
+  font: 500 15px / 1.2 var(--sans);
+}
+
+/* 29 PICKS · LISTS, HOME AND CASE EVIDENCE ─ batch 2 of site-picks-implementation.md. Notes rows,
+   Labs rows, item rows, the Home work entry, private work, the case hero, facts, image grids and
+   the case cover are A (ruled paper); the Home entry rail, the case video player and the Notes
+   empty state are B (cell grid). Case-evidence components owned by the round 4 block (captions,
+   compare, lens, live embed frame, quotes, stat CSS, timeline) are not touched here. Appended
+   after section 28; the round 3 rules it supersedes stay in place for the cleanup pass. */
+
+@keyframes pick-afterglow-a {
+  0% { opacity: 0.55; animation-timing-function: steps(1, end); }
+  50%, 100% { opacity: 0; }
+}
+
+/* ── 2.1 Notes rows (A) ── one link per row, 66 px: the title in Departure 22, date · read time in
+   13 px sans on the right, a Geist Mono arrow. Hover: the 4 px marker in three steps, the title
+   steps 4 px in two; leave in one step; keyboard focus lands both at once. */
+:root .notes-list__item {
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .notes-list__item > a {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto 38px;
+  grid-template-areas: "title meta read arrow";
+  align-items: center;
+  gap: 4px 0;
+  min-height: 66px;
+  padding: 11px 0 11px 10px;
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+:root .notes-list__item > a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-a);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: none;
+  pointer-events: none;
+}
+
+:root .notes-list__item > a:hover::before {
+  transform: none;
+  transition: transform var(--snap-a) steps(3, jump-start);
+}
+
+:root .notes-list__item > a:focus-visible::before {
+  transform: none;
+  transition: none;
+}
+
+:root .notes-list__item h3,
+:root .notes-list .notes-list__item > a > h3 {
+  grid-area: title;
+  min-width: 0;
+  margin: 0;
+  padding-right: 16px;
+  font: 400 var(--type-px-22) / 1.25 var(--font-pixel);
+  letter-spacing: 0;
+  transform: none;
+  transition: none;
+}
+
+:root .notes-list .notes-list__item > a:hover > h3 {
+  transform: translateX(var(--label-a));
+  transition: transform var(--snap-a) steps(2, jump-start);
+}
+
+:root .notes-list .notes-list__item > a:focus-visible > h3 {
+  transform: translateX(var(--label-a));
+  transition: none;
+}
+
+:root .notes-list__item > a > .notes-list__meta,
+:root .notes-list__item > a:is(:hover, :focus-visible) > .notes-list__meta {
+  grid-area: meta;
+  justify-self: end;
+  transform: none;
+  transition: none;
+}
+
+:root :is(.notes-list__meta, .notes-list__meta time, .notes-list__read-time) {
+  display: inline;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+:root .notes-list__item .notes-list__read-time {
+  display: block;
+  grid-area: read;
+}
+
+:root .notes-list__item .notes-list__read-time::before {
+  content: "\00a0·\00a0";
+}
+
+:root .notes-list__item .notes-list__arrow {
+  display: block;
+  grid-area: arrow;
+  justify-self: end;
+  font: 400 22px / 1 var(--mono);
+}
+
+:root .notes-list__item.is-leaving {
+  animation: pick-afterglow-a var(--afterglow-a) both;
+}
+
+/* Search: a 44 px field on a hairline; focus draws a 2 px ink line left → right in four steps. */
+:root .notes-search input {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-bottom: var(--hairline) solid var(--line);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-origin: border-box;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  color: var(--ink);
+  font: 400 17px / 1.4 var(--sans);
+  transition: background-size 160ms steps(4, end);
+}
+
+:root .notes-search input:focus {
+  border-bottom-color: var(--line);
+  background-size: 100% 2px;
+  outline: none;
+}
+
+:root .notes-search output {
+  grid-column: auto;
+  justify-self: start;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+}
+
+/* Empty state (B): a 5 × 3 block of 7 px cells breathing on the tick (loader.js), then words. */
+:root .notes-empty {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding: 22px 0;
+  border: 0;
+  text-align: left;
+}
+
+:root .notes-empty[hidden] {
+  display: none;
+}
+
+:root .notes-empty__icon {
+  --cells: 5;
+  --cell-size: 7px;
+  --cell-gap: 1px;
+  margin-bottom: 8px;
+}
+
+:root .notes-empty__title {
+  margin: 0;
+  color: var(--ink);
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+:root .notes-empty p:not(.notes-empty__title) {
+  max-width: 40ch;
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 16px / 1.5 var(--sans);
+}
+
+@media (max-width: 640px) {
+  :root .notes-list__item > a {
+    grid-template-columns: auto minmax(0, 1fr) 22px;
+    grid-template-areas:
+      "title title arrow"
+      "meta read arrow";
+    min-height: 88px;
+  }
+
+  :root .notes-list__item > a > .notes-list__meta,
+  :root .notes-list__item > a:is(:hover, :focus-visible) > .notes-list__meta {
+    justify-self: start;
+  }
+
+  :root .notes-list__item .notes-list__read-time {
+    justify-self: start;
+  }
+}
+
+/* ── 2.2 Labs rows (A) ── the real screen at 132 px (4:3), the title, one sentence, "Open →" as a
+   quiet action. Hover and focus: the marker on the row's left edge, the screen frame goes ink, the
+   quiet rule goes solid and the arrow nudges (section 28); the copy does not step aside. Screens
+   sweep in on the stagger (data-reveal="scan"). */
+:root .labs-list {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+:root .labs-item {
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .labs-item__link {
+  position: relative;
+  grid-template-columns: 132px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0 16px 12px;
+}
+
+:root .labs-item__link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-a);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: none;
+  pointer-events: none;
+}
+
+:root .labs-item__link:hover::before {
+  transform: none;
+  transition: transform var(--snap-a) steps(3, jump-start);
+}
+
+:root .labs-item__link:focus-visible::before {
+  transform: none;
+  transition: none;
+}
+
+:root .labs-item__link > *,
+:root .labs-item__link:is(:hover, :focus-visible) > :is(.labs-item__copy, .labs-item__action) {
+  transform: none;
+  transition: none;
+}
+
+:root .labs-item__screen {
+  width: 132px;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border: var(--hairline) solid var(--line);
+}
+
+:root .labs-item__link:is(:hover, :focus-visible) .labs-item__screen {
+  border-color: var(--ink);
+}
+
+:root .labs-item__link .labs-item__screen::after {
+  content: none;
+}
+
+:root .labs-item__copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+:root .labs-item__title {
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+:root .labs-item__body {
+  max-width: 46ch;
+  color: var(--text-soft);
+  font: 400 17px / 1.5 var(--sans);
+}
+
+:root .labs-item__action {
+  padding-right: 0;
+}
+
+@media (max-width: 700px) {
+  :root .labs-item__link {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "screen screen"
+      "copy action";
+  }
+
+  :root .labs-item__screen {
+    width: auto;
+  }
+}
+
+/* ── 2.3 Published items (About) and experience rows (CV) (A) ── a date column in Departure 11, the
+   title in Departure 22, the body at 17 px, a 44 px secondary button on the right where there is a
+   link; 22 px row padding, a hairline beneath. Only the button takes a marker. */
+:root .published-list {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  border-top: var(--hairline) solid var(--line);
+}
+
+:root .published-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title action"
+    "body action";
+  align-content: start;
+  align-items: start;
+  gap: 6px 16px;
+  min-height: 0;
+  padding: 22px 0;
+  border: 0;
+  border-bottom: var(--hairline) solid var(--line);
+  border-radius: 0;
+  background: transparent;
+}
+
+:root main .published-item h3 {
+  grid-area: title;
+  margin: 0;
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .published-item__body {
+  grid-area: body;
+  max-width: 64ch;
+  color: var(--text-soft);
+  font: 400 17px / 1.5 var(--sans);
+}
+
+:root .published-item a[data-ascii-action] {
+  grid-area: action;
+  align-self: start;
+  margin: 0;
+}
+
+:root .experience-list {
+  border-top: var(--hairline) solid var(--line);
+}
+
+:root .experience-item {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "date title action"
+    "date body action";
+  align-items: start;
+  gap: 6px 16px;
+  padding: 22px 0;
+  border-bottom: var(--hairline) solid var(--line);
+  background: transparent;
+}
+
+:root .experience-item > div {
+  display: contents;
+}
+
+:root .experience-item > div:first-child > p {
+  grid-area: date;
+  margin: 0;
+  padding-top: 5px;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.5 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root main .experience-item h2 {
+  grid-area: title;
+  margin: 0;
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+  letter-spacing: 0;
+}
+
+:root .experience-item > div:last-child > p {
+  grid-area: body;
+  max-width: 64ch;
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 17px / 1.5 var(--sans);
+}
+
+:root .experience-item a[data-ascii-action] {
+  grid-area: action;
+  align-self: start;
+  width: auto;
+  padding: 0 20px;
+  border: var(--hairline) solid var(--ink);
+  color: var(--ink);
+  font: 500 15px / 1 var(--sans);
+  text-transform: none;
+}
+
+@media (max-width: 640px) {
+  :root .published-item {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "body"
+      "action";
+  }
+
+  :root .experience-item {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "date"
+      "title"
+      "body"
+      "action";
+  }
+
+  :root :is(.published-item, .experience-item) a[data-ascii-action] {
+    justify-self: start;
+    width: auto;
+    margin-top: 6px;
+  }
+}
+
+/* ── 2.4 Home entry rail (B) ── each entry: a stack of three 7 px cells (current 8·8·8, earlier
+   3·3·3, later 0·0·0), a Departure 11 counter, the label. Pointer hover fills the stack top to
+   bottom in three steps of 30 ms (li::before, an ink layer clipped in steps); leave and keyboard
+   focus are instant. ≤ 900: a strip of 48 px items, counter and label, no cells. */
+:root .homepage-timeline__toc ol {
+  gap: 2px;
+  counter-reset: rail-entry;
+}
+
+:root .homepage-timeline__toc li {
+  position: relative;
+  counter-increment: rail-entry;
+}
+
+:root .homepage-timeline__toc a {
+  display: grid;
+  grid-template-columns: 7px 2.4ch minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  font: 400 14px / 1.35 var(--sans);
+}
+
+:root .homepage-timeline__toc a::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  width: 7px;
+  height: 23px;
+  margin: 0;
+  background: var(--cell-empty);
+  -webkit-mask: linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y;
+  mask: linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y;
+}
+
+:root .homepage-timeline__toc a[data-rail-state="read"]::before {
+  background: var(--ink);
+  -webkit-mask:
+    linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y,
+    var(--dither-3) 0 0 / 4px 4px;
+  -webkit-mask-composite: source-in;
+  mask:
+    linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y,
+    var(--dither-3) 0 0 / 4px 4px;
+  mask-composite: intersect;
+}
+
+:root .homepage-timeline__toc a:is([aria-current="location"], [data-rail-state="current"])::before {
+  background: var(--ink);
+  -webkit-mask: linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y;
+  mask: linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y;
+}
+
+:root .homepage-timeline__toc a::after {
+  content: counter(rail-entry, decimal-leading-zero);
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .homepage-timeline__toc li::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 11.5px);
+  left: 0;
+  z-index: 1;
+  width: 7px;
+  height: 23px;
+  background: var(--ink);
+  -webkit-mask: linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y;
+  mask: linear-gradient(#000 7px, transparent 7px) 0 0 / 100% 8px repeat-y;
+  clip-path: inset(0 0 100% 0);
+  transition: none;
+  pointer-events: none;
+}
+
+:root .homepage-timeline__toc li:has(> a:hover)::before {
+  clip-path: inset(0);
+  transition: clip-path 90ms steps(3, jump-start);
+}
+
+:root .homepage-timeline__toc li:has(> a:focus-visible)::before {
+  clip-path: inset(0);
+  transition: none;
+}
+
+:root .homepage-timeline__toc a:is(:hover, :focus-visible, [aria-current="location"]) {
+  border: 0;
+  color: var(--ink);
+}
+
+:root .homepage-timeline__toc a[aria-current="location"] {
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  :root .homepage-timeline__toc ol {
+    gap: 0;
+  }
+
+  :root .homepage-timeline__toc a {
+    display: flex;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 14px;
+    white-space: nowrap;
+  }
+
+  :root .homepage-timeline__toc a::before,
+  :root .homepage-timeline__toc li::before {
+    content: none;
+  }
+
+  :root .homepage-timeline__toc a::after {
+    order: -1;
+  }
+}
+
+/* ── 2.5 Home work entry (A) ── the date in 13 px sans, the title in Departure 33 (22 on phones),
+   the summary at 17 / 1.6. Lead media in a hairline frame with no strip: the 44 px toggle and one
+   4 × 16 progress cell (video-cells.js) sit in the frame's bottom-left corner. Context on A soft
+   rules; impact as a two-column row between hairlines; the quiet "Read full case study →". */
+:root .homepage-timeline__date {
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .project-overview__copy h3 {
+  font: 400 var(--type-px-33) / 1.1 var(--font-pixel);
+  letter-spacing: 0;
+}
+
+:root .project-overview__summary {
+  max-width: 64ch;
+  color: var(--text-soft);
+  font: 400 17px / 1.6 var(--sans);
+}
+
+body[data-page-type="home"] .overview-video__frame,
+body[data-page-type="home"] img.project-overview__media {
+  border: var(--hairline) solid var(--line);
+}
+
+body[data-page-type="home"] .overview-video__toggle {
+  top: auto;
+  right: auto;
+  bottom: 11px;
+  left: 11px;
+}
+
+body[data-page-type="home"] .overview-video__progress {
+  position: absolute;
+  bottom: 11px;
+  left: 55px;
+  z-index: var(--z-inline-effect);
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 44px;
+  border: var(--hairline) solid var(--ink);
+  border-left: 0;
+  background: var(--paper);
+  pointer-events: none;
+}
+
+body[data-page-type="home"] .overview-video__progress .cell {
+  width: 4px;
+  height: 16px;
+}
+
+body[data-page-type="home"] .video-cells--strip {
+  display: none;
+}
+
+body[data-page-type="home"] .project-overview__caption-label {
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+}
+
+/* The caption lands 170 ms into the entry. The lead media sweeps with the title (no 50 ms offset:
+   delaying it holds the overview video's autoplay past the motion contract's manual pause). */
+html[data-motion="ready"] body[data-page-type="home"] .project-overview__recording--lead[data-reveal] .project-overview__caption {
+  transition: opacity var(--snap-a) steps(1, end) 170ms;
+}
+
+:root .project-overview__context {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+  padding-block: 0;
+  border-block: 0;
+}
+
+:root .project-overview__context > div {
+  position: relative;
+  gap: 4px;
+  padding: 11px 0 14px;
+}
+
+:root .project-overview__context > div::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--rule-a);
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  pointer-events: none;
+}
+
+:root .project-overview__context dt,
+:root .project-overview__impact > p {
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .project-overview__context dd {
+  color: var(--ink);
+  font: 400 17px / 1.5 var(--sans);
+}
+
+:root .project-overview__footer {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding-top: 0;
+  border-top: 0;
+}
+
+:root .project-overview__impact {
+  gap: 8px;
+}
+
+:root .project-overview__impact dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 11px 0;
+  border-block: var(--hairline) solid var(--line);
+}
+
+:root .project-overview__impact dl > div {
+  gap: 4px;
+}
+
+:root .project-overview__impact dt {
+  color: var(--ink);
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .project-overview__impact dd {
+  color: var(--text-soft);
+  font: 400 15px / 1.5 var(--sans);
+}
+
+:root .project-overview__link {
+  justify-self: start;
+}
+
+@media (max-width: 640px) {
+  :root .project-overview__copy h3 {
+    font-size: var(--type-px-22);
+  }
+
+  :root .project-overview__context,
+  :root .project-overview__impact dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── 2.6 Private work link (A) ── the kicker in 13 px sans. */
+:root .private-work-link > p:first-child {
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+}
+
+/* ── 2.7 Case hero (A) ── breadcrumb, meta, title and summary snap in reading order (0, 70, 125,
+   170 ms). The meta line is 13 px sans with one 8 px status cell; the title is Departure 66 with
+   44 px above; the summary is 17 / 1.6 at 64 ch, 22 px below the title. */
+:root .case-hero-copy {
+  gap: 0;
+}
+
+:root .case-hero-meta {
+  margin: 11px 0 0;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-status {
+  gap: 8px;
+  color: var(--ink);
+  font: 500 13px / 1.4 var(--sans);
+}
+
+:root .case-status .cell {
+  --cell-size: 8px;
+  width: 8px;
+  height: 8px;
+}
+
+:root .case-hero-copy h1 {
+  margin: 44px 0 0;
+  font: 400 var(--type-px-66) / 1.05 var(--font-pixel);
+  letter-spacing: 0;
+}
+
+:root .case-hero-summary {
+  max-width: 64ch;
+  margin: 22px 0 0;
+  font: 400 17px / 1.6 var(--sans);
+}
+
+@media (max-width: 640px) {
+  :root .case-hero-copy h1 {
+    font-size: var(--type-px-44);
+  }
+}
+
+/* ── 2.8 Facts list (A) ── one column of rows, each on an A soft rule (2 px, level 3, 8 px tile):
+   the term in 13 px sans in a 120 px column, the value at 17 px; 44 px rows, 11 px below. The value
+   holds inline links, so the term hangs in the padding instead of a grid column. */
+:root body .case-study-body #bluf + p + ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:root body .case-study-body #bluf + p + ul li:nth-child(n) {
+  position: relative;
+  display: block;
+  grid-column: 1 / -1;
+  min-height: 44px;
+  margin: 0;
+  padding: 13px 0 11px calc(120px + 11px);
+  border: 0;
+  color: var(--ink);
+  font: 400 17px / 1.5 var(--sans);
+}
+
+:root body .case-study-body #bluf + p + ul li:nth-child(n)::before {
+  content: none;
+}
+
+:root body .case-study-body #bluf + p + ul li:nth-child(n)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--rule-a);
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root body .case-study-body #bluf + p + ul li:nth-child(n) > strong:first-child {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  display: block;
+  width: 120px;
+  margin: 0;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 640px) {
+  :root body .case-study-body #bluf + p + ul li:nth-child(n) {
+    padding-left: 0;
+  }
+
+  :root body .case-study-body #bluf + p + ul li:nth-child(n) > strong:first-child {
+    position: static;
+    width: auto;
+    margin-bottom: 4px;
+  }
+}
+
+/* ── 2.11 Video player (B) ── a 48 px play button, 48 cells (played solid, buffered 2 ↔ 3 while it
+   plays), the time in Departure 11. While a requested play waits for data a 12-cell sweep and
+   "Loading video" replace the track. Without JS the native controls stay. */
+:root .cell-player {
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 11px;
+  margin-top: 8px;
+}
+
+:root .cell-player .cell-player__play {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  min-height: 48px;
+}
+
+:root .cell-player__time {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  font-variant-numeric: tabular-nums;
+}
+
+:root .cell-player.is-loading .cell-player__track {
+  display: none;
+}
+
+:root .cell-player__loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root .cell-player__loading[hidden] {
+  display: none;
+}
+
+:root .cell-player__loading .loader {
+  --cell-size: 7px;
+  --cell-gap: 1px;
+}
+
+/* ── 2.12 Image grid (A) ── hairline frames, 11 px gaps, no hover lift or shadow; each card sweeps in
+   (reveal.js, six bands over 300 ms, in reading order). */
+:root .case-study-body .case-image-grid__items {
+  gap: 11px;
+}
+
+:root .case-image-card,
+:root .case-image-card:hover,
+:root .case-cover,
+:root .case-cover:hover {
+  transform: none;
+}
+
+:root .case-image-card::after,
+:root .case-cover::after {
+  content: none;
+}
+
+:root body .case-study-body .case-image-card img {
+  border: var(--hairline) solid var(--line);
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  :root .case-study-body .case-image-grid:not(.case-image-grid--cols-4) > .case-image-grid__items {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── 2.13 Status tags (A chips) ── one 8 × 8 cell at the status level, then the word in 13 px sans.
+   Before, Concept and Rejected keep the dotted outline cell. */
+:root .case-tag {
+  gap: 6px;
+  padding: 0;
+  color: var(--muted);
+  font: 500 13px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-tag::before {
+  width: 8px;
+  height: 8px;
+}
+
+/* Motion off (reduced motion or the visitor switch): markers and steps land at once. */
+@media (prefers-reduced-motion: reduce) {
+  :root .notes-list__item > a::before,
+  :root .notes-list__item h3,
+  :root .labs-item__link::before,
+  :root .homepage-timeline__toc li::before,
+  :root .notes-search input {
+    transition: none !important;
+  }
+
+  :root .notes-list__item.is-leaving {
+    animation: none;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .notes-list__item > a::before,
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .labs-item__link::before,
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .homepage-timeline__toc li::before,
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.notes-list__item h3, .notes-search input) {
+  transition: none !important;
+}
+
+/* 24b CASE EVIDENCE, ROUND 5 ─ the facts strip, colour swatches and the directions tree.
+   First used by Pave's new look. */
+
+/* Facts: one ruled strip, a Departure 11 label over each plain value. */
+:root .case-study-body .case-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0 var(--space-4);
+  margin: var(--space-5) 0;
+  padding: 0;
+  border-top: var(--hairline) solid var(--ink);
+}
+
+:root .case-study-body .case-facts > div {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  padding: var(--space-2) 0 var(--space-3);
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .case-study-body .case-facts dt {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root .case-study-body .case-facts dd {
+  margin: 0;
+  color: var(--ink);
+  font: 500 0.98rem / 1.4 var(--sans);
+}
+
+/* Swatches: the studio's square chips on a hairline, a hex under each, and two nested stacks. */
+:root .case-study-body .case-swatches {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+}
+
+:root .case-study-body .case-swatches__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+:root .case-study-body .case-swatches ul {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--hairline) solid var(--ink);
+}
+
+:root .case-study-body .case-swatches li {
+  display: grid;
+  grid-template-columns: 9ch auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: var(--space-2) 0;
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .case-study-body .case-swatches li::before,
+:root .case-study-body .case-swatches li::marker {
+  content: none;
+}
+
+:root .case-study-body .case-swatches li strong {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root .case-study-body .case-swatches__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+:root .case-study-body .case-swatches__chip i {
+  display: block;
+  width: 33px;
+  height: 33px;
+  border: var(--hairline) solid var(--edge-strong);
+  background: var(--swatch);
+}
+
+:root .case-study-body .case-swatches__chip code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 400 0.78rem / 1 var(--mono);
+}
+
+:root .case-study-body .case-swatches__use {
+  color: var(--text-caption);
+  font: 400 0.9rem / 1.4 var(--sans);
+}
+
+/* Each stack nests Background › Raised › Floating, so the height reads at a glance. */
+:root .case-study-body .case-swatches__stacks {
+  display: flex;
+  gap: var(--space-3);
+}
+
+:root .case-study-body .case-swatches__stack {
+  position: relative;
+  display: grid;
+  width: 132px;
+  aspect-ratio: 1;
+}
+
+:root .case-study-body .case-swatches__stack i {
+  grid-area: 1 / 1;
+  border: var(--hairline) solid var(--edge-strong);
+  background: var(--swatch);
+  margin: calc(var(--layer) * 18px) calc(var(--layer) * 18px) calc((2 - var(--layer)) * 6px + var(--space-4)) calc(var(--layer) * 18px);
+}
+
+:root .case-study-body .case-swatches__stack span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+@media (max-width: 700px) {
+  :root .case-study-body .case-swatches__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :root .case-study-body .case-swatches li {
+    grid-template-columns: 9ch auto auto;
+  }
+
+  :root .case-study-body .case-swatches__use {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Directions tree: a 1728 × 560 drawing scaled to the column; phones scroll it sideways. */
+:root .case-study-body .case-tree {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+}
+
+:root .case-study-body .case-tree__viewport {
+  position: relative;
+  overflow: hidden;
+  overflow-x: auto;
+  height: 560px;
+  scrollbar-width: thin;
+}
+
+:root .case-study-body .case-tree__stage {
+  position: relative;
+  width: 1728px;
+  height: 560px;
+  transform: scale(var(--tree-scale, 1));
+  transform-origin: 0 0;
+}
+
+:root .case-study-body .case-tree__lines {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+:root .case-study-body .case-tree__lines path {
+  fill: none;
+  stroke: var(--edge-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+:root .case-study-body .case-tree__lines .case-tree__trunk {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+
+:root .case-study-body .case-tree__node,
+:root .case-study-body .case-tree__thumb,
+:root .case-study-body .case-tree__family {
+  position: absolute;
+}
+
+:root .case-study-body .case-tree__node {
+  overflow: hidden;
+  border: var(--hairline) solid var(--edge-strong);
+  background: var(--paper);
+  box-shadow: var(--shadow-control);
+}
+
+:root .case-study-body .case-tree__node img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+:root .case-study-body .case-tree__node span {
+  display: block;
+  padding: var(--space-1) var(--space-2);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root .case-study-body .case-tree__node--start {
+  left: 0;
+  width: 230px;
+}
+
+:root .case-study-body .case-tree__node--start img {
+  height: 128px;
+}
+
+:root .case-study-body .case-tree__node--end {
+  right: 0;
+  width: 344px;
+  border: 2px solid var(--ink);
+}
+
+:root .case-study-body .case-tree__node--end img {
+  height: 196px;
+}
+
+:root .case-study-body .case-tree__thumb {
+  width: 134px;
+  height: 84px;
+  margin: 0;
+  object-fit: cover;
+  object-position: top left;
+  border: var(--hairline) solid var(--edge-soft);
+  background: var(--paper);
+}
+
+:root .case-study-body .case-tree__family {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  white-space: nowrap;
+}
+
+/* Before it runs, the lines wait undrawn; then they draw in steps, branch by branch. */
+:root .case-study-body .case-tree[data-case-tree-ready]:not([data-run]) .case-tree__lines path {
+  stroke-dashoffset: 1;
+}
+
+:root .case-study-body .case-tree[data-case-tree-ready] .case-tree__lines .case-tree__trunk {
+  transition: stroke-dashoffset var(--dur-2) steps(4, end);
+}
+
+:root .case-study-body .case-tree[data-case-tree-ready] .case-tree__lines .case-tree__branch {
+  transition: stroke-dashoffset calc(var(--dur-6) * 1.4) steps(14, end);
+  transition-delay: calc(var(--dur-2) + var(--row) * var(--stagger-1));
+}
+
+@media (max-width: 700px) {
+  :root .case-study-body .case-tree__viewport {
+    margin-inline: calc(var(--space-3) * -1);
+    padding-inline: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .case-study-body .case-tree[data-case-tree-ready] .case-tree__lines path {
+    transition: none;
+  }
+}
+
+/* 30 PICKS · CASE NAVIGATION, FEEDBACK AND TOOLS ─ batch 3 of site-picks-implementation.md. Sibling
+   nav and next tool are C (printed dither: Departure titles, level-stepped markers and bands); the
+   contact prompt, walkthrough trigger, fields, form status and the SVG studio pieces are A (ruled
+   paper); loaders, status lines and the 404 field are B (cell grid) with A rules; the case index and
+   the tool panel are the resolved hybrids (§0.2.2, §0.2.3, §0.2.6). Appended after section 29; the
+   round 3 rules it supersedes stay in place for the cleanup pass. No repeating gradients. */
+
+/* ── shared keyframes ── */
+@keyframes marker-c-in {
+  0% { visibility: visible; -webkit-mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); }
+  33.333% { visibility: visible; -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  66.666%, 100% { visibility: visible; -webkit-mask: none; mask: none; }
+}
+
+@keyframes marker-c-out {
+  0% { visibility: visible; -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  50% { visibility: visible; -webkit-mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); }
+  100% { visibility: hidden; }
+}
+
+@keyframes pick-nudge-c {
+  0% { transform: translateX(calc(4px * var(--nudge-sign, 1))); }
+  50%, 100% { transform: translateX(calc(3px * var(--nudge-sign, 1))); }
+}
+
+@keyframes pick-flash-fail-a {
+  0%, 50% { color: var(--signal-fail); }
+  25%, 75%, 100% { color: var(--ink); }
+}
+
+/* ── 3.1 sibling nav (C) ── a 2 px ink line above, a hairline below, two 99 px halves; the marker
+   is a 6 px C marker on the half's outer edge, arriving 3 → 6 → 8 (150 ms) and leaving 6 → 3 → 0
+   (80 ms, .is-marker-out from case-index.js); keyboard focus lands it solid at once. */
+:root .case-sibling-nav {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border: 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: var(--hairline) solid var(--line);
+  background: transparent;
+}
+
+:root .case-sibling-nav a {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-height: 99px;
+  padding: 11px 22px;
+  background: transparent;
+  text-decoration: none;
+}
+
+:root .case-sibling-nav a:is(:hover, :focus-visible) {
+  background: transparent;
+}
+
+:root .case-sibling-nav span {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.2 var(--font-pixel);
+}
+
+:root .case-sibling-nav strong {
+  color: var(--ink);
+  font: 400 var(--type-px-33) / 1.15 var(--font-pixel);
+  overflow-wrap: anywhere;
+}
+
+:root .case-sibling-nav a[data-case-direction="previous"] strong::before,
+:root .case-sibling-nav a[data-case-direction="next"] strong::after {
+  display: inline-block;
+  font-family: var(--mono);
+  font-weight: 400;
+}
+
+:root .case-sibling-nav a[data-case-direction="previous"] strong::before {
+  --nudge-sign: -1;
+}
+
+:root .case-sibling-nav a:is(:hover, :focus-visible)[data-case-direction="previous"] strong::before,
+:root .case-sibling-nav a:is(:hover, :focus-visible)[data-case-direction="next"] strong::after {
+  animation: pick-nudge-c 200ms steps(1, end) both;
+}
+
+:root .case-sibling-nav a::after,
+:root .case-sibling-nav a[data-case-direction="next"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  width: var(--marker-c);
+  background: var(--ink);
+  transform: none;
+  transition: none;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+:root .case-sibling-nav a[data-case-direction="next"]::after {
+  right: 0;
+  left: auto;
+}
+
+:root .case-sibling-nav a:hover::after {
+  visibility: visible;
+  transform: none;
+  animation: marker-c-in calc(var(--level-c) * 3) steps(1, end) both;
+}
+
+:root .case-sibling-nav a.is-marker-out:not(:hover):not(:focus-visible)::after {
+  animation: marker-c-out 80ms steps(1, end) both;
+}
+
+:root .case-sibling-nav a:focus-visible::after {
+  visibility: visible;
+  -webkit-mask: none;
+  mask: none;
+  animation: none;
+}
+
+:root .case-sibling-nav .case-sibling-nav__empty {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 11px 22px;
+  min-height: 77px;
+  padding: 11px;
+  color: var(--muted);
+  font: 400 13px / 1.4 var(--sans);
+}
+
+:root .case-sibling-nav__empty::before {
+  -webkit-mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+  mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+}
+
+@media (max-width: 640px) {
+  :root .case-sibling-nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :root .case-sibling-nav a[data-case-direction="previous"],
+  :root .case-sibling-nav a[data-case-direction="next"],
+  :root .case-sibling-nav .case-sibling-nav__empty,
+  :root .case-sibling-nav a[data-case-direction="next"] ~ .case-sibling-nav__empty {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  :root .case-sibling-nav a {
+    min-height: 66px;
+    padding: 11px 16px;
+  }
+
+  :root .case-sibling-nav a[data-case-direction="previous"] {
+    border-right: 0;
+    border-bottom: var(--hairline) solid var(--line);
+  }
+
+  :root .case-sibling-nav strong {
+    font-size: var(--type-px-22);
+  }
+
+  :root .case-sibling-nav .case-sibling-nav__empty {
+    min-height: 44px;
+    margin: 11px 16px;
+  }
+}
+
+/* ── 3.2 contact prompt (A) ── a hairline above, a Departure 33 line, a 17 px sentence, the primary
+   and the secondary side by side 11 px apart; stacked full width on phones. */
+:root main .case-contact-prompt:not(.case-contact-prompt--compact) h2 {
+  font: 400 var(--type-px-33) / 1.1 var(--font-pixel);
+}
+
+:root .case-contact-prompt:not(.case-contact-prompt--compact) .case-contact-prompt__copy p {
+  max-width: 46ch;
+  color: var(--text-soft);
+  font: 400 17px / 1.6 var(--sans);
+}
+
+:root .case-contact-prompt__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+@media (max-width: 640px) {
+  :root main .case-contact-prompt:not(.case-contact-prompt--compact) h2 {
+    font-size: var(--type-px-22);
+  }
+
+  :root .case-contact-prompt__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── 3.3 case index, desktop rail (hybrid A rows + C head) ── "On this case" and "28% read" in
+   Departure 11 on one line over a hairline; rows are a 4 × 17 reading cell and a 14 px title, no
+   counters; hover and focus only turn the title ink. Transitions stay off (reduced-motion contract). */
+:root .case-toc[data-case-index="cells"] > p {
+  align-items: baseline;
+  padding: 0 0 11px;
+  border-bottom: var(--hairline) solid var(--line);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.3 var(--font-pixel);
+}
+
+:root .case-toc[data-case-index="cells"] a {
+  grid-template-columns: 4px minmax(0, 1fr);
+  column-gap: 11px;
+  min-height: 33px;
+  padding: 8px 0;
+  color: var(--muted);
+  font: 400 14px / 17px var(--sans);
+  transition: none;
+}
+
+:root .case-toc[data-case-index="cells"] a::before {
+  width: 4px;
+  height: 17px;
+  transition: none;
+}
+
+:root .case-toc[data-case-index="cells"] a::after {
+  content: none;
+}
+
+:root .case-toc[data-case-index="cells"] a[data-toc-state="read"] {
+  color: var(--text-soft);
+}
+
+:root .case-toc[data-case-index="cells"] a[aria-current="location"] {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+:root .case-toc[data-case-index="cells"] a:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+/* Narrow desktop: cells only; the title is the A tooltip (case-index.js), the name stays the text. */
+@media (min-width: 901px) and (max-width: 1180px) {
+  :root .case-toc[data-case-index="cells"] a {
+    grid-template-columns: 4px;
+    width: max-content;
+    min-width: 44px;
+    font-size: 0;
+    line-height: 0;
+  }
+}
+
+/* ── 3.4 case index, phone strip and sheet (hybrid C + A) ── */
+@media (max-width: 900px) {
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle {
+    grid-template-rows: 43px;
+    align-items: center;
+    min-height: 55px;
+    height: 55px;
+    padding: 0 0 12px 16px;
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__num {
+    font: 400 var(--type-px-22) / 1 var(--font-pixel);
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle strong {
+    overflow: hidden;
+    font: 500 14px / 1.25 var(--sans);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The new title resolves through the dither (case-index.js sets data-level 2 → 4 → 6). */
+  :root .case-toc [data-case-toc-current][data-level="2"] { -webkit-mask: var(--dither-2) 0 0 / 4px 4px; mask: var(--dither-2) 0 0 / 4px 4px; }
+  :root .case-toc [data-case-toc-current][data-level="4"] { -webkit-mask: var(--dither-4) 0 0 / 4px 4px; mask: var(--dither-4) 0 0 / 4px 4px; }
+  :root .case-toc [data-case-toc-current][data-level="6"] { -webkit-mask: var(--dither-6) 0 0 / 4px 4px; mask: var(--dither-6) 0 0 / 4px 4px; }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__word,
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle[aria-expanded="true"] .case-toc__word {
+    position: relative;
+    align-self: center;
+    height: 43px;
+    background: transparent;
+    color: var(--ink);
+    font: 500 14px / 1 var(--sans);
+  }
+
+  /* "Contents / Close" sits on the A soft rule, solid while the sheet is open. */
+  :root .case-toc[data-case-index="cells"] .case-toc__word::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    bottom: 10px;
+    left: 16px;
+    height: var(--rule-a);
+    background: var(--ink);
+    -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle:is(:hover, :focus-visible, [aria-expanded="true"]) .case-toc__word::after {
+    -webkit-mask: none;
+    mask: none;
+  }
+
+  /* Progress: 12 cells of 12 px on the strip's bottom edge (a meter, not a rule). */
+  :root .case-toc[data-case-index="cells"] .case-toc__progress {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2px;
+    height: 12px;
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__progress .cell {
+    height: 12px;
+  }
+
+  /* The sheet: 48 px rows on hairlines, 15 px text, the current row holds a 6 px C marker. */
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a {
+    position: relative;
+    grid-template-columns: 4px minmax(0, 1fr);
+    column-gap: 12px;
+    min-height: 48px;
+    align-items: center;
+    padding: 0 16px 0 22px;
+    font: 400 15px / 1.3 var(--sans);
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a::before {
+    width: 4px;
+    height: 17px;
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a[aria-current="location"]::after {
+    content: "";
+    grid-column: auto;
+    grid-row: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--marker-c);
+    background: var(--ink);
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a[aria-current="location"] {
+    font-weight: 500;
+  }
+
+  /* Open: from a 2 px line, through the dither, to solid in four steps over 240 ms. Close (pointer):
+     the afterglow, 180 ms in three steps. */
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] ol.is-sheet-on {
+    animation: sheet-switch-c var(--switch-c) steps(1, end) both;
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] ol.is-sheet-off {
+    display: grid;
+    pointer-events: none;
+    animation: sheet-afterglow-c var(--afterglow-b) steps(1, end) both;
+  }
+
+  :root .case-toc__scrim {
+    position: fixed;
+    inset: var(--strip-bottom, 0px) 0 0;
+    z-index: calc(var(--z-reading-tools) - 1);
+    background: var(--ink);
+    -webkit-mask: var(--dither-2) 0 0 / var(--tile-c) var(--tile-c);
+    mask: var(--dither-2) 0 0 / var(--tile-c) var(--tile-c);
+    pointer-events: auto;
+  }
+}
+
+:root .case-toc__scrim[hidden] {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  :root .case-toc__scrim {
+    display: none;
+  }
+}
+
+@keyframes sheet-switch-c {
+  0% { clip-path: inset(0 0 calc(100% - 2px) 0); -webkit-mask: none; mask: none; }
+  25% { clip-path: inset(0); -webkit-mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); }
+  50% { clip-path: inset(0); -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  75%, 100% { clip-path: inset(0); -webkit-mask: none; mask: none; }
+}
+
+@keyframes sheet-afterglow-c {
+  0% { -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  33.333% { -webkit-mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-3) 0 0 / var(--tile-c) var(--tile-c); }
+  66.666% { -webkit-mask: var(--dither-1) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-1) 0 0 / var(--tile-c) var(--tile-c); }
+  100% { visibility: hidden; }
+}
+
+/* ── 3.5 walkthrough trigger (A) ── the A secondary button: a 5 × 5 play cell, then "Watch the
+   walkthrough". No poster and no avatar video on screen (the hidden video keeps preload="none"). */
+:root .case-walkthrough__trigger[data-ascii-action="secondary"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 16px;
+  border: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  box-shadow: none;
+  color: var(--ink);
+  font: 500 15px / 1 var(--sans);
+  white-space: nowrap;
+  backdrop-filter: none;
+}
+
+:root .case-walkthrough__trigger[data-ascii-action="secondary"] > .fill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:root .case-walkthrough__trigger .case-walkthrough__avatar {
+  display: none;
+}
+
+:root .case-walkthrough__trigger .case-walkthrough__play {
+  --cells: 5;
+  --icon-cell: 3px;
+  --cell-size: 3px;
+  flex: none;
+  transform: none;
+}
+
+:root .case-walkthrough__trigger .case-walkthrough__play .cell:not([data-level="0"]) {
+  background: currentColor;
+}
+
+:root .case-walkthrough__trigger .case-walkthrough__copy {
+  display: inline;
+  transform: none;
+}
+
+:root .case-walkthrough__trigger .case-walkthrough__copy strong {
+  color: inherit;
+  font: 500 15px / 1 var(--sans);
+}
+
+@media (max-width: 900px) {
+  /* The phone strip keeps one square: the play cell, with the words for assistive tech only. */
+  :root .case-reading-tools .case-walkthrough {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  :root .case-walkthrough__trigger[data-ascii-action="secondary"] {
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: var(--tap-target);
+    padding: 0;
+    border: 0;
+    border-right: var(--hairline) solid var(--line);
+  }
+
+  :root .case-walkthrough__trigger .case-walkthrough__copy {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* ── 3.6 loaders (B) ── loader.js: quarter turn, dither bar, sweep and breathing cells on the tick;
+   7 px cells on an 8 px pitch unless the owner sets a size. */
+:root .loader {
+  --cell-gap: 1px;
+  vertical-align: middle;
+}
+
+:root .loader:is(.loader--sweep, .loader--bar) .cell {
+  height: 7px;
+}
+
+:root .loader .cell:not([data-level="0"]) {
+  background: var(--ink);
+}
+
+/* ── 3.8 text field and textarea (A) ── label 13 px muted above; a 44 px field on a hairline; focus
+   draws a 2 px ink line left → right in four steps over 160 ms; :user-invalid turns the line red
+   with two flashes; the textarea keeps a "120 / 5000" count under its line. */
+:root :is(.private-access label, .contact-form label:not(.contact-form__trap) > span) {
+  color: var(--muted);
+  font: 500 13px / 1.3 var(--sans);
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)) {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: var(--hairline) solid var(--line);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-origin: border-box;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  color: var(--ink);
+  font: 400 17px / 1.4 var(--sans);
+  transition: background-size 160ms steps(4, end);
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)):focus {
+  border-bottom-color: var(--line);
+  background-size: 100% 2px;
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)):focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: 2px;
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)):user-invalid {
+  border-bottom-color: var(--line);
+  background-image: linear-gradient(var(--signal-fail), var(--signal-fail));
+  background-size: 100% 2px;
+  animation: field-flash-a 480ms steps(1, end) both;
+}
+
+@keyframes field-flash-a {
+  0%, 50% { background-size: 100% 2px; }
+  25%, 75% { background-size: 0% 2px; }
+  100% { background-size: 100% 2px; }
+}
+
+:root .contact-form label:not(.contact-form__trap) textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+
+:root .contact-form__count {
+  margin: calc(var(--space-4) * -1 + 6px) 0 0;
+  color: var(--muted);
+  font: 500 13px / 1.4 var(--sans);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ── 3.9 form status line (A) ── a 4 × 16 cell in the signal colour before the 15 px sentence; on
+   failure the sentence flashes red twice (120 ms each) and rests in ink with the red cell held. */
+:root .contact-form__status,
+:root .contact-form__status:is([data-state="error"], [data-state="success"]) {
+  gap: 8px;
+  padding-left: 0;
+  border-left: 0;
+  color: var(--ink);
+  font: 500 15px / 1.4 var(--sans);
+}
+
+:root .contact-form__status:is([data-state="success"], [data-state="error"])::before {
+  width: 4px;
+  height: 16px;
+  background: var(--signal-ok);
+}
+
+:root .contact-form__status[data-state="error"]::before {
+  background: var(--signal-fail);
+}
+
+:root .contact-form__status[data-state="error"] {
+  animation: pick-flash-fail-a 480ms steps(1, end) both;
+}
+
+/* ── 3.10 404 (hybrid B field + A rule) ── "404" in 5 × 7 glyphs on 23 columns of 7 px cells (8 px
+   pitch), resolving one column per tick; a 1 px hairline 11 px below the field. */
+:root .not-found__field {
+  --cell-size: 7px;
+  --cell-gap: 1px;
+  margin-bottom: 0;
+}
+
+:root .not-found__rule {
+  display: block;
+  justify-self: stretch;
+  height: var(--hairline);
+  margin-top: calc(11px - var(--space-3));
+  background: var(--line);
+}
+
+:root .not-found__lede {
+  font: 400 16px / 1.5 var(--sans);
+}
+
+@media (max-width: 640px) {
+  :root .not-found__field {
+    --cell-size: 7px;
+  }
+}
+
+/* ── 3.11 status lines (B) ── plain words in Departure 11 that swap with the B snap (280 ms, one
+   step; index.js marks [data-status-snap] regions), never scrambled. */
+:root :is([data-pc-copy-status], body .ascii-banner-studio__status) {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.5 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root [data-status-snap].is-snapping {
+  animation: pick-snap-a var(--snap-b) steps(1, end) both;
+}
+
+/* ── 3.12 tool panel (hybrid: A look, B interactions) ── 13 px sans labels, Departure 11 values, no
+   group counters, groups apart on A soft rules with 22 px of space, 36 px buttons on a hairline with
+   the B cell-column marker (edge-marker.js) and the diagonal toggle fill (press.js); the select,
+   checkbox and slider come from section 28. Save PNG is the standard A primary. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) :is(label > span, legend, .playground-settings > span, .control-group > label),
+:root body :is(.ascii-banner-studio__quality > span, .pave-turntable-settings > span) {
+  color: var(--muted);
+  font: 500 13px / 1.3 var(--sans);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) output {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  text-align: right;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button:not([data-ascii-action]):not([role="tab"]):not([role="option"]):not(.ascii-banner-studio__quality-trigger),
+:root body :is(.playground-controls, .pave-turntable-controls) .playground-studio-cta {
+  position: relative;
+  min-height: 36px;
+  border-color: var(--line);
+  font: 500 13px / 1.2 var(--sans);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button:not([data-ascii-action]):is(:hover, :focus-visible),
+:root body :is(.playground-controls, .pave-turntable-controls) .playground-studio-cta:is(:hover, :focus-visible) {
+  box-shadow: none;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) .has-edge-marker .edge-marker {
+  z-index: 1;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) .has-edge-marker .edge-marker .cell:not([data-level="0"]) {
+  background: var(--ink);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) .has-edge-marker .edge-marker .cell[data-level="0"] {
+  background: transparent;
+}
+
+/* The shared label (press fill / edge marker) wraps the words: it keeps the button's type, and the
+   banner's secondary line (the canvas size) stays Departure 11 inside it. */
+:root body .ascii-banner-studio__controls button > :is(.fill-label, .edge-marker__label) {
+  font: inherit;
+  opacity: 1;
+}
+
+:root body .ascii-banner-studio__controls button > :is(.fill-label, .edge-marker__label) > span {
+  font: 400 var(--type-px-11) / 1.3 var(--font-pixel);
+  opacity: 0.7;
+}
+
+/* The banner format buttons stack their name over the size inside the shared label. */
+:root body .ascii-banner-studio__formats .edge-marker__label {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+/* Selected tool buttons: the diagonal dither fill to solid, held while pressed (press.js toggle). */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button[data-ascii-press="toggle"][aria-pressed="true"]:not(.is-filled),
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button[data-ascii-press="toggle"][aria-pressed="false"] {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button[data-ascii-press="toggle"].is-filled {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+/* Groups: A soft rules (2 px, level 3) with 22 px of space, no outlined boxes. */
+:root body .ascii-banner-studio__controls :is(.ascii-banner-studio__formats, .ascii-banner-studio__presets) {
+  position: relative;
+  padding-bottom: 22px;
+  border-bottom: 0;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__actions {
+  position: relative;
+  padding-top: 22px;
+  border-top: 0;
+}
+
+:root body .ascii-banner-studio__controls :is(.ascii-banner-studio__formats, .ascii-banner-studio__presets)::after,
+:root body .ascii-banner-studio__controls .ascii-banner-studio__actions::before,
+:root body .playground-controls > :is(.playground-settings, .control-grid)::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: var(--rule-a);
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  pointer-events: none;
+}
+
+:root body .ascii-banner-studio__controls :is(.ascii-banner-studio__formats, .ascii-banner-studio__presets)::after {
+  bottom: 0;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__actions::before,
+:root body .playground-controls > :is(.playground-settings, .control-grid)::before {
+  top: 0;
+}
+
+:root body .playground-controls > :is(.playground-settings, .control-grid) {
+  position: relative;
+  padding-top: 22px;
+}
+
+:root body .playground-controls > .playground-settings {
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls) textarea {
+  border: var(--hairline) solid var(--line);
+}
+
+/* Save PNG: the standard A primary (paper, ink hairline, 44 px), not a solid block. */
+:root body .ascii-banner-studio__controls .ascii-banner-studio__save {
+  min-width: 176px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 15px / 1 var(--sans);
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__save.is-filled {
+  background: var(--ink);
+}
+
+/* ── 3.16 next tool row (C) ── "Next tool" in Departure 11, the title in Departure 44 on a 4 px C
+   band at level 4; hover and focus resolve the band 6 → 8 (two steps of 50 ms), it leaves in one
+   step; the arrow nudges 3 px in one step at 100 ms. */
+:root .labs-tool-related {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 11px;
+  border-top: var(--hairline) solid var(--line);
+  padding-block: 22px;
+}
+
+:root .labs-tool-related > span {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root .labs-tool-related a {
+  position: relative;
+  display: inline-flex;
+  justify-self: start;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 11px;
+  max-width: 100%;
+  padding-bottom: 11px;
+  border-bottom: 0;
+}
+
+:root .labs-tool-related a > span,
+:root .labs-tool-related a > span:first-child {
+  font: 400 var(--type-px-44) / 1.1 var(--font-pixel);
+}
+
+:root .labs-tool-related a > span[aria-hidden="true"] {
+  font-family: var(--mono);
+  animation: none;
+  transform: none;
+}
+
+:root .labs-tool-related a:is(:hover, :focus-visible) > span[aria-hidden="true"] {
+  animation: none;
+  transform: translateX(3px);
+  transition: transform 100ms steps(1, end);
+}
+
+:root .labs-tool-related a::after {
+  bottom: 0;
+  height: var(--band-c);
+  transform: none;
+  transition: none;
+  -webkit-mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+  mask: var(--dither-4) 0 0 / var(--tile-c) var(--tile-c);
+}
+
+:root .labs-tool-related a:is(:hover, :focus-visible)::after {
+  transform: none;
+  transition: none;
+  -webkit-mask: none;
+  mask: none;
+  animation: band-c-resolve calc(var(--level-c) * 2) steps(1, end) both;
+}
+
+:root .labs-tool-related a:focus-visible::after {
+  -webkit-mask: none;
+  mask: none;
+  animation: none;
+}
+
+@keyframes band-c-resolve {
+  0% { -webkit-mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); mask: var(--dither-6) 0 0 / var(--tile-c) var(--tile-c); }
+  50%, 100% { -webkit-mask: none; mask: none; }
+}
+
+@media (max-width: 640px) {
+  :root .labs-tool-related a > span,
+  :root .labs-tool-related a > span:first-child {
+    font-size: var(--type-px-33);
+  }
+}
+
+/* Motion off (reduced motion or the visitor switch): every batch-3 state lands in one step. */
+@media (prefers-reduced-motion: reduce) {
+  :root .case-sibling-nav a::after,
+  :root .case-sibling-nav a strong::before,
+  :root .case-sibling-nav a strong::after,
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] ol:is(.is-sheet-on, .is-sheet-off),
+  :root .contact-form__status[data-state="error"],
+  :root [data-status-snap].is-snapping,
+  :root .labs-tool-related a::after,
+  :root :is(.private-access input, .contact-form :is(input, textarea)) {
+    animation: none !important;
+  }
+
+  :root .labs-tool-related a > span[aria-hidden="true"],
+  :root :is(.private-access input, .contact-form :is(input, textarea)) {
+    transition: none !important;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.case-toc ol.is-sheet-on, .case-toc ol.is-sheet-off, .contact-form__status, [data-status-snap].is-snapping, .private-access input, .contact-form input, .contact-form textarea),
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .case-sibling-nav a::after,
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .case-sibling-nav a strong::before,
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .case-sibling-nav a strong::after,
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .labs-tool-related a::after {
+  animation: none !important;
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.labs-tool-related a > span, .private-access input, .contact-form input, .contact-form textarea) {
+  transition: none !important;
+}
+
+/* Four key numbers sit four across, two across on narrow screens; no orphan row. */
+:root .case-study-body .case-stats__grid:has(> :nth-child(4):last-child) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  :root .case-study-body .case-stats__grid:has(> :nth-child(4):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Pave's new look: no "Fig. N" labels. Alexander's call, 18 Oct 2026: keep the numbers on every
+   other study, drop them here. Titles and notes run in one column from the figure's left edge. */
+html body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has(> strong:first-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+html body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has(> strong:first-child)::before {
+  content: none;
+}
+
+html body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has(> strong:first-child) > :is(strong, em, span) {
+  grid-column: 1;
 }

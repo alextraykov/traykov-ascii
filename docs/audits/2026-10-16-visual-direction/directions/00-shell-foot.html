@@ -1,0 +1,16 @@
+<section class="picks-panel" id="your-picks" aria-labelledby="your-picks-title">
+  <h2 id="your-picks-title">Your picks</h2>
+  <p class="bar-count" data-pick-count aria-live="polite">No picks yet</p>
+  <p class="reason">Picks and notes are saved in this browser as you go. Export writes them as plain text, one line per component, with the undecided ones last.</p>
+  <div class="demo-row">
+    <button class="btn btn--box" type="button" data-picks-export>Export</button>
+    <button class="btn btn--box" type="button" data-picks-copy>Copy</button>
+    <button class="btn btn--box" type="button" data-picks-clear>Clear all</button>
+    <span class="bar-note" role="status" data-picks-status></span>
+  </div>
+  <label class="vh" for="picks-out">Exported picks</label>
+  <textarea id="picks-out" readonly data-picks-out></textarea>
+</section>
+</main>
+</body>
+</html>

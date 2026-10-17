@@ -1,4 +1,7 @@
 ---
+import geistSans400 from "@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2?url";
+import geistSans500 from "@fontsource/geist-sans/files/geist-sans-latin-500-normal.woff2?url";
+
 type Props = {
   title?: string;
   description?: string;
@@ -227,6 +230,10 @@ const structuredDataItems = structuredData ? (Array.isArray(structuredData) ? st
 {refresh && <meta http-equiv="refresh" content={refresh} />}
 <link rel="canonical" href={canonicalUrl} />
 <link rel="alternate" type="application/rss+xml" title="Alexander Traykov — Notes" href="/rss.xml" />
+<!-- Fonts start downloading with the HTML, so the first paint already uses them. -->
+<link rel="preload" href="/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={geistSans400} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={geistSans500} as="font" type="font/woff2" crossorigin />
 <link
   rel="preload"
   href="/sasi.svg"

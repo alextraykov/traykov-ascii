@@ -17,7 +17,8 @@
   src: url("/fonts/DepartureMono-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  /* Preloaded (SiteHead). Headings wait briefly for it rather than flashing a fallback face. */
+  font-display: block;
 }
 
 /* 00 FONTS · 01 TOKENS · 02 PAGE ENTER · 03 NAV · 04 MOTION PRIMITIVES · 05 LINKS */
@@ -13684,8 +13685,8 @@ body[data-page-type="about"] .about-hero--trail .about-title--trail {
 }
 
 body[data-page-type="about"] .about-hero--trail .dither-trail[data-dither-auto-cycle="true"] {
-  --about-trail-auto-interval: var(--dur-6);
-  --about-trail-auto-hold: var(--dur-4);
+  --about-trail-auto-interval: 460ms;
+  --about-trail-auto-hold: 1600ms;
   --about-trail-auto-burst: var(--dur-5);
   --about-trail-auto-refill: var(--dur-2);
   --about-trail-auto-rest: var(--dur-6);
@@ -17908,4 +17909,15 @@ html[data-motion-preference="paused"] ::view-transition-new(root) {
     overflow-wrap: anywhere;
     font-size: 13px;
   }
+}
+
+/* Labs: the hero's rule already opens the list, so the list carries no second rule. */
+:root .labs-directory {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+:root .labs-list {
+  border-top: 0;
 }

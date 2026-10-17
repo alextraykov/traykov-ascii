@@ -1,7 +1,6 @@
 // Captures one real screen per Labs tool for the Labs index cards.
 // Usage: npm run build && node scripts/capture-labs-screens.mjs
-// Writes public/labs/screens/<id>.webp at 960×720 (4:3), each at most 40 KB. Each crop is framed on
-// the tool's own output with a sliver of its controls, so a small thumbnail still reads.
+// Writes public/labs/screens/<id>.webp at 960×720 (4:3), each at most 40 KB: the whole tool screen.
 //
 // The pages are served straight from dist/ through request interception, and every
 // other host is blocked, so the capture is offline and repeatable.
@@ -38,14 +37,15 @@ function playgroundFrame() {
   ].join("\n");
 }
 
-// id, route, the element whose top-left anchors the 16:10 crop (or a fixed clip), optional setup.
+// Each screen is the whole tool as a visitor sees it: a 1280×1024 window, clipped to the 1280×960
+// area under the site bar (4:3). Optional setup puts the tool in a representative state; `scrollTo`
+// brings a part of the page to the top first.
+const VIEW = { width: 1280, height: 1024 };
+const CLIP = { x: 0, y: 64, width: 1280, height: 960 };
 const SHOTS = [
   {
     id: "playground",
     route: "/playground/",
-    anchor: ".playground-stage",
-    // The stage fills the window: frame the figure with the edge of the controls panel.
-    clip: { x: 360, y: 150, width: 800 },
     setup: async (page) => {
       await page.evaluate((frame) => {
         const layer = [...document.querySelectorAll(".playground-stage pre")][1];
@@ -58,16 +58,17 @@ const SHOTS = [
   {
     id: "svg-ascii-studio",
     route: "/svg-ascii-studio/",
-    anchor: ".s2-stage",
-    inset: { x: 0.16, width: 0.68 },
     setup: async (page) => {
       await page.locator("[data-load-sample]").first().click();
       await page.waitForTimeout(3000);
     }
   },
-  { id: "ascii-banner", route: "/labs/ascii-banner/", anchor: ".ascii-banner-studio", inset: { x: 0, width: 0.5 } },
-  { id: "presenting-in-code", route: "/labs/presenting-in-code/", anchor: ".pc-demo--layers", inset: { x: 0.1, width: 0.8 }, offsetY: 46,
-    // Show the exploded "Lift" stage, the page's most distinctive view.
+  { id: "ascii-banner", route: "/labs/ascii-banner/", scrollTo: ".labs-tool-workbench" },
+  {
+    id: "presenting-in-code",
+    route: "/labs/presenting-in-code/",
+    scrollTo: ".pc-layers",
+    // The exploded "Lift" stage, the page's most distinctive view.
     setup: async (page) => {
       await page.locator(".pc-demo--layers").scrollIntoViewIfNeeded();
       await page.waitForTimeout(800);
@@ -107,7 +108,7 @@ if (!existsSync(join(dist, "index.html"))) {
 mkdirSync(out, { recursive: true });
 
 const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
-const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, colorScheme: "light", reducedMotion: "reduce" });
+const context = await browser.newContext({ viewport: VIEW, colorScheme: "light", reducedMotion: "reduce" });
 await context.addInitScript(() => {
   try {
     localStorage.setItem("traykov-color-theme", "light");
@@ -132,18 +133,13 @@ for (const shot of SHOTS) {
     await page.goto(`http://labs.local${shot.route}`, { waitUntil: "load", timeout: 45_000 });
     await page.waitForTimeout(2500);
     if (shot.setup) await shot.setup(page);
-    if (!shot.clip) await page.evaluate((selector) => {
+    await page.evaluate((selector) => {
       document.documentElement.style.scrollBehavior = "auto";
-      const element = document.querySelector(selector);
-      if (element) window.scrollTo(0, element.getBoundingClientRect().top + window.scrollY - 80);
-    }, shot.anchor);
+      const element = selector && document.querySelector(selector);
+      window.scrollTo(0, element ? element.getBoundingClientRect().top + window.scrollY - 64 - 24 : 0);
+    }, shot.scrollTo || "");
     await page.waitForTimeout(1200);
-    const box = shot.clip || (await page.locator(shot.anchor).first().boundingBox());
-    if (!box) throw new Error(`no ${shot.anchor}`);
-    // Optional inset: a horizontal slice of the anchor (fractions of its width), kept at 4:3.
-    const x = box.x + (shot.inset ? box.width * shot.inset.x : 0);
-    const width = Math.min(shot.inset ? box.width * shot.inset.width : box.width, 1440 - x);
-    const clip = { x, y: Math.max(0, box.y + (shot.offsetY || 0)), width, height: (width * HEIGHT) / WIDTH };
+    const clip = CLIP;
     const png = await page.screenshot({ clip });
     const { url, quality } = await encode(encoder, png);
     const bytes = Buffer.from(url.slice(url.indexOf(",") + 1), "base64");

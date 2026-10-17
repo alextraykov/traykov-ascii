@@ -503,7 +503,8 @@ const initializeTrail = (root) => {
 
     visibleOrder.forEach((item, index) => {
       const age = newestIndex - index;
-      const brightness = clamp(0.84 ** age, 0.4, 1);
+      // Older cards recede gently; they never sink into a muddy grey.
+      const brightness = clamp(0.94 ** age, 0.74, 1);
       const scale = clamp(0.94 ** age, 0.72, 1);
       item.style.setProperty("--trail-age-brightness", brightness.toFixed(3));
       item.style.setProperty("--trail-age-scale", scale.toFixed(3));
@@ -724,7 +725,8 @@ const initializeTrail = (root) => {
       clearAutoItems();
       autoBursting = false;
       updateAutoState("refilling");
-      scheduleAuto(getAutoDuration("--about-trail-auto-refill", "--dur-2"), autoStep);
+      // Refill straight away so the field is never left empty after a burst.
+      scheduleAuto(0, autoStep);
     });
   };
 
@@ -756,7 +758,10 @@ const initializeTrail = (root) => {
         angle: placement.angle
       });
       updateAutoState("accumulating");
-      scheduleAuto(getAutoDuration("--about-trail-auto-interval", "--dur-6"), autoStep);
+      // The first two cards land close together so the collage reads at once; the rest follow on
+      // the steady interval.
+      const next = visibleCount < 1 ? 140 : getAutoDuration("--about-trail-auto-interval", "--dur-6");
+      scheduleAuto(next, autoStep);
     });
   };
 

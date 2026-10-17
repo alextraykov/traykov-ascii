@@ -65,11 +65,11 @@ for (const viewport of [
     storageSaved: Boolean(window.localStorage.getItem("ascii-studio:workspace"))
   }));
 
+  // Round 3 layout: depth lives under "Adjust"; export controls are always visible.
+  await page.locator(".s2-adjust > summary").click();
   await page.locator("[data-control=depth]").fill("88");
   await page.locator("[data-control=depth]").dispatchEvent("input");
   await page.waitForTimeout(350);
-  await page.locator("[data-panel-tab=export]").click();
-  await page.waitForTimeout(150);
 
   const after = await page.evaluate(() => {
     const stage = document.querySelector("[data-stage]");
@@ -82,7 +82,7 @@ for (const viewport of [
       depthOutput: document.querySelector("[data-output=depth]")?.textContent || "",
       settingsHasDepth: settings.includes('"depth": 88'),
       codeLength: code.length,
-      exportVisible: !document.querySelector("[data-panel=export]")?.hidden
+      exportVisible: Boolean(document.querySelector(".s2-export")?.getClientRects().length)
     };
   });
 
@@ -105,7 +105,7 @@ for (const viewport of [
 
   let edgeCases = null;
   if (viewport.name === "desktop") {
-    await page.locator(".source-actions [data-clear-source]").click();
+    await page.locator(".s2-source-actions [data-clear-source]").click();
     await page.waitForTimeout(100);
     const emptyState = await page.evaluate(() => ({
       sourceState: document.querySelector("[data-studio]")?.dataset.sourceState,
@@ -115,7 +115,7 @@ for (const viewport of [
       status: document.querySelector("[data-status]")?.textContent || ""
     }));
 
-    await page.locator(".import-tools summary").click();
+    await page.locator(".s2-paste summary").click();
     await page.locator("[data-svg-paste]").fill(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" onload="window.__svgPwned=1">
       <script>window.__svgPwned=1</script>
       <image href="https://example.com/bad.png" width="64" height="64" />

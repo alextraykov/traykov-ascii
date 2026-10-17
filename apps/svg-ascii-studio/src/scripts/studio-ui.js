@@ -1,4 +1,4 @@
-// UI layer for the studio redesign preview. The engine (studio.js) owns rendering and state;
+// UI layer for the SVG → 3D ASCII studio (round 3). The engine (studio.js) owns rendering and state;
 // this only draws the step strip and the cell tracks behind the real range inputs.
 const root = document.querySelector(".studio2[data-studio]");
 

@@ -4,6 +4,8 @@ import "./artwork-pointer.js";
 import "./reveal.js";
 import "./scroll-fx.js";
 import "./count-up.js";
+import "./cells.js";
+import "./tick.js";
 
 const rotatorObservers = new Map();
 const rotatorTimers =

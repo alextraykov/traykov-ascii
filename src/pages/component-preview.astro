@@ -77,6 +77,34 @@ const catalogue = [
         </label>
       </section>
 
+      <section class="simple-marks-preview" id="simple-marks" aria-labelledby="simple-marks-title">
+        <h2 id="simple-marks-title">Simple marks</h2>
+        <p>Round 3 primitives. Every component composes these: dithered cells, the hover marker, the press, the state ladder, and one curved stagger.</p>
+
+        <div class="simple-marks-preview__row" aria-label="Density scale">
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((level) => (
+            <span class="simple-marks-preview__level"><i class="cell" data-level={level} aria-hidden="true"></i><span>{level}</span></span>
+          ))}
+        </div>
+
+        <div class="simple-marks-preview__ladder">
+          <div><span class="simple-marks-preview__swatch">Label</span><b>Rest</b></div>
+          <div><span class="simple-marks-preview__swatch has-marker is-marked">Label</span><b>Hover</b></div>
+          <div><span class="simple-marks-preview__swatch simple-marks-preview__swatch--focus">Label</span><b>Focus</b></div>
+          <div><span class="simple-marks-preview__swatch simple-marks-preview__swatch--pressed">Label</span><b>Pressed</b></div>
+          <div><span class="simple-marks-preview__swatch"><span class="cells" style="--cells: 2; --cell-size: 7px; --cell-gap: 1px" data-simple-marks-working></span>Sending</span><b>Working</b></div>
+          <div><span class="simple-marks-preview__swatch has-marker is-marked"><span data-simple-marks-check></span>Sent</span><b>Done</b></div>
+          <div><span class="simple-marks-preview__swatch is-dotted">Label</span><b>Disabled</b></div>
+          <div><span class="simple-marks-preview__swatch simple-marks-preview__swatch--error">Try again</span><b>Error</b></div>
+        </div>
+
+        <div class="simple-marks-preview__row">
+          <button type="button" class="simple-marks-preview__press has-fill has-marker" data-simple-marks-press><span class="fill-label">Send note</span></button>
+          <button type="button" class="simple-marks-preview__press has-marker" data-simple-marks-replay>Replay the stagger</button>
+        </div>
+        <div class="simple-marks-preview__field" data-simple-marks-field aria-hidden="true"></div>
+      </section>
+
       <div class="component-preview-layout">
         <aside class="component-preview-index" aria-label="Component index">
           <span>Catalogue / {catalogue.length}</span>
@@ -463,6 +491,60 @@ const catalogue = [
     </main>
 
     <script>
+    import { createCells, createIcon, fillLayer, runField, setLevel } from "../scripts/motion/cells.js";
+    import { onTick } from "../scripts/motion/tick.js";
+
+    const check = document.querySelector("[data-simple-marks-check]");
+    if (check) createIcon(check, "check").classList.add("cell-icon--ok");
+
+    const working = document.querySelector("[data-simple-marks-working]");
+    if (working) {
+      const cells = createCells(working, 4);
+      working.style.setProperty("--cells", "2");
+      const tail = [8, 4, 2, 0];
+      const order = [0, 1, 3, 2];
+      setLevel(cells[0], 8);
+      onTick(working, (count) => {
+        const head = Math.floor(count / 4) % 4;
+        order.forEach((cellIndex, position) => setLevel(cells[cellIndex], tail[(head - position + 4) % 4]));
+      });
+    }
+
+    const press = document.querySelector("[data-simple-marks-press]");
+    if (press) {
+      const fill = fillLayer(press);
+      const label = press.querySelector(".fill-label");
+      let busy = false;
+      press.addEventListener("click", () => {
+        if (busy) return;
+        busy = true;
+        press.classList.add("is-marked");
+        fill.to(8, { done: () => { label.textContent = "Sending"; } });
+        window.setTimeout(() => fill.to(0, { total: 240, done: () => { label.textContent = "Sent"; } }), 1200);
+        window.setTimeout(() => { label.textContent = "Send note"; press.classList.remove("is-marked"); busy = false; }, 2800);
+      });
+    }
+
+    const field = document.querySelector("[data-simple-marks-field]");
+    if (field) {
+      const cols = 32;
+      const rows = 6;
+      field.style.setProperty("--cells", String(cols));
+      const cells = createCells(field, cols * rows);
+      const finalLevel = (index) => 1 + Math.min(7, Math.floor(((index % cols) / cols) * 8));
+      const play = () => runField({
+        values: cells.map((_, index) => ((index % cols) + Math.floor(index / cols) * 2) / (cols - 1 + (rows - 1) * 2)),
+        steps: 8,
+        stepMs: 26,
+        render: (stepAt) => cells.forEach((cell, index) => {
+          const step = stepAt(index);
+          setLevel(cell, step < 0 ? 0 : Math.min(step + 1, finalLevel(index)));
+        })
+      });
+      play();
+      document.querySelector("[data-simple-marks-replay]")?.addEventListener("click", play);
+    }
+
     import { registerTurntables } from "../scripts/turntable-loader.js";
     import "../scripts/component-preview-ascii.js";
       import "../scripts/project-card-ascii-dispersal.js";

@@ -15,7 +15,7 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 - `src/pages/` contains the Astro routes.
 - `src/components/` contains shared Astro components.
 - `src/lib/content.ts` parses frontmatter and renders the custom MDX dialect.
-- `src/scripts/motion/` owns reveal, scan, scramble, rise-stagger, blink-adjacent count-up, and scroll effects.
+- `src/scripts/motion/` owns reveal (snap and band sweep), scramble, rise-stagger, blink-adjacent count-up, scroll effects, `cells.js` (dithered cells, the curved stagger, the dither press, cell icons) and `tick.js` (the one shared clock).
 - `src/styles/global.css` owns tokens, layout, components, and responsive rules.
 - `case-studies/` contains routable MDX case studies and authoring templates.
 
@@ -27,19 +27,26 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 - Case-study demos must feel like part of the portfolio: present the relevant product interaction directly, use a clearly named full-screen preview, and omit prototype/debug menus, reference-link inventories, and redundant status copy from the reader's experience. Preserve the supplied source's actual visual and behavioral decisions.
 - Canonical ASCII scramble ramp is `" .:+*#%@"`.
 - Canonical breakpoints are 1180, 900, 820, 700, and 640.
-- Motion vocabulary is closed: reveal, scan, scramble, rise-stagger, blink. New animation should compose these primitives.
+- Motion vocabulary is closed: reveal (snap for text and blocks, band sweep for media), scramble, rise-stagger, blink, afterglow (stepped exit), switch (panels open and close from a line in steps), cell stagger, and tick signals (loaders, meters and markers on the shared `--tick` clock). New animation should compose these primitives.
+- Steps inside, curves across: a single mark changes in discrete `steps()`; the delays across many marks follow `--ease-out-expo`-style curves. No blur, slide or spring on text.
+- Density scale (dithered cells, `data-level` 0–8): 8 solid = current, selected, done or shipped; 5 = in progress; 3 = read or supporting; 1 = texture only, never behind text; 0 = not yet.
+- State ladder for every interactive component: rest (hairline); hover (a solid marker arrives at an edge, never a fill behind text); focus (2px ink outline, never removed); pressed or selected (diagonal dither fill to solid); working (a cell loader in place plus a plain word); done (held marker plus a cell check in `--signal-ok`); disabled (dotted outline through the dither, muted text, the reason in words); error (one plain sentence, two short flashes, then still).
+- Three button roles only: primary (one per view, the dither press), secondary, and quiet (text with a dither rule).
+- Type: Departure Mono (`--font-pixel`) for headings, numbers and short labels, only at `--type-px-*` sizes (multiples of 11px) and weight 400; Geist Sans for reading; Geist Mono for character grids such as diagrams and loaders.
+- Visible copy uses plain words a designer would write; no machine language (commands, paths, error codes) in UI labels.
 - Reduced motion is a hard contract: readable at rest, no parallax, no forced motion.
 - Prefer transform and opacity. Avoid layout-driving animation.
 - Per-study identity is allowed through scoped attributes such as `body[data-case-theme="synapse"]`. Synapse card hover is the reference for distinctive identity layered on shared primitives.
 
 ## 5. Motion Quickref
 
-- `data-reveal="rise|fade|scan|scramble"` opts an element into the shared IntersectionObserver.
+- `data-reveal="rise|fade|scan|scramble"` opts an element into the shared IntersectionObserver. `rise` and `fade` snap on; `scan` and media (`img`, `video`, `picture`, `figure`, `canvas`) draw in with a band sweep. Only elements that actually animate get `data-reveal-animate`; history restores and content already in view simply appear.
 - `data-reveal-delay="120"` sets a millisecond delay.
 - `data-reveal-group` staggers direct children by 60ms, capped at six steps.
 - `data-scramble` uses the shared ASCII ramp. Use `data-scramble-trigger="hover|reveal|load"` only when the default hover trigger is not right.
 - `html[data-motion="ready"]` gates hidden reveal states so no-JS remains fully visible.
 - Page-enter owns above-fold motion. Mark above-fold elements in synchronously; avoid double-fire.
+- Cells: `<i class="cell" data-level="0–8">` (CSS-only; masks come from `--dither-1…7`). Use `cells.js` to animate levels, `fillLayer` for the press (`.has-fill` host, `.fill-label` text), `createIcon`/`morphIcon` for cell icons, and `onTick(element, fn)` from `tick.js` for anything that keeps moving. All of them stop when motion is inactive.
 
 ## 6. Content Authoring
 

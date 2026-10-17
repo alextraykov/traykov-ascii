@@ -41,7 +41,7 @@ const bookingPageUrl = (() => {
       data-ascii-stream={compact ? undefined : true}
       data-ascii-burst={compact ? undefined : true}
     >
-      {compact ? "Book 30 minutes" : <span data-scramble data-scramble-label="Book 30 minutes">Book 30 minutes</span>}
+      {compact ? "Book 30 minutes" : <span>Book 30 minutes</span>}
     </a>
     {!compact && <a href={emailHref} data-ascii-action="text" data-ascii-burst>Email instead</a>}
   </div>

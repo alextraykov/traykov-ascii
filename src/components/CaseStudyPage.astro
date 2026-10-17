@@ -312,13 +312,13 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
         <nav class="case-sibling-nav case-sibling-nav--bottom section-shell" aria-label="More case studies" data-reveal="rise">
           {previousStudy && (
             <a href={caseHref(previousStudy)} data-case-direction="previous">
-              <span data-scramble data-scramble-label="Previous case">Previous case</span>
+              <span>Previous case</span>
               <strong>{previousStudy.title}</strong>
             </a>
           )}
           {nextStudy && (
             <a href={caseHref(nextStudy)} data-case-direction="next">
-              <span data-scramble data-scramble-label="Next case">Next case</span>
+              <span>Next case</span>
               <strong>{nextStudy.title}</strong>
             </a>
           )}

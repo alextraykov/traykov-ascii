@@ -1,39 +1,49 @@
-import { SCRAMBLE_RAMP } from "./scramble.js";
+import { curves, runField } from "./cells.js";
+import { isMotionActive } from "./lifecycle.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-function glyphFrame(value, step) {
-  return Array.from(value, (char, index) => {
-    if (!/[0-9]/.test(char)) return char;
-    return SCRAMBLE_RAMP[(index + step) % SCRAMBLE_RAMP.length] || char;
-  }).join("");
+// Round 3: real numbers count through integers on a curve; anything that is not a number simply appears.
+function parseCount(value) {
+  const match = value.match(/^(\D*?)(\d[\d,]*(?:\.\d+)?)(.*)$/s);
+  if (!match) return null;
+  const [, prefix, digits, suffix] = match;
+  const decimals = digits.includes(".") ? digits.split(".")[1].length : 0;
+  return { prefix, suffix, target: Number(digits.replace(/,/g, "")), decimals, grouped: digits.includes(",") };
+}
+
+function formatCount({ prefix, suffix, decimals, grouped }, value) {
+  const fixed = value.toFixed(decimals);
+  const [whole, fraction] = fixed.split(".");
+  const wholeText = grouped ? Number(whole).toLocaleString("en-US") : whole;
+  return `${prefix}${wholeText}${fraction ? `.${fraction}` : ""}${suffix}`;
 }
 
 function runCount(element) {
   const finalValue = element.dataset.countUp || element.textContent || "";
+  const parsed = parseCount(finalValue);
 
-  if (reducedMotion.matches || element.dataset.counted === "true") {
+  if (!parsed || !isMotionActive() || element.dataset.counted === "true") {
     element.textContent = finalValue;
     element.dataset.counted = "true";
     return;
   }
 
   element.dataset.counted = "true";
-  const duration = 720;
-  const start = performance.now();
-
-  const tick = (now) => {
-    const progress = Math.min(1, (now - start) / duration);
-    if (progress < 1) {
-      element.textContent = glyphFrame(finalValue, Math.floor(progress * 18));
-      requestAnimationFrame(tick);
-      return;
+  const steps = 18;
+  runField({
+    values: [0],
+    total: 0,
+    steps,
+    stepMs: 50,
+    render: (stepAt) => {
+      const progress = curves.out(Math.max(0, stepAt(0)) / steps);
+      element.textContent = formatCount(parsed, parsed.target * progress);
+    },
+    done: () => {
+      element.textContent = finalValue;
     }
-
-    element.textContent = finalValue;
-  };
-
-  requestAnimationFrame(tick);
+  });
 }
 
 export function initCountUp() {

@@ -278,10 +278,42 @@
   --synapse-grid-size: 16px;
   --synapse-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
   --synapse-font: "Departure Mono Local", "Departure Mono", "JetBrains Mono Local", monospace;
+  /* Round 3 simple marks: ordered 4×4 dither masks (2 … 14 of 16 dots), so cells render without JavaScript. */
+  --dither-1: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-2: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-3: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-4: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-5: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-6: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-7: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%274%27%20height=%274%27%20viewBox=%270%200%204%204%27%20shape-rendering=%27crispEdges%27%3E%3Crect%20x=%270%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%270%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%271%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%270%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%272%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%271%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%272%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3Crect%20x=%273%27%20y=%273%27%20width=%271%27%20height=%271%27/%3E%3C/svg%3E");
+  --dither-size: 8px;
+  --cell-empty: rgba(8, 8, 8, 0.07);
+  --signal-ok: #04764e;
+  --signal-fail: #b8421f;
+  --font-pixel: "Departure Mono Local", "Departure Mono", var(--mono);
+  --type-px-11: 11px;
+  --type-px-22: 22px;
+  --type-px-33: 33px;
+  --type-px-44: 44px;
+  --type-px-55: 55px;
+  --type-px-66: 66px;
+  --tick: 40ms;
+  --step: 30ms;
+  --snap: 280ms;
+  --sweep: 360ms;
+  --afterglow: 180ms;
+  --switch: 240ms;
+  --stagger-total: 600ms;
+  --marker-width: 6px;
+  --marker-height: 3px;
+  --difference-ink: #fff; /* label colour while a dither fill sits behind it (mix-blend-mode: difference) */
 }
 
 html[data-theme="dark"] {
   --ink: #f4f2ea;
+  --cell-empty: rgba(244, 242, 234, 0.09);
+  --signal-ok: #4cc58f;
+  --signal-fail: #ef7c56;
   --paper: #0c0c0b;
   --muted: #aaa89f;
   --line: rgba(244, 242, 234, 0.24);
@@ -383,6 +415,9 @@ html[data-transition-incoming="true"] {
   html:not([data-theme]) {
     color-scheme: dark;
     --ink: #f4f2ea;
+    --cell-empty: rgba(244, 242, 234, 0.09);
+    --signal-ok: #4cc58f;
+    --signal-fail: #ef7c56;
     --paper: #0c0c0b;
     --muted: #aaa89f;
     --line: rgba(244, 242, 234, 0.24);
@@ -14514,5 +14549,363 @@ select {
   .case-compare[data-case-compare-ready] .case-compare__panel,
   .case-switch button {
     transition: none;
+  }
+}
+
+/* 16 SIMPLE MARKS (round 3) ─ cells, markers, disabled, done, and the stepped motion primitives.
+   Kept at EOF so the earlier override layers cannot flatten it. Steps inside, curves across:
+   each mark changes in discrete steps; staggers across many marks follow --ease-out-expo delays. */
+
+.cell {
+  display: inline-block;
+  flex: none;
+  width: var(--cell-size, 16px);
+  height: var(--cell-size, 16px);
+  background: var(--ink);
+}
+
+.cell[data-level="0"] {
+  background: var(--cell-empty);
+}
+
+.cell--clear[data-level="0"] {
+  background: transparent;
+}
+
+.cell.cell--ok:not([data-level="0"]) {
+  background: var(--signal-ok);
+}
+
+.cell.cell--fail:not([data-level="0"]) {
+  background: var(--signal-fail);
+}
+
+/* Density scale: 8 solid = current/selected/done, 5 = in progress, 3 = read/supporting, 1 = texture only, 0 = not yet. */
+[data-level="1"] {
+  -webkit-mask: var(--dither-1) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-1) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+[data-level="2"] {
+  -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+[data-level="3"] {
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+[data-level="4"] {
+  -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+[data-level="5"] {
+  -webkit-mask: var(--dither-5) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-5) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+[data-level="6"] {
+  -webkit-mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+[data-level="7"] {
+  -webkit-mask: var(--dither-7) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-7) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+.cells {
+  display: inline-grid;
+  grid-template-columns: repeat(var(--cells, 1), var(--cell-size, 16px));
+  gap: var(--cell-gap, 2px);
+}
+
+/* Hover: a solid marker arrives at an edge. Nothing is ever drawn behind text. */
+.has-marker {
+  position: relative;
+}
+
+.has-marker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-width);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.has-marker--right::after {
+  left: auto;
+  right: 0;
+  transform-origin: right center;
+}
+
+.has-marker--under::after {
+  top: auto;
+  right: 0;
+  width: auto;
+  height: var(--marker-height);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+}
+
+.has-marker:hover::after,
+.has-marker:focus-visible::after,
+.has-marker.is-marked::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+/* The press: a dither fill behind a control (cells.js fillLayer). Solid fills swap to one plain fill so no seams show. */
+.has-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.fill-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--fill-cell, 12px));
+  grid-auto-rows: var(--fill-cell, 12px);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fill-layer .cell {
+  width: calc(var(--fill-cell, 12px) + 0.5px);
+  height: calc(var(--fill-cell, 12px) + 0.5px);
+}
+
+.has-fill.is-filled {
+  background: var(--ink);
+}
+
+.has-fill.is-filled > .fill-layer {
+  visibility: hidden;
+}
+
+.has-fill > .fill-label {
+  position: relative;
+}
+
+.has-fill.is-filling > .fill-label,
+.has-fill.is-filled > .fill-label {
+  color: var(--difference-ink);
+  mix-blend-mode: difference;
+}
+
+/* Disabled: a dotted outline drawn through the dither, muted text, and a reason elsewhere in words. */
+.is-dotted {
+  position: relative;
+  border-color: transparent;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.is-dotted::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--hairline, 1px) * -1);
+  border: 1px solid var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  pointer-events: none;
+}
+
+/* Done: a held marker and a check in the ok signal. The check is a 5×5 cell icon (cells.js). */
+.cell-icon {
+  display: inline-grid;
+  grid-template-columns: repeat(var(--cells, 5), var(--cell-size, 3px));
+  vertical-align: middle;
+}
+
+.cell-icon .cell {
+  width: var(--icon-cell, 3px);
+  height: var(--icon-cell, 3px);
+}
+
+.cell-icon .cell[data-level="0"] {
+  background: transparent;
+}
+
+.cell-icon--ok .cell:not([data-level="0"]) {
+  background: var(--signal-ok);
+}
+
+@keyframes mark-snap {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  50% { opacity: 0.15; }
+  70%, 100% { opacity: 1; }
+}
+
+@keyframes mark-sweep {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+
+@keyframes mark-afterglow {
+  0% { opacity: 1; animation-timing-function: steps(1); }
+  33% { opacity: 0.55; animation-timing-function: steps(1); }
+  66% { opacity: 0.2; animation-timing-function: steps(1); }
+  100% { opacity: 0; }
+}
+
+@keyframes mark-switch-on {
+  0% { transform: scaleY(0.02); animation-timing-function: steps(4); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes mark-switch-off {
+  0% { transform: scaleY(1); animation-timing-function: steps(4); }
+  100% { transform: scaleY(0.02); }
+}
+
+.is-snapping { animation: mark-snap var(--snap) steps(1) both; animation-delay: var(--mark-delay, 0ms); }
+.is-sweeping { animation: mark-sweep var(--sweep) steps(10) both; animation-delay: var(--mark-delay, 0ms); }
+.is-leaving { animation: mark-afterglow var(--afterglow) both; }
+.is-switching-on { transform-origin: 50% 0; animation: mark-switch-on var(--switch) both; }
+.is-switching-off { transform-origin: 50% 0; animation: mark-switch-off var(--switch) both; }
+
+/* Living reference for the primitives on /component-preview/. */
+.simple-marks-preview {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.simple-marks-preview h2 {
+  margin: 0;
+  font: 400 var(--type-px-33) / 1.1 var(--font-pixel);
+}
+
+.simple-marks-preview p {
+  max-width: 64ch;
+  margin: 0;
+}
+
+.simple-marks-preview__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.simple-marks-preview__level {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+.simple-marks-preview__ladder {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-2);
+}
+
+.simple-marks-preview__ladder div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.simple-marks-preview__ladder b {
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+.simple-marks-preview__swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--tap-target);
+  border: 1px solid var(--ink);
+}
+
+.simple-marks-preview__swatch--focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.simple-marks-preview__swatch--pressed {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.simple-marks-preview__swatch--error {
+  border-color: var(--signal-fail);
+  color: var(--signal-fail);
+}
+
+.simple-marks-preview__press {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-0);
+  background: none;
+  color: var(--ink);
+  font: 500 14px / 1 var(--sans);
+  cursor: pointer;
+}
+
+.simple-marks-preview__field {
+  display: grid;
+  grid-template-columns: repeat(var(--cells), 14px);
+  gap: 0;
+  --cell-size: 14px;
+}
+
+/* Reveal, round 3: snap for text and blocks, band sweep for "scan"/media. No blur, no slide.
+   Only elements that reveal.js actually animates (data-reveal-animate) play; everything else is simply in. */
+html[data-motion="ready"] [data-reveal] {
+  filter: none;
+  transform: none;
+  transition: none;
+}
+
+html[data-motion="ready"] [data-reveal]:not([data-reveal-state="in"]) {
+  opacity: 0;
+}
+
+html[data-motion="ready"] [data-reveal][data-reveal-state="in"] {
+  opacity: 1;
+}
+
+html[data-motion="ready"] [data-reveal][data-reveal-animate="true"] {
+  animation: mark-snap var(--snap) steps(1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="ready"] [data-reveal="scan"][data-reveal-animate="true"],
+html[data-motion="ready"] [data-reveal][data-reveal-media][data-reveal-animate="true"] {
+  animation: mark-sweep var(--sweep) steps(10) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-marker:hover::after,
+  .has-marker:focus-visible::after,
+  .has-marker.is-marked::after {
+    transition: none;
+  }
+
+  .is-snapping,
+  .is-sweeping,
+  .is-leaving,
+  .is-switching-on,
+  .is-switching-off,
+  html[data-motion="ready"] [data-reveal],
+  html[data-motion="ready"] [data-reveal][data-reveal-animate="true"] {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
   }
 }

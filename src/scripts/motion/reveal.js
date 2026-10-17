@@ -18,6 +18,9 @@ function markIn(element, { animate = true } = {}) {
 
   if (!animate || !isMotionActive() || isHistoryRestore()) return;
 
+  // Round 3: only elements that actually animate get the stepped snap (or band sweep for media).
+  element.dataset.revealAnimate = "true";
+
   if (element.dataset.reveal === "scramble") {
     scrambleElement(element);
   }
@@ -52,6 +55,7 @@ function decorateGroups(root = document) {
 function prepareElement(element) {
   if (element.dataset.revealPrepared === "true") return;
   element.dataset.revealPrepared = "true";
+  if (element.matches("img, video, picture, figure, canvas")) element.dataset.revealMedia = "true";
 
   const delay = Number(element.dataset.revealDelay || 0);
   if (delay > 0) element.style.setProperty("--reveal-delay", `${delay}ms`);
@@ -77,9 +81,10 @@ function prepareElement(element) {
 }
 
 function settleReveals() {
-  document
-    .querySelectorAll("[data-reveal]")
-    .forEach((element) => markIn(element, { animate: false }));
+  document.querySelectorAll("[data-reveal]").forEach((element) => {
+    delete element.dataset.revealAnimate;
+    markIn(element, { animate: false });
+  });
   observer?.disconnect();
   document.documentElement.dataset.motion = "ready";
 }

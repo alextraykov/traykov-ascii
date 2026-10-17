@@ -124,14 +124,6 @@ function installStableLabel(element) {
 }
 
 export function prepareScrambleElement(element) {
-  if (
-    element.closest(
-      ".site-nav, .site-footer, .footer-links, .case-toc, .case-sibling-nav, .case-contact-prompt, .contact-call, .published-item, .labs-tool-hero, [data-reading-control]"
-    )
-  ) {
-    element.textContent = getScrambleLabel(element);
-    return;
-  }
   installStableLabel(element);
   getScrambleLabel(element);
 

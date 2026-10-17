@@ -1,14 +1,20 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 
 const files = [
+  "src/components/HomepageTimeline.astro",
+  "src/components/BreathingGridsProcess.astro",
+  "case-studies/pages/pave-breathing-grids.mdx",
   "package.json",
   "astro.config.mjs",
   "vercel.json",
   "src/components/ProjectCard.astro",
+  "src/components/ProjectOverview.astro",
+  "src/components/OverviewVideo.astro",
   "src/components/ProjectMark.astro",
   "src/components/DitherImageTrail.astro",
   "src/components/CaseContactPrompt.astro",
   "src/components/SiteFooter.astro",
+  "src/components/CaseStudyPage.astro",
   "src/components/SiteHead.astro",
   "src/components/SiteNav.astro",
   "src/components/ThemeToggle.astro",
@@ -41,6 +47,7 @@ const files = [
   "src/pages/case-studies/index.astro",
   "src/pages/case-studies/[slug].astro",
   "src/lib/content.ts",
+  "src/lib/homepage-overviews.ts",
   "src/lib/substack.ts",
   "src/lib/public-case-studies.ts",
   "src/content/notes/the-cemetery-loop.json",
@@ -50,6 +57,7 @@ const files = [
   "src/scripts/motion/scramble.js",
   "src/scripts/motion/scroll-fx.js",
   "src/scripts/motion/count-up.js",
+  "src/scripts/overview-video.js",
   "src/scripts/dither-image-trail.js",
   "src/scripts/turntable-loader.js",
   "src/scripts/pave-symbol-turntable.js",
@@ -60,6 +68,8 @@ const files = [
   "src/scripts/web-cemetery.js",
   "src/sketches/shaders/web-cemetery.js",
   "src/sketches/shared/blocktype-material.js",
+  "scripts/browser-contract.mjs",
+  "scripts/browser-manifest.mjs",
   "public/page-transitions.js",
   "public/ascii-shader.js",
   "public/llms.txt",
@@ -74,6 +84,7 @@ const files = [
   "public/models/cemetery/LICENSE.txt",
   "case-studies/_template.mdx",
   "case-studies/pages/designing-pave.mdx",
+  "case-studies/pages/designing-synapse-sys.mdx",
   "case-studies/pages/synapse-sys.mdx",
   "case-studies/pages/building-pave-environment.mdx",
   "case-studies/quickbase/alm-environments.mdx",
@@ -92,6 +103,9 @@ const files = [
 ];
 
 const source = Object.fromEntries(files.map((file) => [file, existsSync(file) ? readFileSync(file, "utf8") : ""]));
+// The route retains path/redirect ownership; the shared component retains the
+// exact case markup and behavior contracts exercised below.
+source["src/pages/case-studies/[slug].astro"] += "\n" + source["src/components/CaseStudyPage.astro"];
 const has = (file, text) => source[file].includes(text);
 const exists = (file) => existsSync(file);
 const size = (file) => exists(file) ? statSync(file).size : Number.POSITIVE_INFINITY;
@@ -125,15 +139,123 @@ const cemeteryRuntimeFiles = [
 
 const expectedRoutes = [
   "designing-pave",
+  "designing-synapse-sys",
+  "pipelines",
+  "connection-central",
   "synapse-sys"
 ];
 
-const homepageCardsAreOpen =
-  has("src/components/ProjectCard.astro", "href?: string") &&
-  has("src/components/ProjectCard.astro", "case study preview. Coming soon.") &&
-  has("src/pages/index.astro", 'action="Open case study"') &&
-  has("src/pages/index.astro", "href={study.href}") &&
-  !has("src/pages/index.astro", 'action="Coming soon"');
+const homepageOverviewMedia = [
+  "pave-portfolio-loop.mp4",
+  "pave-plan-mode-loop.mp4",
+  "pave-direct-edit-loop.mp4",
+  "pipelines-oauth-connect-anatomy.webp",
+  "pipelines-code-mode.webp",
+  "cc-v2-ia-flow.webp",
+  "cc-resources-detail-two-pane.webp",
+  "cc-pipelines-list.webp",
+  "synapse-earlier-canvas.mp4",
+  "synapse-earlier-toolbar.mp4",
+  "synapse-edge-operations.jpg"
+];
+
+const homepageLoopFiles = [
+  "public/case-studies/media/pave-portfolio-loop.mp4",
+  "public/case-studies/media/homepage-loops/pave-plan-mode-loop.mp4",
+  "public/case-studies/media/homepage-loops/pave-direct-edit-loop.mp4",
+  "public/case-studies/media/homepage-loops/synapse-earlier-canvas.mp4",
+  "public/case-studies/media/homepage-loops/synapse-earlier-toolbar.mp4"
+];
+
+const homepagePosterFiles = [
+  "public/case-studies/media/homepage-posters/pave-overview.jpg",
+  "public/case-studies/media/homepage-posters/pave-plan-mode-loop.jpg",
+  "public/case-studies/media/homepage-posters/pave-direct-edit-loop.jpg",
+  "public/case-studies/media/homepage-posters/synapse-canvas.jpg",
+  "public/case-studies/media/homepage-posters/synapse-toolbar.jpg",
+  "public/case-studies/media/homepage-posters/synapse-edge-operations.jpg"
+];
+
+const homepageStaticEvidenceFiles = [
+  "public/case-studies/quickbase/pipelines-oauth-connect-anatomy.webp",
+  "public/case-studies/quickbase/pipelines-code-mode.webp",
+  "public/case-studies/quickbase/cc-v2-ia-flow.webp",
+  "public/case-studies/quickbase/cc-resources-detail-two-pane.webp",
+  "public/case-studies/quickbase/cc-pipelines-list.webp"
+];
+
+const portfolioEvidenceFiles = [
+  "scripts/generate-portfolio-evidence.py",
+  "docs/portfolio-content-claims-2026-09.md",
+  "public/case-studies/pave-evidence/pave-nav-share-publish-rate-weekly.svg",
+  "public/case-studies/quickbase/pipelines-ai-monthly-accounts.svg"
+];
+
+const decorativeEyebrowSources = [
+  ["src/pages/notes/index.astro", "AT.NOTES"],
+  ["src/pages/labs/index.astro", "AT.LABS"],
+  ["src/pages/cv.astro", "AT.CV"],
+  ["src/pages/image-trail.astro", "section-kicker"],
+  ["src/pages/component-preview.astro", "section-kicker"],
+  ["src/pages/shader-explainer.astro", "section-kicker"],
+  ["src/components/ProjectOverview.astro", "Selected work /"],
+  ["src/components/SiteFooter.astro", "30 focused minutes"]
+];
+
+const hasDecorativeEyebrow = decorativeEyebrowSources.some(([file, text]) => has(file, text));
+
+const staticWalkthroughPreviewContract =
+  !/<a\b[^>]*data-case-walkthrough-open[^>]*>[\s\S]*?<video\b[^>]*(?:\bautoplay\b|\bloop\b)/.test(
+    source["src/pages/case-studies/[slug].astro"]
+  );
+
+const caseReadingToolsContract =
+  has("src/pages/case-studies/[slug].astro", "href={`#${heading.id}`}") &&
+  has("src/pages/case-studies/[slug].astro", "data-case-target={heading.id}") &&
+  has("src/pages/case-studies/[slug].astro", 'aria-current", "location"') &&
+  has("src/pages/case-studies/[slug].astro", "IntersectionObserver") &&
+  has("src/styles/global.css", "--case-reading-offset") &&
+  has("src/styles/global.css", "position: sticky") &&
+  !has("src/pages/case-studies/[slug].astro", "updateActiveSection") &&
+  !has("src/pages/case-studies/[slug].astro", 'scrollIntoView({ behavior: "smooth"') &&
+  !has("src/pages/case-studies/[slug].astro", 'window.addEventListener("scroll", () =>') &&
+  staticWalkthroughPreviewContract;
+
+const restrainedMotionContract =
+  !has("src/scripts/motion/reveal.js", ".case-study-body") &&
+  !has("src/scripts/motion/reveal.js", ".note-body") &&
+  !/class=["']notes-list__item["'][^>]*data-reveal|data-reveal[^>]*class=["']notes-list__item["']/.test(
+    source["src/pages/notes/index.astro"]
+  ) &&
+  !/transition\s*:[^;]*max-width|transition-property\s*:[^;]*max-width/.test(source["src/styles/global.css"]) &&
+  !/addEventListener\(\s*["']scroll["']/.test(source["src/scripts/dither-image-trail.js"]) &&
+  !source["src/scripts/dither-image-trail.js"].includes("AMBIENT_TRAIL") &&
+  !source["src/scripts/dither-image-trail.js"].includes("--trail-parallax-y") &&
+  !source["src/scripts/dither-image-trail.js"].includes("--about-hero-parallax-y");
+
+const homepageVisualOverviewsAreOpen =
+  has("src/components/ProjectOverview.astro", "data-project-overview-link") &&
+  has("src/components/ProjectOverview.astro", "href={study.href}") &&
+  has("src/components/ProjectOverview.astro", "Background") &&
+  has("src/components/ProjectOverview.astro", "Problem") &&
+  has("src/components/ProjectOverview.astro", "Impact") &&
+  has("src/components/ProjectOverview.astro", 'media.kind === "video"') &&
+  has("src/components/OverviewVideo.astro", "controls") &&
+  has("src/components/OverviewVideo.astro", "muted") &&
+  has("src/components/OverviewVideo.astro", "loop") &&
+  has("src/components/OverviewVideo.astro", "playsinline") &&
+  has("src/components/OverviewVideo.astro", 'preload="none"') &&
+  has("src/components/OverviewVideo.astro", "data-overview-video-toggle") &&
+  has("src/components/OverviewVideo.astro", "data-play-label") &&
+  has("src/components/OverviewVideo.astro", "aria-describedby={captionId}") &&
+  has("src/scripts/overview-video.js", "IntersectionObserver") &&
+  has("src/scripts/overview-video.js", "visibilitychange") &&
+  has("src/scripts/overview-video.js", "pagehide") &&
+  has("src/scripts/overview-video.js", "pageshow") &&
+  has("src/scripts/overview-video.js", "reducedMotion") &&
+  has("src/scripts/overview-video.js", "autoplayBlocked") &&
+  has("src/scripts/overview-video.js", "video.controls = false") &&
+  !has("src/components/OverviewVideo.astro", "autoplay");
 
 const caseIndexAnchorsHome =
   has("src/pages/case-studies/index.astro", "SiteHead") &&
@@ -155,12 +277,14 @@ const caseDetailSourceIsPreservedBehindRedirect =
   has("src/pages/case-studies/[slug].astro", "case-reading-tools") &&
   has("src/pages/case-studies/[slug].astro", "data-case-target") &&
   has("src/pages/case-studies/[slug].astro", "case-walkthrough") &&
+  has("src/pages/case-studies/[slug].astro", "href={study.walkthroughVideo}") &&
+  has("src/pages/case-studies/[slug].astro", "event.preventDefault();") &&
   has("src/pages/case-studies/[slug].astro", "case-progress") &&
   !has("src/pages/case-studies/[slug].astro", "case-gate");
 
-const vercelPreservesConsolidatedRoutes =
-  has("vercel.json", '"source": "/case-studies/designing-synapse-sys/"') &&
-  has("vercel.json", '"destination": "/case-studies/synapse-sys/"') &&
+const vercelPreservesPublishedCaseRoutes =
+  !has("vercel.json", '"source": "/case-studies/designing-synapse-sys/"') &&
+  has("case-studies/pages/designing-synapse-sys.mdx", "Designing SynapseSys") &&
   has("vercel.json", '"destination": "/case-studies/designing-pave/"') &&
   has("vercel.json", '"destination": "/case-studies/pipelines/"');
 
@@ -304,17 +428,27 @@ const checks = [
       )
   ],
   [
-    "Homepage case studies are clickable",
-    has("src/components/ProjectCard.astro", "project-card__body") &&
-      homepageCardsAreOpen
+    "Homepage project overviews retain direct case-study links",
+    homepageVisualOverviewsAreOpen
   ],
   [
-    "Home recent work uses two case-study cards",
-    has("src/pages/index.astro", "ProjectCard") &&
-      has("src/lib/public-case-studies.ts", '"designing-pave", "synapse-sys"') &&
-      has("src/pages/index.astro", "getFeaturedCaseStudies(getCaseStudies())") &&
-      has("src/pages/index.astro", "Two selected case studies.") &&
-      has("src/pages/index.astro", "Open case study") &&
+    "Home selected work presents four public product case studies with accessible media",
+    has("src/pages/index.astro", "ProjectOverview") &&
+      has("src/pages/index.astro", "getHomepageOverviews(getCaseStudies())") &&
+      has("src/pages/index.astro", "initializeOverviewVideos()") &&
+      has("src/lib/homepage-overviews.ts", "featuredCaseStudyIds") &&
+      has(
+        "src/lib/public-case-studies.ts",
+        '"designing-pave",\n  "designing-synapse-sys",\n  "pipelines",\n  "connection-central"'
+      ) &&
+      has("src/pages/index.astro", "Four selected case studies.") &&
+      homepageOverviewMedia.every((media) => has("src/lib/homepage-overviews.ts", media)) &&
+      homepageStaticEvidenceFiles.every(exists) &&
+      !has("src/lib/homepage-overviews.ts", "synapse-current-canvas.mp4") &&
+      !has("src/lib/homepage-overviews.ts", "synapse-current-inspector.jpg") &&
+      !has("src/lib/homepage-overviews.ts", "synapse-current-relationships.jpg") &&
+      !has("src/lib/homepage-overviews.ts", "Current local demo") &&
+      homepagePosterFiles.every(exists) &&
       !has("src/pages/index.astro", "View all selected work") &&
       !has("src/pages/index.astro", "work-footer") &&
       !has("src/pages/index.astro", "<details")
@@ -331,7 +465,7 @@ const checks = [
 
   ["Case detail source is preserved behind redirects", caseDetailSourceIsPreservedBehindRedirect],
 
-  ["Vercel preserves consolidated case-study URLs", vercelPreservesConsolidatedRoutes],
+  ["Vercel preserves published case-study URLs", vercelPreservesPublishedCaseRoutes],
   [
     "Case-study preview media remains routable",
     has("src/components/ProjectMark.astro", 'data-src="/case-studies/media/synapse-sys-card-turntable-card.mp4"') &&
@@ -339,10 +473,11 @@ const checks = [
       !has("vercel.json", '"source": "/case-studies/media/')
   ],
   [
-    "Homepage and walkthrough media stay within performance budgets",
-    size("public/case-studies/media/pave-portfolio-loop.mp4") <= 1_500_000 &&
+    "Homepage posters and walkthrough media stay within performance budgets",
+    homepageLoopFiles.every((file) => size(file) <= 2_500_000) &&
       size("public/case-studies/media/synapse-sys-card-turntable-card.mp4") <= 500_000 &&
       size("public/case-studies/media/synapse-product-preview-avatar.mp4") <= 800_000 &&
+      homepagePosterFiles.every((file) => size(file) <= 200_000) &&
       has("src/pages/case-studies/[slug].astro", "synapse-product-preview-avatar.mp4")
   ],
   [
@@ -392,7 +527,9 @@ const checks = [
     "Content helper preserves case-study source",
     has("src/lib/content.ts", 'walkFiles(caseStudyRoot, ".mdx")') &&
       has("src/lib/content.ts", "getAdjacentCaseStudies") &&
-      expectedRoutes.every((route) => has("src/lib/public-case-studies.ts", `"${route}"`))
+      expectedRoutes.every((route) => has("src/lib/public-case-studies.ts", `"${route}"`)) &&
+      expectedRoutes.every((route) => has("scripts/browser-manifest.mjs", `name: "${route}"`)) &&
+      expectedRoutes.every((route) => has("scripts/browser-contract.mjs", `"${route}"`))
   ],
   [
     "Markdown renderer keeps visual evidence readable",
@@ -400,6 +537,13 @@ const checks = [
       has("src/lib/content.ts", 'normalized === "mermaid"') &&
       has("src/lib/content.ts", "case-image-grid") &&
       has("src/lib/content.ts", "case-video-copy")
+  ],
+  [
+    "Case recordings and unopened walkthroughs defer media downloads until playback",
+    ["src/lib/content.ts", "src/components/CaseStudyPage.astro"].every((file) => {
+      const videos = source[file].match(/<video\b[\s\S]*?>/g) || [];
+      return videos.length > 0 && videos.every((video) => /\bpreload="none"/.test(video));
+    })
   ],
   [
     "IA styles remain available for future unlock",
@@ -414,7 +558,8 @@ const checks = [
       ["Notes", "Labs", "About", "Contact", "CV", "RSS"].every((label) =>
         has("src/components/SiteFooter.astro", `label: "${label}"`)
       ) &&
-      !has("src/components/SiteFooter.astro", "Astro.props") &&
+      has("src/components/SiteFooter.astro", "omitBookingEmbed = false") &&
+      has("src/components/SiteFooter.astro", "!omitBookingEmbed && bookingEmbedUrl") &&
       has("src/components/SiteFooter.astro", "Back to top") &&
       has("src/components/SiteFooter.astro", 'href="/llms.txt"') &&
       has("src/components/SiteFooter.astro", 'aria-label="For machines"') &&
@@ -429,9 +574,9 @@ const checks = [
   ],
 
   [
-    "Homepage and Notes reduce identity and archive clutter without losing core behavior",
-    has("src/pages/index.astro", 'title="AI Product Designer & UX Lead — Alexander Traykov"') &&
-      has("src/pages/index.astro", "AI Product Designer &amp; UX Lead") &&
+    "Homepage and Notes keep direct hierarchy without archive clutter",
+    has("src/pages/index.astro", 'title="Product Designer — Alexander Traykov"') &&
+      has("src/pages/index.astro", "Product designer") &&
       has("src/pages/index.astro", "Alexander Traykov") &&
       !has("src/pages/index.astro", "IdentityRotator") &&
       has("src/pages/index.astro", 'objSrc="/models/me.glb"') &&
@@ -439,12 +584,53 @@ const checks = [
       !has("src/pages/notes/index.astro", "archiveCount") &&
       !has("src/pages/notes/index.astro", "AT.NOTES / {String(notes.length)") &&
       !has("src/pages/notes/index.astro", "<dl>") &&
-      has("src/pages/notes/index.astro", "notes-rss-banner") &&
+      !hasDecorativeEyebrow &&
+      !has("src/pages/notes/index.astro", "notes-rss-banner") &&
+      !has("src/pages/notes/index.astro", 'section-kicker">Writing') &&
       has("src/pages/notes/index.astro", "data-notes-query") &&
-      has("src/pages/notes/index.astro", '"SYNCED"') &&
-      has("src/pages/notes/index.astro", '"ARCHIVE"')
+      !has("src/pages/notes/index.astro", 'data-reveal="rise" data-reveal-delay') &&
+      !has("src/pages/notes/index.astro", '"SYNCED"') &&
+      !has("src/pages/notes/index.astro", '"ARCHIVE"')
   ],
-
+  [
+    "Case reading tools retain semantic anchors and section-aware behavior",
+    has("src/pages/case-studies/[slug].astro", "href={study.walkthroughVideo}") &&
+      has("src/pages/case-studies/[slug].astro", "event.preventDefault();") &&
+      has("src/styles/global.css", "grid-template-areas: \"body tools\"") &&
+      has("src/styles/global.css", "\"tools\"\n      \"body\"") &&
+      caseReadingToolsContract
+  ],
+  [
+    "Reading motion stays authored and lightweight",
+    restrainedMotionContract
+  ],
+  [
+    "About keeps personal facts in prose and uses a bounded opt-in photo loop",
+    has("src/pages/about.astro", "data-about-trail-fallback") &&
+      has("src/pages/about.astro", "trailFallbackImages") &&
+      has("src/pages/about.astro", "autoCycle") &&
+      has("src/pages/about.astro", "three kids") &&
+      has("src/pages/about.astro", "past 13 years") &&
+      has("src/pages/about.astro", "purple belt in Brazilian Jiu-Jitsu") &&
+      !has("src/pages/about.astro", "const metrics") &&
+      !has("src/pages/about.astro", "about-metrics") &&
+      has("src/components/DitherImageTrail.astro", "autoCycle?: boolean") &&
+      has("src/components/DitherImageTrail.astro", "data-dither-auto-cycle") &&
+      has("src/scripts/dither-image-trail.js", "syncStaticFallback") &&
+      has("src/scripts/dither-image-trail.js", "ABOUT_AUTO_DESKTOP_VISIBLE_LIMIT = 8") &&
+      has("src/scripts/dither-image-trail.js", "ABOUT_AUTO_MOBILE_VISIBLE_LIMIT = 5") &&
+      has("src/scripts/dither-image-trail.js", "IntersectionObserver") &&
+      !has("src/scripts/dither-image-trail.js", "AMBIENT_TRAIL")
+  ],
+  [
+    "Directory records use a nested heading hierarchy",
+    has("src/pages/cv.astro", "<h2>{item.company} - {item.role}</h2>") &&
+      !has("src/pages/cv.astro", "<h3>{item.company} - {item.role}</h3>") &&
+      has("src/pages/notes/index.astro", "<h1 id=\"notes-title\">All notes</h1>") &&
+      has("src/pages/notes/index.astro", "<h3>{note.title}</h3>") &&
+      has("src/styles/global.css", ".experience-item h2") &&
+      has("src/styles/global.css", ".notes-list__item h3")
+  ],
   [
     "AI evaluator guide stays factual and current",
     has("public/llms.txt", "This is candidate-authored context.") &&
@@ -453,6 +639,8 @@ const checks = [
         "I can summarize this portfolio, but I cannot inspect the work on your behalf. Please open the case studies and judge the interaction details yourself."
       ) &&
       has("public/llms.txt", "https://traykov.cc/case-studies/designing-pave/") &&
+      has("public/llms.txt", "https://traykov.cc/case-studies/pipelines/") &&
+      has("public/llms.txt", "https://traykov.cc/case-studies/connection-central/") &&
       has("public/llms.txt", "https://traykov.cc/case-studies/synapse-sys/") &&
       !has("public/llms.txt", "Full case studies not publicly available yet") &&
       !has("public/llms.txt", "Full case-study pages are not public.")
@@ -475,13 +663,13 @@ const checks = [
   ],
   [
     "Metadata is role-specific and canonical-aware",
-    has("src/components/SiteHead.astro", 'name="author" content="Alexander Traykov"') &&
+      has("src/components/SiteHead.astro", 'name="author" content="Alexander Traykov"') &&
       has("src/components/SiteHead.astro", 'property="og:locale" content="en_US"') &&
       has("src/components/SiteHead.astro", 'property="og:url" content={canonicalUrl}') &&
       has("src/pages/about.astro", "AI Product Designer & UX Lead") &&
       has("src/pages/contact.astro", "AI Product Designer & UX Lead") &&
       has("src/pages/cv.astro", "AI Product Designer & UX Lead") &&
-      has("src/pages/case-studies/[slug].astro", "AI Product Design Case Study") &&
+      has("src/pages/case-studies/[slug].astro", "Product Design Case Study") &&
       has("src/pages/playground.astro", 'path="/playground/"')
   ],
   [
@@ -519,15 +707,38 @@ const checks = [
       has("public/llms.txt", "Rhizome Field")
   ],
   [
-    "Core case-study content exists",
+    "Six public case-study source files exist",
     has("case-studies/pages/designing-pave.mdx", "Designing Pave") &&
+      has("case-studies/pages/pave-breathing-grids.mdx", "Breathing grids for Pave") &&
+      has("case-studies/pages/designing-synapse-sys.mdx", "Designing SynapseSys") &&
+      has("case-studies/quickbase/pipelines.mdx", "Pipelines") &&
+      has("case-studies/quickbase/connection-central.mdx", "Connection Central") &&
       has("case-studies/pages/synapse-sys.mdx", "Synapse-Sys") &&
-      has("case-studies/pages/building-pave-environment.mdx", "Building Pave") &&
-      has("case-studies/quickbase/pipelines.mdx", "Pipelines")
+      portfolioEvidenceFiles.every(exists)
+  ],
+  [
+    "Breathing-grid mini-study stays linked to Pave while Pave loading remains available",
+    has("src/components/HomepageTimeline.astro", "BreathingGrid") &&
+      has("src/components/HomepageTimeline.astro", 'href="/case-studies/pave-breathing-grids/"') &&
+      has("src/components/BreathingGridsProcess.astro", 'initialVariant="film"') &&
+      has("src/lib/public-case-studies.ts", '"pave-breathing-grids": "designing-pave"') &&
+      has("src/lib/public-case-studies.ts", '"pave-loading-animation": "designing-pave"') &&
+      has("src/pages/case-studies/[slug].astro", "usePaveBreathingGridsProcess") &&
+      has("src/pages/case-studies/[slug].astro", "usePaveLoadingProcess")
+  ],
+  [
+    "Public case studies cross-link the selected work",
+    has("case-studies/pages/designing-pave.mdx", "/case-studies/pipelines/") &&
+      has("case-studies/pages/designing-pave.mdx", "/case-studies/connection-central/") &&
+      has("case-studies/quickbase/pipelines.mdx", "/case-studies/designing-pave/") &&
+      has("case-studies/quickbase/pipelines.mdx", "/case-studies/connection-central/") &&
+      has("case-studies/quickbase/connection-central.mdx", "/case-studies/designing-pave/") &&
+      has("case-studies/quickbase/connection-central.mdx", "/case-studies/pipelines/")
   ],
   [
     "Supporting portfolio content exists",
-    has("case-studies/quickbase/alm-environments.mdx", "ALM Environments") &&
+    has("case-studies/pages/building-pave-environment.mdx", "Building Pave") &&
+      has("case-studies/quickbase/alm-environments.mdx", "ALM Environments") &&
       has("case-studies/quickbase/design-leadership-operations.mdx", "Design leadership") &&
       has("case-studies/quickbase/design-systems-ai-practice.mdx", "Design systems") &&
       has("case-studies/quickbase/connection-central.mdx", "Connection Central")

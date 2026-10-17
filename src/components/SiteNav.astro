@@ -25,12 +25,26 @@ const links: Array<{ section: SiteNavSection; label: string; href: string }> = [
       <a
         href={link.href}
         aria-current={active === link.section ? "page" : undefined}
-        data-scramble
       >
         {link.label}
       </a>
     ))}
   </nav>
-  <ThemeToggle />
+  <div class="site-nav__controls">
+    <button
+      class="motion-toggle"
+      type="button"
+      hidden
+      aria-label="Motion"
+      aria-describedby="motion-toggle-description"
+      aria-pressed="true"
+      data-motion-toggle
+    >
+      <span class="motion-toggle__name" aria-hidden="true">MOTION</span>
+      <span class="motion-toggle__state" aria-hidden="true" data-motion-toggle-state>ON</span>
+      <span class="visually-hidden" id="motion-toggle-description" data-motion-toggle-description>Motion is on</span>
+    </button>
+    <ThemeToggle />
+  </div>
   {variant === "case" && <div class="case-progress" aria-hidden="true"><span></span></div>}
 </header>

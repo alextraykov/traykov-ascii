@@ -1,0 +1,5184 @@
+[
+  {
+    "version": "local",
+    "name": "home",
+    "width": 1440,
+    "status": 200,
+    "errors": [
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    ],
+    "title": "Product Designer — Alexander Traykov",
+    "url": "http://127.0.0.1:4330/",
+    "h1": "\nProduct designer\n",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--home",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "pave",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Designing Pave — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4330/case-studies/designing-pave/",
+    "h1": "Designing Pave",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--case",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "synapse",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Synapse-Sys — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4330/case-studies/synapse-sys/",
+    "h1": "Synapse-Sys",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "case-walkthrough__trigger",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "case-walkthrough__avatar",
+        "border": "2px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "labs",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Labs — Alexander Traykov",
+    "url": "http://127.0.0.1:4330/labs/",
+    "h1": "Labs",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "about",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "About Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4330/about/",
+    "h1": " Product design, close to the work. ",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-published section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "notes",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Notes — Alexander Traykov",
+    "url": "http://127.0.0.1:4330/notes/",
+    "h1": "All notes",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "INPUT",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "contact",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Contact Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4330/contact/",
+    "h1": "Get in touch.",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "SECTION",
+        "cls": "contact-direct",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "contact-call",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "pipelines",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Designing trust into Quickbase Pipelines — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4330/case-studies/pipelines/",
+    "h1": "Designing trust into Quickbase Pipelines",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "case-cover",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "home",
+    "width": 390,
+    "status": 200,
+    "errors": [
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    ],
+    "title": "Product Designer — Alexander Traykov",
+    "url": "http://127.0.0.1:4330/",
+    "h1": "\nProduct designer\n",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--home",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "pave",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Designing Pave — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4330/case-studies/designing-pave/",
+    "h1": "Designing Pave",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--case",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "synapse",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Synapse-Sys — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4330/case-studies/synapse-sys/",
+    "h1": "Synapse-Sys",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "case-walkthrough__trigger",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "labs",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Labs — Alexander Traykov",
+    "url": "http://127.0.0.1:4330/labs/",
+    "h1": "Labs",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "about",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "About Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4330/about/",
+    "h1": " Product design, close to the work. ",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-published section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "notes",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Notes — Alexander Traykov",
+    "url": "http://127.0.0.1:4330/notes/",
+    "h1": "All notes",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "INPUT",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "contact",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Contact Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4330/contact/",
+    "h1": "Get in touch.",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "SECTION",
+        "cls": "contact-direct",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "contact-call",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "local",
+    "name": "pipelines",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Designing trust into Quickbase Pipelines — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4330/case-studies/pipelines/",
+    "h1": "Designing trust into Quickbase Pipelines",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "case-cover",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "home",
+    "width": 1440,
+    "status": 200,
+    "errors": [
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    ],
+    "title": "Product Designer — Alexander Traykov",
+    "url": "http://127.0.0.1:4331/",
+    "h1": "\nProduct designer\n",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--home",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "pave",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Designing Pave — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4331/case-studies/designing-pave/",
+    "h1": "Designing Pave",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--case",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "synapse",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Synapse-Sys — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4331/case-studies/synapse-sys/",
+    "h1": "Synapse-Sys",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "case-walkthrough__trigger",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "case-walkthrough__avatar",
+        "border": "2px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "labs",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Labs — Alexander Traykov",
+    "url": "http://127.0.0.1:4331/labs/",
+    "h1": "Labs",
+    "overflow": false,
+    "theme": "light",
+    "borders": [],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "about",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "About Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4331/about/",
+    "h1": " Product design, close to the work. ",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-published section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "notes",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Notes — Alexander Traykov",
+    "url": "http://127.0.0.1:4331/notes/",
+    "h1": "All notes",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "INPUT",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "contact",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Contact Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4331/contact/",
+    "h1": "Get in touch.",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "SECTION",
+        "cls": "contact-direct",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "contact-call",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "pipelines",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Designing trust into Quickbase Pipelines — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4331/case-studies/pipelines/",
+    "h1": "Designing trust into Quickbase Pipelines",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "case-cover",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "home",
+    "width": 390,
+    "status": 200,
+    "errors": [
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    ],
+    "title": "Product Designer — Alexander Traykov",
+    "url": "http://127.0.0.1:4331/",
+    "h1": "\nProduct designer\n",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--home",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "pave",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Designing Pave — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4331/case-studies/designing-pave/",
+    "h1": "Designing Pave",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "private-work-link private-work-link--case",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "synapse",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Synapse-Sys — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4331/case-studies/synapse-sys/",
+    "h1": "Synapse-Sys",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "case-walkthrough__trigger",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "labs",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Labs — Alexander Traykov",
+    "url": "http://127.0.0.1:4331/labs/",
+    "h1": "Labs",
+    "overflow": false,
+    "theme": "light",
+    "borders": [],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "about",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "About Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4331/about/",
+    "h1": " Product design, close to the work. ",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-published section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "notes",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Notes — Alexander Traykov",
+    "url": "http://127.0.0.1:4331/notes/",
+    "h1": "All notes",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "INPUT",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "contact",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Contact Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "http://127.0.0.1:4331/contact/",
+    "h1": "Get in touch.",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "SECTION",
+        "cls": "contact-direct",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "contact-call",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "branch",
+    "name": "pipelines",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Designing trust into Quickbase Pipelines — Product Design Case Study | Alexander Traykov",
+    "url": "http://127.0.0.1:4331/case-studies/pipelines/",
+    "h1": "Designing trust into Quickbase Pipelines",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "case-cover",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "home",
+    "width": 1440,
+    "status": 200,
+    "errors": [
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    ],
+    "title": "Product Designer — Alexander Traykov",
+    "url": "https://traykov.cc/",
+    "h1": "\nProduct designer\n",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "pave",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Designing Pave — Product Design Case Study | Alexander Traykov",
+    "url": "https://traykov.cc/case-studies/designing-pave/",
+    "h1": "Designing Pave",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "synapse",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Synapse-Sys — Product Design Case Study | Alexander Traykov",
+    "url": "https://traykov.cc/case-studies/synapse-sys/",
+    "h1": "Synapse-Sys",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "case-walkthrough__trigger",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "case-walkthrough__avatar",
+        "border": "2px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "labs",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Labs — Alexander Traykov",
+    "url": "https://traykov.cc/labs/",
+    "h1": "Labs",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "about",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "About Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "https://traykov.cc/about/",
+    "h1": " Product design, close to the work. ",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "DIV",
+        "cls": "about-metrics__inner section-shell",
+        "border": "1px solid rgba(244, 242, 234, 0.2)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-grid section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-published section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "notes",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Notes — Alexander Traykov",
+    "url": "https://traykov.cc/notes/",
+    "h1": "All notes",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "INPUT",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "contact",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Contact Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "https://traykov.cc/contact/",
+    "h1": "Get in touch.",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "SECTION",
+        "cls": "contact-direct",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "contact-call",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "pipelines",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "title": "Designing trust into Quickbase Pipelines — Product Design Case Study | Alexander Traykov",
+    "url": "https://traykov.cc/case-studies/pipelines/",
+    "h1": "Designing trust into Quickbase Pipelines",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "case-cover",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "home",
+    "width": 390,
+    "status": 200,
+    "errors": [
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+      "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    ],
+    "title": "Product Designer — Alexander Traykov",
+    "url": "https://traykov.cc/",
+    "h1": "\nProduct designer\n",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "homepage-timeline__link",
+        "border": "1px solid rgba(8, 8, 8, 0.28)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DL",
+        "cls": "project-overview__context",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "project-overview__media",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FOOTER",
+        "cls": "project-overview__footer",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "project-overview__link",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "pave",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Designing Pave — Product Design Case Study | Alexander Traykov",
+    "url": "https://traykov.cc/case-studies/designing-pave/",
+    "h1": "Designing Pave",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "LI",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "synapse",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Synapse-Sys — Product Design Case Study | Alexander Traykov",
+    "url": "https://traykov.cc/case-studies/synapse-sys/",
+    "h1": "Synapse-Sys",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "case-walkthrough__trigger",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(8, 8, 8, 0.1) 8px 8px 0px 0px"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "labs",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Labs — Alexander Traykov",
+    "url": "https://traykov.cc/labs/",
+    "h1": "Labs",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      },
+      {
+        "tag": "A",
+        "cls": "project-card__body",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px inset"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "about",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "About Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "https://traykov.cc/about/",
+    "h1": " Product design, close to the work. ",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "DIV",
+        "cls": "about-metrics__inner section-shell",
+        "border": "1px solid rgba(244, 242, 234, 0.2)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-grid section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "about-published section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "published-item",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "notes",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Notes — Alexander Traykov",
+    "url": "https://traykov.cc/notes/",
+    "h1": "All notes",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "INPUT",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "contact",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Contact Alexander Traykov — AI Product Designer & UX Lead",
+    "url": "https://traykov.cc/contact/",
+    "h1": "Get in touch.",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "SECTION",
+        "cls": "contact-direct",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "contact-call",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  },
+  {
+    "version": "live",
+    "name": "pipelines",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "title": "Designing trust into Quickbase Pipelines — Product Design Case Study | Alexander Traykov",
+    "url": "https://traykov.cc/case-studies/pipelines/",
+    "h1": "Designing trust into Quickbase Pipelines",
+    "overflow": false,
+    "theme": "light",
+    "borders": [
+      {
+        "tag": "ARTICLE",
+        "cls": "case-study case-detail section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "case-cover",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "IMG",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.22)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "ASIDE",
+        "cls": "case-contact-prompt",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "NAV",
+        "cls": "case-sibling-nav case-sibling-nav--bottom section-shell",
+        "border": "1px solid rgba(8, 8, 8, 0.16)",
+        "shadow": "none"
+      }
+    ],
+    "toc": null
+  }
+]

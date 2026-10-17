@@ -5,8 +5,8 @@ status: shipped
 pubDate: 2026-07-04
 tags: [research, ia, integrations, platform, quickbase]
 heroImage: /case-studies/quickbase/cc-v2-ia-flow.webp
-readTime: 4 min
-summary: "A resources-first redesign of Quickbase Connection Central, cut down for a December 2024 launch without a beta."
+readTime: 7 min
+summary: "A resources-first redesign of Quickbase Connection Central, shaped by research, narrowed for a December 2024 launch, and shipped without a beta with later adoption evidence."
 role: "Lead Product Designer"
 year: 2024
 group: "Quickbase"
@@ -15,57 +15,67 @@ order: -4
 
 ## On July 22, I started deleting my own design
 
-Connection Central is where Quickbase admins work out which systems, connections, tables, and pipelines are touching company data. The first version, designed by Johnny Lee, already exposed a lot of that information. My v2 work in 2024 was supposed to make the relationships easier to reason about.
+Connection Central is where Quickbase admins work out which systems, connections, tables, and pipelines are touching company data. The first version, designed by Johnny Lee, already exposed a lot of information. My v2 work in 2024 was supposed to make the relationships easier to reason about.
 
-Research gave me a better information architecture and, naturally, enough good ideas to miss the release date. On July 22 I removed the richer accordion and popover detail from the MVP because I had designed more than engineering could responsibly build before GA.
+Research gave me a better information architecture and, naturally, enough good ideas to miss the release date. On July 22, I removed the richer accordion and popover detail from the MVP because I had designed more than engineering could responsibly build before GA. The later July 20, 2025 through July 19, 2026 read-back records 3,110 accounts using the page: real reach, but not proof that the redesign made a difficult investigation easier.
 
-## My role
+### My role
 
 - Role: Lead Product Designer.
-- Scope: research, IA, interaction design, MVP definition, Pendo strategy.
-- Team: PM Stasha Markovska, engineering lead Dimitar Arnaudov, co-research with Lisa Sawyer.
-- Launch: GA on December 17, 2024.
+- Scope: research, information architecture, interaction design, MVP definition, and post-launch measurement strategy.
+- Team: PM Stasha Markovska, engineering lead Dimitar Arnaudov, and co-research with Lisa Sawyer.
+- Shipped scope: Connection Central v2 reached GA on December 17, 2024.
+
+## v1 had information, but not a map
+
+Johnny’s v1 was not a failed product. It was a surface that had accumulated enough views that builders could see individual objects without reliably following their relationships. A connection, the resources it exposed, and the pipelines that depended on it could all be present while the answer to “what does this touch?” still required too much reconstruction.
+
+That distinction mattered. I could have redrawn the existing tabs and called it cleanup. Instead, I treated the information architecture as the actual product decision: what should a person start from when they are trying to understand a complex, live integration estate?
 
 ## Thirteen architects rearranged the problem
 
-Connection Central v1 was informative but sprawling. Builders could see the objects; following what was wired to what was harder.
+Before proposing a new structure, I ran a Structured Association study with 13 Solution Architects. They were close proxies for experienced builders who spent time in Pipelines and customer playback, not external customer participants. That limitation belongs next to the finding.
 
-Before drawing a new structure, I ran a Structured Association survey with 13 Solution Architects. They were the closest proxy we had for power builders living inside integrations every day.
+The pattern was consistent enough to change the top-level split. People described a resource — the connected system and what it exposed — before they described the internal object model around it. They wanted to understand what a connection affected, what depended on it, and where to inspect the consequences. The research did not validate every detail of the later UI. It gave me a credible reason to lead with resources.
 
-The pattern was consistent: people thought in resources and impact, not in our internal object plumbing. I had been looking at a system diagram. They were asking, “if I touch this connection, what breaks?” Fair.
+![Connection Central resources-side-panel design specification, showing a resource hierarchy and nested relationships. It is a broader v2 design specification, not a sequence or a complete GA screen.](/case-studies/quickbase/cc-v2-ia-flow.webp)
 
-## Keeping the map while inspecting one thing
+This is a design specification of the resources side panel, not a claim that every illustrated screen shipped. The structure was the decision I protected: a builder should begin with the resource and keep its relationships visible while they inspect it.
 
-I organised the page around resources. People needed to see what a connected system exposed, where each resource appeared, and which pipelines depended on it.
+## Keep the map while inspecting one thing
 
-![Connection Central v2 resources-first IA flow.](/case-studies/quickbase/cc-v2-ia-flow.webp)
+The core interaction was a two-pane model. Navigation stayed on one side; detail appeared on the other. A builder could drill into a connection without losing the surrounding resource map. That was the part of the control-room metaphor that held up under real constraints: one view had to preserve context while the other did the detailed work.
 
-The two-pane model kept the resource map visible while an admin inspected detail. Losing the whole map to read one connection would have reproduced the same problem in a cleaner layout.
+![Two-pane Connection Central design specification. It documents the context-preserving interaction model with expanded filters and field rows; the shown detail controls were deferred from the GA release.](/case-studies/quickbase/cc-resources-detail-two-pane.webp)
 
-![Two-pane resources detail model.](/case-studies/quickbase/cc-resources-detail-two-pane.webp)
+The companion Pipelines view gave the domain a first-class list for answering a different question: what is running here? It belongs to the broader v2 design specification, with sample data plus Export CSV and 24-hour activity concepts deferred from the December GA release, rather than a labelled screenshot of shipped UI.
+
+![Connection Central Pipelines-list design specification with sample data. It includes Export CSV and 24-hour activity concepts deferred from GA, so it is not evidence that every shown detail shipped.](/case-studies/quickbase/cc-pipelines-list.webp)
 
 ## What survived the cut
 
-Engineering had a hard GA date and limited UI capacity late in the work. The useful question was no longer which version I preferred; it was which decision would be expensive to reverse later.
+Engineering had a fixed December GA date and limited UI capacity late in the work. The useful question was no longer which version I preferred. It was which decision would be expensive to reverse after launch.
 
-I kept the resources-first IA and the two-pane control-room shape. The accordion and popover detail could come later. Shipping the wrong organising model and decorating it afterwards would have been a much nastier problem.
+I kept the resources-first IA and the two-pane shape. The accordion and popover detail did not survive. Neither did field-level detail, 24-hour activity emphasis, and CSV export. They were deferred, not quietly recast as shipped work.
 
-![Pipelines tab in the Connection Central hub.](/case-studies/quickbase/cc-pipelines-list.webp)
+That was a design decision as much as a delivery decision. A rich inline detail treatment demoed well, but it was not load-bearing for the first release. The two-pane model fit the available scope and preserved the context the research had actually made important.
 
-## Then we skipped the beta
+## Then we launched without a beta
 
-On November 6, 2024, I aligned with the PM to go straight to GA to hit the H2 date. There was no beta. This is the sort of sentence that looks decisive in a portfolio and feels considerably less elegant while making the call.
+On November 6, the PM and I decided to go straight to GA to meet the H2 date. There was no beta. This is the sort of sentence that looks decisive in a portfolio and feels considerably less elegant while making the call.
 
-That made post-launch measurement more important, so I authored the v2 Pendo strategy: new-feature guide, onboarding walkthrough, feedback poll, and help update.
+I wrote the v2 Pendo strategy so the team could read the surface after launch: a new-feature guide, onboarding walkthrough, feedback poll, and help update. Measurement was a follow-up mechanism, not a substitute for testing. The retained structure, the deferred details, and the no-beta decision are separate judgments. Blurring them together would make the launch sound more certain than it was.
 
-What I can still verify from the project record:
+## The read-back measured reach, not relief
 
-- GA on December 17, 2024.
-- Research-led IA grounded in n=13 Solution Architect survey.
-- Follow-up backlog tied to deferred survey needs.
+From July 20, 2025 through July 19, 2026, the reporting record shows 3,110 accounts using the Connection Central page. Separately, the measured entry-point population included 2,297 paying accounts, about 51.9% of the measured paying-account base. These are different populations. They describe reach through the measurement setup; they do not show revenue contribution, a redesign lift, or the quality of a builder’s decision.
 
-## The read-back arrived later
+I leave raw event volume out because automation contaminated that stream. I also leave the longer-window navigation funnel out of the headline because it does not establish a same-session usability result.
 
-The first archive did not include the Pendo adoption export. A later fixed-window pull did: from July 20, 2025 to July 19, 2026, 3,110 accounts and 8,436 visitors used the Connection Central page. Of the people who opened Connection Central through the measured entry point, 62.7% went on to use one of its tabs. I leave raw event volume out because automated activity contaminated that part of the stream; the account and visitor counts are the honest measures.
+The unresolved question is the one that mattered when the project began: did the resources-first model stop people from making a mistake or help them recover when they were unsure? The data available here cannot answer that. I would still protect the launch date, but I would fight harder for a small moderated pass with the same Solution Architects before GA. The survey helped choose a model. It did not show where someone would hesitate, misread a status, or lose confidence in the middle of a real investigation.
 
-That read-back proves reach and navigation, not whether the resources-first model prevented mistakes. I would still protect the date. I would also fight harder for five moderated pre-GA sessions with the same architects. Pendo can tell me where people went after launch; it cannot tell me why a builder hesitated over a resource filter or misread a status. Skipping that evidence was the debt attached to the schedule call, and the debt did not vanish because we shipped.
+## Related work
+
+[Designing trust into Quickbase Pipelines](/case-studies/pipelines/) covers the automation surface whose relationships Connection Central needed to make inspectable.
+
+[Designing Pave](/case-studies/designing-pave/) shows a related AI-builder navigation and recovery problem at public-launch scale.

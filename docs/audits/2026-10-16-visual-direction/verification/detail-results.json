@@ -1,0 +1,413 @@
+[
+  {
+    "label": "live",
+    "name": "pave-video",
+    "errors": [],
+    "metrics": [
+      {
+        "tag": "FIGURE",
+        "cls": "case-video-copy",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "VIDEO",
+        "cls": "",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "",
+        "shadow": "none"
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "EM",
+        "cls": "",
+        "border": "0px none rgba(8, 8, 8, 0.68)",
+        "shadow": "none"
+      }
+    ]
+  },
+  {
+    "label": "live",
+    "name": "home-product",
+    "errors": [],
+    "metrics": [
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "project-overview__recording project-overview__recording--lead",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "VIDEO",
+        "cls": "project-overview__media",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SOURCE",
+        "cls": "",
+        "border": "0px none rgb(0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "0px none rgb(0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "overview-video__toggle",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "overview-video__icon overview-video__icon--play",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "svg",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "path",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "overview-video__icon overview-video__icon--pause",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "svg",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "path",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "visually-hidden",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "project-overview__caption",
+        "border": "0px none rgba(8, 8, 8, 0.72)",
+        "shadow": "none"
+      }
+    ]
+  },
+  {
+    "label": "local",
+    "name": "pave-video",
+    "errors": [],
+    "metrics": [
+      {
+        "tag": "FIGURE",
+        "cls": "case-video-copy",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "VIDEO",
+        "cls": "",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "",
+        "shadow": "none"
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "EM",
+        "cls": "",
+        "border": "0px none rgba(8, 8, 8, 0.68)",
+        "shadow": "none"
+      }
+    ]
+  },
+  {
+    "label": "local",
+    "name": "home-product",
+    "errors": [],
+    "metrics": [
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "project-overview__recording project-overview__recording--lead",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "VIDEO",
+        "cls": "project-overview__media",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SOURCE",
+        "cls": "",
+        "border": "0px none rgb(0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "0px none rgb(0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "overview-video__toggle",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "overview-video__icon overview-video__icon--play",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "svg",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "path",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "overview-video__icon overview-video__icon--pause",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "svg",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "path",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "visually-hidden",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "project-overview__caption",
+        "border": "0px none rgba(8, 8, 8, 0.72)",
+        "shadow": "none"
+      }
+    ]
+  },
+  {
+    "label": "branch",
+    "name": "pave-video",
+    "errors": [],
+    "metrics": [
+      {
+        "tag": "FIGURE",
+        "cls": "case-video-copy",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "VIDEO",
+        "cls": "",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "",
+        "border": "",
+        "shadow": "none"
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "EM",
+        "cls": "",
+        "border": "0px none rgba(8, 8, 8, 0.68)",
+        "shadow": "none"
+      }
+    ]
+  },
+  {
+    "label": "branch",
+    "name": "home-product",
+    "errors": [],
+    "metrics": [
+      {
+        "tag": "ARTICLE",
+        "cls": "project-overview",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGURE",
+        "cls": "project-overview__recording project-overview__recording--lead",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "DIV",
+        "cls": "overview-video__frame",
+        "border": "1px solid rgba(8, 8, 8, 0.18)",
+        "shadow": "none"
+      },
+      {
+        "tag": "VIDEO",
+        "cls": "project-overview__media",
+        "border": "0px none rgb(8, 8, 8)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SOURCE",
+        "cls": "",
+        "border": "0px none rgb(0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "A",
+        "cls": "",
+        "border": "0px none rgb(0, 0, 0)",
+        "shadow": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "overview-video__toggle",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "overview-video__icon overview-video__icon--play",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "svg",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "path",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "overview-video__icon overview-video__icon--pause",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "svg",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "path",
+        "cls": {},
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "SPAN",
+        "cls": "visually-hidden",
+        "border": "0px none rgb(255, 255, 255)",
+        "shadow": "none"
+      },
+      {
+        "tag": "FIGCAPTION",
+        "cls": "project-overview__caption",
+        "border": "0px none rgba(8, 8, 8, 0.72)",
+        "shadow": "none"
+      }
+    ]
+  },
+  {
+    "name": "motion-pause",
+    "label": "Motion",
+    "pressed": "false"
+  },
+  {
+    "name": "live-case-index",
+    "url": "https://traykov.cc/#work"
+  }
+]

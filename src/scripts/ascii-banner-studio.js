@@ -1,3 +1,5 @@
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
+
 const ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
 const PREVIEW_LONG_EDGE = 1584;
 const TAU = Math.PI * 2;
@@ -407,11 +409,22 @@ class AsciiBannerStudio {
     } else {
       this.reducedMotion.addListener(handleReducedMotion);
     }
+
+    this.unsubscribeMotion = onMotionChange(() => {
+      this.lastFrame = 0;
+      if (!isMotionActive() && this.animationFrame) {
+        window.cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = 0;
+      }
+      this.draw();
+      this.updateAnimationState();
+    });
   }
 
   shouldAnimate() {
     return (
       this.isPlaying &&
+      isMotionActive() &&
       !document.hidden &&
       (this.isFullscreen || this.isInViewport)
     );

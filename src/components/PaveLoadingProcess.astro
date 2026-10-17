@@ -1,0 +1,65 @@
+---
+import OverviewVideo from "./OverviewVideo.astro";
+import type { HomepageVideo } from "../lib/homepage-overviews";
+
+const processReel: HomepageVideo = {
+  kind: "video",
+  src: "/case-studies/media/pave-loading-process.mp4",
+  poster: "/case-studies/media/pave-loading-process-poster.jpg",
+  width: 1280,
+  height: 720,
+  title: "Loading explorations",
+  description: "From literal icons to fixed-pixel motifs.",
+  label: "Iterations reel"
+};
+
+const prototypeVideo: HomepageVideo = {
+  kind: "video",
+  src: "/case-studies/media/pave-loading-system.mp4",
+  poster: "/case-studies/media/pave-loading-system-poster.jpg",
+  width: 1280,
+  height: 720,
+  title: "UI-first prototype",
+  description: "The builder wait and agent-status language in context.",
+  label: "Recorded prototype"
+};
+
+const paveOverview: HomepageVideo = {
+  kind: "video",
+  src: "/case-studies/media/pave-portfolio-loop.mp4",
+  poster: "/case-studies/media/homepage-posters/pave-overview.jpg",
+  width: 960,
+  height: 540,
+  title: "Pave in 26 seconds",
+  description: "A quick look at the builder, Plan Mode, versioning, Direct Edit, and an early workflow idea.",
+  label: "Pave product overview"
+};
+---
+
+<section class="pave-loading-process" aria-label="Pave loading system">
+  <section class="pave-loading-process__chapter" id="pave-process-reel" aria-labelledby="pave-process-reel-title">
+    <h2 id="pave-process-reel-title">The iterations</h2>
+    <div class="pave-process-reel">
+      <OverviewVideo video={processReel} studyTitle="Pave loading system" captionId="pave-process-reel-caption" />
+    </div>
+    <p>The first passes turned product features into moving icons. The useful version removed the puzzle: fixed cells only light, dim, or change colour; white leads and green trails.</p>
+  </section>
+
+  <section class="pave-loading-process__chapter" id="pave-process-states" aria-labelledby="pave-process-states-title">
+    <h2 id="pave-process-states-title">The chip follows the work</h2>
+    <div class="pave-process-prototype-video">
+      <OverviewVideo video={prototypeVideo} studyTitle="Pave loading system" captionId="pave-loading-system-prototype-caption" />
+    </div>
+    <p>The UI recording keeps meaning in the host: <b>Implement core changes</b> is the active tool verb; <b>Waiting for your approval</b> pauses ordinary loading; <b>Disconnected</b> names a connection condition, not failure.</p>
+  </section>
+
+  <section class="pave-loading-process__chapter" id="pave-process-finish" aria-labelledby="pave-process-finish-title">
+    <h2 id="pave-process-finish-title">Finish from the frame you have</h2>
+    <p>Completion begins from the lit cells already on screen, floods outward, retracts the grid, then resolves to the Pave mark. That made it possible to finish an interrupted motif without pretending the earlier frame did not happen.</p>
+  </section>
+
+  <section class="pave-loading-process__chapter pave-loading-process__chapter--next" aria-labelledby="pave-overview-title">
+    <h2 id="pave-overview-title"><a href="/case-studies/designing-pave/">Explore Designing Pave</a></h2>
+    <OverviewVideo video={paveOverview} studyTitle="Pave" captionId="pave-overview-caption" lead />
+  </section>
+</section>

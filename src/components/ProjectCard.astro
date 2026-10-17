@@ -5,20 +5,18 @@ import type { CaseStudy } from "../lib/content";
 const {
   study,
   index = 0,
-  eyebrow = study.group,
   action = "WIP",
   href
 }: {
   study: CaseStudy;
   index?: number;
-  eyebrow?: string;
   action?: string;
   href?: string;
 } = Astro.props;
 
 const isSynapse = study.group.toLowerCase().includes("synapse");
 const isPave = `${study.group} ${study.title}`.toLowerCase().includes("pave");
-const meta = [eyebrow, study.status, study.readTime].filter(Boolean).join(" / ");
+const meta = [study.status, study.readTime].filter(Boolean).join(" / ");
 const ariaAction = href ? `Open ${study.title} case study` : `${study.title} case study preview. Coming soon.`;
 ---
 
@@ -47,7 +45,6 @@ const ariaAction = href ? `Open ${study.title} case study` : `${study.title} cas
         <span class="project-index" data-scramble data-scramble-trigger="hover">{String(index + 1).padStart(2, "0")} / {meta}</span>
         <h3>{study.title}</h3>
         {study.summary && <p>{study.summary}</p>}
-        {study.tags.length > 0 && <p class="project-card__tags">{study.tags.slice(0, 4).join(" / ")}</p>}
         <span class="construction-status" data-scramble data-scramble-trigger="hover">{action}</span>
       </div>
     </a>
@@ -58,7 +55,6 @@ const ariaAction = href ? `Open ${study.title} case study` : `${study.title} cas
         <span class="project-index" data-scramble data-scramble-trigger="hover">{String(index + 1).padStart(2, "0")} / {meta}</span>
         <h3>{study.title}</h3>
         {study.summary && <p>{study.summary}</p>}
-        {study.tags.length > 0 && <p class="project-card__tags">{study.tags.slice(0, 4).join(" / ")}</p>}
         <span class="construction-status" data-scramble data-scramble-trigger="hover">{action}</span>
       </div>
     </div>

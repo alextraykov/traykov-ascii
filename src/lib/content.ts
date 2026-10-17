@@ -341,6 +341,22 @@ function renderCodeBlock(lang: string, code: string): string {
     return renderCaseTimeline(code);
   }
 
+  if (normalized === "case-compare") {
+    return renderCaseCompare(code);
+  }
+
+  if (normalized === "case-live") {
+    return renderCaseLive(code);
+  }
+
+  if (normalized === "case-live-switcher") {
+    return renderCaseLiveSwitcher(code);
+  }
+
+  if (normalized === "case-gallery") {
+    return renderCaseGallery(code);
+  }
+
   return `<pre><code>${esc(code)}</code></pre>`;
 }
 
@@ -376,7 +392,7 @@ function renderCaseVideo(source: string): string {
 
   return `<figure class="case-video-copy">${
     file
-      ? `<video src="${esc(file)}" controls muted loop playsinline preload="metadata" data-case-video-autoplay></video>`
+      ? `<video src="${esc(file)}" controls muted loop playsinline preload="none" data-case-video-autoplay></video>`
       : ""
   }<figcaption><strong>${inlineMarkdown(title)}</strong>${
     caption ? `<em>${inlineMarkdown(caption)}</em>` : ""
@@ -463,6 +479,167 @@ function renderCaseTimeline(source: string): string {
   return `<section class="case-timeline" data-reveal="rise" aria-label="${esc(
     plainMarkdownText(title)
   )}"><p class="case-timeline__label">${inlineMarkdown(title)}</p><ol>${items}</ol></section>`;
+}
+
+function splitRows(body: string): string[][] {
+  return body
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.split("|").map((part) => part.trim()));
+}
+
+function renderCaseTag(tag: string): string {
+  if (!tag) return "";
+  const slug = tag.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return `<span class="case-tag case-tag--${esc(slug)}">${esc(tag)}</span>`;
+}
+
+function renderCaseFigureHeader(title: string, note: string): string {
+  return `<figcaption class="case-figure-head"><strong>${inlineMarkdown(title)}</strong>${
+    note ? `<em>${inlineMarkdown(note)}</em>` : ""
+  }</figcaption>`;
+}
+
+function renderCaseSwitch(label: string, buttons: string[], attr: string): string {
+  return `<div class="case-switch" role="group" aria-label="${esc(plainMarkdownText(label))}" ${attr} hidden>${buttons.join(
+    ""
+  )}</div>`;
+}
+
+function renderCaseMedia(src: string, alt: string, poster = ""): string {
+  const path = normalizeAssetPath(src);
+  if (/\.mp4(\?|$)/i.test(path)) {
+    return `<video src="${esc(path)}"${
+      poster ? ` poster="${esc(normalizeAssetPath(poster))}"` : ""
+    } muted loop playsinline preload="none" controls aria-label="${esc(alt)}" data-case-video-autoplay></video>`;
+  }
+  return `<img src="${esc(path)}" alt="${esc(alt)}" loading="lazy" />`;
+}
+
+// Before/after (or any N-way) switch. Rows: Label | src | caption | tag | poster.
+// Without JS every panel stays visible and the switch stays hidden.
+function renderCaseCompare(source: string): string {
+  const { attrs, body } = parseInlineMetadata(source);
+  const title = attrs.title ?? "Before and after";
+  const fit = attrs.fit?.toLowerCase() === "contain" ? " case-compare--contain" : "";
+  const rows = splitRows(body);
+  const buttons = rows.map(
+    ([label = ""], index) =>
+      `<button type="button" aria-pressed="${index === 0 ? "true" : "false"}" data-case-compare-option="${index}">${esc(
+        label
+      )}</button>`
+  );
+  const panels = rows
+    .map(([label = "", src = "", caption = "", tag = "", poster = ""], index) => {
+      const alt = plainMarkdownText(caption || `${title}: ${label}`);
+      return `<div class="case-compare__panel" data-case-compare-panel="${index}" data-active="${
+        index === 0 ? "true" : "false"
+      }"><div class="case-compare__media">${renderCaseMedia(src, alt, poster)}</div><p class="case-compare__caption"><span class="case-compare__label">${esc(
+        label
+      )}</span>${renderCaseTag(tag)}${caption ? `<span>${inlineMarkdown(caption)}</span>` : ""}</p></div>`;
+    })
+    .join("");
+
+  return `<figure class="case-compare${fit}" data-case-compare>${renderCaseFigureHeader(
+    title,
+    attrs.note ?? ""
+  )}${renderCaseSwitch(title, buttons, "data-case-compare-switch")}<div class="case-compare__stage">${panels}</div></figure>`;
+}
+
+function renderCaseLiveFrame(src: string, title: string, height: string, fallback: string): string {
+  const frameHeight = /^\d+$/.test(height) ? height : "560";
+  return `<div class="case-live__frame" style="--case-live-height: ${esc(frameHeight)}px">${
+    fallback
+      ? `<img class="case-live__fallback" src="${esc(normalizeAssetPath(fallback))}" alt="" loading="lazy" />`
+      : ""
+  }<iframe title="${esc(title)}" data-case-live-src="${esc(normalizeAssetPath(src))}" loading="lazy" tabindex="-1"></iframe></div>`;
+}
+
+// Lazy prototype embed. The iframe only loads near the viewport and unloads far from it.
+function renderCaseLive(source: string): string {
+  const { attrs, body } = parseInlineMetadata(source);
+  const title = attrs.title ?? "Live prototype";
+  const src = attrs.src ?? "";
+  const caption = body || attrs.note || "";
+
+  return `<figure class="case-live" data-case-live>${renderCaseLiveFrame(
+    src,
+    title,
+    attrs.height ?? "",
+    attrs.fallback ?? ""
+  )}<figcaption><strong>${inlineMarkdown(title)}</strong>${renderCaseTag(attrs.tag ?? "")}${
+    caption ? `<em>${inlineMarkdown(caption)}</em>` : ""
+  }<a class="case-live__open" href="${esc(normalizeAssetPath(src))}" target="_blank" rel="noopener">Open full screen</a></figcaption></figure>`;
+}
+
+// One prototype iframe plus buttons that swap a query value. Rows: value | label | tag.
+function renderCaseLiveSwitcher(source: string): string {
+  const { attrs, body } = parseInlineMetadata(source);
+  const title = attrs.title ?? "Live states";
+  const base = attrs.base ?? "";
+  const rows = splitRows(body);
+  const first = rows[0]?.[0] ?? "";
+  const buttons = rows.map(
+    ([value = "", label = "", tag = ""], index) =>
+      `<button type="button" aria-pressed="${index === 0 ? "true" : "false"}" data-case-live-value="${esc(
+        value
+      )}" data-case-live-tag="${esc(tag)}">${esc(label || value)}${tag ? ` <small>${esc(tag)}</small>` : ""}</button>`
+  );
+  const noScriptList = rows
+    .map(
+      ([value = "", label = "", tag = ""]) =>
+        `<li><a href="${esc(normalizeAssetPath(base + value))}" target="_blank" rel="noopener">${esc(label || value)}</a> ${renderCaseTag(
+          tag
+        )}</li>`
+    )
+    .join("");
+
+  return `<figure class="case-live case-live--switcher" data-case-live data-case-live-base="${esc(
+    normalizeAssetPath(base)
+  )}">${renderCaseFigureHeader(title, attrs.note ?? "")}${renderCaseSwitch(
+    title,
+    buttons,
+    "data-case-live-switch"
+  )}<ul class="case-live__states" data-case-live-fallback-list>${noScriptList}</ul>${renderCaseLiveFrame(
+    base + first,
+    title,
+    attrs.height ?? "",
+    attrs.fallback ?? ""
+  )}<figcaption><span data-case-live-current>${renderCaseTag(rows[0]?.[2] ?? "")}</span>${
+    attrs.caption ? `<em>${inlineMarkdown(attrs.caption)}</em>` : ""
+  }<a class="case-live__open" href="${esc(normalizeAssetPath(base + first))}" target="_blank" rel="noopener" data-case-live-open>Open full screen</a></figcaption></figure>`;
+}
+
+// Image grid with a theme switch. Rows: file stem | label. Files: <dir><stem>-<theme>.<ext>.
+function renderCaseGallery(source: string): string {
+  const { attrs, body } = parseInlineMetadata(source);
+  const title = attrs.title ?? "Gallery";
+  const dir = attrs.dir ?? "";
+  const ext = attrs.ext ?? "webp";
+  const themes = (attrs.themes ?? "light, dark").split(",").map((theme) => theme.trim()).filter(Boolean);
+  const buttons = themes.map(
+    (theme, index) =>
+      `<button type="button" aria-pressed="${index === 0 ? "true" : "false"}" data-case-gallery-theme="${esc(theme)}">${esc(
+        theme.charAt(0).toUpperCase() + theme.slice(1)
+      )}</button>`
+  );
+  const items = splitRows(body)
+    .map(([stem = "", label = ""]) => {
+      const sources = themes.map((theme) => `${normalizeAssetPath(dir)}${stem}-${theme}.${ext}`);
+      return `<figure class="case-image-card"><img src="${esc(sources[0])}" alt="${esc(
+        label || stem
+      )}" loading="lazy" ${themes
+        .map((theme, index) => `data-case-gallery-${esc(theme)}="${esc(sources[index])}"`)
+        .join(" ")} /><figcaption><span>${esc(label || stem)}</span></figcaption></figure>`;
+    })
+    .join("");
+
+  return `<figure class="case-gallery case-image-grid case-image-grid--cols-${esc(
+    attrs.columns ?? "3"
+  )}" data-case-gallery>${renderCaseFigureHeader(title, attrs.note ?? "")}${
+    attrs.tag ? `<p class="case-gallery__tag">${renderCaseTag(attrs.tag)}</p>` : ""
+  }${renderCaseSwitch(title, buttons, "data-case-gallery-switch")}<div class="case-image-grid__items">${items}</div></figure>`;
 }
 
 function simplifyDiagramLine(line: string): string {

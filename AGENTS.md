@@ -23,6 +23,8 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 
 - Use tokens from `:root`; do not hardcode colors, easings, durations, z-indexes, shadows, or spacing in new CSS.
 - Corners are square: `--radius-0`. Pills are the only exception.
+- Do not ship browser-default dropdown chrome in portfolio UI. Prefer visible buttons or tabs for short sets of choices. When a select is genuinely needed, use the shared styled control with an explicit chevron, reserved end padding, and a clear gap between the label, chevron, and right border; verify the longest label on desktop and mobile. Never let the arrow sit against the edge.
+- Case-study demos must feel like part of the portfolio: present the relevant product interaction directly, use a clearly named full-screen preview, and omit prototype/debug menus, reference-link inventories, and redundant status copy from the reader's experience. Preserve the supplied source's actual visual and behavioral decisions.
 - Canonical ASCII scramble ramp is `" .:+*#%@"`.
 - Canonical breakpoints are 1180, 900, 820, 700, and 640.
 - Motion vocabulary is closed: reveal, scan, scramble, rise-stagger, blink. New animation should compose these primitives.
@@ -86,7 +88,31 @@ attribution: Product principle
 role: Launch review
 Quote body.
 ```
+```case-compare
+title: Before and after
+fit: contain
+Before | /path.webp | Caption | Before
+After | /path.mp4 | Caption | Live | /poster.jpg
+```
+
+```case-live
+title: Prototype
+src: /case-studies/study/live/demo.html?present=1
+height: 560
+fallback: /path.webp
+tag: Concept
+Caption body.
+```
+
+```case-gallery
+title: States
+dir: /case-studies/study/pages/
+themes: light, dark
+stem-desk | Label
+```
 ````
+
+`case-compare` renders a switch between rows (images, or mp4 with an optional poster); without JS every panel stays visible. `case-live` lazy-loads an iframe near the viewport and unloads it far away. `case-live-switcher` (rows `value | label | tag`, `base:` URL) swaps one query value. `case-gallery` swaps `<stem>-<theme>.webp`. Tags `Live`, `Concept`, `Before` and `Rejected` render as labels; keep concept work labelled. Never embed a demo that is listed in `private-work-source/manifest.json`; the build's leak check will fail.
 
 Renderer limits: this is a line-based custom renderer. Do not rely on nested lists, tables, or arbitrary HTML passthrough.
 

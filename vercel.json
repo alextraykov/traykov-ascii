@@ -3,16 +3,30 @@
   "framework": "astro",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": {
+    "api/private-work.js": {
+      "includeFiles": ".private-work/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/private",
+      "destination": "/api/private-work?action=route&privatePath="
+    },
+    {
+      "source": "/private/",
+      "destination": "/api/private-work?action=route&privatePath="
+    },
+    {
+      "source": "/private/:privatePath*",
+      "destination": "/api/private-work?action=route&privatePath=:privatePath*"
+    }
+  ],
   "redirects": [
     {
       "source": "/case-studies/",
       "destination": "/#work",
       "permanent": false
-    },
-    {
-      "source": "/case-studies/designing-synapse-sys/",
-      "destination": "/case-studies/synapse-sys/",
-      "permanent": true
     },
     {
       "source": "/case-studies/blinq-pave-rebrand/",

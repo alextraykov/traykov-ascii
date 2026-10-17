@@ -32,6 +32,7 @@ import {
   cemeteryPlaneVertexShader,
   cemeterySceneFragmentShader
 } from "../sketches/shaders/web-cemetery.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 export const CEMETERY_CONFIG = Object.freeze({
   seed: 1847,
@@ -228,8 +229,8 @@ class WebCemetery {
         root.querySelector(`[data-web-cemetery-output="${name}"]`)
       ])
     );
-    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     this.debugEnabled = new URLSearchParams(window.location.search).get("debug") === "1";
+    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     this.settings = { ...CEMETERY_CONFIG.defaults };
     this.viewMode = 6;
     this.pointer = new Vector2(0.5, 0.5);
@@ -620,7 +621,7 @@ class WebCemetery {
 
   bindEvents() {
     this.onPointerMove = (event) => {
-      if (this.reducedMotion.matches) return;
+      if (!isMotionActive()) return;
       const bounds = this.canvas.getBoundingClientRect();
       const x = clamp((event.clientX - bounds.left) / Math.max(1, bounds.width), 0, 1);
       const y = clamp((event.clientY - bounds.top) / Math.max(1, bounds.height), 0, 1);
@@ -641,11 +642,16 @@ class WebCemetery {
     };
     this.onVisibility = () => this.requestFrame();
     this.onPageTransition = () => this.requestFrame();
-    this.onMotionChange = () => {
+    this.onMotionChange = (state) => {
       this.lastTimestamp = 0;
       this.elapsed = 0;
       this.pointer.set(0.5, 0.5);
       this.targetPointer.set(0.5, 0.5);
+      if (!state.active) {
+        this.cancelFrame();
+        this.pointerVelocity.set(0, 0);
+        this.wake = 0;
+      }
       this.requestFrame();
     };
     this.onContextLost = (event) => {
@@ -679,8 +685,16 @@ class WebCemetery {
     document.addEventListener("visibilitychange", this.onVisibility);
     window.addEventListener("page-transition-state", this.onPageTransition);
     window.addEventListener("keydown", this.onKeyDown);
-    this.reducedMotion.addEventListener?.("change", this.onMotionChange);
-    window.addEventListener("pagehide", () => this.destroy(), { once: true });
+    this.unsubscribeMotion = onMotionChange(this.onMotionChange);
+    this.onPageHide = (event) => {
+      this.cancelFrame();
+      if (!event.persisted) this.destroy();
+    };
+    this.onPageShow = (event) => {
+      if (event.persisted) this.requestFrame();
+    };
+    window.addEventListener("pagehide", this.onPageHide);
+    window.addEventListener("pageshow", this.onPageShow);
   }
 
   configureDebug() {
@@ -760,25 +774,24 @@ class WebCemetery {
     this.requestFrame();
   }
 
-  shouldAnimate() {
+  canRender() {
     return this.started &&
       !this.failed &&
-      !this.reducedMotion.matches &&
       this.intersecting &&
       !document.hidden &&
-      document.documentElement.dataset.pageTransitionActive !== "true" &&
       !this.contextLost &&
       !this.destroyed;
   }
 
+  shouldAnimate() {
+    return this.canRender() && isMotionActive();
+  }
+
   requestFrame() {
     if (
-      !this.started ||
-      this.failed ||
+      !this.canRender() ||
       this.frameHandle ||
-      this.destroyed ||
-      this.contextLost ||
-      document.hidden
+      this.destroyed
     ) return;
     this.frameHandle = window.requestAnimationFrame((timestamp) => this.tick(timestamp));
   }
@@ -790,11 +803,11 @@ class WebCemetery {
 
   tick(timestamp) {
     this.frameHandle = 0;
-    if (!this.started || this.failed || this.destroyed || this.contextLost) return;
+    if (!this.canRender()) return;
     const delta = this.lastTimestamp ? Math.min(0.05, (timestamp - this.lastTimestamp) / 1000) : 0;
     this.lastTimestamp = timestamp;
-    if (!this.reducedMotion.matches) this.elapsed += delta;
-    this.update(delta);
+    if (this.shouldAnimate()) this.elapsed += delta;
+    this.update(this.shouldAnimate() ? delta : 0);
     this.render(timestamp);
     if (this.shouldAnimate()) this.requestFrame();
   }
@@ -806,13 +819,14 @@ class WebCemetery {
       Math.pow(CEMETERY_CONFIG.motion.velocityDecay, Math.max(0.001, delta))
     );
     this.wake *= Math.pow(CEMETERY_CONFIG.motion.wakeDecay, Math.max(0.001, delta));
-    if (this.reducedMotion.matches) {
+    if (!isMotionActive()) {
       this.pointer.set(0.5, 0.5);
       this.pointerVelocity.set(0, 0);
       this.wake = 0;
     }
 
-    const motion = this.reducedMotion.matches ? 0 : 1;
+    const systemMotion = this.reducedMotion.matches ? 0 : 1;
+    const motion = systemMotion && isMotionActive() ? 1 : 0;
     const terrainOffsetX =
       (this.pointer.x - 0.5) * this.settings.parallax * CEMETERY_CONFIG.motion.terrainParallax * motion;
     const terrainOffsetY =
@@ -826,7 +840,8 @@ class WebCemetery {
 
   render(timestamp) {
     if (!this.renderer || !this.sceneTarget || !this.fogTarget || !this.atlas) return;
-    const motion = this.reducedMotion.matches ? 0 : 1;
+    const systemMotion = this.reducedMotion.matches ? 0 : 1;
+    const motion = systemMotion && isMotionActive() ? 1 : 0;
 
     this.fogMaterial.uniforms.uTime.value = this.elapsed;
     this.fogMaterial.uniforms.uMotion.value = motion;
@@ -958,7 +973,9 @@ class WebCemetery {
     document.removeEventListener("visibilitychange", this.onVisibility);
     window.removeEventListener("page-transition-state", this.onPageTransition);
     window.removeEventListener("keydown", this.onKeyDown);
-    this.reducedMotion.removeEventListener?.("change", this.onMotionChange);
+    this.unsubscribeMotion?.();
+    window.removeEventListener("pagehide", this.onPageHide);
+    window.removeEventListener("pageshow", this.onPageShow);
     this.sceneTarget?.dispose();
     this.fogTarget?.dispose();
     this.atlasTexture?.dispose();

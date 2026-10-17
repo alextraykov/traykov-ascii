@@ -1,0 +1,102 @@
+---
+import { readFile } from "node:fs/promises";
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHead from "../../components/SiteHead.astro";
+import SiteNav from "../../components/SiteNav.astro";
+import Artwork from "../../components/presenting-code/Artwork.astro";
+import Skill from "../../components/presenting-code/Skill.astro";
+import "../../styles/global.css";
+
+const base = "/labs/presenting-in-code";
+const definitions = [
+  { name: "presentation-planner", title: "Plan the argument", purpose: "Turn a design argument and a real screen into a sequence of beats.", when: "you know what needs explaining, before building the presentation.", output: "a slide plan: one point, one demonstration and one technique per beat.", demo: "#plan" },
+  { name: "coded-presentation-setup", title: "Build on the real screen", purpose: "Set up the host every technique below depends on.", when: "the plan is ready and the real screen component is available.", output: "a deck with addressable steps, shared motion tokens and reduced motion.", demo: "#setup" },
+  { name: "camera-zoom", title: "Direct the camera", purpose: "Move between measured parts of one live screen.", when: "the audience needs a closer look without losing the surrounding interface.", output: "named camera stops and one continuous transform between them.", demo: "#camera" },
+  { name: "live-anchors", title: "Attach the explanation", purpose: "Tie the ring and leader line to the element being discussed.", when: "the interface can move or change while a note points at it.", output: "an annotation measured from the live element after the camera settles.", demo: "#anchors" },
+  { name: "layer-tagging", title: "Name the surfaces", purpose: "Give every visible surface the level it actually occupies.", when: "you need to explain depth, nesting or the structure of a screen.", output: "data-layer tags on the real component, ready for extraction.", demo: "#layers" },
+  { name: "orthographic-breakdown", title: "Open the stack", purpose: "Separate the real screen into CSS 3D planes.", when: "flat pixels conceal how the interface is assembled.", output: "a flat-to-exploded view with the original screen on every plane.", demo: "#layers" },
+  { name: "level-pointing", title: "Inspect one level", purpose: "Lift a chosen level and quiet the surrounding planes.", when: "one surface or component needs a focused explanation.", output: "level and component targets with lift, dimming, leaders and a closer view.", demo: "#layers" },
+  { name: "blueprint-mode", title: "Look through the paint", purpose: "Show the measured structure of the same surfaces.", when: "spacing, nesting and level membership matter more than appearance.", output: "wireframe boxes that remain attached to their own planes.", demo: "#layers" },
+  { name: "one-screen-before-after", title: "Make the change visible", purpose: "Compare two states without replacing the screen.", when: "a design change needs to be seen in place.", output: "a reversible switch on one live component, with measured FLIP transitions.", demo: "#compare" },
+  { name: "frame-check", title: "Check the transition", purpose: "Inspect frames while the demonstration runs.", when: "the final state looks right but the transition may still jump or duplicate text.", output: "frame timing, long-task counts and overlapping-text checks to investigate.", demo: "#frame-check" }
+];
+const skills = await Promise.all(definitions.map(async (skill) => ({ ...skill, source: await readFile(new URL(`../../../public/labs/presenting-in-code/skills/${skill.name}/SKILL.md`, import.meta.url), "utf8") })));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead title="Presentations in code — Alexander Traykov Labs" description="Build explanations on a live interface: cameras, measured annotations, exploded views and ten reusable skills. Try the original working demonstrations." path="/labs/presenting-in-code/" />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body class="labs-tool-page presenting-code-page">
+    <SiteNav />
+    <main id="top" class="pc-shell section-shell">
+      <header class="pc-hero">
+        <div class="pc-kicker"><a href="/labs/" data-scramble>← All labs</a><span>Open source · 10 skills · MIT</span></div>
+        <div class="pc-hero__intro"><h1>Presentations<br />in code.</h1><div><p class="pc-lead">Camera moves, live annotations and exploded views. Built on the interface itself.</p><p>Try the techniques here. Take the skills and use them on your own screen.</p><div class="pc-actions"><a class="pc-button" href="#camera">Try the techniques ↓</a><a href="#skills">Get the skills</a></div></div></div>
+        <figure class="pc-demo pc-demo--hero" data-pc-demo="hero">
+          <div class="pc-demo__bar"><span class="pc-label">One component. Two states.</span><div class="pc-controls" data-pc-controls hidden role="group" aria-label="Hero interface state"><button type="button" data-pc-action="theme" aria-pressed="false">Dark screen</button></div></div>
+          <Artwork name="hero" label="The original live blueprint interface, with its header, navigation, cards, panel and input." />
+          <figcaption><span>Click a part of the screen to switch Before / After. The same elements change together.</span><a href="#compare">How the comparison works ↗</a></figcaption>
+        </figure>
+      </header>
+      <nav class="pc-chapters" aria-label="Tutorial chapters"><a href="#plan"><span>01</span> Plan</a><a href="#camera"><span>02</span> Camera</a><a href="#anchors"><span>03</span> Anchors</a><a href="#layers"><span>04</span> Layers</a><a href="#compare"><span>05</span> Compare</a><a href="#skills"><span>06</span> Skills</a></nav>
+
+      <section id="plan" class="pc-section pc-plan" aria-labelledby="plan-title">
+        <header class="pc-section__heading" data-reveal="fade"><p class="pc-kicker">01 / Start with the argument</p><h2 id="plan-title">One point per beat.<br />One real screen underneath.</h2><p>The plan chooses what the audience needs to notice. The setup keeps every technique connected to the same component.</p></header>
+        <div class="pc-foundations">
+          <article class="pc-plan-output"><div class="pc-output-heading"><span class="pc-label">Deliverable / the plan</span><a href="#skill-presentation-planner">01 · Planner skill ↓</a></div><ol class="pc-beats"><li><span>01</span><div><h3>Show the change</h3><p>One screen, before and after.</p></div><code>compare</code></li><li><span>02</span><div><h3>Bring it closer</h3><p>Move to the part being discussed.</p></div><code>camera</code></li><li><span>03</span><div><h3>Explain the structure</h3><p>Separate the surfaces into levels.</p></div><code>explode</code></li></ol><p class="pc-caption">Three beats from the techniques in this tutorial. The planner proposes the sequence before building it.</p></article>
+          <article id="setup" class="pc-setup-output"><div class="pc-output-heading"><span class="pc-label">Deliverable / the host</span><a href="#skill-coded-presentation-setup">02 · Setup skill ↓</a></div><div class="pc-host-map" aria-label="A screen component connected to camera, anchors and layers"><div><span>your screen component</span><code>&lt;Screen /&gt;</code></div><ul><li>Camera<span>named stops</span></li><li>Anchors<span>live bounds</span></li><li>Layers<span>real surfaces</span></li></ul></div><div class="pc-host-address"><span>Every state has an address</span><a href={`${base}/deck/#making-of?slide=7&step=4`} target="_blank" rel="noopener"><code>#making-of?slide=7&amp;step=4 ↗</code></a></div><p class="pc-caption">The reference deck includes URL steps, shared timing tokens and a reduced-motion mode.</p></article>
+        </div>
+      </section>
+
+      <section id="camera" class="pc-section pc-technique" aria-labelledby="camera-title">
+        <header class="pc-technique__copy" data-reveal="scan"><p class="pc-kicker">02 / Direct attention</p><h2 id="camera-title">Move the camera.<br />Keep the screen.</h2><p>Each stop frames a measured rectangle in the same interface. Move between them and keep enough context to know where you are.</p><p class="pc-instruction">Click Input, Panel or Cards on the screen. Use Whole screen to return.</p><a class="pc-skill-link" href="#skill-camera-zoom">03 · Camera zoom skill ↓</a></header>
+        <figure class="pc-demo" data-pc-demo="camera"><div class="pc-demo__bar"><span class="pc-label">Camera stops</span><div class="pc-controls" data-pc-controls hidden role="group" aria-label="Camera stops"><button type="button" data-pc-action="target" data-value="whole" aria-pressed="true">Whole screen</button><button type="button" data-pc-action="target" data-value="input" aria-pressed="false">Input</button><button type="button" data-pc-action="target" data-value="panel" aria-pressed="false">Panel</button><button type="button" data-pc-action="target" data-value="cards" aria-pressed="false">Cards</button></div></div><Artwork name="camera" label="A camera framing the original blueprint screen; named stops focus its input, panel and cards." /><figcaption><output data-pc-camera-readout>Input · x 200 / y 324 / 880 × 509</output><span>One world transform</span></figcaption></figure>
+      </section>
+
+      <section id="anchors" class="pc-section pc-technique pc-technique--reverse" aria-labelledby="anchors-title">
+        <header class="pc-technique__copy"><p class="pc-kicker">03 / Point at the live element</p><h2 id="anchors-title">The note follows<br />the interface.</h2><p>The ring comes from the element’s actual bounds. The leader tracks that ring while the live interface changes.</p><p class="pc-instruction">Click a component to attach its note. Use the in-screen switch: the input changes height, and the note follows.</p><a class="pc-skill-link" href="#skill-live-anchors">04 · Live anchors skill ↓</a><details class="pc-disclosure"><summary>What usually goes wrong</summary><p>A stored rectangle becomes wrong when the component moves. Track rendered bounds during the transition and measure again when the element or viewport changes.</p></details></header>
+        <figure class="pc-demo" data-pc-demo="anchor"><div class="pc-demo__bar"><span class="pc-label">Measured live anchor</span><span class="pc-label">Select on the screen ↓</span></div><Artwork name="anchor" kind="anchor" label="A live ring and leader line attached to the changing input on the original blueprint screen." /><figcaption><span>Live component → measured ring → leader</span><span>Click Input, Panel or Cards to move the note.</span></figcaption></figure>
+      </section>
+
+      <section id="layers" class="pc-section pc-layers" aria-labelledby="layers-title">
+        <header class="pc-section__heading"><p class="pc-kicker">04 / Open the interface</p><h2 id="layers-title">One screen.<br />Four planes.</h2><p>Tag the surfaces, copy each level, tilt the view, then lift the planes apart. The blueprint is measured from those same surfaces.</p><div class="pc-skill-links"><a href="#skill-layer-tagging">05 · Tagging</a><a href="#skill-orthographic-breakdown">06 · Breakdown</a><a href="#skill-level-pointing">07 · Pointing</a><a href="#skill-blueprint-mode">08 · Blueprint</a></div></header>
+        <div class="pc-layer-sequence" data-pc-sequence>
+          <div class="pc-layer-sticky">
+            <figure class="pc-demo pc-demo--layers" data-pc-demo="layers">
+              <div class="pc-demo__bar"><span class="pc-label">The original surface stack</span><span class="pc-label">Select a surface ↓</span></div>
+              <Artwork name="layers" kind="layers" label="The original screen separated into background, raised surfaces, dimmer and dialog planes." />
+              <figcaption><output data-pc-layer-caption>Exploded: the tagged surfaces are separated, with measured lines back to the ground.</output></figcaption>
+            </figure>
+            <div class="pc-layer-guide">
+              <ol class="pc-layer-steps" data-pc-stage-list aria-label="Breakdown stages"><li><button type="button" data-pc-stage="0" aria-pressed="false" disabled><span>1</span><span>Flat</span></button></li><li><button type="button" data-pc-stage="1" aria-pressed="false" disabled><span>2</span><span>Copy levels</span></button></li><li><button type="button" data-pc-stage="2" aria-pressed="false" disabled><span>3</span><span>Tilt</span></button></li><li><button type="button" data-pc-stage="3" aria-pressed="false" disabled><span>4</span><span>Lift</span></button></li><li><button type="button" data-pc-stage="4" aria-pressed="true" disabled><span>5</span><span>Connect</span></button></li></ol>
+              <p class="pc-caption" data-pc-controls hidden>Hover to identify a surface. Click or tap to inspect it. Tab and Enter work too; Escape or empty space returns.</p>
+              <div class="pc-sequence-mode" data-pc-controls hidden><p data-pc-scroll-status>Scroll through the stages, or choose one.</p><button type="button" data-pc-resume disabled>Follow scrolling</button></div>
+              <details class="pc-disclosure pc-layer-options" data-pc-controls hidden><summary>Display options</summary><div class="pc-controls" role="group" aria-label="Layer display options"><button type="button" data-pc-action="theme" aria-pressed="false">Dark screen</button><button type="button" data-pc-action="xray" aria-pressed="false">Show tags</button><button type="button" data-pc-action="blueprint" aria-pressed="false">Blueprint</button></div></details>
+            </div>
+          </div>
+        </div>
+        <div class="pc-layer-key"><span><code>L0</code> Background / header, navigation</span><span><code>L2</code> Raised / cards, panel, input</span><span><code>L3s</code> Dimmer</span><span><code>L3</code> Floating / dialog</span></div>
+      </section>
+
+      <section id="compare" class="pc-section" aria-labelledby="compare-title">
+        <header class="pc-section__heading" data-reveal="fade"><p class="pc-kicker">05 / Check what changes</p><h2 id="compare-title">Before and after.<br />On one screen.</h2><p>Switch between states. The same component changes its surfaces, spacing and emphasis. Show the moving bounds, then inspect the transition.</p><a class="pc-skill-link" href="#skill-one-screen-before-after">09 · Before / after skill ↓</a></header>
+        <div class="pc-compare-layout">
+          <figure class="pc-demo" data-pc-demo="compare"><div class="pc-demo__bar"><span class="pc-label">Live comparison</span><div class="pc-controls" data-pc-controls hidden role="group" aria-label="Comparison state"><button type="button" data-pc-action="outlines" aria-pressed="false">Show bounds</button></div></div><Artwork name="compare" label="A reversible before-and-after comparison on the original blueprint interface." /><figcaption>One component. Measured movement, rather than two unrelated pictures.</figcaption></figure>
+          <aside id="frame-check" class="pc-frame-check"><p class="pc-label">Live test / this browser</p><h3>Watch the frames.</h3><p>Start a sample on the screen, then click a part to switch the whole design. Readings come from the original frame checker.</p><div class="pc-actions" data-pc-controls hidden><button type="button" data-pc-probe aria-pressed="false">Start sample</button><output data-pc-probe-status aria-live="polite">Not sampling</output></div><dl class="pc-readings"><div><dt>Frame interval</dt><dd data-pc-frame-reading>—</dd></div><div><dt>Long tasks &gt; 50 ms</dt><dd data-pc-task-reading>—</dd></div><div><dt>Overlapping text</dt><dd data-pc-text-reading>—</dd></div></dl><p class="pc-caption">A diagnostic, not a score. Frame intervals include this page; long-task support varies by browser. Sampling stops when this demo leaves view.</p><a class="pc-skill-link" href="#skill-frame-check">10 · Frame check skill ↓</a></aside>
+        </div>
+      </section>
+
+      <section id="skills" class="pc-section pc-skills" aria-labelledby="skills-title">
+        <header class="pc-section__heading"><p class="pc-kicker">06 / Take the techniques</p><h2 id="skills-title">Ten skills.<br />Your own screen.</h2><p>Start with <code>presentation-planner</code>. Each skill proposes its plan before building. The files below are the original skills, unchanged.</p><div class="pc-actions"><a class="pc-button" href={`${base}/downloads/all-skills.zip`} download>Download all 10 skills ↓</a><a href={`${base}/skills/README.md`}>Installation guide ↗</a></div></header>
+        <div class="pc-install"><span class="pc-label">Install for Claude Code</span><p>Copy the skill folders into <code>~/.claude/skills/</code> for every project, or <code>.claude/skills/</code> inside one project.</p></div>
+        <div class="pc-skill-list">{skills.map((skill, index) => <Skill skill={skill} index={index} />)}</div>
+      </section>
+      <aside class="pc-reference"><div><p class="pc-label">The original presentation</p><h2>Keep the working reference.</h2><p>The complete 13-slide tutorial and its 45 states are also available as a standalone deck.</p></div><div class="pc-actions"><a href={`${base}/deck/#making-of?slide=1`} target="_blank" rel="noopener">Open the original deck ↗</a><a href={`${base}/downloads/presentations-in-code.zip`} download>Download deck + skills ↓</a><a href={`${base}/LICENSE.txt`}>MIT license</a></div></aside>
+    </main>
+    <SiteFooter /><SiteAnalytics />
+    <script>import "../../scripts/motion/index.js"; import "../../scripts/presenting-code.js";</script>
+  </body>
+</html>

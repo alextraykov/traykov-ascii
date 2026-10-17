@@ -6,6 +6,7 @@ import SiteAnalytics from "../../components/SiteAnalytics.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
 import SiteNav from "../../components/SiteNav.astro";
+import { addLocalImageDimensions } from "../../lib/local-image-dimensions";
 import WebCemeterySketch from "../../components/WebCemeterySketch.astro";
 import { getNotes, type NoteRecord } from "../../lib/substack";
 import "../../styles/global.css";
@@ -59,6 +60,7 @@ const structuredData = [
     ]
   }
 ];
+const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
 ---
 
 <!doctype html>
@@ -80,36 +82,19 @@ const structuredData = [
     <SiteNav active="notes" />
 
     <main id="top" class="note-page section-shell">
-      <nav class="note-page__back" aria-label="Notes">
-        <a href="/notes/">← ALL NOTES</a>
-      </nav>
-
       <article>
-        <header class="note-header" data-reveal="rise">
-          <div class="note-header__meta">
-            <span>
-              {note.source === "local"
-                ? "[PREVIEW]"
-                : note.source === "local-published"
-                  ? "[PUBLISHED]"
-                  : note.source === "legacy"
-                    ? "[ARCHIVE]"
-                    : "[SYNCED]"}
-            </span>
-            <time datetime={note.publishedAt}>{published}</time>
-            <span>{note.readTime}</span>
+        <header class="note-header" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+          <div class="note-header__utility">
+            <nav class="note-page__back" aria-label="Notes">
+              <a href="/notes/">← ALL NOTES</a>
+            </nav>
+            <div class="note-header__meta">
+              <time datetime={note.publishedAt}>{published}</time>
+              <span>{note.readTime}</span>
+            </div>
           </div>
           <h1>{note.title}</h1>
-          {note.tags.length > 0 && (
-            <ul aria-label="Topics">
-              {note.tags.map((tag) => <li>{tag}</li>)}
-            </ul>
-          )}
         </header>
-
-        <aside class="authorship-disclaimer" aria-label="Authorship disclaimer" data-reveal="rise">
-          <p>This note is AI slop-free and it was written with intent and attention.</p>
-        </aside>
 
         {(note.source === "local" || note.source === "local-published") && note.heroImage && !showWebCemetery && (
           <figure class="note-hero-image" data-reveal="scan">
@@ -129,7 +114,7 @@ const structuredData = [
 
         {showAsciiFlowField && <AsciiFlowFieldSketch />}
 
-        <div class="note-body" set:html={note.contentHtml} />
+        <div class="note-body" set:html={noteContentHtml} />
 
         {note.source !== "local" && (
           <footer class="note-source">

@@ -1,12 +1,22 @@
 import { initScramble, scrambleElement } from "./scramble.js";
+import { isHistoryRestore, isMotionActive, onMotionChange } from "./lifecycle.js";
 
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let observer;
+let pageEnterElements = [];
+
+function shouldOwnPageEnter(element) {
+  return (
+    element.dataset.revealPageEnter === "true" &&
+    !isHistoryRestore() &&
+    document.documentElement.dataset.pageEnterConsumed !== "true" &&
+    document.documentElement.dataset.transitionIncoming !== "true"
+  );
+}
 
 function markIn(element, { animate = true } = {}) {
   element.dataset.revealState = "in";
 
-  if (!animate) return;
+  if (!animate || !isMotionActive() || isHistoryRestore()) return;
 
   if (element.dataset.reveal === "scramble") {
     scrambleElement(element);
@@ -17,20 +27,11 @@ function markIn(element, { animate = true } = {}) {
     .forEach((target) => scrambleElement(target));
 }
 
-function decorateCaseBody() {
-  document.querySelectorAll(".case-study-body").forEach((body) => {
-    body.querySelectorAll(":scope > *").forEach((element, index) => {
-      if (element.hasAttribute("data-reveal")) return;
-
-      if (/^H2$/i.test(element.tagName)) {
-        element.dataset.reveal = "scramble";
-      } else if (element.matches("figure, .case-stats, .case-pull-quote, .case-timeline")) {
-        element.dataset.reveal = "rise";
-        element.dataset.revealDelay = String(Math.min(index, 6) * 40);
-      } else {
-        element.dataset.reveal = "rise";
-      }
-    });
+function decorateStandalone(root = document) {
+  root.querySelectorAll("[data-motion-standalone] .pave-turntable-stage, [data-motion-standalone] .pave-turntable-controls, [data-motion-standalone] main[data-studio]").forEach((surface) => {
+    surface.dataset.reveal = "rise";
+    surface.dataset.revealDuration = "340";
+    surface.dataset.revealPageEnter = "true";
   });
 }
 
@@ -54,9 +55,16 @@ function prepareElement(element) {
 
   const delay = Number(element.dataset.revealDelay || 0);
   if (delay > 0) element.style.setProperty("--reveal-delay", `${delay}ms`);
+  const duration = Number(element.dataset.revealDuration || 0);
+  if (duration > 0) element.style.setProperty("--reveal-duration", `${duration}ms`);
 
-  if (reducedMotion.matches) {
+  if (!isMotionActive() || isHistoryRestore()) {
     markIn(element, { animate: false });
+    return;
+  }
+
+  if (shouldOwnPageEnter(element)) {
+    pageEnterElements.push(element);
     return;
   }
 
@@ -68,7 +76,7 @@ function prepareElement(element) {
   observer?.observe(element);
 }
 
-function applyReducedMotion() {
+function settleReveals() {
   document
     .querySelectorAll("[data-reveal]")
     .forEach((element) => markIn(element, { animate: false }));
@@ -77,12 +85,13 @@ function applyReducedMotion() {
 }
 
 export function initReveal() {
-  decorateCaseBody();
+  pageEnterElements = [];
+  decorateStandalone();
   decorateGroups();
   initScramble();
 
-  if (reducedMotion.matches) {
-    applyReducedMotion();
+  if (!isMotionActive() || isHistoryRestore()) {
+    settleReveals();
     return;
   }
 
@@ -101,10 +110,18 @@ export function initReveal() {
 
   document.querySelectorAll("[data-reveal]").forEach((element) => prepareElement(element));
   document.documentElement.dataset.motion = "ready";
+
+  if (pageEnterElements.length) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        pageEnterElements.forEach((element) => markIn(element));
+      });
+    });
+  }
 }
 
-reducedMotion.addEventListener("change", () => {
-  if (reducedMotion.matches) applyReducedMotion();
+onMotionChange((state) => {
+  if (!state.active || state.historyRestore) settleReveals();
 });
 
 if (document.readyState === "loading") {

@@ -95,11 +95,23 @@ export function initializePaveTurntable(root) {
   let turntableAngle = 0;
   let lastRenderTime = 0;
   let isVisible = true;
+  let motionEnabled = false;
   let pendingFrame = null;
   let geometryRebuildFrame = null;
   let lastAsciiOutput = ascii.textContent;
   let lastSkeletonOutput = "";
   const asciiReveal = createTurntableAsciiReveal(root, { duration: isCard ? 720 : 1200 });
+  let asciiEntranceStarted = false;
+  const startAsciiEntrance = () => {
+    if (root.closest("[data-motion-standalone]") || window.__traykovMotion?.isHistoryRestore?.()) {
+      asciiEntranceStarted = true;
+      asciiReveal.finish();
+      return;
+    }
+    if (asciiEntranceStarted || !isVisible || !motionEnabled) return;
+    asciiEntranceStarted = true;
+    asciiReveal.start();
+  };
   const glyphField = createStructuralGlyphField(root, { ramp });
 
   const makeRectShape = (x, y, width, height) => {
@@ -180,6 +192,7 @@ export function initializePaveTurntable(root) {
     geometryRebuildFrame = requestAnimationFrame(() => {
       geometryRebuildFrame = null;
       rebuildGeometry();
+      requestRender();
     });
   };
 
@@ -326,12 +339,19 @@ export function initializePaveTurntable(root) {
   };
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const canAnimate = () => motionEnabled && !reduceMotion.matches;
+
+  const requestRender = () => {
+    if (isVisible && !document.hidden && !pendingFrame) {
+      pendingFrame = requestAnimationFrame(render);
+    }
+  };
 
   const render = (time = 0) => {
     pendingFrame = null;
     if (!isVisible || document.hidden) return;
     const frameInterval = isCard ? CARD_ASCII_FRAME_INTERVAL : STAGE_ASCII_FRAME_INTERVAL;
-    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+    if (canAnimate() && lastRenderTime && time - lastRenderTime < frameInterval - 1) {
       pendingFrame = requestAnimationFrame(render);
       return;
     }
@@ -339,19 +359,21 @@ export function initializePaveTurntable(root) {
     const delta = Math.min(80, Math.max(0, time - lastRenderTime)) / 1000;
     lastRenderTime = time;
 
-    if (!reduceMotion.matches) turntableAngle += delta * Math.PI * controls.speed;
-    mark.rotation.y = reduceMotion.matches ? 0.82 : turntableAngle;
-    mark.rotation.z = (isCard ? -0.04 : -0.08) + Math.sin(time * 0.00055) * (isCard ? 0.012 : 0.018);
+    if (canAnimate()) turntableAngle += delta * Math.PI * controls.speed;
+    mark.rotation.y = canAnimate() ? turntableAngle : 0.82;
+    mark.rotation.z = canAnimate()
+      ? (isCard ? -0.04 : -0.08) + Math.sin(time * 0.00055) * (isCard ? 0.012 : 0.018)
+      : isCard ? -0.04 : -0.08;
     renderer.render(scene, camera);
-    updateTrail(time);
-    glyphField.update(time);
+    if (canAnimate()) updateTrail(time);
+    glyphField.update(canAnimate() ? time : 0);
 
-    if (time - lastAscii > frameInterval || reduceMotion.matches) {
+    if (time - lastAscii > frameInterval || !canAnimate()) {
       lastAscii = time;
       toAscii(time);
     }
 
-    if (!reduceMotion.matches) pendingFrame = requestAnimationFrame(render);
+    if (canAnimate()) pendingFrame = requestAnimationFrame(render);
   };
 
   const settingsOutput = root.hasAttribute("data-pave-controls") ? document.querySelector("[data-pave-settings]") : null;
@@ -376,10 +398,11 @@ export function initializePaveTurntable(root) {
     document.querySelectorAll("[data-pave-control]").forEach((control) => {
       const name = control.dataset.paveControl;
       const output = document.querySelector(`[data-pave-output="${name}"]`);
-      const update = () => {
+      const update = (event) => {
         const value = Number(control.value);
         if (output) output.textContent = Number.isInteger(value) ? String(value) : value.toFixed(2);
         applyControlValue(name, value);
+      if (event) requestRender();
       };
       control.addEventListener("input", update);
       control.addEventListener("change", update);
@@ -437,42 +460,51 @@ export function initializePaveTurntable(root) {
   });
 
   root.addEventListener("pointermove", (event) => {
+    if (!canAnimate()) return;
     const point = eventToGrid(event);
     addTrail(point.x, point.y);
+    requestRender();
   }, { passive: true });
 
   root.addEventListener("turntable-controls:update", (event) => {
-    const wasVisible = isVisible;
-    isVisible = true;
-    if (!wasVisible) asciiReveal.start();
     const values = event.detail || {};
     Object.entries(values).forEach(([name, value]) => {
       if (Object.hasOwn(controls, name)) applyControlValue(name, Number(value));
     });
+    requestRender();
   });
 
   const onEligibility = (event) => {
     const wasVisible = isVisible;
-    isVisible = Boolean(event.detail?.active);
+    const wasAnimated = motionEnabled;
+    isVisible = Boolean(event.detail?.render ?? event.detail?.active);
+    motionEnabled = Boolean(event.detail?.active);
     if (!isVisible) {
       if (pendingFrame) cancelAnimationFrame(pendingFrame);
       pendingFrame = null;
       return;
     }
     lastRenderTime = 0;
-    if (!wasVisible) asciiReveal.start();
-    if (!pendingFrame) pendingFrame = requestAnimationFrame(render);
+    if (!motionEnabled) {
+      trailBuffer.fill(0);
+      lastTrailTime = 0;
+      asciiReveal.finish();
+    }
+    if (motionEnabled && (!wasVisible || !wasAnimated)) startAsciiEntrance();
+    requestRender();
   };
   root.addEventListener("turntable-eligibility", onEligibility);
 
-  const resizeObserver = new ResizeObserver(resize);
+  const resizeObserver = new ResizeObserver(() => {
+    resize();
+    requestRender();
+  });
   resizeObserver.observe(root);
   root.style.setProperty("--pave-ascii-glow", controls.glow);
   rebuildGeometry();
   resize();
   updateSettingsPayload();
-  if (isVisible) asciiReveal.start();
-  pendingFrame = requestAnimationFrame(render);
+  requestRender();
 
   return {
     destroy() {

@@ -1,9 +1,10 @@
 import { SCRAMBLE_RAMP, initScramble } from "./scramble.js";
+import { isMotionActive, onMotionChange } from "./lifecycle.js";
+import "./artwork-pointer.js";
 import "./reveal.js";
 import "./scroll-fx.js";
 import "./count-up.js";
 
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const rotatorObservers = new Map();
 const rotatorTimers =
   globalThis.__traykovIdentityRotatorTimers ||
@@ -135,7 +136,7 @@ function startIdentityRotator(rotator) {
   if (
     rotatorTimers.has(rotator) ||
     rotator.dataset.identityControllerActive === "true" ||
-    reducedMotion.matches
+    !isMotionActive()
   ) {
     return;
   }
@@ -174,7 +175,7 @@ function freezeIdentityRotator(rotator) {
 
   if (rotatorObservers.has(rotator)) return;
   const observer = new MutationObserver(() => {
-    if (reducedMotion.matches && rotator.textContent !== label) rotator.textContent = label;
+    if (!isMotionActive() && rotator.textContent !== label) rotator.textContent = label;
   });
   observer.observe(rotator, { childList: true, characterData: true, subtree: true });
   rotatorObservers.set(rotator, observer);
@@ -184,7 +185,7 @@ function syncMotionMedia(media) {
   if (!(media instanceof HTMLMediaElement)) return;
 
   const canPlay =
-    !reducedMotion.matches &&
+    isMotionActive() &&
     !document.hidden &&
     document.documentElement.dataset.pageTransitionActive !== "true" &&
     media.dataset.motionVisible === "true";
@@ -224,9 +225,10 @@ function syncCaseVideo(media) {
 
   const isHovered = media.dataset.caseVideoHovered === "true";
   const canPlay =
-    !reducedMotion.matches &&
+    isMotionActive() &&
     !document.hidden &&
     document.documentElement.dataset.pageTransitionActive !== "true" &&
+    !media.closest('[data-active="false"]') &&
     (media.dataset.caseVideoVisible === "true" || isHovered);
 
   if (!canPlay) {
@@ -267,9 +269,9 @@ function initCaseVideos() {
   });
 }
 
-function syncReducedMotion() {
+function syncMotionState() {
   document.querySelectorAll("[data-identity-rotator]").forEach((rotator) => {
-    if (reducedMotion.matches) {
+    if (!isMotionActive()) {
       freezeIdentityRotator(rotator);
       return;
     }
@@ -283,31 +285,27 @@ function syncReducedMotion() {
   caseVideos.forEach(syncCaseVideo);
 }
 
-function autoDecorateNav() {
-  document.querySelectorAll(".site-nav nav a, .case-toc button, .case-sibling-nav a span").forEach((element) => {
-    if (element.hasAttribute("data-scramble")) return;
-    element.setAttribute("data-scramble", "");
-    element.setAttribute("data-scramble-label", element.textContent?.trim() || "");
-  });
-
+function initializeMotion() {
   initScramble();
   initMotionMedia();
   initCaseVideos();
-  syncReducedMotion();
+  syncMotionState();
 }
 
-reducedMotion.addEventListener("change", syncReducedMotion);
-document.addEventListener("visibilitychange", syncReducedMotion);
-window.addEventListener("page-transition-state", syncReducedMotion);
-window.addEventListener("pagehide", () => {
+onMotionChange(syncMotionState);
+window.addEventListener("pagehide", (event) => {
   document.querySelectorAll("[data-identity-rotator]").forEach(stopIdentityRotator);
+  if (event.persisted) return;
   mediaObserver?.disconnect();
   caseVideoObserver?.disconnect();
-  window.removeEventListener("page-transition-state", syncReducedMotion);
-}, { once: true });
+});
+window.addEventListener("pageshow", (event) => {
+  if (!event.persisted) return;
+  syncMotionState();
+});
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", autoDecorateNav, { once: true });
+  document.addEventListener("DOMContentLoaded", initializeMotion, { once: true });
 } else {
-  autoDecorateNav();
+  initializeMotion();
 }

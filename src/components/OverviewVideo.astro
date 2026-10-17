@@ -1,0 +1,69 @@
+---
+import type { HomepageVideo } from "../lib/homepage-overviews";
+
+type Props = {
+  video: HomepageVideo;
+  studyTitle: string;
+  captionId: string;
+  lead?: boolean;
+};
+
+const { video, studyTitle, captionId, lead = false } = Astro.props;
+const playLabel = `Play ${video.title}`;
+const pauseLabel = `Pause ${video.title}`;
+---
+
+<figure
+  class:list={["project-overview__recording", { "project-overview__recording--lead": lead }]}
+  data-overview-video
+  data-reveal="rise"
+  data-reveal-duration="340"
+>
+  <div class="overview-video__frame">
+    <video
+      class="project-overview__media"
+      controls
+      muted
+      loop
+      playsinline
+      preload="none"
+      width={video.width}
+      height={video.height}
+      poster={video.poster}
+      aria-label={`${studyTitle}: ${video.title}`}
+      aria-describedby={captionId}
+      data-overview-video-media
+    >
+      <source src={video.src} type="video/mp4" />
+      Video playback is unavailable. <a href={video.src}>Open {video.title}</a>.
+    </video>
+    <button
+      class="overview-video__toggle"
+      type="button"
+      hidden
+      aria-label={playLabel}
+      aria-pressed="false"
+      data-overview-video-toggle
+      data-play-label={playLabel}
+      data-pause-label={pauseLabel}
+    >
+      <span class="overview-video__icon overview-video__icon--play" aria-hidden="true">
+        <svg viewBox="0 0 16 16" focusable="false"><path d="M5 3.25 12 8 5 12.75z" /></svg>
+      </span>
+      <span class="overview-video__icon overview-video__icon--pause" aria-hidden="true">
+        <svg viewBox="0 0 16 16" focusable="false"><path d="M4.5 3.25h2.5v9.5H4.5zm4.5 0h2.5v9.5H9z" /></svg>
+      </span>
+      <span class="visually-hidden" data-overview-video-label>Play</span>
+    </button>
+  </div>
+  <figcaption
+    id={captionId}
+    class="project-overview__caption"
+  >
+    <span class="project-overview__caption-label">{video.label}</span>
+    <span class:list={["project-overview__caption-detail", { "visually-hidden": lead }]}>
+      <strong>{video.title}</strong>
+      <span>{video.description}</span>
+    </span>
+  </figcaption>
+</figure>

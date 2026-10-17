@@ -74,7 +74,9 @@ const playgroundDiagrams = [
     <SiteNav />
 
     <main class="playground-shell">
-      <section class="playground-stage" aria-label="ASCII shader playground">
+      <h1 id="playground-title" class="visually-hidden">ASCII shader playground</h1>
+      <section class="playground-stage" aria-label="ASCII shader playground" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+        <p class="visually-hidden">Choose a preview and adjust its render settings in the controls that follow.</p>
         <div class="playground-ascii" data-ascii-playground>
           <canvas aria-hidden="true"></canvas>
           <pre aria-hidden="true" lang="bg"></pre>
@@ -107,6 +109,11 @@ const playgroundDiagrams = [
             ariaLabel=""
           />
         </div>
+        <noscript>
+          <p class="playground-stage__fallback">
+            The live ASCII preview needs JavaScript. The controls below document the available render settings.
+          </p>
+        </noscript>
       </section>
 
       <aside class="playground-controls" aria-label="Shader controls">
@@ -372,6 +379,7 @@ const playgroundDiagrams = [
     </script>
     <script is:inline src="/ascii-playground.js"></script>
     <script>
+      import "../scripts/motion/index.js";
       import { registerTurntables } from "../scripts/turntable-loader.js";
 
       registerTurntables(

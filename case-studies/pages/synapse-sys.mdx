@@ -5,7 +5,7 @@ status: closed beta
 pubDate: 2026-05-21
 tags: [ai, product-design, design-engineering, canvas, agents]
 readTime: 14 min
-summary: "An AI-powered infinite canvas in closed beta, where idea exploration becomes easy."
+summary: "Designing and building an AI-powered infinite canvas for research and synthesis in closed beta"
 role: "Solo product designer + design engineer"
 group: "Synapse-Sys"
 walkthroughVideo: /case-studies/media/synapse-product-preview.mp4
@@ -16,7 +16,7 @@ order: -1
 
 ## BLUF
 
-Synapse-Sys is an AI-powered infinite canvas, where idea exploration becomes easy. I designed and built it to turn loose  ideation material into a canvas where ideas can actually grow. I solo built the following domains of this product: accounts, sharing, exports, AI budgets, pricing and checkout flows, security boundaries and the canvas itself. 
+Synapse-Sys is an AI-powered infinite canvas in closed beta. I designed and built it to turn loose ideation material into a canvas where people can connect, revise, and use it in the next operation. I built the product's accounts, sharing, exports, AI budgets, pricing and checkout flows, security boundaries, and canvas.
 
 ```case-video-copy
 title: A working canvas, not a static map
@@ -60,7 +60,7 @@ Quick paths:
 - **Scope** Graph interaction, AI operations, transaction safety, accounts, sharing, budgets, billing, performance and visual system
 - **Build** 126 commits across the product, designed and built by me with heavy LLM assistance
 
-Synapse-Sys started with a simple question: what if the connection between two ideas could do empower more idea exploration? I wanted something more useful than a chat box throwing text onto a canvas. If AI made something, it had to come back as part of the person's structure - movable, editable, connectable and useful as input to the next operation.
+Synapse-Sys started with a simple question: what if the connection between two ideas could support the next step in exploration? I wanted something more useful than a chat box throwing text onto a canvas. If AI made something, it had to come back as part of the person's structure: movable, editable, connectable, and useful as input to the next operation.
 
 ## The core loop: relationship becomes operation
 
@@ -99,7 +99,7 @@ The early share setup still had a weak spot: it did not preview what the recipie
 
 ## Build the product around the demo
 
-The graph interaction was the hook, yet I felt it shoudln't be the whole product.
+The graph interaction was the hook, but it could not be the whole product.
 
 To be usable, Synapse-Sys needed people to have accounts, recover access, own a canvas, share it safely, fork it, export it, understand their AI budget and get useful errors when something went wrong. In today's closed beta the product  includes authentication, protected routes, ownership checks, expiring share links, operation budgets, rate limits, error reporting, settings, pricing, onboarding and public share pages.
 
@@ -152,7 +152,7 @@ public/case-studies/media/synapse-live-ai-behavior.jpg | Output behaviour | Peop
 ```
 
 ## Make the canvas not fold under pressure 
-So after tons of research, I chose a hybrid rendering for the infinite canvas. That's because neither obvious option did the full job. Konva does a good job  handling the grid, edges, hit regions, connection previews and selection geometry, but HTML renders the editable node cards above the canvas using the same viewport transform. With this setup, the design lets nodes behave like interface objects: text selection, editing, resize handles, tooltips, buttons, context menus and accessible markup, but it also lets edges behave like graph geometry: routing, labels, invisible hit regions, bridge arcs and zoom-compensated strokes.
+I chose hybrid rendering for the infinite canvas because neither obvious option did the full job. Konva handles the grid, edges, hit regions, connection previews, and selection geometry; HTML renders editable node cards above the canvas using the same viewport transform. That lets nodes behave like interface objects—text selection, editing, resize handles, tooltips, buttons, context menus, and accessible markup—while edges behave like graph geometry: routing, labels, invisible hit regions, bridge arcs, and zoom-compensated strokes.
 
 ```synapse-rendering
 ```

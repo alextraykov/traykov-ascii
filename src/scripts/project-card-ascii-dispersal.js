@@ -1,4 +1,5 @@
 import { SURFACE_ASCII_RAMP } from "./structural-glyph-field.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 const MAX_PARTICLES = 760;
 const HOVER_SEED_COUNT = 76;
@@ -22,7 +23,6 @@ export function initializeProjectCardDispersal(canvas) {
   if (!card || !context) return () => {};
 
   const link = card.querySelector("a[href]");
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const particles = [];
   const pointer = {
     active: false,
@@ -57,7 +57,7 @@ export function initializeProjectCardDispersal(canvas) {
   let navigationTimer = 0;
 
   const isActive = () =>
-    (pointer.active || pointer.focused || bursting) && !reduceMotion.matches;
+    (pointer.active || pointer.focused || bursting) && isMotionActive();
 
   const syncStyle = () => {
     const style = getComputedStyle(canvas);
@@ -221,7 +221,7 @@ export function initializeProjectCardDispersal(canvas) {
   };
 
   const burstSideways = () => {
-    if (reduceMotion.matches) return;
+    if (!isMotionActive()) return;
 
     bursting = true;
     pointer.active = false;
@@ -346,6 +346,10 @@ export function initializeProjectCardDispersal(canvas) {
 
   const render = (time) => {
     frame = 0;
+    if (!isMotionActive()) {
+      context.clearRect(0, 0, width, height);
+      return;
+    }
     if (!previousFrameTime) previousFrameTime = time;
     const delta = clamp(time - previousFrameTime, 0, 48);
     previousFrameTime = time;
@@ -362,13 +366,13 @@ export function initializeProjectCardDispersal(canvas) {
   };
 
   const wake = () => {
-    if (reduceMotion.matches || frame) return;
+    if (!isMotionActive() || frame) return;
     previousFrameTime = 0;
     frame = window.requestAnimationFrame(render);
   };
 
   const activate = () => {
-    if (pointer.active || reduceMotion.matches) return;
+    if (pointer.active || !isMotionActive()) return;
     pointer.active = true;
     pointer.lastTime = 0;
     pointer.intensity = Math.max(pointer.intensity, 0.24);
@@ -394,7 +398,7 @@ export function initializeProjectCardDispersal(canvas) {
   };
 
   const handlePointerMove = (event) => {
-    if (reduceMotion.matches || bursting) return;
+    if (!isMotionActive() || bursting) return;
 
     const now = performance.now();
     const canvasRect = canvas.getBoundingClientRect();
@@ -422,7 +426,7 @@ export function initializeProjectCardDispersal(canvas) {
   };
 
   const handleFocusIn = () => {
-    if (pointer.focused || reduceMotion.matches) return;
+    if (pointer.focused || !isMotionActive()) return;
     pointer.focused = true;
     pointer.intensity = Math.max(pointer.intensity, 0.28);
     seedPerimeter();
@@ -439,7 +443,7 @@ export function initializeProjectCardDispersal(canvas) {
   const handleLinkClick = (event) => {
     if (
       replayingClick ||
-      reduceMotion.matches ||
+      !isMotionActive() ||
       event.defaultPrevented ||
       event.button !== 0 ||
       event.metaKey ||
@@ -463,8 +467,8 @@ export function initializeProjectCardDispersal(canvas) {
     }, tokenMilliseconds("--dur-3", 260));
   };
 
-  const handleReducedMotion = () => {
-    if (!reduceMotion.matches) {
+  const handleMotionState = (state) => {
+    if (state.active) {
       resize();
       return;
     }
@@ -497,7 +501,7 @@ export function initializeProjectCardDispersal(canvas) {
   card.addEventListener("focusin", handleFocusIn);
   card.addEventListener("focusout", handleFocusOut);
   link?.addEventListener("click", handleLinkClick);
-  reduceMotion.addEventListener("change", handleReducedMotion);
+  const unsubscribeMotion = onMotionChange(handleMotionState);
 
   resize();
 
@@ -512,7 +516,7 @@ export function initializeProjectCardDispersal(canvas) {
     card.removeEventListener("focusin", handleFocusIn);
     card.removeEventListener("focusout", handleFocusOut);
     link?.removeEventListener("click", handleLinkClick);
-    reduceMotion.removeEventListener("change", handleReducedMotion);
+    unsubscribeMotion();
   };
 }
 
@@ -522,6 +526,7 @@ const cleanups = Array.from(
 
 window.addEventListener(
   "pagehide",
-  () => cleanups.forEach((cleanup) => cleanup()),
-  { once: true }
+  (event) => {
+    if (!event.persisted) cleanups.forEach((cleanup) => cleanup());
+  }
 );

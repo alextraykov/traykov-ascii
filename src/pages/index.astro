@@ -1,15 +1,17 @@
 ---
 import ObjTurntable from "../components/ObjTurntable.astro";
-import ProjectCard from "../components/ProjectCard.astro";
+import HomepageTimeline from "../components/HomepageTimeline.astro";
+import PrivateWorkLink from "../components/PrivateWorkLink.astro";
+import ProjectOverview from "../components/ProjectOverview.astro";
 import SiteAnalytics from "../components/SiteAnalytics.astro";
 import SiteHead from "../components/SiteHead.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { getCaseStudies } from "../lib/content";
-import { getFeaturedCaseStudies } from "../lib/public-case-studies";
+import { getHomepageOverviews } from "../lib/homepage-overviews";
 import SiteNav from "../components/SiteNav.astro";
 import "../styles/global.css";
 
-const featuredCards = getFeaturedCaseStudies(getCaseStudies());
+const homepageOverviews = getHomepageOverviews(getCaseStudies());
 
 const siteUrl = "https://traykov.cc";
 const structuredData = [
@@ -19,7 +21,7 @@ const structuredData = [
     "@id": `${siteUrl}/#person`,
     name: "Alexander Traykov",
     url: siteUrl,
-    jobTitle: "AI Product Designer and UX Lead",
+    jobTitle: "Product Designer",
     description:
       "AI product designer and UX lead working across enterprise software, design systems, and design engineering.",
     sameAs: ["https://www.linkedin.com/in/alextraykov/", "https://adplist.org/mentors/alexander-traykov"],
@@ -50,7 +52,7 @@ const structuredData = [
 <html lang="en">
   <head>
     <SiteHead
-      title="AI Product Designer & UX Lead — Alexander Traykov"
+      title="Product Designer — Alexander Traykov"
       description="Alexander Traykov designs AI products, enterprise software, and design systems from early product questions through shipped interaction detail."
       path="/"
       structuredData={structuredData}
@@ -95,95 +97,47 @@ const structuredData = [
           ariaLabel=""
         />
 
-        <div class="about-hero-copy" data-transition-copy>
-          <p class="about-title__prefix">Alexander Traykov</p>
+        <div class="about-hero-copy" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+          <p class="about-title__prefix" data-scramble data-scramble-trigger="load" data-scramble-duration="260">Alexander Traykov</p>
           <h1 id="hero-title" class="about-title about-title--role">
-            AI Product Designer &amp; UX Lead
+            Product designer
           </h1>
           <p class="about-hero-lede">
-            I design AI and enterprise software from early product questions through shipped interaction detail.
+            I design, code and ship software from micro-businesses to large enterprises.
           </p>
         </div>
 </section>
 
-<section id="work" class="work section-shell" aria-label="Selected case studies">
-<div class="section-heading">
-<!-- Verification contract: Two selected case studies. -->
-<p class="section-kicker">Selected work</p>
-          <h2>Recent work</h2>
-</div>
+      <HomepageTimeline>
+        <section id="work" class="work section-shell" aria-labelledby="work-title">
+          <!-- Verification contract: Four selected case studies. -->
+          <h2 id="work-title" class="visually-hidden">Work</h2>
 
-        <div class="project-grid" data-reveal-group>
-          {featuredCards.map((study, index) => (
-            <ProjectCard
-              study={study}
-              index={index}
-              eyebrow="Recent case study"
-              action="Open case study"
-              href={study.href}
-            />
-          ))}
-        </div>
-
-      </section>
+          <div class="project-overview-list">
+            {homepageOverviews.map((overview, index) => (
+              <ProjectOverview overview={overview} index={index} />
+            ))}
+          </div>
+          <PrivateWorkLink />
+        </section>
+      </HomepageTimeline>
     </main>
 
     <SiteFooter />
 
     <script>
       import { registerTurntables } from "../scripts/turntable-loader.js";
-      import "../scripts/project-card-ascii-dispersal.js";
-      import "../scripts/synapse-card-scramble.js";
+      import { initializeHomepageTimeline } from "../scripts/homepage-timeline.js";
+      import { initializeOverviewVideos } from "../scripts/overview-video.js";
+
+      initializeHomepageTimeline();
+      initializeOverviewVideos();
 
       registerTurntables(
         "[data-obj-turntable]",
         () => import("../scripts/obj-turntable.js"),
         (module, root) => module.initializeObjTurntable(root)
       );
-      registerTurntables(
-        "[data-pave-turntable]",
-        () => import("../scripts/pave-symbol-turntable.js"),
-        (module, root) => module.initializePaveTurntable(root)
-      );
-    </script>
-    <script is:inline>
-      (() => {
-        const turntable = document.querySelector(".about-turntable");
-        const hero = document.querySelector(".about-hero");
-        if (!turntable || !hero) return;
-
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-        let ticking = false;
-
-        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-        const update = () => {
-          ticking = false;
-
-          if (reduceMotion.matches) {
-            turntable.style.setProperty("--about-turntable-parallax", "0px");
-            return;
-          }
-
-          const scrollY = window.scrollY || window.pageYOffset || 0;
-          const scrollRange = Math.max(180, Math.min(420, hero.offsetHeight * 0.62));
-          const progress = clamp(scrollY / scrollRange, 0, 1);
-          const parallax = Math.round(progress * 190);
-
-          turntable.style.setProperty("--about-turntable-parallax", `${parallax}px`);
-        };
-
-        const requestUpdate = () => {
-          if (ticking) return;
-          ticking = true;
-          window.requestAnimationFrame(update);
-        };
-
-        update();
-        window.addEventListener("scroll", requestUpdate, { passive: true });
-        window.addEventListener("resize", requestUpdate);
-        reduceMotion.addEventListener?.("change", requestUpdate);
-      })();
     </script>
     <SiteAnalytics />
   </body>

@@ -1,0 +1,68 @@
+[
+  {
+    "version": "live",
+    "before": {
+      "readyState": 4,
+      "poster": "",
+      "preload": "metadata",
+      "src": "https://traykov.cc/case-studies/media/pave-portfolio-loop.mp4",
+      "paused": true
+    },
+    "after": {
+      "readyState": 4,
+      "poster": "",
+      "preload": "metadata",
+      "src": "https://traykov.cc/case-studies/media/pave-portfolio-loop.mp4",
+      "paused": true
+    },
+    "toc": {
+      "height": 741,
+      "scrollHeight": 741,
+      "overflow": "auto"
+    }
+  },
+  {
+    "version": "local",
+    "before": {
+      "readyState": 0,
+      "poster": "",
+      "preload": "none",
+      "src": "http://127.0.0.1:4330/case-studies/media/pave-portfolio-loop.mp4",
+      "paused": true
+    },
+    "after": {
+      "readyState": 4,
+      "poster": "",
+      "preload": "none",
+      "src": "http://127.0.0.1:4330/case-studies/media/pave-portfolio-loop.mp4",
+      "paused": true
+    },
+    "toc": {
+      "height": 741,
+      "scrollHeight": 741,
+      "overflow": "auto"
+    }
+  },
+  {
+    "version": "branch",
+    "before": {
+      "readyState": 0,
+      "poster": "",
+      "preload": "none",
+      "src": "http://127.0.0.1:4331/case-studies/media/pave-portfolio-loop.mp4",
+      "paused": true
+    },
+    "after": {
+      "readyState": 4,
+      "poster": "",
+      "preload": "none",
+      "src": "http://127.0.0.1:4331/case-studies/media/pave-portfolio-loop.mp4",
+      "paused": true
+    },
+    "toc": {
+      "height": 288,
+      "scrollHeight": 769,
+      "overflow": "auto"
+    }
+  }
+]

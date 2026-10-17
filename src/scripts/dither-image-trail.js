@@ -4,6 +4,7 @@ import {
   sampleDitherTremor,
   setDitherGlyphField
 } from "./dither-pixel-dispersal.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 import { SURFACE_ASCII_RAMP } from "./structural-glyph-field.js";
 
@@ -17,20 +18,24 @@ const MOBILE_VISIBLE_LIMIT = 3;
 const MIN_RENDER_EDGE = 320;
 const MAX_RENDER_EDGE = 720;
 const MOBILE_MAX_RENDER_EDGE = 360;
-const TRAIL_PARALLAX_RATE = 0.34;
-const COPY_PARALLAX_RATE = 0.16;
 const TAP_MOVE_TOLERANCE = 12;
 const TAP_BURST_HOLD = 120;
 const DRAG_INTENT_THRESHOLD = 7;
-const AMBIENT_TRAIL_DELAY = 680;
-const AMBIENT_TRAIL_INTERVAL = 620;
-const AMBIENT_RESUME_DELAY = 1400;
 const MOBILE_EMIT_INTERVAL = 84;
 const GYRO_TILT_RANGE = 35;
 const GYRO_NOISE_FLOOR = 1.5;
+const ABOUT_AUTO_DESKTOP_VISIBLE_LIMIT = 8;
+const ABOUT_AUTO_MOBILE_VISIBLE_LIMIT = 5;
 const GYRO_SMOOTHING = 0.18;
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+const toMilliseconds = (value) => {
+  const trimmed = value.trim();
+  if (trimmed.endsWith("ms")) return Number.parseFloat(trimmed) || 0;
+  if (trimmed.endsWith("s")) return (Number.parseFloat(trimmed) || 0) * 1_000;
+  return 0;
+};
 
 const loadSource = (url) => new Promise((resolve, reject) => {
   const image = new Image();
@@ -154,7 +159,6 @@ const initializeTrail = (root) => {
   if (!(field instanceof HTMLElement) || items.length === 0) return;
 
   root.dataset.ditherTrailReady = "true";
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const finePointer = window.matchMedia("(pointer: fine)");
   const coarsePointer = window.matchMedia("(pointer: coarse)");
   const mobileViewport = window.matchMedia("(max-width: 820px)");
@@ -171,7 +175,6 @@ const initializeTrail = (root) => {
   let lastFrameAt = 0;
   let lastEmitAt = 0;
   let velocity = { x: 0, y: 0 };
-  let parallaxFrame = 0;
   let headlineTremorFrame = 0;
   let tapBurstTimer = 0;
   let dragPointerId = null;
@@ -186,13 +189,20 @@ const initializeTrail = (root) => {
   let fieldBounds = null;
   let fieldSize = { width: 0, height: 0 };
   let initialRenderingStarted = false;
+  let initialRenderingComplete = false;
   let deferredRenderingStarted = false;
-  let ambientTimer = 0;
-  let ambientStartedAt = 0;
-  let ambientPausedUntil = 0;
-  let ambientPrevious = null;
   let visibleOrder = [];
   let promptsDismissed = false;
+  const autoCycleEnabled = root.dataset.ditherAutoCycle === "true";
+  let autoVisible = false;
+  let autoActive = false;
+  let autoBursting = false;
+  let autoTimer = 0;
+  let autoRun = 0;
+  let autoImageIndex = 0;
+  let autoCycleCount = 0;
+  let autoManualPauseUntil = 0;
+  let autoObserver;
   const itemTimers = new WeakMap();
   const itemDimensions = new WeakMap();
   const renderPromises = new WeakMap();
@@ -219,6 +229,7 @@ const initializeTrail = (root) => {
           width: item.offsetWidth,
           height: item.offsetHeight
         });
+        syncStaticFallback();
       }
       renderPromises.delete(item);
       return rendered;
@@ -233,6 +244,18 @@ const initializeTrail = (root) => {
       return;
     }
     window.setTimeout(callback, 32);
+  };
+
+  const syncStaticFallback = () => {
+    const dynamicTrailIsReady =
+      isMotionActive() &&
+      items.some((item) => item.classList.contains("is-ascii-rendered"));
+
+    if (dynamicTrailIsReady) {
+      root.dataset.ditherTrailRendered = "true";
+    } else {
+      delete root.dataset.ditherTrailRendered;
+    }
   };
 
   const startDeferredRendering = () => {
@@ -262,12 +285,14 @@ const initializeTrail = (root) => {
       isMobileMode() ? MOBILE_RENDER_COUNT : items.length
     );
     void Promise.all(items.slice(0, initialCount).map(ensureRendered)).then(() => {
-      if (!promptsDismissed && finePointer.matches && !reducedMotion.matches) {
+      initialRenderingComplete = true;
+      syncStaticFallback();
+      if (!promptsDismissed && finePointer.matches && isMotionActive() && !isMobileMode()) {
         promptItems.forEach((item) => item.classList.add("is-prompt"));
       }
       if (isMobileMode()) startDeferredRendering();
-      scheduleAmbientTrail(AMBIENT_TRAIL_DELAY);
-      if (!active || !current || reducedMotion.matches) return;
+      syncAutoCycle();
+      if (!active || !current || !isMotionActive()) return;
       previous = null;
       requestTick();
     });
@@ -280,8 +305,8 @@ const initializeTrail = (root) => {
   };
 
   const prepareInteraction = () => {
+    if (autoCycleEnabled) pauseAutoCycle();
     dismissPrompts();
-    ambientPausedUntil = performance.now() + AMBIENT_RESUME_DELAY;
     startDeferredRendering();
     if (pixelDisperserInitialized) return;
     pixelDisperserInitialized = true;
@@ -346,7 +371,7 @@ const initializeTrail = (root) => {
 
   const syncGyro = (now) => {
     gyroFrame = 0;
-    if (!gyroEnabled || dragging || !gyroTarget || reducedMotion.matches) return;
+    if (!gyroEnabled || dragging || !gyroTarget || !isMotionActive()) return;
 
     const prior = current || { x: fieldSize.width / 2, y: fieldSize.height / 2 };
     const next = {
@@ -412,11 +437,10 @@ const initializeTrail = (root) => {
     }
     if (gyroLabel instanceof HTMLElement) gyroLabel.textContent = "Tilt trail";
     requestTick();
-    scheduleAmbientTrail(AMBIENT_RESUME_DELAY);
   };
 
   const enableGyro = () => {
-    if (gyroEnabled || reducedMotion.matches) return;
+    if (gyroEnabled || !isMotionActive()) return;
     prepareInteraction();
     gyroEnabled = true;
     gyroBaseline = null;
@@ -471,25 +495,6 @@ const initializeTrail = (root) => {
     };
   };
 
-  const syncParallax = () => {
-    parallaxFrame = 0;
-    if (!(hero instanceof HTMLElement) || reducedMotion.matches) {
-      root.style.removeProperty("--trail-parallax-y");
-      hero?.style.removeProperty("--about-hero-parallax-y");
-      syncBounds();
-      return;
-    }
-
-    const offset = clamp(window.scrollY, 0, hero.offsetHeight);
-    root.style.setProperty("--trail-parallax-y", `${(offset * TRAIL_PARALLAX_RATE).toFixed(2)}px`);
-    hero.style.setProperty("--about-hero-parallax-y", `${(offset * COPY_PARALLAX_RATE).toFixed(2)}px`);
-    syncBounds();
-  };
-
-  const requestParallax = () => {
-    if (!parallaxFrame) parallaxFrame = window.requestAnimationFrame(syncParallax);
-  };
-
   const getDistance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
   const syncAgeScale = () => {
@@ -514,12 +519,21 @@ const initializeTrail = (root) => {
     window.requestAnimationFrame(() => item.classList.remove("is-resetting"));
   };
 
-  const showItem = (point, vector) => {
+  const showItem = (point, vector, options = {}) => {
+    const {
+      item: requestedItem = null,
+      visibleLimit = autoCycleEnabled
+        ? (isMobileMode() ? ABOUT_AUTO_MOBILE_VISIBLE_LIMIT : ABOUT_AUTO_DESKTOP_VISIBLE_LIMIT)
+        : (isMobileMode() ? MOBILE_VISIBLE_LIMIT : items.length),
+      persist = false,
+      angle: requestedAngle = null
+    } = options;
     const availableItems = items.filter((item) => item.classList.contains("is-ascii-rendered"));
     if (availableItems.length === 0) return;
 
-    const item = availableItems[itemIndex % availableItems.length];
-    itemIndex += 1;
+    const item = requestedItem || availableItems[itemIndex % availableItems.length];
+    if (!item.classList.contains("is-ascii-rendered")) return;
+    if (!requestedItem) itemIndex += 1;
     stackIndex += 1;
     const existingTimers = itemTimers.get(item) || [];
     existingTimers.forEach((timer) => window.clearTimeout(timer));
@@ -527,7 +541,7 @@ const initializeTrail = (root) => {
     const dimensions = itemDimensions.get(item);
     const width = dimensions?.width || item.offsetWidth;
     const height = dimensions?.height || item.offsetHeight;
-    const angle = clamp(vector.x * 0.028, -5, 5);
+    const angle = Number.isFinite(requestedAngle) ? requestedAngle : clamp(vector.x * 0.028, -5, 5);
     const x = point.x - width / 2;
     const y = point.y - height / 2;
     item.style.zIndex = String(stackIndex);
@@ -540,9 +554,10 @@ const initializeTrail = (root) => {
     item.classList.add("is-visible");
     visibleOrder = visibleOrder.filter((visibleItem) => visibleItem !== item);
     visibleOrder.push(item);
-    const visibleLimit = isMobileMode() ? MOBILE_VISIBLE_LIMIT : items.length;
     while (visibleOrder.length > visibleLimit) hideItem(visibleOrder[0]);
     syncAgeScale();
+
+    if (persist) return item;
 
     const exitTimer = window.setTimeout(() => item.classList.add("is-exiting"), 1150);
     const resetTimer = window.setTimeout(() => {
@@ -552,46 +567,239 @@ const initializeTrail = (root) => {
       window.requestAnimationFrame(() => item.classList.remove("is-resetting"));
     }, 1950);
     itemTimers.set(item, [exitTimer, resetTimer]);
+    return item;
   };
 
-  const ambientTrailStep = () => {
-    ambientTimer = 0;
-    const now = performance.now();
-    const bounds = hero?.getBoundingClientRect() || root.getBoundingClientRect();
-    const heroVisible = bounds.bottom > 0 && bounds.top < window.innerHeight;
-    const canRun =
-      isMobileMode() &&
-      !reducedMotion.matches &&
-      !dragging &&
-      !gyroEnabled &&
-      document.visibilityState === "visible" &&
-      heroVisible &&
-      now >= ambientPausedUntil;
+  const getAutoDuration = (property, fallback) => {
+    const styles = getComputedStyle(root);
+    return toMilliseconds(styles.getPropertyValue(property)) || toMilliseconds(styles.getPropertyValue(fallback));
+  };
 
-    if (canRun) {
-      if (!ambientStartedAt) ambientStartedAt = now;
-      const phase = (now - ambientStartedAt) / 1000;
-      const point = {
-        x: fieldSize.width * (0.5 + Math.sin(phase * 1.12) * 0.34),
-        y: fieldSize.height * (0.54 + Math.sin(phase * 0.73 + 1.2) * 0.28)
-      };
-      const vector = ambientPrevious
-        ? { x: point.x - ambientPrevious.x, y: point.y - ambientPrevious.y }
-        : { x: 0, y: 0 };
-      showItem(point, vector);
-      ambientPrevious = point;
+  const getAutoVisibleLimit = () => (
+    isMobileMode() ? ABOUT_AUTO_MOBILE_VISIBLE_LIMIT : ABOUT_AUTO_DESKTOP_VISIBLE_LIMIT
+  );
+
+  const updateAutoState = (state) => {
+    if (!autoCycleEnabled) return;
+    root.dataset.ditherAutoState = state;
+    root.dataset.ditherAutoVisibleCount = String(
+      items.filter((item) => item.classList.contains("is-visible")).length
+    );
+    root.dataset.ditherAutoImageIndex = String(autoImageIndex);
+    root.dataset.ditherAutoCycleCount = String(autoCycleCount);
+  };
+
+  const clearAutoTimer = () => {
+    autoRun += 1;
+    if (!autoTimer) return;
+    window.clearTimeout(autoTimer);
+    autoTimer = 0;
+  };
+
+  const clearAutoItems = () => {
+    items.forEach((item) => {
+      const timers = itemTimers.get(item) || [];
+      timers.forEach((timer) => window.clearTimeout(timer));
+      itemTimers.set(item, []);
+      item.classList.remove(
+        "is-visible",
+        "is-exiting",
+        "is-dispersing",
+        "is-pixel-dispersing",
+        "is-auto-bursting"
+      );
+      item.style.removeProperty("--trail-age-brightness");
+      item.style.removeProperty("--trail-age-scale");
+    });
+    visibleOrder = [];
+    updateAutoState("idle");
+  };
+
+  const canRunAutoCycle = () => (
+    autoCycleEnabled &&
+    autoVisible &&
+    initialRenderingComplete &&
+    isMotionActive() &&
+    !dragging &&
+    !gyroEnabled
+  );
+
+  const syncAutoVisibilityFromGeometry = () => {
+    if (!autoCycleEnabled) return;
+    const bounds = root.getBoundingClientRect();
+    const visible =
+      bounds.bottom > 0 &&
+      bounds.top < window.innerHeight &&
+      bounds.right > 0 &&
+      bounds.left < window.innerWidth;
+    if (visible === autoVisible) return;
+    autoVisible = visible;
+    root.dataset.ditherAutoVisible = String(autoVisible);
+  };
+
+  const scheduleAuto = (delay, callback) => {
+    clearAutoTimer();
+    const run = autoRun;
+    autoTimer = window.setTimeout(() => {
+      autoTimer = 0;
+      if (run !== autoRun || !canRunAutoCycle()) {
+        syncAutoCycle();
+        return;
+      }
+      callback();
+    }, delay);
+  };
+
+  const getAutoPlacement = (slot, item) => {
+    const desktopPlacements = [
+      [0.7, 0.18, -4],
+      [0.84, 0.26, 3],
+      [0.62, 0.44, -2],
+      [0.82, 0.56, 4],
+      [0.68, 0.73, -5],
+      [0.9, 0.72, 2],
+      [0.6, 0.74, 3],
+      [0.87, 0.12, -3]
+    ];
+    const mobilePlacements = [
+      [0.72, 0.52, -3],
+      [0.34, 0.62, 3],
+      [0.72, 0.72, -4],
+      [0.32, 0.84, 4],
+      [0.72, 0.88, -2]
+    ];
+    const [xRatio, yRatio, angle] = (isMobileMode() ? mobilePlacements : desktopPlacements)[slot % getAutoVisibleLimit()];
+    const dimensions = itemDimensions.get(item);
+    const width = dimensions?.width || item.offsetWidth;
+    const height = dimensions?.height || item.offsetHeight;
+    const minX = width / 2;
+    const minY = height / 2;
+    const maxX = Math.max(minX, fieldSize.width - minX);
+    const maxY = Math.max(minY, fieldSize.height - minY);
+
+    return {
+      point: {
+        x: clamp(fieldSize.width * xRatio, minX, maxX),
+        y: clamp(fieldSize.height * yRatio, minY, maxY)
+      },
+      angle
+    };
+  };
+
+  const burstAutoCycle = () => {
+    if (!autoActive || autoBursting || !canRunAutoCycle()) return;
+    autoBursting = true;
+    autoCycleCount += 1;
+    updateAutoState("bursting");
+    const origin = { x: fieldSize.width * 0.74, y: fieldSize.height * 0.52 };
+    const visibleItems = items.filter((item) => item.classList.contains("is-visible"));
+
+    visibleItems.forEach((item, index) => {
+      const x = Number.parseFloat(item.style.getPropertyValue("--trail-x")) || 0;
+      const y = Number.parseFloat(item.style.getPropertyValue("--trail-y")) || 0;
+      const dimensions = itemDimensions.get(item);
+      const width = dimensions?.width || item.offsetWidth;
+      const height = dimensions?.height || item.offsetHeight;
+      const centerX = x + width / 2;
+      const centerY = y + height / 2;
+      let dx = centerX - origin.x;
+      let dy = centerY - origin.y;
+      let length = Math.hypot(dx, dy);
+
+      if (length < 1) {
+        const fallbackAngle = (index / Math.max(1, visibleItems.length)) * Math.PI * 2;
+        dx = Math.cos(fallbackAngle);
+        dy = Math.sin(fallbackAngle);
+        length = 1;
+      }
+
+      const distance = Math.min(Math.max(fieldSize.width * 0.18, width), fieldSize.width * 0.3);
+      item.style.setProperty("--trail-auto-burst-x", `${x + (dx / length) * distance}px`);
+      item.style.setProperty("--trail-auto-burst-y", `${y + (dy / length) * distance}px`);
+      item.style.setProperty("--trail-auto-burst-angle", `${Number.parseFloat(item.style.getPropertyValue("--trail-angle")) + (dx / length) * 8}deg`);
+      item.classList.add("is-auto-bursting");
+    });
+
+    scheduleAuto(getAutoDuration("--about-trail-auto-burst", "--dur-5"), () => {
+      clearAutoItems();
+      autoBursting = false;
+      updateAutoState("refilling");
+      scheduleAuto(getAutoDuration("--about-trail-auto-refill", "--dur-2"), autoStep);
+    });
+  };
+
+  const autoStep = () => {
+    if (!autoActive || autoBursting || !canRunAutoCycle()) return;
+    const visibleCount = items.filter((item) => item.classList.contains("is-visible")).length;
+    const limit = getAutoVisibleLimit();
+    if (visibleCount >= limit) {
+      updateAutoState("holding");
+      scheduleAuto(getAutoDuration("--about-trail-auto-hold", "--dur-4"), burstAutoCycle);
+      return;
     }
 
-    scheduleAmbientTrail(AMBIENT_TRAIL_INTERVAL);
+    const item = items[autoImageIndex % items.length];
+    autoImageIndex = (autoImageIndex + 1) % items.length;
+    updateAutoState("accumulating");
+    const run = autoRun;
+    void ensureRendered(item).then((rendered) => {
+      if (run !== autoRun || !autoActive || !canRunAutoCycle()) return;
+      if (!rendered) {
+        scheduleAuto(getAutoDuration("--about-trail-auto-interval", "--dur-6"), autoStep);
+        return;
+      }
+      const placement = getAutoPlacement(visibleCount, item);
+      showItem(placement.point, { x: 0, y: 0 }, {
+        item,
+        visibleLimit: limit,
+        persist: true,
+        angle: placement.angle
+      });
+      updateAutoState("accumulating");
+      scheduleAuto(getAutoDuration("--about-trail-auto-interval", "--dur-6"), autoStep);
+    });
   };
 
-  function scheduleAmbientTrail(delay = AMBIENT_TRAIL_INTERVAL) {
-    if (ambientTimer || reducedMotion.matches || !isMobileMode()) return;
-    ambientTimer = window.setTimeout(ambientTrailStep, delay);
-  }
+  const stopAutoCycle = (state = "paused", clearItems = true) => {
+    if (!autoCycleEnabled) return;
+    clearAutoTimer();
+    autoActive = false;
+    autoBursting = false;
+    if (clearItems) clearAutoItems();
+    updateAutoState(state);
+  };
+
+  const pauseAutoCycle = () => {
+    if (!autoCycleEnabled) return;
+    const restDuration = getAutoDuration("--about-trail-auto-rest", "--dur-6");
+    autoManualPauseUntil = performance.now() + restDuration;
+    stopAutoCycle("paused", false);
+    if (autoVisible && isMotionActive()) scheduleAuto(restDuration, syncAutoCycle);
+  };
+
+  const syncAutoCycle = () => {
+    if (!autoCycleEnabled) return;
+    syncAutoVisibilityFromGeometry();
+    if (!canRunAutoCycle()) {
+      stopAutoCycle(isMotionActive() ? "paused" : "static");
+      return;
+    }
+    const remainingPause = autoManualPauseUntil - performance.now();
+    if (remainingPause > 0) {
+      updateAutoState("paused");
+      scheduleAuto(remainingPause, syncAutoCycle);
+      return;
+    }
+    if (autoActive) return;
+    dismissPrompts();
+    clearAutoItems();
+    autoActive = true;
+    updateAutoState("accumulating");
+    scheduleAuto(0, autoStep);
+  };
 
   const emitTrail = () => {
-    if (!active || !current || reducedMotion.matches) return;
+    if (!active || !current || !isMotionActive()) return;
 
     const now = performance.now();
     if (isMobileMode() && lastEmitAt && now - lastEmitAt < MOBILE_EMIT_INTERVAL) return;
@@ -626,7 +834,7 @@ const initializeTrail = (root) => {
 
   const tick = (now) => {
     frame = 0;
-    if (!active || !current || reducedMotion.matches) {
+    if (!active || !current || !isMotionActive()) {
       lastFrameAt = 0;
       return;
     }
@@ -672,6 +880,7 @@ const initializeTrail = (root) => {
 
   const onPageTransition = (event) => {
     if (!event.detail?.active) return;
+    stopAutoCycle("paused");
     pointerInside = false;
     active = false;
     current = null;
@@ -687,14 +896,12 @@ const initializeTrail = (root) => {
     dragStart = null;
     dragIntent = null;
     root.classList.remove("is-dragging");
-    window.clearTimeout(ambientTimer);
-    ambientTimer = 0;
     window.clearTimeout(tapBurstTimer);
     tapBurst?.classList.remove("is-active", "is-fading");
   };
 
   const disperseAll = (event) => {
-    if (reducedMotion.matches) return;
+    if (!isMotionActive()) return;
 
     prepareInteraction();
     const bounds = fieldBounds || field.getBoundingClientRect();
@@ -784,7 +991,7 @@ const initializeTrail = (root) => {
 
   document.addEventListener("pointerdown", (event) => {
     if (
-      reducedMotion.matches ||
+      !isMotionActive() ||
       !event.isPrimary ||
       event.button !== 0 ||
       !isInteractionTarget(event.target) ||
@@ -875,7 +1082,10 @@ const initializeTrail = (root) => {
     } else {
       requestTick();
     }
-    scheduleAmbientTrail(AMBIENT_RESUME_DELAY);
+
+    // A long drag can outlive the rest timer that prepareInteraction() queued.
+    // Re-evaluate only after dragging is cleared so the opt-in cycle can resume.
+    syncAutoCycle();
   };
 
   document.addEventListener("pointerup", (event) => finishDrag(event), { passive: true });
@@ -897,15 +1107,14 @@ const initializeTrail = (root) => {
 
   const syncMode = () => {
     const orientationSupported = typeof window.DeviceOrientationEvent !== "undefined";
-    const needsMotionPermission = typeof window.DeviceOrientationEvent?.requestPermission === "function";
     const secureMotionContext = window.isSecureContext;
-    const staticMode = reducedMotion.matches;
+    const staticMode = !isMotionActive();
     const canUseGyro = !staticMode && coarsePointer.matches && orientationSupported && secureMotionContext;
     if (!canUseGyro && gyroEnabled) disableGyro();
     root.classList.toggle("is-static", staticMode);
     root.classList.toggle("has-coarse-pointer", coarsePointer.matches);
     if (gyroToggle instanceof HTMLButtonElement) {
-      const showPermissionButton = canUseGyro && needsMotionPermission;
+      const showPermissionButton = canUseGyro;
       const showHttpsNotice = !staticMode && coarsePointer.matches && orientationSupported && !secureMotionContext;
       gyroToggle.hidden = !showPermissionButton && !showHttpsNotice;
       gyroToggle.disabled = showHttpsNotice;
@@ -918,14 +1127,13 @@ const initializeTrail = (root) => {
       }
     }
     if (staticMode) {
+      stopAutoCycle("static");
       disableGyro();
       dragging = false;
       dragPointerId = null;
       dragStart = null;
       dragIntent = null;
       root.classList.remove("is-dragging");
-      window.clearTimeout(ambientTimer);
-      ambientTimer = 0;
       items.forEach((item) => {
         const timers = itemTimers.get(item) || [];
         timers.forEach((timer) => window.clearTimeout(timer));
@@ -945,25 +1153,60 @@ const initializeTrail = (root) => {
       frame = 0;
     } else {
       startInitialRendering();
-      scheduleAmbientTrail(AMBIENT_TRAIL_DELAY);
-      if (canUseGyro && !needsMotionPermission && !gyroEnabled) enableGyro();
+      if (isMobileMode()) promptItems.forEach((item) => item.classList.remove("is-prompt"));
     }
-    syncParallax();
+    syncStaticFallback();
+    syncBounds();
+    if (!staticMode) syncAutoCycle();
   };
+
+  const observeAutoCycle = () => {
+    if (!autoCycleEnabled || autoObserver) return;
+    if ("IntersectionObserver" in window) {
+      autoObserver = new IntersectionObserver(
+        ([entry]) => {
+          autoVisible = Boolean(entry?.isIntersecting);
+          root.dataset.ditherAutoVisible = String(autoVisible);
+          syncAutoCycle();
+        },
+        { threshold: 0.12 }
+      );
+      autoObserver.observe(root);
+    } else {
+      autoVisible = true;
+      root.dataset.ditherAutoVisible = "true";
+    }
+  };
+
+  if (autoCycleEnabled) {
+    root.dataset.ditherAutoState = "idle";
+    root.dataset.ditherAutoVisibleCount = "0";
+    root.dataset.ditherAutoImageIndex = "0";
+    root.dataset.ditherAutoCycleCount = "0";
+    observeAutoCycle();
+  }
 
   syncMode();
   root.classList.add("is-ready");
-  syncParallax();
-  reducedMotion.addEventListener?.("change", syncMode);
+  onMotionChange(syncMode);
   finePointer.addEventListener?.("change", syncMode);
   coarsePointer.addEventListener?.("change", syncMode);
   mobileViewport.addEventListener?.("change", syncMode);
   window.addEventListener("page-transition-state", onPageTransition);
-  window.addEventListener("scroll", requestParallax, { passive: true });
   window.addEventListener("resize", () => {
     items.forEach((item) => itemDimensions.delete(item));
-    requestParallax();
+    syncBounds();
   }, { passive: true });
+  window.addEventListener("pagehide", () => {
+    stopAutoCycle("paused");
+    autoObserver?.disconnect();
+    autoObserver = undefined;
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    observeAutoCycle();
+    syncAutoCycle();
+  });
 };
 
 export const initializeDitherImageTrails = () => {

@@ -1,4 +1,15 @@
 const PLAYGROUND_RAMP = " ·•+*✦✶✷✸✹";
+const playgroundMotionState = () =>
+  window.__traykovMotion?.getState?.() || {
+    active: !document.hidden && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  };
+
+const subscribePlaygroundMotion = (callback) => {
+  const listener = (event) => callback(event.detail || playgroundMotionState());
+  window.addEventListener("traykov-motion-change", listener);
+  callback(playgroundMotionState());
+  return () => window.removeEventListener("traykov-motion-change", listener);
+};
 const SASI_FORM = 4;
 const HOMEPAGE_DITHER_FORM = 5;
 const BAYER_4 = [
@@ -391,7 +402,8 @@ class AsciiPlayground {
     this.lastTurntablePayload = "";
     this.sasiImage = new Image();
     this.sasiLoaded = false;
-    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.visible = false;
+    this.destroyed = false;
 
     this.sasiImage.onload = () => {
       this.sasiLoaded = true;
@@ -439,17 +451,21 @@ class AsciiPlayground {
       this.gl.STATIC_DRAW
     );
 
-    this.root.addEventListener("pointermove", (event) => {
+    this.onPointerMove = (event) => {
       const rect = this.root.getBoundingClientRect();
       this.mouse.x = (event.clientX - rect.left) / rect.width;
       this.mouse.y = 1 - (event.clientY - rect.top) / rect.height;
-    });
-    this.root.addEventListener("pointerdown", (event) => {
+      this.scheduleRender();
+    };
+    this.onPointerDown = (event) => {
       const rect = this.root.getBoundingClientRect();
       this.click.x = (event.clientX - rect.left) / rect.width;
       this.click.y = 1 - (event.clientY - rect.top) / rect.height;
-      this.click.heat = 1;
-    });
+      this.click.heat = this.canAnimate() ? 1 : 0;
+      this.scheduleRender();
+    };
+    this.root.addEventListener("pointermove", this.onPointerMove);
+    this.root.addEventListener("pointerdown", this.onPointerDown);
     this.root.addEventListener("turntable-ready", () => {
       this.lastTurntablePayload = "";
       this.syncTurntableControls();
@@ -462,8 +478,25 @@ class AsciiPlayground {
       if (!document.hidden) this.scheduleRender();
     };
     document.addEventListener("visibilitychange", this.onVisibilityChange);
-    window.addEventListener("pagehide", () => this.destroy(), { once: true });
-    this.scheduleRender();
+    this.intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        this.visible = Boolean(entry?.isIntersecting);
+        this.syncMotion();
+      },
+      { rootMargin: "120px 0px", threshold: 0.01 }
+    );
+    this.intersectionObserver.observe(this.root);
+    this.unsubscribeMotion = subscribePlaygroundMotion(() => this.syncMotion());
+    this.onPageHide = (event) => {
+      if (this.pendingFrame) cancelAnimationFrame(this.pendingFrame);
+      this.pendingFrame = 0;
+      if (!event.persisted) this.destroy();
+    };
+    this.onPageShow = (event) => {
+      if (event.persisted) this.syncMotion();
+    };
+    window.addEventListener("pagehide", this.onPageHide);
+    window.addEventListener("pageshow", this.onPageShow);
   }
 
   createShader(type, source) {
@@ -505,6 +538,24 @@ class AsciiPlayground {
     this.gl.viewport(0, 0, this.cols, this.rows);
     this.pre.style.fontSize = `${Math.max(7, rect.width / (this.cols * 0.62))}px`;
     this.pre.style.lineHeight = `${rect.height / this.rows}px`;
+    this.scheduleRender();
+  }
+
+  canRender() {
+    return this.visible && !document.hidden && !this.destroyed;
+  }
+
+  canAnimate() {
+    return this.canRender() && playgroundMotionState().active;
+  }
+
+  syncMotion() {
+    if (!this.canAnimate()) {
+      if (this.pendingFrame) cancelAnimationFrame(this.pendingFrame);
+      this.pendingFrame = 0;
+      this.click.heat = 0;
+    }
+    this.scheduleRender();
   }
 
   setControl(name, value) {
@@ -518,7 +569,7 @@ class AsciiPlayground {
   }
 
   scheduleRender() {
-    if (this.pendingFrame || document.hidden || this.reducedMotion) return;
+    if (this.pendingFrame || !this.canRender()) return;
     this.pendingFrame = requestAnimationFrame((time) => this.render(time));
   }
 
@@ -572,8 +623,9 @@ class AsciiPlayground {
 
   render(time) {
     this.pendingFrame = 0;
-    if (document.hidden) return;
-    const seconds = this.reducedMotion ? 4.2 : time * 0.001;
+    if (!this.canRender()) return;
+    const animated = this.canAnimate();
+    const seconds = animated ? time * 0.001 : 4.2;
     const isTurntable = this.controls.mode === "turntable";
     this.root.classList.toggle("is-turntable-example", isTurntable);
     this.root.dataset.activeTurntable = this.controls.turntable || "none";
@@ -584,7 +636,7 @@ class AsciiPlayground {
       return;
     }
 
-    if (time - this.lastFrame < 1000 / 15) {
+    if (animated && time - this.lastFrame < 1000 / 15) {
       this.scheduleRender();
       return;
     }
@@ -616,9 +668,9 @@ class AsciiPlayground {
     gl.uniform1f(this.uniforms.u_click_decay, this.click.heat);
     gl.uniform2f(this.uniforms.u_click_position, this.click.x, this.click.y);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    this.click.heat *= 0.94;
+    if (animated) this.click.heat *= 0.94;
 
-    if (time - this.lastAscii > 1000 / 15 || this.reducedMotion) {
+    if (time - this.lastAscii > 1000 / 15 || !animated) {
       this.lastAscii = time;
       const output = this.toAscii(seconds);
       if (output !== this.lastAsciiOutput) {
@@ -627,14 +679,22 @@ class AsciiPlayground {
       }
     }
 
-    this.scheduleRender();
+    if (animated) this.scheduleRender();
   }
 
   destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
     if (this.pendingFrame) cancelAnimationFrame(this.pendingFrame);
     this.pendingFrame = 0;
     this.resizeObserver?.disconnect();
+    this.intersectionObserver?.disconnect();
+    this.unsubscribeMotion?.();
     document.removeEventListener("visibilitychange", this.onVisibilityChange);
+    this.root.removeEventListener("pointermove", this.onPointerMove);
+    this.root.removeEventListener("pointerdown", this.onPointerDown);
+    window.removeEventListener("pagehide", this.onPageHide);
+    window.removeEventListener("pageshow", this.onPageShow);
     if (this.gl) {
       if (this.buffer) this.gl.deleteBuffer(this.buffer);
       if (this.program) this.gl.deleteProgram(this.program);

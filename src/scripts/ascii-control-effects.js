@@ -1,14 +1,14 @@
 import { SURFACE_ASCII_RAMP } from "./structural-glyph-field.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 const CLICK_TARGET_SELECTOR = [
-  "button:not([disabled])",
+  "button:not([disabled]):not([data-motion-toggle])",
   '[role="button"]:not([aria-disabled="true"])',
   'nav a[href]:not([aria-disabled="true"])',
   "[data-ascii-action]",
   "[data-ascii-burst]"
 ].join(", ");
 const STREAM_TARGET_SELECTOR = "[data-ascii-stream]";
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const particles = [];
 const streams = new Map();
@@ -88,7 +88,7 @@ const addParticle = (particle) => {
 };
 
 const emitSplash = (target, event) => {
-  if (reducedMotion.matches) return;
+  if (!isMotionActive()) return;
   const bounds = target.getBoundingClientRect();
   const hasPointerOrigin =
     Number.isFinite(event.clientX) &&
@@ -152,6 +152,7 @@ const emitStream = (target) => {
 
 const draw = (now) => {
   frame = 0;
+  if (!isMotionActive()) return;
   if (!ensureCanvas()) return;
   resize();
   const delta = previousTime ? clamp(now - previousTime, 8, 40) : 16.67;
@@ -208,7 +209,7 @@ const draw = (now) => {
 };
 
 const requestDraw = (immediate = false) => {
-  if (reducedMotion.matches) return;
+  if (!isMotionActive()) return;
 
   if (immediate) {
     if (frame) cancelAnimationFrame(frame);
@@ -284,8 +285,8 @@ if (!window.__asciiControlEffectsInitialized) {
     if (target instanceof HTMLElement) streams.delete(target);
   });
 
-  reducedMotion.addEventListener("change", () => {
-    if (!reducedMotion.matches) return;
+  onMotionChange((state) => {
+    if (state.active) return;
     particles.length = 0;
     streams.clear();
     if (frame) cancelAnimationFrame(frame);

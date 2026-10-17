@@ -1,0 +1,17 @@
+---
+const { skill, index } = Astro.props;
+---
+<article class="pc-skill" id={`skill-${skill.name}`}>
+  <div class="pc-skill__identity">
+    <span class="pc-number">{String(index + 1).padStart(2, "0")}</span>
+    <div><h3>{skill.title}</h3><code>{skill.name}</code></div>
+  </div>
+  <div class="pc-skill__description"><p>{skill.purpose}</p><p><span>Use it when</span> {skill.when}</p><p><span>You get</span> {skill.output}</p><a href={skill.demo}>See the result ↑</a></div>
+  <details class="pc-disclosure">
+    <summary>Read &amp; copy skill</summary>
+    <div class="pc-skill__source">
+      <div class="pc-actions"><button type="button" data-pc-copy={skill.name} hidden>Copy skill</button><a href={`/labs/presenting-in-code/skills/${skill.name}/SKILL.md`} download={`${skill.name}-SKILL.md`}>Download SKILL.md ↓</a><span data-pc-copy-status aria-live="polite"></span></div>
+      <pre tabindex="0" aria-label={`${skill.name} source`}><code data-pc-skill-source={skill.name}>{skill.source}</code></pre>
+    </div>
+  </details>
+</article>

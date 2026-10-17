@@ -2,6 +2,7 @@ import {
   createBlockGlyphAtlas,
   waitForBlockFont
 } from "../sketches/shared/block-glyph-atlas.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 const ASCII_RAMP = " .:+*#%@";
 const MAX_BUNDLES = 3;
@@ -847,8 +848,10 @@ class RhizomeField {
     this.canvas.addEventListener("webglcontextrestored", this.onContextRestored);
     window.addEventListener("themechange", this.onThemeChange);
     document.addEventListener("visibilitychange", this.onVisibilityChange);
-    this.reducedMotion.addEventListener?.("change", this.onMotionChange);
-    window.addEventListener("pagehide", () => this.destroy(), { once: true });
+    this.unsubscribeMotion = onMotionChange(this.onMotionChange);
+    window.addEventListener("pagehide", (event) => {
+      if (!event.persisted) this.destroy();
+    }, { once: true });
   }
 
   syncSettings() {
@@ -997,7 +1000,7 @@ class RhizomeField {
     this.bundles.push(bundle);
     this.syncBundleUniformData();
 
-    if (removed && !this.reducedMotion.matches) {
+    if (removed && isMotionActive()) {
       this.dispersal = {
         bundle: removed,
         startedAt: performance.now()
@@ -1197,7 +1200,13 @@ class RhizomeField {
   }
 
   onMotionChange() {
-    if (this.reducedMotion.matches) this.dispersal = null;
+    if (!isMotionActive()) {
+      this.dispersal = null;
+      if (this.frameHandle) {
+        window.cancelAnimationFrame(this.frameHandle);
+        this.frameHandle = 0;
+      }
+    }
     this.requestRender();
   }
 
@@ -1210,7 +1219,7 @@ class RhizomeField {
 
   shouldAnimate() {
     return (
-      !this.reducedMotion.matches &&
+      isMotionActive() &&
       this.inViewport &&
       document.visibilityState === "visible" &&
       this.root.dataset.state === "ready"
@@ -1359,7 +1368,7 @@ class RhizomeField {
     gl.uniform1f(field.u_structure, this.view === "structure" ? 1 : 0);
     gl.uniform1f(
       field.u_time,
-      this.reducedMotion.matches ? 0 : timestamp * 0.001
+      isMotionActive() ? timestamp * 0.001 : 0
     );
     gl.uniform4fv(field["u_bundles[0]"], this.bundleData);
     gl.uniform1fv(field["u_bundle_angles[0]"], this.bundleAngles);
@@ -1367,7 +1376,7 @@ class RhizomeField {
 
     let disperseProgress = 0;
     let disperseBundle = null;
-    if (this.dispersal && !this.reducedMotion.matches) {
+    if (this.dispersal && isMotionActive()) {
       disperseProgress = clamp(
         (timestamp - this.dispersal.startedAt) / (DISPERSAL_SECONDS * 1000),
         0,
@@ -1495,7 +1504,7 @@ class RhizomeField {
     this.canvas?.removeEventListener("webglcontextrestored", this.onContextRestored);
     window.removeEventListener("themechange", this.onThemeChange);
     document.removeEventListener("visibilitychange", this.onVisibilityChange);
-    this.reducedMotion?.removeEventListener?.("change", this.onMotionChange);
+    this.unsubscribeMotion?.();
     this.deleteResources();
   }
 }

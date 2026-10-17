@@ -11,6 +11,7 @@ if (
 ) {
   const items = Array.from(list.querySelectorAll("[data-note-slug]"));
   let indexPromise;
+  let filterVersion = 0;
 
   const normalize = (value) =>
     value
@@ -37,8 +38,16 @@ if (
   };
 
   const filter = async () => {
+    const version = ++filterVersion;
     const terms = normalize(query.value).trim().split(/\s+/).filter(Boolean);
-    const index = terms.length > 0 ? await loadIndex() : new Map();
+    let index;
+    try {
+      index = terms.length > 0 ? await loadIndex() : new Map();
+    } catch (error) {
+      if (version === filterVersion) throw error;
+      return;
+    }
+    if (version !== filterVersion) return;
     let visible = 0;
 
     items.forEach((item) => {
@@ -49,13 +58,25 @@ if (
       if (matches) visible += 1;
     });
 
-    count.value = `${visible} / ${items.length}`;
+    count.hidden = terms.length === 0;
+    count.value = terms.length > 0 ? `${visible} / ${items.length}` : "";
     empty.hidden = visible > 0;
   };
 
   query.addEventListener("input", () => {
     filter().catch(() => {
+      count.hidden = false;
       count.value = "SEARCH UNAVAILABLE";
+    });
+  });
+
+  const disclosure = query.closest("details");
+  disclosure?.addEventListener("toggle", () => {
+    if (disclosure.open || !query.value) return;
+    query.value = "";
+    filter().catch(() => {
+      count.hidden = true;
+      count.value = "";
     });
   });
 }

@@ -29,79 +29,45 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
     <SiteNav active="notes" />
 
     <main id="top" class="notes-index section-shell">
-      <section class="notes-hero" aria-labelledby="notes-title" data-reveal="rise">
-        <div class="notes-hero__meta">
-          <span>AT.NOTES / FIELD NOTES</span>
-          <a href="/rss.xml">RSS.XML ↗</a>
-        </div>
-        <div class="notes-hero__copy">
-          <p class="section-kicker">Writing</p>
-          <h1 id="notes-title">Notes.</h1>
-        </div>
+      <section class="notes-hero" aria-labelledby="notes-title" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+        <h1 id="notes-title">All notes</h1>
       </section>
 
-      <a
-        class="notes-rss-banner"
-        href="/rss.xml"
-        aria-label="Add traykov.cc RSS to your feed reader"
-        data-reveal="scan"
-      >
-        <span class="notes-rss-banner__track" aria-hidden="true">
-          <span class="notes-rss-banner__group">
-            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-          </span>
-          <span class="notes-rss-banner__group">
-            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-            <span>ADD TRAYKOV.CC/RSS.XML TO YOUR RSS READER&nbsp;&nbsp;+++&nbsp;&nbsp;</span>
-          </span>
-        </span>
-      </a>
-
       <section class="notes-directory" aria-labelledby="notes-directory-title">
-        <header>
-          <p id="notes-directory-title">All notes</p>
-          <span>Newest first</span>
-        </header>
-
-        <div class="notes-search" aria-labelledby="notes-search-label" data-reveal="scan">
-          <label id="notes-search-label" for="notes-query">SEARCH</label>
-          <input
-            id="notes-query"
-            type="search"
-            placeholder="TITLE, IDEA, PHRASE"
-            autocomplete="off"
-            spellcheck="false"
-            data-notes-query
-          />
-          <output data-notes-count>{notes.length} / {notes.length}</output>
+        <h2 id="notes-directory-title" class="visually-hidden">Notes directory</h2>
+        <div class="notes-directory__utility">
+          <details class="notes-search" aria-labelledby="notes-search-label">
+            <summary id="notes-search-label">Search notes</summary>
+            <label class="visually-hidden" for="notes-query">Search notes</label>
+            <input
+              id="notes-query"
+              type="search"
+              autocomplete="off"
+              spellcheck="false"
+              data-notes-query
+            />
+            <output hidden aria-live="polite" data-notes-count></output>
+          </details>
+          <a
+            class="notes-directory__rss"
+            href="/rss.xml"
+            aria-label="Add traykov.cc RSS to your feed reader"
+          >
+            RSS ↗
+          </a>
         </div>
 
         <div class="notes-list" aria-label="Notes" data-notes-list>
-          {notes.map((note, index) => (
+          {notes.map((note) => (
             <article
               class="notes-list__item"
               data-note-slug={note.slug}
-              data-reveal="rise"
-              data-reveal-delay={String(Math.min(index, 5) * 60)}
             >
               <a href={`/notes/${note.slug}/`}>
                 <div class="notes-list__meta">
-                  <span>{String(index + 1).padStart(2, "0")}</span>
                   <time datetime={note.publishedAt}>{dateFormatter.format(new Date(note.publishedAt))}</time>
-                  <span>
-                    {note.source === "local"
-                      ? "PREVIEW"
-                      : note.source === "local-published"
-                        ? "PUBLISHED"
-                        : note.source === "legacy"
-                          ? "ARCHIVE"
-                          : "SYNCED"}
-                  </span>
                 </div>
-                <h2>{note.title}</h2>
+                <h3>{note.title}</h3>
                 <span class="notes-list__read-time">{note.readTime}</span>
                 <span class="notes-list__arrow" aria-hidden="true">↗</span>
               </a>

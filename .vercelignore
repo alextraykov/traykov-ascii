@@ -1,0 +1,14 @@
+dist/
+.astro/
+audit-artifacts/
+exports/
+.agents/
+.codex/
+plans/
+openspec/
+*.zip
+!/public/labs/presenting-in-code/downloads/presentations-in-code.zip
+!/public/labs/presenting-in-code/downloads/all-skills.zip
+/01.obj
+/02.obj
+private-work-source/

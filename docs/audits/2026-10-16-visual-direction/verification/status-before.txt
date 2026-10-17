@@ -1,0 +1,136 @@
+ M .gitignore
+ M AGENTS.md
+ M apps/svg-ascii-studio/src/scripts/studio.js
+ M case-studies/pages/designing-pave.mdx
+ M case-studies/pages/synapse-sys.mdx
+ M case-studies/quickbase/connection-central.mdx
+ M case-studies/quickbase/pipelines.mdx
+ M docs/codex-harness.md
+ M package.json
+ M public/ascii-playground.js
+ M public/ascii-shader.js
+ M public/llms.txt
+ M public/page-transitions.js
+ M scripts/browser-contract.mjs
+ M scripts/browser-manifest.mjs
+ M scripts/performance-audit.mjs
+ M scripts/verify-site.mjs
+ M src/components/BlocktypeWavePreview.astro
+ M src/components/CaseContactPrompt.astro
+ M src/components/DitherImageTrail.astro
+ M src/components/ProjectCard.astro
+ M src/components/SiteFooter.astro
+ M src/components/SiteHead.astro
+ M src/components/SiteNav.astro
+ M src/content/notes/design-outside-design.json
+ M src/content/notes/on-digital-art.json
+ M src/content/notes/the-confidence-crutch.json
+ M src/lib/content.ts
+ M src/lib/public-case-studies.ts
+ M src/pages/about.astro
+ M src/pages/case-studies/[slug].astro
+ M src/pages/component-preview.astro
+ M src/pages/contact.astro
+ M src/pages/cv.astro
+ M src/pages/image-trail.astro
+ M src/pages/index.astro
+ M src/pages/labs/ascii-banner.astro
+ M src/pages/labs/index.astro
+ M src/pages/labs/product-systems-kit.astro
+ M src/pages/labs/rhizome-field.astro
+ M src/pages/labs/sketchbook.astro
+ M src/pages/notes/[slug].astro
+ M src/pages/notes/index.astro
+ M src/pages/obj-turntable.astro
+ M src/pages/pave-turntable.astro
+ M src/pages/playground.astro
+ M src/pages/roadmap.astro
+ M src/pages/sasi-turntable.astro
+ M src/pages/shader-explainer.astro
+ M src/pages/sitemap.xml.ts
+ M src/pages/svg-ascii-studio.astro
+ M src/pages/synapse-turntable.astro
+ M src/scripts/ascii-banner-studio.js
+ M src/scripts/ascii-control-effects.js
+ M src/scripts/creative-sketchbook.js
+ M src/scripts/dither-image-trail.js
+ M src/scripts/dither-pixel-dispersal.js
+ M src/scripts/motion/index.js
+ M src/scripts/motion/reveal.js
+ M src/scripts/motion/scramble.js
+ M src/scripts/motion/scroll-fx.js
+ M src/scripts/notes-search.js
+ M src/scripts/obj-turntable.js
+ M src/scripts/pave-symbol-turntable.js
+ M src/scripts/product-systems-kit.js
+ M src/scripts/project-card-ascii-dispersal.js
+ M src/scripts/rhizome-field.js
+ M src/scripts/sasi-logo-turntable.js
+ M src/scripts/structural-glyph-field.js
+ M src/scripts/turntable-loader.js
+ M src/scripts/web-cemetery.js
+ M src/styles/global.css
+ M vercel.json
+?? .vercelignore
+?? api/private-work.js
+?? case-studies/pages/designing-synapse-sys.mdx
+?? case-studies/pages/pave-breathing-grids.mdx
+?? case-studies/pages/pave-loading-animation.mdx
+?? docs/design-coherency-plan.md
+?? docs/portfolio-content-claims-2026-09.md
+?? docs/portfolio-performance-2026-09.md
+?? docs/presenting-in-code.md
+?? docs/private-work.md
+?? docs/prompts/
+?? openspec/
+?? plans/
+?? public/case-studies/breathing-grids/
+?? public/case-studies/media/breathing-grids-blocks-poster.jpg
+?? public/case-studies/media/breathing-grids-dither-poster.jpg
+?? public/case-studies/media/breathing-grids-film-poster.jpg
+?? public/case-studies/media/homepage-loops/
+?? public/case-studies/media/homepage-posters/
+?? public/case-studies/media/pave-loading-process-poster.jpg
+?? public/case-studies/media/pave-loading-process.mp4
+?? public/case-studies/media/pave-loading-system-poster.jpg
+?? public/case-studies/media/pave-loading-system.mp4
+?? public/case-studies/pave-evidence/pave-nav-share-publish-rate-weekly.svg
+?? public/case-studies/pave-loading-process/
+?? public/case-studies/quickbase/pipelines-ai-monthly-accounts.svg
+?? public/labs/presenting-in-code/
+?? scripts/__pycache__/
+?? scripts/breathing-grids-contract.mjs
+?? scripts/build-breathing-grids.py
+?? scripts/build-private-work.mjs
+?? scripts/generate-pave-loading-process.py
+?? scripts/generate-portfolio-evidence.py
+?? scripts/motion-contract.mjs
+?? scripts/presenting-in-code-browser.mjs
+?? scripts/private-demos-browser.mjs
+?? scripts/private-work-browser.mjs
+?? scripts/private-work-dev.mjs
+?? server/
+?? src/components/BreathingGrid.astro
+?? src/components/BreathingGridsProcess.astro
+?? src/components/CaseStudyPage.astro
+?? src/components/HomepageTimeline.astro
+?? src/components/OverviewVideo.astro
+?? src/components/PaveLoadingProcess.astro
+?? src/components/PrivateWorkLink.astro
+?? src/components/ProjectOverview.astro
+?? src/components/presenting-code/
+?? src/lib/homepage-overviews.ts
+?? src/lib/local-image-dimensions.ts
+?? src/pages/labs/presenting-in-code.astro
+?? src/pages/private-access.astro
+?? src/pages/private-case-template.astro
+?? src/pages/private-collection-template.astro
+?? src/scripts/breathing-grid.js
+?? src/scripts/homepage-timeline.js
+?? src/scripts/motion/artwork-pointer.js
+?? src/scripts/motion/lifecycle.js
+?? src/scripts/overview-video.js
+?? src/scripts/presenting-code.js
+?? src/scripts/private-demos.js
+?? tests/local-image-dimensions.test.mjs
+?? tests/private-work.test.mjs

@@ -1,0 +1,39 @@
+---
+interface Props { id: string; initialVariant?: 'blocks' | 'dither' | 'film'; }
+const {id,initialVariant='blocks'}=Astro.props;
+const variants=[['blocks','Blocks'],['dither','Pixel dither'],['film','How it’s built']];
+---
+<div class="breathing-grid" data-breathing-grid data-initial-variant={initialVariant} id={id}>
+  <div class="breathing-grid__controls" data-grid-controls hidden>
+    <div class="breathing-grid__variants" role="group" aria-label="Grid exploration">
+      {variants.map(([value,label])=><button type="button" data-grid-variant={value} aria-pressed={String(value===initialVariant)}>{label}</button>)}
+    </div>
+    <div class="breathing-grid__actions">
+      <button type="button" data-grid-open>Open a cell</button>
+      <button type="button" data-grid-reset aria-label="Generate another grid layout">New layout</button>
+    </div>
+  </div>
+  <div class="breathing-grid__stage">
+    <img src={`/case-studies/media/breathing-grids-${initialVariant}-poster.jpg`} alt="Modular green blocks, discs and arches arranged on a construction grid." width="1280" height="720" loading="lazy" data-grid-poster hidden />
+    <noscript><img src={`/case-studies/media/breathing-grids-${initialVariant}-poster.jpg`} alt="Modular green blocks, discs and arches arranged on a construction grid." width="1280" height="720" loading="lazy" data-grid-nojs /></noscript>
+    <button type="button" class="overview-video__toggle" data-grid-pause aria-label="Play grid animation" aria-pressed="false" hidden>
+      <span class="overview-video__icon overview-video__icon--play" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.25 12 8 5 12.75z" /></svg></span>
+      <span class="overview-video__icon overview-video__icon--pause" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4.5 3.25h2.5v9.5H4.5zm4.5 0h2.5v9.5H9z" /></svg></span>
+    </button>
+    <iframe title="Interactive breathing grid" sandbox="allow-scripts" referrerpolicy="strict-origin" data-grid-frame hidden></iframe>
+  </div>
+  <div class="breathing-grid__inspector" data-grid-inspector hidden>
+    <div role="group" aria-label="Construction view">
+      <button type="button" data-grid-stage="film" aria-pressed="true">Film</button>
+      <button type="button" data-grid-stage="geometry" aria-pressed="false">Geometry</button>
+      <button type="button" data-grid-stage="timing" aria-pressed="false">Timing</button>
+    </div>
+    <label for={`${id}-scrub`}>Assembly <input id={`${id}-scrub`} type="range" min="0" max="100" value="100" data-grid-scrub disabled /><output data-grid-progress>100%</output></label>
+  </div>
+  <p class="breathing-grid__hint" data-grid-hint>Hover to reveal a cell’s tiling. Click to stamp it or turn a shape.</p>
+  <noscript><p>The interactive grid needs JavaScript. The still above shows the composition; the breakdown below explains its construction.</p></noscript>
+</div>
+<script>
+  import { initializeBreathingGrids } from '../scripts/breathing-grid.js';
+  initializeBreathingGrids();
+</script>

@@ -7,28 +7,10 @@ import SiteNav from "../components/SiteNav.astro";
 import { imageTrailImages } from "../lib/image-trail";
 import "../styles/global.css";
 
-const metrics = [
-  {
-    value: "150K+",
-    label: "Product reach across work"
-  },
-  {
-    value: "20+",
-    label: "Products"
-  },
-  {
-    value: "10",
-    label: "Orgs and product teams"
-  },
-  {
-    value: "13",
-    label: "Years doing design"
-  }
-];
+const trailFallbackImages = imageTrailImages.slice(0, 4);
 
 const writingAndInterviews = [
   {
-    eyebrow: "Interview / Mode Remote",
     title: "A conversation with Mode Remote",
     body: "An interview about my path into product design, the work behind the work, and what I have learned along the way.",
     href: "https://moderemote.com/interviews/alexander-traykov",
@@ -36,7 +18,6 @@ const writingAndInterviews = [
     external: true
   },
   {
-    eyebrow: "Writing / Notes",
     title: "Notes from Alexander Traykov",
     body: "Essays and working notes on product design, teams, craft, and the ideas I keep returning to.",
     href: "/notes/",
@@ -78,62 +59,62 @@ const structuredData = {
         <DitherImageTrail
           images={imageTrailImages}
           label="Interactive ASCII gallery from Alexander's life and work"
+          autoCycle
         />
-        <div class="about-hero-copy">
-          <h1 id="about-title" class="about-title about-title--trail">
-            <span>A human building things</span>
-            <span>with the help of machines</span>
-          </h1>
-        </div>
-      </section>
-
-      <section id="metrics" class="about-metrics" aria-label="Selected career and product metrics" data-reveal="rise">
-        <div class="about-metrics__inner section-shell" data-reveal-group>
-          {metrics.map((metric) => (
-            <article class="about-metric">
-              <strong>{metric.value}</strong>
-              <p>{metric.label}</p>
-            </article>
+        <div class="about-trail-fallback" aria-hidden="true" data-about-trail-fallback>
+          {trailFallbackImages.map((src, index) => (
+            <img
+              src={src}
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+              loading={index === 0 ? "eager" : "lazy"}
+            />
           ))}
         </div>
-        <span class="about-metrics__roughly">Roughly*</span>
+        <div class="about-hero-copy" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+          <h1 id="about-title" class="about-title about-title--trail">
+            <span>Product design,</span>
+            <span>close to the work.</span>
+          </h1>
+        </div>
       </section>
 
       <section class="about-grid section-shell" aria-labelledby="story-title" data-reveal="rise">
         <div class="about-copy">
           <h2 id="story-title">Greetings, friends.</h2>
-          <p>
-            I’m Alexander and I am a human. I take care of my three kids, do my best to be a good husband, and for the past 13 years I’ve been doing a lot of design.
-          </p>
-          <p>
-            Right now at Quickbase I do tons of things: leadership, management, and high-quality IC work. I’m <span class="about-nerd-burst" tabindex="0"><span class="about-nerd-burst__text">absolutely geeking tf out</span><span class="about-nerd-burst__emoji" aria-hidden="true">🤓</span><span class="about-nerd-burst__emoji" aria-hidden="true">🧠</span><span class="about-nerd-burst__emoji" aria-hidden="true">⚡</span><span class="about-nerd-burst__emoji" aria-hidden="true">🤖</span><span class="about-nerd-burst__emoji" aria-hidden="true">💻</span><span class="about-nerd-burst__emoji" aria-hidden="true">🧪</span><span class="about-nerd-burst__emoji" aria-hidden="true">👾</span><span class="about-nerd-burst__emoji" aria-hidden="true">🫠</span></span> when a discussion about AI starts.
-          </p>
-          <p>
-            At 17, my teacher trusted me with a Sofia Philharmonic poster. Seeing it around the city made design feel like a real job. I’ve followed that thread from eCommerce and mobile to automation and AI.
-          </p>
-          <p>
-            Outside work, I’m an energetic, underslept father. I hike, bike, fight under controlled conditions (martial arts), drink too much coffee, and try to make my wife and kids laugh.
-          </p>
+          <div class="about-copy__body">
+            <p>
+              I’m Alexander and I am a human. I take care of my three kids, do my best to be a good husband, and for the past 13 years I’ve been doing a lot of design.
+            </p>
+            <p>
+              At Quickbase I lead, manage, and stay hands-on with the work. I still get properly excited when a discussion about AI turns into a product question.
+            </p>
+            <p>
+              At 17, my teacher trusted me with a Sofia Philharmonic poster. Seeing it around the city made design feel like a real job. I’ve followed that thread from eCommerce and mobile to automation and AI.
+            </p>
+            <p>
+              Outside work, I’m an energetic, underslept father. I hike, bike, fight under controlled conditions as a purple belt in Brazilian Jiu-Jitsu, drink too much coffee, and try to make my wife and kids laugh.
+            </p>
+          </div>
         </div>
       </section>
 
       <section id="writing" class="about-published section-shell" aria-labelledby="published-title" data-reveal="rise">
-        <div class="section-heading">
-          <p class="section-kicker">Writing &amp; interviews</p>
+        <div class="section-heading about-published__heading">
           <h2 id="published-title">Things I’ve written and talked about.</h2>
         </div>
 
         <div class="published-list" data-reveal-group>
           {writingAndInterviews.map((item) => (
             <article class="published-item">
-              <p class="published-item__eyebrow">{item.eyebrow}</p>
               <h3>{item.title}</h3>
               <p class="published-item__body">{item.body}</p>
                 <a
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noreferrer" : undefined}
-                  data-ascii-action="secondary"
+                  data-ascii-action="primary"
                   data-ascii-stream
                   data-ascii-burst
                 >

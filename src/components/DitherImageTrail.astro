@@ -2,16 +2,23 @@
 type Props = {
   images: string[];
   label?: string;
+  autoCycle?: boolean;
 };
 
-const { images, label = "Interactive ASCII image trail" }: Props = Astro.props;
+const { images, label = "Interactive ASCII image trail", autoCycle = false }: Props = Astro.props;
 const renderSource = (src: string, size: 720 | 360) =>
   src.startsWith("/image-trail/")
     ? src.replace("/image-trail/", `/image-trail/render-${size}/`)
     : src;
 ---
 
-<div class="dither-trail" data-dither-trail role="img" aria-label={label}>
+<div
+  class="dither-trail"
+  data-dither-trail
+  data-dither-auto-cycle={autoCycle ? "true" : undefined}
+  role="img"
+  aria-label={label}
+>
   <div class="dither-trail__field" data-dither-trail-field aria-hidden="true">
     {images.map((src, index) => (
       <figure

@@ -1,12 +1,12 @@
 ---
 interface Props {
   caseTitle: string;
-  eyebrow: string;
   title: string;
   body: string;
+  compact?: boolean;
 }
 
-const { caseTitle, eyebrow, title, body } = Astro.props;
+const { caseTitle, title, body, compact = false } = Astro.props;
 const emailHref = `mailto:hi@traykov.cc?subject=${encodeURIComponent(`Product question after reading ${caseTitle}`)}`;
 const defaultBookingUrl = "https://cal.com/alexander-cqn5aq/30min";
 const configuredBookingUrl =
@@ -23,11 +23,14 @@ const bookingPageUrl = (() => {
 })();
 ---
 
-<aside class="case-contact-prompt" aria-labelledby="case-contact-title" data-reveal="rise">
+<aside
+  class:list={["case-contact-prompt", { "case-contact-prompt--compact": compact }]}
+  aria-labelledby="case-contact-title"
+  data-reveal={compact ? undefined : "rise"}
+>
   <div class="case-contact-prompt__copy">
-    <p>{eyebrow}</p>
     <h2 id="case-contact-title">{title}</h2>
-    <p>{body}</p>
+    {body && <p>{body}</p>}
   </div>
 
   <div class="case-contact-prompt__actions">
@@ -35,11 +38,11 @@ const bookingPageUrl = (() => {
       href={bookingPageUrl}
       data-booking-modal-open
       data-ascii-action="primary"
-      data-ascii-stream
-      data-ascii-burst
+      data-ascii-stream={compact ? undefined : true}
+      data-ascii-burst={compact ? undefined : true}
     >
-      <span data-scramble data-scramble-label="Book 30 minutes">Book 30 minutes</span>
+      {compact ? "Book 30 minutes" : <span data-scramble data-scramble-label="Book 30 minutes">Book 30 minutes</span>}
     </a>
-    <a href={emailHref} data-ascii-action="text" data-ascii-burst>Email instead</a>
+    {!compact && <a href={emailHref} data-ascii-action="text" data-ascii-burst>Email instead</a>}
   </div>
 </aside>

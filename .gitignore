@@ -10,9 +10,13 @@ audit-artifacts/
 .DS_Store
 *.log
 *.zip
+!/public/labs/presenting-in-code/downloads/presentations-in-code.zip
+!/public/labs/presenting-in-code/downloads/all-skills.zip
 /02.obj
 .vercel
 .env
 .env.local
 .env.*.local
 .env*
+/private-work-source/
+/.private-work/

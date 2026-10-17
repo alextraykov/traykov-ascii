@@ -1,0 +1,107 @@
+---
+import OverviewVideo from "./OverviewVideo.astro";
+import BreathingGrid from "./BreathingGrid.astro";
+
+const timelineEntries = [
+  { id: "latest-work", label: "Latest · Breathing grids" },
+  { id: "pave-loading-work", label: "Pave loading" },
+  { id: "designing-pave-overview", label: "Pave" },
+  { id: "designing-synapse-sys-overview", label: "SynapseSys" },
+  { id: "pipelines-overview", label: "Pipelines" },
+  { id: "connection-central-overview", label: "Connection Central" }
+] as const;
+
+const paveLoadingVideo = {
+  kind: "video" as const,
+  src: "/case-studies/media/pave-loading-system.mp4",
+  poster: "/case-studies/media/pave-loading-system-poster.jpg",
+  width: 1280,
+  height: 720,
+  title: "Build-wait motifs and builder context",
+  description:
+    "The recorded prototype opens on the builder loading state, then cuts to the fixed-pixel motif set behind it.",
+  label: "Prototype recording"
+};
+---
+
+<section class="homepage-timeline section-shell" aria-labelledby="latest-work-title" data-homepage-timeline>
+  <div class="homepage-timeline__layout">
+    <aside class="homepage-timeline__rail">
+      <nav class="homepage-timeline__toc" aria-label="Homepage contents">
+        <ol>
+          {timelineEntries.map((entry, index) => (
+            <li>
+              <a
+                href={`#${entry.id}`}
+                data-homepage-timeline-link
+                data-homepage-timeline-target={entry.id}
+                aria-current={index === 0 ? "location" : undefined}
+              >
+                {entry.label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </aside>
+
+    <div class="homepage-timeline__content">
+      <section
+        id="latest-work"
+        class="homepage-timeline__entry"
+        data-homepage-timeline-entry
+        aria-labelledby="latest-work-title"
+      >
+        <header class="homepage-timeline__entry-header" data-reveal="rise" data-reveal-duration="340">
+          <p class="homepage-timeline__date">
+            <time datetime="2026-10-02">02 Oct 2026</time>
+            <span aria-hidden="true"> / </span>
+            <span>Pave</span>
+          </p>
+          <h2 id="latest-work-title">Breathing grids for Pave</h2>
+          <p>A background built from a grid, then taken apart.</p>
+        </header>
+
+        <BreathingGrid id="breathing-home" />
+
+        <div class="homepage-timeline__entry-copy">
+          <div class="homepage-timeline__actions">
+            <a class="homepage-timeline__link" href="/case-studies/pave-breathing-grids/">Read the mini-study <span aria-hidden="true">↗</span></a>
+            <a class="homepage-timeline__related" href="/case-studies/designing-pave/">Part of Designing Pave <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="pave-loading-work"
+        class="homepage-timeline__entry"
+        data-homepage-timeline-entry
+        aria-labelledby="pave-loading-work-title"
+      >
+        <header class="homepage-timeline__entry-header" data-reveal="rise" data-reveal-duration="340">
+          <p class="homepage-timeline__date">
+            <time datetime="2026-09-13">13 Sep 2026</time>
+            <span aria-hidden="true"> / </span>
+            <span>Pave</span>
+          </p>
+          <h2 id="pave-loading-work-title">Designing a dot-patterns loading language for Pave</h2>
+        </header>
+
+        <OverviewVideo
+          video={paveLoadingVideo}
+          studyTitle="Pave loading system"
+          captionId="pave-loading-system-caption"
+        />
+
+        <div class="homepage-timeline__entry-copy">
+          <div class="homepage-timeline__actions">
+            <a class="homepage-timeline__link" href="/case-studies/pave-loading-animation/">Read the design breakdown <span aria-hidden="true">↗</span></a>
+            <a class="homepage-timeline__related" href="/case-studies/designing-pave/">Part of Designing Pave <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
+
+      <slot />
+    </div>
+  </div>
+</section>

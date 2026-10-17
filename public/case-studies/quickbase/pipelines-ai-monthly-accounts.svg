@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560" role="img" aria-labelledby="chart-title chart-description">
+<title id="chart-title">Monthly Pipelines AI account reach</title>
+<desc id="chart-description">Monthly customer accounts using any Pipelines AI feature rose from 57 in August 2024 to 862 in August 2026, with a 942-account peak in June 2026. The umbrella feature set changed across the period, so the chart shows observed reach rather than causal design impact.</desc>
+<rect width="960" height="560" fill="#fbfbf8"/>
+<g font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif">
+<text x="74" y="42" fill="#080808" font-size="22" font-weight="700">Pipelines AI reached more accounts as the feature set evolved.</text>
+<text x="74" y="68" fill="#666660" font-size="14">Customer accounts using any Pipelines AI feature · August 2024–August 2026</text>
+<line x1="74" y1="430.0" x2="868" y2="430.0" stroke="#d8d8d2" stroke-width="1"/>
+<text x="62" y="434.0" fill="#666660" font-size="12" text-anchor="end">0</text>
+<line x1="74" y1="354.0" x2="868" y2="354.0" stroke="#d8d8d2" stroke-width="1"/>
+<text x="62" y="358.0" fill="#666660" font-size="12" text-anchor="end">250</text>
+<line x1="74" y1="278.0" x2="868" y2="278.0" stroke="#d8d8d2" stroke-width="1"/>
+<text x="62" y="282.0" fill="#666660" font-size="12" text-anchor="end">500</text>
+<line x1="74" y1="202.0" x2="868" y2="202.0" stroke="#d8d8d2" stroke-width="1"/>
+<text x="62" y="206.0" fill="#666660" font-size="12" text-anchor="end">750</text>
+<line x1="74" y1="126.0" x2="868" y2="126.0" stroke="#d8d8d2" stroke-width="1"/>
+<text x="62" y="130.0" fill="#666660" font-size="12" text-anchor="end">1,000</text>
+<text x="74.0" y="456" fill="#666660" font-size="11" text-anchor="middle">Aug 24</text>
+<text x="173.2" y="456" fill="#666660" font-size="11" text-anchor="middle">Nov</text>
+<text x="239.4" y="456" fill="#666660" font-size="11" text-anchor="middle">Jan 25</text>
+<text x="338.7" y="456" fill="#666660" font-size="11" text-anchor="middle">Apr</text>
+<text x="437.9" y="456" fill="#666660" font-size="11" text-anchor="middle">Jul</text>
+<text x="537.2" y="456" fill="#666660" font-size="11" text-anchor="middle">Oct</text>
+<text x="636.4" y="456" fill="#666660" font-size="11" text-anchor="middle">Jan 26</text>
+<text x="735.7" y="456" fill="#666660" font-size="11" text-anchor="middle">Apr</text>
+<text x="834.9" y="456" fill="#666660" font-size="11" text-anchor="middle">Jul</text>
+<text x="868.0" y="456" fill="#666660" font-size="11" text-anchor="middle">Aug</text>
+<polyline points="74.0,412.7 107.1,411.5 140.2,410.5 173.2,363.4 206.3,304.1 239.4,291.4 272.5,268.0 305.6,235.7 338.7,202.6 371.8,220.2 404.8,215.1 437.9,214.2 471.0,215.4 504.1,203.5 537.2,206.0 570.2,251.9 603.3,236.0 636.4,222.4 669.5,209.0 702.6,199.3 735.7,169.2 768.8,175.9 801.8,143.6 834.9,173.7 868.0,168.0" fill="none" stroke="#080808" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74.0" cy="412.7" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="107.1" cy="411.5" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="140.2" cy="410.5" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="173.2" cy="363.4" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="206.3" cy="304.1" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="239.4" cy="291.4" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="272.5" cy="268.0" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="305.6" cy="235.7" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="338.7" cy="202.6" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="371.8" cy="220.2" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="404.8" cy="215.1" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="437.9" cy="214.2" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="471.0" cy="215.4" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="504.1" cy="203.5" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="537.2" cy="206.0" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="570.2" cy="251.9" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="603.3" cy="236.0" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="636.4" cy="222.4" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="669.5" cy="209.0" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="702.6" cy="199.3" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="735.7" cy="169.2" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="768.8" cy="175.9" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="801.8" cy="143.6" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="834.9" cy="173.7" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<circle cx="868.0" cy="168.0" r="3.5" fill="#080808" stroke="#fbfbf8" stroke-width="1.5"/>
+<text x="801.8" y="131.6" fill="#080808" font-size="12" font-weight="700" text-anchor="middle">942 peak</text>
+<text x="860.0" y="156.0" fill="#080808" font-size="12" font-weight="700" text-anchor="end">862</text>
+<text x="74" y="492" fill="#666660" font-size="12">Source: Pendo monthly account reach. The series measures an evolving umbrella feature, not one design’s attributable growth.</text>
+</g>
+</svg>

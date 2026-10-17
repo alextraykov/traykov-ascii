@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breathing grids</title>
+<style>
+  /* the film: the drafting sheet and its blocks, full-bleed, nothing else on the page */
+  :root { --page:#f8faf9; }
+  body[data-theme="dark"] { --page:#111715; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; overflow:hidden; background:var(--page); }
+  #field { position:fixed; inset:0; width:100vw; height:100vh; display:block; }
+  /* the engine needs a composer and a prompt to measure; here they are a hairline the sheet's middle band forms around, never seen */
+  #composer { position:fixed; left:50%; top:calc(50% - 70px); width:1px; height:140px; visibility:hidden; pointer-events:none; }
+  #prompt { display:none; }
+  #panel { display:none; }
+  /* the safe frame: no block opens within these strips, so every one arrives whole inside the picture */
+  .safe { position:fixed; left:0; right:0; height:5vh; visibility:hidden; pointer-events:none; } .safe.top { top:0; } .safe.bot { bottom:0; }
+</style>
+</head>
+<body>
+<canvas id="field" role="img" aria-label="Interactive modular grid"></canvas>
+<div class="safe top" aria-hidden="true"></div><div class="safe bot" aria-hidden="true"></div>
+<form id="composer" aria-hidden="true"><textarea id="prompt" tabindex="-1"></textarea></form>
+<aside class="panel" id="panel">
+  <header id="panelHead"><b id="pName"></b><span id="pSeed"></span></header>
+  <div class="body"><p id="pLine"></p><div class="dirs" id="dirs"></div>
+    <div class="tools"><button data-act="theme">Light / dark</button><button data-act="motion">Motion on</button><button data-act="reseed">New seed</button><button data-act="open">Open a cell</button><button data-act="slow">Speed 1×</button><button data-act="palette">Palette</button></div>
+    <div class="tune" id="tune" hidden></div></div>
+</aside>
+<script>window.__gridVariant='3B';</script><script>window.__gridHost = Object.assign({"canvasBox": true, "live": true, "noUrl": true, "noKeys": true, "margin": 0, "arrive": {"v": "up", "h": "left"}, "arriveMs": 1100, "tune": {"drift": 0, "breathe": 56, "breathePeriod": 4, "openW": 1.1, "openV": 120, "cadence": 3.4, "maxLive": 3, "hold": 5, "buildSpeed": 0.85, "hoverK": 1, "clickK": 1, "gap": 1, "minH": 130, "rowsX": 0, "unit": 128, "light": {"lineA": 1, "inkA": 1}, "dark": {"lineA": 1, "inkA": 1}}},
+  { avoid: () => [...document.querySelectorAll('.safe')], floor: () => innerHeight });
+
+window.__gridHost.tune.unit=Math.min(128,Math.max(72,innerWidth/4)); window.__gridHost.tune.minH=Math.min(130,innerHeight/4); window.__gridHost.paused=true; window.__gridHost.overlay=(c,s)=>window.__film?.draw(c,s);
+</script><script>
+(() => {
+/* ============================================================ maths */
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const E = {
+  outCubic: (t) => 1 - (1 - t) ** 3,
+  outQuint: (t) => 1 - (1 - t) ** 5,
+  outExpo: (t) => (t >= 1 ? 1 : 1 - 2 ** (-10 * t)),
+  inCubic: (t) => t * t * t,
+  inOutCubic: (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2),
+  inOutSine: (t) => -(Math.cos(Math.PI * t) - 1) / 2,
+};
+const prog = (t, delay, dur) => clamp((t - delay) / dur);
+const smooth = (e0, e1, v) => { const t = clamp((v - e0) / (e1 - e0)); return t * t * (3 - 2 * t); };
+const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const css = (c, a = 1) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+function rngFrom(seed) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const hashN = (a, b) => { const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return s - Math.floor(s); };
+const pick = (rng, arr) => arr[(rng() * arr.length) | 0];
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const TAU = Math.PI * 2;
+const vn2 = (x, y, s = 0) => { const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy), o = s * 57; const a = hashN(i + o, j), b = hashN(i + 1 + o, j), c = hashN(i + o, j + 1), d = hashN(i + 1 + o, j + 1); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; };
+const lum = (c) => c[0] + c[1] + c[2];
+const brightOn = (pal, k) => lum(pal[k]) > lum(pal.page);   // does more of this colour read lighter (dark page) or darker (light page)?
+
+/* ============================================================ palette
+   Every style draws with the same slots: ink (main green), deep (second green), orange (the red), lime (the fourth colour),
+   well (a surface), guide (drafting marks). Values are Pave's own tokens from services/ui-server/src/ui/styles/variables.css;
+   colours.html is the audit. P cycles the palettes live. */
+const T_ = {                                                                     // the tokens, resolved
+  page: [248, 250, 249], pageD: [17, 23, 21], surface: [241, 243, 245], surfaceD: [22, 29, 27], inputD: [40, 45, 43],
+  brand: [5, 135, 90], brandDark: [4, 111, 74], brandMedium: [130, 195, 172], brandLight: [205, 231, 222],   // --color-brand-primary and its color-mix ramp
+  nudge: [243, 53, 0], nudgeD: [255, 95, 50], ai: [124, 31, 166], grey: [100, 112, 124], greyD: [148, 158, 155],   // --nudge-nudge-primary, --semantic-ai, --text-text-tertiary light/dark
+};
+const BASE = {
+  light: { page: T_.page, line: mixc(T_.page, [17, 23, 21], 0.15), text: [71, 77, 82], lineA: 1, fineA: 0.3, fillA: 1, dotA: 0.92, shadow: 0.16 },   // line = --border-border-medium over the page
+  dark: { page: T_.pageD, line: mixc(T_.pageD, [248, 250, 249], 0.12), text: [174, 183, 180], lineA: 0.8, fineA: 0.22, fillA: 0.82, dotA: 0.8, shadow: 0.5 },
+};
+const PALETTES = {
+  pave: { label: 'Pave: brand green, brand dark, nudge red, brand light; pave flood in the theme surface',
+    light: { ink: T_.brand, deep: T_.brandDark, orange: T_.nudge, lime: T_.brandLight, well: T_.surface, guide: T_.grey, bpMix: 0.62 },
+    dark: { ink: T_.brand, deep: T_.brandMedium, orange: T_.nudgeD, lime: T_.inputD, well: T_.surfaceD, guide: T_.greyD, bpMix: 1 },
+    green: { light: { page: T_.brand, ink: T_.page, deep: T_.brandDark, orange: T_.nudge, lime: T_.brandLight }, dark: { page: mixc(T_.brand, [0, 0, 0], 0.45), ink: [234, 236, 235], deep: T_.brand, orange: T_.nudgeD, lime: T_.brandMedium } } },
+  'pave-ai': { label: 'Pave with the AI purple in place of the red',
+    light: { ink: T_.brand, deep: T_.brandDark, orange: T_.ai, lime: T_.brandLight, well: T_.surface, guide: T_.grey, bpMix: 0.62 },
+    dark: { ink: T_.brand, deep: T_.brandMedium, orange: mixc(T_.ai, [255, 255, 255], 0.25), lime: T_.inputD, well: T_.surfaceD, guide: T_.greyD, bpMix: 1 },
+    green: { light: { page: T_.brand, ink: T_.page, deep: T_.brandDark, orange: T_.ai, lime: T_.brandLight }, dark: { page: mixc(T_.brand, [0, 0, 0], 0.45), ink: [234, 236, 235], deep: T_.brand, orange: mixc(T_.ai, [255, 255, 255], 0.25), lime: T_.brandMedium } } },
+  r4: { label: 'Round 4 (off-brand, for comparison)',
+    light: { ink: [5, 135, 90], deep: [11, 61, 44], orange: [239, 108, 71], lime: [176, 204, 54], well: T_.surface, guide: [124, 150, 196] },
+    dark: { ink: [10, 166, 111], deep: [150, 214, 184], orange: [239, 108, 71], lime: [169, 193, 63], well: T_.surfaceD, guide: [98, 124, 172] },
+    green: { light: { page: [5, 128, 86], ink: [244, 247, 240], deep: [3, 58, 38], orange: [245, 120, 82], lime: [196, 222, 80] }, dark: { page: [4, 78, 52], ink: [236, 242, 234], deep: [2, 40, 26], orange: [239, 108, 71], lime: [190, 214, 72] } } },
+};
+const PALETTE = { name: 'pave' };
+/* the flood on send: which tone paves the page. Not the brand green by default; the chrome's toggles and ?pave= pick one */
+const PAVE_TONES = {
+  inverse: { label: 'the theme inverted', light: T_.pageD, dark: T_.page },
+  surface: { label: 'the theme surface', light: T_.brandLight, dark: T_.surfaceD },
+  ink: { label: 'brand green', light: T_.brand, dark: T_.brand },
+  grey: { label: 'the guide grey', light: T_.grey, dark: T_.greyD },
+  deep: { label: 'a charcoal: on light a step off the ink, on dark a few steps above the page (never a light flash over a dark page)', light: mixc(T_.pageD, T_.page, 0.18), dark: mixc(T_.pageD, T_.page, 0.3) },
+};
+const PAVE = { tone: 'inverse' };
+/* the palette a direction draws with: theme base, palette, optional surface, then the tuning's line contrast and ink intensity */
+function palFor(theme, surface) {
+  const P = PALETTES[PALETTE.name], p = { ...BASE[theme], ...P[theme] };
+  if (surface) { Object.assign(p, P[surface][theme]); p.line = mixc(p.page, [255, 255, 255], 0.16); p.guide = mixc(p.page, [255, 255, 255], 0.42); p.text = mixc(p.page, [255, 255, 255], 0.8); p.well = mixc(p.page, [0, 0, 0], 0.12); }
+  const tn = TUNE[theme];
+  p.line = mixc(p.page, p.line, tn.lineA);
+  const k = tn.inkA; p.ink = k < 1 ? mixc(p.page, p.ink, k) : mixc(p.ink, p.deep, (k - 1) * 0.8);
+  p.pave = PAVE_TONES[PAVE.tone][theme];
+  p.dark = lum(p.page) < 240;
+  return p;
+}
+/* which slots a tiling may use. On a dark page the grounds are Pave's dark surfaces and the figures are the greens, with the red rare,
+   so a cell reads as one panel of shapes rather than a saturated quilt */
+const tilingColours = (pal) => (pal.dark
+  ? { fgs: ['ink', 'deep', 'ink', 'deep', 'ink', 'deep', 'orange'], bgs: ['lime', 'well'], lights: ['deep'], redCap: 1 }
+  : { fgs: ['ink', 'deep', 'lime', 'ink', 'deep', 'lime', 'orange'], bgs: ['ink', 'deep', 'lime'], lights: ['lime'], redCap: 2 });   // the red is only ever a small figure, never a ground
+const hitCtx = document.createElement('canvas').getContext('2d');   // point-in-path tests in local cell space
+function latticeAt(w, h, step) { const nx = Math.max(3, Math.round(w / step)), ny = Math.max(3, Math.round(h / step)); return { nx, ny, sx: w / nx, sy: h / ny }; }
+const latticeFor = (w, h) => latticeAt(w, h, 12);
+/* draw the part [from, to] (in px along its length) of a stroke */
+function strokePart(c, st, from, to) { if (to - from <= 0.5) return; c.setLineDash([to - from, st.len * 4 + 10]); c.lineDashOffset = -from; c.stroke(st.path); c.setLineDash([]); }
+/* bottom-left to top-right order, with a little noise so fronts are organic, not ruled */
+const ordBLTR = (x, y, w, h, n, r) => clamp(((x / w + (1 - y / h)) / 2) * (1 - n) + r * n);
+
+/* ============================================================ modules: a hidden square grid that the P's parts tile exactly
+   Every module is covered, straight edges sit on module edges, arcs are tangent to them, and module edges land on device pixels,
+   so there is never a gap, a margin or an anti-aliased seam between pieces. */
+const gridSub = (K) => [(Math.round(K.m.e) - K.m.e) / K.m.a, (Math.round(K.m.f) - K.m.f) / K.m.a];   // the translate that puts the cell origin on a device pixel
+/* the translate that puts a cell's own step-pitch lattice onto the sheet's lattice (x), and on device pixels, so click effects drawn on the sheet line up with it */
+const sheetSnap = (K, step) => { const ox = K.m.e / K.m.a, off = (((-K.sheet.x) % step) + step) % step; return [Math.round((ox + off) * dpr) / dpr - ox, gridSub(K)[1]]; };
+function moduleGrid(w, h, o = {}) {
+  const { rows = [2, 3], target = 72, minM = 36, maxM = 120, bleed = false, rng = null, quant = 0 } = o, D = dpr;
+  const snapM = (m) => (quant ? Math.ceil(m / quant) * quant : Math.ceil(m * D) / D);   // quant: modules are a whole number of pixels or lattice steps
+  let best = null;
+  for (const r of rows) { const M = snapM(h / r); if (M < minM || M > maxM) continue; const sc = Math.abs(M - target) / target; if (!best || sc < best.sc) best = { M, sc }; }
+  const M = best ? best.M : snapM(clamp(h / rows[0], minM, maxM));
+  let nr = Math.ceil(h / M - 1e-6);
+  const nc = Math.ceil(w / M - 1e-6) + (bleed ? 2 : 0);
+  let x0 = Math.round(((w - nc * M) / 2) * D) / D, y0 = Math.round(((h - nr * M) / 2) * D) / D;   // centred, so a cropped edge module always shows at least half of itself
+  if (bleed && rng) { x0 += Math.round((rng() - 0.5) * M * 0.9 * D) / D; y0 -= Math.round(rng() * M * 0.6 * D) / D; nr += 1; }   // offset and overflowing
+  return { M, rows: nr, cols: nc, x0, y0 };
+}
+const FOOT = { square: [1, 1], quarter: [1, 1], half: [1, 1], disc: [1, 1], blank: [1, 1], bar: [2, 1], halfpair: [2, 1], disc4: [2, 2], arch: [2, 2] };
+const SYMMETRIC = { square: 1, disc: 1, disc4: 1, bar: 1, blank: 1 };            // turning these changes nothing, so they never turn
+/* each part centred on the origin in its base orientation; e (0..1) is how far it has drawn in */
+function piecePath(type, M, e = 1) {
+  const p = new Path2D(), h = M / 2;
+  if (e <= 0.001) return p;
+  switch (type) {
+    case 'square': p.rect(-h, -h, M * E.outCubic(clamp(e * 1.6)), M * E.outCubic(clamp(e * 1.6 - 0.35))); break;         // unfolds from its corner: across, then down
+    case 'quarter': p.moveTo(-h, -h); p.arc(-h, -h, M, 0, (Math.PI / 2) * e); p.closePath(); break;                         // vertex on a corner, arc tangent to the far edges
+    case 'half': p.moveTo(0, h); p.arc(0, h, h, Math.PI, Math.PI + Math.PI * e); p.closePath(); break;                      // diameter on an edge
+    case 'disc': p.arc(0, 0, h * E.outCubic(e), 0, TAU); break;                                                              // tangent to all four edges
+    case 'bar': p.rect(-M, -h, 2 * M * E.outCubic(e), M); break;
+    case 'halfpair': p.moveTo(0, h); p.arc(0, h, M, Math.PI, Math.PI + Math.PI * e); p.closePath(); break;                  // two quarters meeting on the shared edge
+    case 'disc4': p.moveTo(0, 0); p.arc(0, 0, M, -Math.PI / 2, -Math.PI / 2 + TAU * e); p.closePath(); break;               // four quarters round the shared vertex
+    case 'arch': p.moveTo(-M, M); p.lineTo(-M, 0); p.arc(0, 0, M, Math.PI, TAU); p.lineTo(M, M); p.lineTo(h, M); p.lineTo(h, 0); p.arc(0, 0, h, 0, Math.PI, true); p.lineTo(-h, M); p.closePath(); break;
+  }
+  return p;
+}
+/* the same parts as outlines (no fan radii), for the line styles */
+function pieceOutline(type, M) {
+  const p = new Path2D(), h = M / 2;
+  switch (type) {
+    case 'square': p.rect(-h, -h, M, M); return { path: p, len: 4 * M };
+    case 'quarter': p.moveTo(-h, h); p.lineTo(-h, -h); p.lineTo(h, -h); p.arc(-h, -h, M, 0, Math.PI / 2); return { path: p, len: 2 * M + (Math.PI * M) / 2 };
+    case 'half': p.moveTo(-h, h); p.arc(0, h, h, Math.PI, TAU); p.closePath(); return { path: p, len: M + Math.PI * h };
+    case 'disc': p.moveTo(h, 0); p.arc(0, 0, h, 0, TAU); return { path: p, len: Math.PI * M };
+    case 'bar': p.rect(-M, -h, 2 * M, M); return { path: p, len: 6 * M };
+    case 'halfpair': p.moveTo(-M, h); p.arc(0, h, M, Math.PI, TAU); p.closePath(); return { path: p, len: 2 * M + Math.PI * M };
+    case 'disc4': p.moveTo(M, 0); p.arc(0, 0, M, 0, TAU); return { path: p, len: TAU * M };
+    case 'arch': return { path: piecePath('arch', M), len: Math.PI * 1.5 * M + 5 * M };
+  }
+  return null;
+}
+/* does piece p's figure cover (x, y), with the piece turned by rot quarter-turns? */
+function figureAt(p, G, x, y, rot = p.rot) {
+  if (!p || !p.fg) return false;
+  const M = G.M, dx = x - (G.x0 + (p.i + p.cw / 2) * M), dy = y - (G.y0 + (p.j + p.ch / 2) * M), a = (-rot * Math.PI) / 2, ca = Math.cos(a), sa = Math.sin(a);
+  return hitCtx.isPointInPath((G.hit ||= {})[p.type] ||= piecePath(p.type, M), dx * ca - dy * sa, dx * sa + dy * ca);
+}
+const colOf = (pal, k) => (k === 'page' ? pal.page : pal[k]);
+function drawPiece(c, p, G, pal, e, turn, a = pal.fillA ?? 1) {
+  if (e <= 0.001) return;
+  const M = G.M, x = G.x0 + p.i * M, y = G.y0 + p.j * M, fw = p.cw * M, fh = p.ch * M;
+  c.save(); c.beginPath(); c.rect(x, y, fw, fh); c.clip();
+  if (p.bg) {                                                                  // the footprint's ground wipes in from the edge facing the build's origin
+    const k = E.outCubic(clamp(e * 1.3)); c.fillStyle = css(colOf(pal, p.bg), a);
+    c.fillRect(...[[x, y + fh * (1 - k), fw, fh * k], [x, y, fw * k, fh], [x, y, fw, fh * k], [x + fw * (1 - k), y, fw * k, fh]][p.wipe]);
+  }
+  const k = clamp((e - 0.12) / 0.88);
+  if (p.fg && k > 0) {
+    c.translate(x + fw / 2, y + fh / 2); c.rotate(((p.rot + turn) * Math.PI) / 2); c.fillStyle = css(colOf(pal, p.fg), a);
+    if (p.type === 'arch') { const rise = E.outCubic(k); c.beginPath(); c.rect(-M, M - 2 * M * rise, 2 * M, 2 * M * rise + 1); c.clip(); c.fill(piecePath('arch', M)); }   // the arch rises from its feet
+    else c.fill(piecePath(p.type, M, k));
+  }
+  c.restore();
+}
+const COLS4 = ['ink', 'deep', 'orange', 'lime'];
+/* tile the grid: one compound first (two quarters make a half, four a disc, or the P's arch), a few more multi-module pieces, singles in every free module,
+   then colours so no two neighbours share a figure or a ground, then the build order by module distance from the origin corner */
+function composeModules(rng, G, o = {}) {
+  const { multi = 1, empty = 0, fgs = COLS4, bgs = COLS4, compounds = ['halfpair', 'halfpair', 'disc4', 'arch'], singles = ['quarter', 'quarter', 'half', 'disc', 'square', 'quarter'], origin = [0, 1], step = 55, w = Infinity, h = Infinity, lights = ['lime'], redCap = null } = o;
+  const bothLight = (a, b) => lights.includes(a) && lights.includes(b);   // two light colours on each other wash out
+  const occ = new Array(G.cols * G.rows).fill(null), pieces = [];
+  const at = (i, j) => (i < 0 || j < 0 || i >= G.cols || j >= G.rows ? null : occ[j * G.cols + i]);
+  const dims = (type, rot) => { const [bw, bh] = FOOT[type]; return rot % 2 ? [bh, bw] : [bw, bh]; };
+  const fits = (i, j, cw, ch) => { for (let b = 0; b < ch; b++) for (let a = 0; a < cw; a++) if (i + a >= G.cols || j + b >= G.rows || occ[(j + b) * G.cols + i + a]) return false; return true; };
+  const visible = (i, j, cw, ch) => G.x0 + i * G.M >= -1 && G.x0 + (i + cw) * G.M <= w + 1 && G.y0 + j * G.M >= -1 && G.y0 + (j + ch) * G.M <= h + 1;
+  const place = (type, i, j, rot) => { const [cw, ch] = dims(type, rot); if (!fits(i, j, cw, ch)) return null; const p = { type, i, j, cw, ch, rot, turns: 0, turnFrom: 0, turnAt: -1e9 }; for (let b = 0; b < ch; b++) for (let a = 0; a < cw; a++) occ[(j + b) * G.cols + i + a] = p; pieces.push(p); return p; };
+  const placeSomewhere = (type) => {
+    const rot = (rng() * 4) | 0, [cw, ch] = dims(type, rot), cands = [];
+    for (let j = 0; j <= G.rows - ch; j++) for (let i = 0; i <= G.cols - cw; i++) if (fits(i, j, cw, ch)) cands.push([i, j, visible(i, j, cw, ch)]);
+    const vis = cands.filter((q) => q[2]), pool = vis.length ? vis : cands;
+    if (!pool.length) return null; const [i, j] = pick(rng, pool); return place(type, i, j, rot);
+  };
+  for (let k = 0; k < 8 && !placeSomewhere(pick(rng, compounds)); k++);
+  for (let n = 0; n < multi; n++) placeSomewhere(pick(rng, ['bar', 'halfpair', 'arch', 'disc4']));
+  for (let j = 0; j < G.rows; j++) for (let i = 0; i < G.cols; i++) if (!occ[j * G.cols + i]) place(pick(rng, singles), i, j, (rng() * 4) | 0);
+  if (empty) { const ones = pieces.filter((p) => p.cw === 1 && p.ch === 1 && visible(p.i, p.j, 1, 1)); for (let n = 0; n < empty && ones.length; n++) ones.splice((rng() * ones.length) | 0, 1)[0].type = 'blank'; }
+  const nbOf = (p) => { const s = new Set(); for (let a = -1; a <= p.cw; a++) for (let b = -1; b <= p.ch; b++) { const ao = a < 0 || a >= p.cw, bo = b < 0 || b >= p.ch; if (ao === bo) continue; const q = at(p.i + a, p.j + b); if (q && q !== p) s.add(q); } return [...s]; };
+  pieces.sort((p, q) => p.j - q.j || p.i - q.i);
+  for (const p of pieces) {
+    if (p.type === 'blank') { p.fg = null; p.bg = null; continue; }
+    const nb = nbOf(p).filter((q) => q.fg !== undefined), nfg = new Set(nb.map((q) => q.fg)), nbg = new Set(nb.map((q) => q.bg));
+    const strict = fgs.filter((c) => !nfg.has(c) && !nbg.has(c)), loose = fgs.filter((c) => !nfg.has(c));
+    p.fg = pick(rng, strict.length ? strict : loose.length ? loose : fgs);
+    if (p.type === 'square' || p.type === 'bar') { p.bg = null; continue; }   // these cover their footprint on their own
+    const bs = bgs.filter((c) => c !== p.fg && !bothLight(c, p.fg) && (c === null || (!nbg.has(c) && !nfg.has(c)))), bl = bgs.filter((c) => c !== p.fg && !bothLight(c, p.fg));
+    p.bg = pick(rng, bs.length ? bs : bl);
+  }
+  if (redCap !== null) {                                                        // the red is an accent: past the cap, a figure takes the other green instead
+    let reds = 0; for (const p of pieces) if (p.fg === 'orange' && ++reds > redCap) p.fg = p.bg === 'ink' ? 'deep' : 'ink';
+  }
+  const oi = origin[0] ? G.cols - 1 : 0, oj = origin[1] ? G.rows - 1 : 0, wipes = [origin[1] ? 0 : 2, origin[0] ? 3 : 1];
+  let maxD = 0;
+  for (const p of pieces) { p.md = Math.abs(p.i + (p.cw - 1) / 2 - oi) + Math.abs(p.j + (p.ch - 1) / 2 - oj); maxD = Math.max(maxD, p.md); p.d = p.md * step + rng() * 30; p.wipe = pick(rng, wipes); }
+  for (const p of pieces) p.od = (maxD - p.md) * step * 0.6 + rng() * 20;     // the exit folds back toward the origin
+  pieces.forEach((p, k) => { p.idx = k; });
+  return { pieces, at, maxD };
+}
+const pieceK = (p, tin, tout, dur = 800) => E.outExpo(prog(tin, p.d, dur)) * (1 - E.inOutCubic(prog(tout, p.od, dur * 0.8)));
+const pieceTurn = (p, t) => p.turnFrom + (p.turns - p.turnFrom) * E.inOutCubic(clamp((t - p.turnAt) / 700));
+function turnPiece(p, t) { if (!p || SYMMETRIC[p.type]) return; p.turnFrom = pieceTurn(p, t); p.turns += p.cw === p.ch ? 1 : 2; p.turnAt = t; }   // retargets from wherever it is
+
+/* ============================================================ 1 · LINES: 3B's tiling as a line drawing, the lattice inside the figures */
+const LINE_GRID = { rows: [2, 3], target: 84, minM: 48, maxM: 132, quant: 12 };
+const LINE_SINGLES = ['quarter', 'quarter', 'half', 'disc', 'quarter', 'half'];
+const LineTiling = {
+  key: 'A', name: 'Line tiling', buildMs: 2000, exitMs: 1100, wave: 'lattice', noShape: true,
+  line: 'Blocks as a drawing: the same hidden square grid and the same parts of the P, drawn as outlines, with the fine lattice hatched inside each figure instead of around it. About a third of the modules stay empty so the drawing breathes. Outlines trace in from the corner the build starts at, then each figure fills with its lattice; the piece under the cursor turns. On the way out the lattice retracts and the outlines undraw.',
+  build({ w, h, rng }) {
+    const G = moduleGrid(w, h, LINE_GRID), singles = G.cols * G.rows;
+    const comp = composeModules(rng, G, { multi: 1, w, h, step: 70, singles: LINE_SINGLES, empty: Math.round(singles * 0.3) });
+    return { G, comp, outlines: {}, fills: {}, hoverP: null };
+  },
+  draw(c, s, K) {
+    const { tin, tout, pal } = K, { G, comp } = s, M = G.M, st = 12;
+    c.translate(...gridSub(K));
+    const hp = K.hv > 0.5 && tout < 0 ? comp.at(Math.floor((K.hp.x - G.x0) / M), Math.floor((K.hp.y - G.y0) / M)) : null;
+    if (hp && hp !== s.hoverP) turnPiece(hp, tin); s.hoverP = hp;
+    for (const p of comp.pieces) {
+      if (!p.fg) continue;
+      const ol = (s.outlines[p.type] ||= pieceOutline(p.type, M)); if (!ol) continue;
+      const op = E.inOutCubic(prog(tin, p.d, 720)), oq = E.inOutCubic(prog(tout, p.od, 520)); if (op <= oq) continue;
+      const bw = FOOT[p.type][0] * M, bh = FOOT[p.type][1] * M;
+      c.save(); c.translate(G.x0 + (p.i + p.cw / 2) * M, G.y0 + (p.j + p.ch / 2) * M); c.rotate(((p.rot + pieceTurn(p, tin)) * Math.PI) / 2);
+      const lp = prog(tin, p.d + 420, 760), lq = prog(tout, p.od * 0.5, 420);
+      if (lp > lq) {                                                             // the lattice, clipped to the figure: verticals rise from the base, rows run in from the left
+        c.save(); c.clip((s.fills[p.type] ||= piecePath(p.type, M))); c.strokeStyle = css(pal.ink, pal.fineA * 1.3); c.lineWidth = 0.7; c.beginPath();
+        const nx = Math.round(bw / st), ny = Math.round(bh / st);
+        for (let i = 1; i < nx; i++) { const d = (i / nx) * 0.45, a = E.outCubic(clamp((lp - d) / 0.55)), b = E.inOutCubic(clamp((lq - d) / 0.55)); if (a <= b) continue; const x = -bw / 2 + i * st; c.moveTo(x, bh / 2 - bh * b); c.lineTo(x, bh / 2 - bh * a); }
+        for (let j = 1; j < ny; j++) { const d = (1 - j / ny) * 0.45, a = E.outCubic(clamp((lp - d) / 0.55)), b = E.inOutCubic(clamp((lq - d) / 0.55)); if (a <= b) continue; const y = -bh / 2 + j * st; c.moveTo(-bw / 2 + bw * b, y); c.lineTo(-bw / 2 + bw * a, y); }
+        c.stroke(); c.restore();
+      }
+      c.strokeStyle = css(pal.ink); c.lineWidth = 1.5; c.lineJoin = 'round'; strokePart(c, ol, ol.len * oq, ol.len * op); c.lineJoin = 'miter';
+      c.restore();
+    }
+  },
+};
+
+/* ============================================================ 3 · ARCHES */
+const BLOCK_GRID = { rows: [2, 3], target: 68, minM: 44, maxM: 100 };
+const Blocks = {
+  key: 'B', name: 'Blocks', buildMs: 1500, exitMs: 1000, extraLive: 1, spacing: 2, wave: 'none', clickOpens: false, noShape: true,
+  line: 'The cell is tiled by a hidden square grid with every module covered: grounds wipe in from the edge facing the corner the build starts at, quarters and halves sweep open like fans, and at least one pair of modules joins into a larger half, a disc or the P’s arch. No two neighbours share a colour. A piece turns now and then, and the one under the cursor turns when you reach it. Hover the empty grid for a ghost of a tiling; click to stamp it. On the way out every piece folds back toward its corner.',
+  build({ w, h, rng, pal }) {
+    const G = moduleGrid(w, h, BLOCK_GRID), comp = composeModules(rng, G, { multi: 1, w, h, step: 55, ...tilingColours(pal) });
+    return { G, comp, nextTurn: 2000 + rng() * 800, hoverP: null, rng };
+  },
+  draw(c, s, K) {
+    const { tin, tout, pal } = K, { G, comp } = s;
+    c.translate(...gridSub(K));
+    if (tout < 0 && tin > s.nextTurn) { const cand = comp.pieces.filter((p) => !SYMMETRIC[p.type]); if (cand.length) turnPiece(pick(s.rng, cand), tin); s.nextTurn = tin + 1400 + s.rng() * 1000; }
+    const hp = K.hv > 0.5 && tout < 0 ? comp.at(Math.floor((K.hp.x - G.x0) / G.M), Math.floor((K.hp.y - G.y0) / G.M)) : null;
+    if (hp && hp !== s.hoverP) turnPiece(hp, tin); s.hoverP = hp;
+    for (const p of comp.pieces) drawPiece(c, p, G, pal, pieceK(p, tin, tout), pieceTurn(p, tin));
+  },
+};
+
+/* ============================================================ 3C · the tiling as a two-colour dither
+   One ink on one ground (D cycles the pair). 4px pixels on the device grid, an 8×8 Bayer threshold, and a real shade field:
+   each part is lit as a form (the quarter and the disc as domes, the arch as a tube, flat parts as pillows), with a rim at the
+   silhouette and a short cast shadow on its own ground. Module edges are whole pixels, so every curve steps on one grid. */
+const BAYER8 = (() => { const m = [[0, 32, 8, 40, 2, 34, 10, 42], [48, 16, 56, 24, 50, 18, 58, 26], [12, 44, 4, 36, 14, 46, 6, 38], [60, 28, 52, 20, 62, 30, 54, 22], [3, 35, 11, 43, 1, 33, 9, 41], [51, 19, 59, 27, 49, 17, 57, 25], [15, 47, 7, 39, 13, 45, 5, 37], [63, 31, 55, 23, 61, 29, 53, 21]]; return m.flat().map((v) => (v + 0.5) / 64); })();
+const bayer8 = (i, j) => BAYER8[(j & 7) * 8 + (i & 7)];
+const light = (nx, ny) => { const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny)); return clamp(0.18 + 0.82 * (-0.45 * nx - 0.55 * ny + 0.7 * nz)); };
+const DPX = 4, DITHER_GRID = { rows: [2, 3], target: 76, minM: 48, maxM: 112, quant: DPX }, DITHER_FADE = 520;
+const DUOS = [['ink', 'page'], ['deep', 'page'], ['ink', 'well']];
+const DUO = { i: 0 };
+/* the part's own geometry in its unrotated frame: is (lx, ly) inside, and which way does the surface face there */
+function partAt(type, M, lx, ly) {
+  const h = M / 2, dome = (cx, cy, R, clip) => { const dx = lx - cx, dy = ly - cy, d = Math.hypot(dx, dy); return d <= R && clip ? [dx / R, dy / R] : null; };
+  switch (type) {
+    case 'square': return Math.abs(lx) <= h && Math.abs(ly) <= h ? [lx / M, ly / M] : null;
+    case 'bar': return Math.abs(lx) <= M && Math.abs(ly) <= h ? [lx / (2 * M), ly / M] : null;
+    case 'quarter': return dome(-h, -h, M, lx >= -h && ly >= -h);
+    case 'half': return dome(0, h, h, ly <= h);
+    case 'disc': return dome(0, 0, h, true);
+    case 'halfpair': return dome(0, h, M, ly <= h);
+    case 'disc4': return dome(0, 0, M, true);
+    case 'arch': {
+      const d = Math.hypot(lx, ly), tube = (u, dx, dy) => [dx * (2 * u - 1) * 0.9, dy * (2 * u - 1) * 0.9];
+      if (ly <= 0) return d >= h && d <= M ? tube((d - h) / (M - h), lx / d, ly / d) : null;
+      const ax = Math.abs(lx); return ly <= M && ax >= h && ax <= M ? tube((ax - h) / (M - h), Math.sign(lx), 0) : null;
+    }
+  }
+  return null;
+}
+/* fill the ink density (0..1) for every pixel of piece p, at rotation rot, into tone */
+function ditherPiece(D, G, p, rot, tone, dark) {
+  const M = G.M, n = D.n, a = (-rot * Math.PI) / 2, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(-a), sb = Math.sin(-a);
+  const cx = G.x0 + (p.i + p.cw / 2) * M, cy = G.y0 + (p.j + p.ch / 2) * M, i0 = p.i * n, j0 = p.j * n, w = p.cw * n, hh = p.ch * n;
+  const inside = new Uint8Array(w * hh), nrm = new Float32Array(w * hh * 2);
+  const local = (x, y) => { const dx = x - cx, dy = y - cy; return [dx * ca - dy * sa, dx * sa + dy * ca]; };
+  for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) {
+    const [lx, ly] = local(G.x0 + (i0 + i + 0.5) * DPX, G.y0 + (j0 + j + 0.5) * DPX), r = p.fg ? partAt(p.type, M, lx, ly) : null;
+    if (r) { inside[j * w + i] = 1; nrm[(j * w + i) * 2] = r[0] * cb - r[1] * sb; nrm[(j * w + i) * 2 + 1] = r[0] * sb + r[1] * cb; }   // the normal back in screen space
+  }
+  const ground = (p.i + p.j) % 2 ? 0.13 : 0.06, sh = 2;                        // grounds alternate faintly, so the module grid reads as a checker
+  for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) {
+    const k = (j0 + j) * D.nx + i0 + i, q = j * w + i;
+    if (inside[q]) {
+      const lit = light(nrm[q * 2], nrm[q * 2 + 1]), rim = i === 0 || j === 0 || i === w - 1 || j === hh - 1 ? false : !inside[q - 1] || !inside[q + 1] || !inside[q - w] || !inside[q + w];
+      tone[k] = rim ? (dark ? 0.85 : 0.96) : dark ? 0.22 + 0.6 * lit : 0.35 + 0.65 * (1 - lit);   // a dark page gets a lighter hand: the same density reads heavier as light on dark
+    } else {
+      const si = i - sh, sj = j - sh, shadow = si >= 0 && sj >= 0 && inside[sj * w + si];
+      tone[k] = ground + (shadow ? 0.26 : 0);
+    }
+  }
+}
+function ditherField(G, comp, dark) {
+  const n = Math.round(G.M / DPX), D = { n, nx: G.cols * n, ny: G.rows * n };
+  D.own = new Int16Array(D.nx * D.ny).fill(-1); D.tone = new Float32Array(D.nx * D.ny); D.next = new Float32Array(D.nx * D.ny).fill(-1);
+  for (const p of comp.pieces) { for (let j = p.j * n; j < (p.j + p.ch) * n; j++) for (let i = p.i * n; i < (p.i + p.cw) * n; i++) D.own[j * D.nx + i] = p.idx; ditherPiece(D, G, p, p.rot + p.turns, D.tone, dark); }
+  return D;
+}
+function ditherTurn(D, G, p, t, dark) {                                        // turn by cross-dissolving into the new orientation
+  if (!p || SYMMETRIC[p.type] || p.fadeAt !== undefined) return;
+  p.turns += p.cw === p.ch ? 1 : 2; p.fadeAt = t; ditherPiece(D, G, p, p.rot + p.turns, D.next, dark);
+}
+function ditherCommit(D, p, t) {
+  if (p.fadeAt === undefined || t - p.fadeAt < DITHER_FADE) return;
+  for (let j = p.j * D.n; j < (p.j + p.ch) * D.n; j++) for (let i = p.i * D.n; i < (p.i + p.cw) * D.n; i++) { const k = j * D.nx + i; if (D.next[k] >= 0) { D.tone[k] = D.next[k]; D.next[k] = -1; } }
+  p.fadeAt = undefined;
+}
+/* eOf(piece) → how far it has dissolved in. o.hover lifts the tone near a point; o.alpha fades the whole ink (the ghost) */
+function drawDither(c, G, comp, D, pal, eOf, o = {}) {
+  const [inkK, groundK] = DUOS[DUO.i], es = comp.pieces.map(eOf), path = new Path2D(), hv = o.hover, t = o.t ?? 0;
+  if (groundK !== 'page' && !o.noGround) { c.fillStyle = css(pal[groundK], o.alpha ?? 1); c.fillRect(G.x0, G.y0, D.nx * DPX, D.ny * DPX); }
+  for (let j = 0; j < D.ny; j++) for (let i = 0; i < D.nx; i++) {
+    const k = j * D.nx + i, oi = D.own[k]; if (oi < 0) continue;
+    const e = es[oi]; if (e <= 0.001 || bayer8(i + 3, j + 5) >= e) continue;   // the dissolve runs on a shifted Bayer, so it never lines up with the tone pattern
+    const p = comp.pieces[oi];
+    let tn = D.tone[k]; if (D.next[k] >= 0 && bayer8(i + 5, j + 2) < clamp((t - p.fadeAt) / DITHER_FADE)) tn = D.next[k];
+    const x = G.x0 + i * DPX, y = G.y0 + j * DPX;
+    if (hv) tn += 0.3 * hv.k * smooth(90, 0, Math.hypot(x + DPX / 2 - hv.x, y + DPX / 2 - hv.y));
+    if (bayer8(i, j) < tn) path.rect(x, y, DPX, DPX);
+  }
+  c.fillStyle = css(pal[inkK], (o.alpha ?? 1) * (pal.dark ? 0.92 : 1)); c.fill(path);
+}
+const Dither = {
+  key: 'C', name: 'Dither', buildMs: 1500, exitMs: 1000, extraLive: 1, spacing: 2, wave: 'none', clickOpens: false, noShape: true,
+  line: 'The Blocks tiling as a two-colour dither: one ink on one ground (D cycles green on page, dark green on page, green on a surface). 4px pixels on the device grid, an 8×8 ordered threshold, and a real shade field: domes, a tube for the arch, pillows for the flat parts, a rim at every silhouette and a short cast shadow. Pieces dissolve in from the corner the build starts at; a piece turns by dissolving into its new orientation; the cursor brightens the pixels it passes. Hover the empty grid for a faint ghost; click to stamp it. On the way out every piece dissolves back.',
+  build({ w, h, rng, pal }) { const G = moduleGrid(w, h, DITHER_GRID), comp = composeModules(rng, G, { multi: 1, w, h, step: 60 }); return { G, comp, D: ditherField(G, comp, pal.dark), dark: pal.dark, nextTurn: 2000 + rng() * 800, hoverP: null, rng }; },
+  draw(c, s, K) {
+    const { tin, tout, pal } = K, { G, comp, D } = s;
+    c.translate(...gridSub(K));
+    if (tout < 0 && tin > s.nextTurn) { const cand = comp.pieces.filter((p) => !SYMMETRIC[p.type]); if (cand.length) ditherTurn(D, G, pick(s.rng, cand), tin, s.dark); s.nextTurn = tin + 1400 + s.rng() * 1000; }
+    const hp = K.hv > 0.5 && tout < 0 ? comp.at(Math.floor((K.hp.x - G.x0) / G.M), Math.floor((K.hp.y - G.y0) / G.M)) : null;
+    if (hp && hp !== s.hoverP) ditherTurn(D, G, hp, tin, s.dark); s.hoverP = hp;
+    drawDither(c, G, comp, D, pal, (p) => pieceK(p, tin, tout, 700), { t: tin, hover: K.hv > 0.01 ? { x: K.hp.x, y: K.hp.y, k: K.hv } : null });
+    for (const p of comp.pieces) ditherCommit(D, p, tin);
+  },
+};
+
+
+
+/* ============================================================ HOOKS: each variant's own grid hover, grid click, in-cell click and focus response
+   One ink per direction, motion on the lattice, hovers ease out, clicks hit fast and settle slow.
+   Grid-level effects either ride the sheet (fx) or, with { live: true, cell }, draw into the cell's rect as it is this frame. */
+
+/* draw a cell's lattice out from a corner (cxi, cyi in 0/1), hard-edged and clipped to the cell; at p = 1 it reaches every edge */
+function latticeFrom(c, r, L, cxi, cyi, p, color, lw = 0.7) {
+  if (p <= 0.001) return;
+  c.save(); c.beginPath(); c.rect(r.x, r.y, r.w, r.h); c.clip(); c.strokeStyle = color; c.lineWidth = lw; c.beginPath();
+  const x0 = cxi ? r.x + r.w : r.x, y0 = cyi ? r.y + r.h : r.y, dx = cxi ? -1 : 1, dy = cyi ? -1 : 1, P = p * 1.4;
+  for (let i = 1; i < L.nx; i++) { const x = r.x + i * L.sx, u = Math.abs(x - x0) / r.w; if (u >= P) continue; const reach = r.h * E.outCubic(clamp((P - u) / 0.4)); c.moveTo(x, y0); c.lineTo(x, y0 + dy * reach); }
+  for (let j = 1; j < L.ny; j++) { const y = r.y + j * L.sy, u = Math.abs(y - y0) / r.h; if (u >= P) continue; const reach = r.w * E.outCubic(clamp((P - u) / 0.4)); c.moveTo(x0, y); c.lineTo(x0 + dx * reach, y); }
+  c.stroke(); c.restore();
+}
+const onPixel = (v) => Math.round(v * dpr) / dpr;
+
+/* the hovered grid cell's own tiling, per style: one per cell, remembered, so it is the same every time you come back */
+const ghostTilings = new Map();
+const GHOSTS = {
+  line: (cell) => { const G = moduleGrid(cell.r.w, cell.r.h, LINE_GRID); return { G, comp: composeModules(rngFrom(cell.k * 91 + cell.bi * 7 + seed), G, { multi: 1, w: cell.r.w, h: cell.r.h, singles: LINE_SINGLES, empty: Math.round(G.cols * G.rows * 0.3) }) }; },
+  block: (cell, pal) => { const G = moduleGrid(cell.r.w, cell.r.h, BLOCK_GRID); return { G, comp: composeModules(rngFrom(cell.k * 91 + cell.bi * 7 + seed), G, { multi: 1, w: cell.r.w, h: cell.r.h, ...tilingColours(pal) }) }; },
+  dither: (cell, pal) => { const G = moduleGrid(cell.r.w, cell.r.h, DITHER_GRID), comp = composeModules(rngFrom(cell.k * 91 + cell.bi * 7 + seed), G, { multi: 1, w: cell.r.w, h: cell.r.h }); return { G, comp, D: ditherField(G, comp, pal.dark) }; },
+};
+function ghostOf(cell, kind, pal) {
+  const key = kind + ':' + (pal.dark ? 'd' : 'l') + ':' + cell.key; let g = ghostTilings.get(key);
+  if (!g) { g = { ...GHOSTS[kind](cell, pal), under: null }; ghostTilings.set(key, g); if (ghostTilings.size > 60) ghostTilings.delete(ghostTilings.keys().next().value); }
+  return g;
+}
+const pieceDist = (G, p, x, y) => Math.hypot(G.x0 + (p.i + p.cw / 2) * G.M - x, G.y0 + (p.j + p.ch / 2) * G.M - y);
+
+/* ---------- 1 · LINES ---------- */
+Object.assign(LineTiling, {
+  hoverGrid(c, K) {                                                                                      // a pale outline of the cell's tiling traces out from the cursor
+    const { pal, cell, on, sp, since, t } = K, g = ghostOf(cell, 'line', pal), { G, comp } = g, r = cell.r, lx = sp.x - r.x, ly = sp.y - r.y;
+    const under = comp.at(Math.floor((lx - G.x0) / G.M), Math.floor((ly - G.y0) / G.M)); if (under && under !== g.under) turnPiece(under, t); g.under = under;
+    c.save(); c.translate(onPixel(r.x), onPixel(r.y)); c.lineWidth = 1; c.lineJoin = 'round';
+    for (const p of comp.pieces) {
+      if (!p.fg) continue; const ol = pieceOutline(p.type, G.M); if (!ol) continue;
+      const e = E.outCubic(clamp((since - pieceDist(G, p, lx, ly) * 1.1) / 460)) * on; if (e <= 0.01) continue;
+      c.save(); c.translate(G.x0 + (p.i + p.cw / 2) * G.M, G.y0 + (p.j + p.ch / 2) * G.M); c.rotate(((p.rot + pieceTurn(p, t)) * Math.PI) / 2);
+      c.strokeStyle = css(p === under ? pal.ink : mixc(pal.page, pal.text, 0.45), p === under ? 0.7 * on : 0.8); strokePart(c, ol, 0, ol.len * e); c.restore();
+    }
+    c.restore();
+  },
+  clickGrid(K) {                                                                                         // the cell's lattice strikes in ink from the click's corner, then settles
+    const { cell } = K; if (!cell) return; const cx = K.x - cell.r.x < cell.r.w / 2 ? 0 : 1, cy = K.y - cell.r.y < cell.r.h / 2 ? 0 : 1;
+    K.fx((c, u, age, F) => { const r = F.rect; if (!r) return; const a = age < 90 ? 1 : 1 - E.outCubic(clamp((age - 90) / 520)); latticeFrom(c, r, latticeFor(r.w, r.h), cx, cy, E.outExpo(clamp(age / 220)), css(F.pal.ink, 0.5 * a)); }, 620, { live: true, cell });
+  },
+  click(c, s, K, ck) { if (!ck.done) { ck.done = true; turnPiece(s.comp.at(Math.floor((ck.x - s.G.x0) / s.G.M), Math.floor((ck.y - s.G.y0) / s.G.M)), K.tin); } },
+  focusCell(c, r, F) { latticeFrom(c, r, F.lat, 0, 1, E.outExpo(F.f), css(F.pal.ink, F.pal.fineA * (0.9 + 0.5 * F.pulse))); },
+});
+
+/* ---------- 3 · ARCHES ---------- */
+Object.assign(Blocks, {
+  hoverGrid(c, K) {                                                                                      // a ghost of the cell's tiling fans out from the cursor; the module under it turns
+    const { pal, cell, on, sp, since, t } = K, g = ghostOf(cell, 'block', pal), { G, comp } = g, r = cell.r, lx = sp.x - r.x, ly = sp.y - r.y;
+    const under = comp.at(Math.floor((lx - G.x0) / G.M), Math.floor((ly - G.y0) / G.M)); if (under && under !== g.under) turnPiece(under, t); g.under = under;
+    c.save(); c.translate(onPixel(r.x), onPixel(r.y));
+    for (const p of comp.pieces) drawPiece(c, p, G, pal, E.outExpo(clamp((since - pieceDist(G, p, lx, ly) * 1.1) / 420)), pieceTurn(p, t), (p === under ? 0.3 : 0.12) * on);
+    c.restore();
+  },
+  clickGrid(K) {                                                                                         // the ghost stamps in full colour from the click, holds, and folds back
+    const { cell, pal } = K; if (!cell) return; const { G, comp } = ghostOf(cell, 'block', pal), lx = K.x - cell.r.x, ly = K.y - cell.r.y;
+    const dist = comp.pieces.map((p) => pieceDist(G, p, lx, ly)), far = Math.max(...dist, 1);
+    K.fx((c, u, age, F) => {
+      const r = F.rect; if (!r) return; c.translate(onPixel(r.x), onPixel(r.y));
+      comp.pieces.forEach((p, k) => { const e = E.outExpo(clamp((age - dist[k] * 0.6) / 320)) * (1 - E.inOutCubic(clamp((age - 900 - (far - dist[k]) * 0.4) / 420))); drawPiece(c, p, G, F.pal, e, pieceTurn(p, F.t), F.pal.fillA); });
+    }, 1300 + far * 0.4 + 420, { live: true, cell });
+  },
+  click(c, s, K, ck) { if (!ck.done) { ck.done = true; turnPiece(s.comp.at(Math.floor((ck.x - s.G.x0) / s.G.M), Math.floor((ck.y - s.G.y0) / s.G.M)), K.tin); } },
+  focusCell(c, r, F) { const { pal, f, box } = F, R = 22 * f; c.fillStyle = css(pal.ink, 0.5 * f); for (const [x, y, a0] of [[box.x - 8, box.y - 8, Math.PI], [box.x + box.w + 8, box.y - 8, Math.PI * 1.5], [box.x - 8, box.y + box.h + 8, Math.PI * 0.5], [box.x + box.w + 8, box.y + box.h + 8, 0]]) { c.beginPath(); c.moveTo(x, y); c.arc(x, y, R, a0, a0 + Math.PI / 2); c.closePath(); c.fill(); } },
+});
+Object.assign(Dither, {
+  hoverGrid(c, K) {                                                                                      // a faint dithered ghost of the cell's tiling dissolves in from the cursor
+    const { pal, cell, on, sp, since } = K, { G, comp, D } = ghostOf(cell, 'dither', pal), r = cell.r, lx = sp.x - r.x, ly = sp.y - r.y;
+    c.save(); c.translate(onPixel(r.x), onPixel(r.y));
+    drawDither(c, G, comp, D, pal, (p) => E.outCubic(clamp((since - pieceDist(G, p, lx, ly) * 1.1) / 420)) * on, { alpha: 0.28 * on, noGround: true, hover: { x: lx, y: ly, k: on } });
+    c.restore();
+  },
+  clickGrid(K) {                                                                                         // the ghost dissolves in at full ink from the click, holds, dissolves back
+    const { cell, pal } = K; if (!cell) return; const { G, comp, D } = ghostOf(cell, 'dither', pal), lx = K.x - cell.r.x, ly = K.y - cell.r.y;
+    const dist = comp.pieces.map((p) => pieceDist(G, p, lx, ly)), far = Math.max(...dist, 1);
+    K.fx((c, u, age, F) => {
+      const r = F.rect; if (!r) return; c.translate(onPixel(r.x), onPixel(r.y));
+      drawDither(c, G, comp, D, F.pal, (p) => { const d = dist[p.idx]; return clamp((age - d * 0.6) / 300) * (1 - clamp((age - 900 - (far - d) * 0.4) / 380)); });
+    }, 1300 + far * 0.4 + 380, { live: true, cell });
+  },
+  click(c, s, K, ck) { if (!ck.done) { ck.done = true; ditherTurn(s.D, s.G, s.comp.at(Math.floor((ck.x - s.G.x0) / s.G.M), Math.floor((ck.y - s.G.y0) / s.G.M)), K.tin, s.dark); } },
+  focusCell(c, r, F) {                                                                                   // the box gathers a dithered halo
+    const { pal, f, box } = F, path = new Path2D();
+    for (let y = Math.floor(r.y / DPX) * DPX; y < r.y + r.h; y += DPX) for (let x = Math.floor(r.x / DPX) * DPX; x < r.x + r.w; x += DPX) {
+      const d = Math.max(Math.abs(x - box.x - box.w / 2) - box.w / 2, Math.abs(y - box.y - box.h / 2) - box.h / 2); if (d < 3 || d > 48) continue;
+      if (smooth(48, 3, d) * f * 0.7 > bayer8(x / DPX, y / DPX)) path.rect(onPixel(x), y, DPX, DPX);
+    }
+    c.fillStyle = css(pal[DUOS[DUO.i][0]]); c.fill(path);
+  },
+});
+
+
+/* ============================================================ registry */
+/* what survived round 4, under the original numbers (3B is still 3B); 1A and 3C are 3B crossed with the hairlines and the dither */
+const DIRS = [
+  { n: 3, id: 'arches', name: 'Arches', lines: 'solid', subs: [Blocks, Dither] },
+];
+const codeOf = (d, s) => `${DIRS[d].n}${DIRS[d].subs[s].key}`;
+function fromCode(v) { const m = /^(\d)([a-c])$/i.exec(v || ''); if (!m) return null; const d = DIRS.findIndex((dd) => dd.n === +m[1]); if (d < 0) return null; const s = DIRS[d].subs.findIndex((ss) => ss.key === m[2].toUpperCase()); return s < 0 ? null : [d, s]; }
+
+/* ============================================================ tuning (live, per theme where it is about contrast) */
+const TUNE_DEFAULTS = {
+  unit: 120, drift: 11, breathe: 52, breathePeriod: 7, openW: 1, openV: 120, cadence: 4.3, maxLive: 2, hold: 3.7, buildSpeed: 1, hoverK: 1, clickK: 1, gap: 0, minH: 90, rowsX: 0,
+  light: { lineA: 1, inkA: 1 }, dark: { lineA: 1, inkA: 1 },
+};
+const TUNE_SPEC = [
+  ['unit', 'Column unit', 72, 180, 1, 'px'], ['drift', 'Drift speed', 0, 30, 0.5, 'px/s'], ['breathe', 'Row breathing', 0, 80, 1, 'px'], ['breathePeriod', 'Breathing period', 3, 12, 0.5, 's'],
+  ['openW', 'Cell open width', 0.5, 2, 0.05, '×'], ['openV', 'Vertical open', 0, 160, 2, 'px'], ['cadence', 'Time between opens', 1, 10, 0.1, 's'], ['maxLive', 'Live cells', 1, 5, 1, ''],
+  ['hold', 'Hold time', 1, 6, 0.1, 's'], ['buildSpeed', 'Build speed', 0.25, 2, 0.05, '×'], ['hoverK', 'Hover strength', 0, 2, 0.05, '×'], ['clickK', 'Click strength', 0, 3, 0.05, '×'],
+  ['gap', 'Column gap', 0, 4, 1, 'cols'], ['minH', 'Min cell height', 40, 160, 2, 'px'], ['rowsX', 'Extra rows', 0, 2, 1, ''],
+  ['lineA', 'Line contrast', 0, 1, 0.02, ''], ['inkA', 'Ink intensity', 0.3, 1.2, 0.02, ''],
+];
+/* a host can set its own defaults (the home page's tune); Reset returns to them */
+if ((window.__gridHost || {}).tune) { const { light, dark, ...rest } = window.__gridHost.tune; Object.assign(TUNE_DEFAULTS, rest); Object.assign(TUNE_DEFAULTS.light, light || {}); Object.assign(TUNE_DEFAULTS.dark, dark || {}); }
+const TUNE = JSON.parse(JSON.stringify(TUNE_DEFAULTS));
+const tuneGet = (k) => (k === 'lineA' || k === 'inkA' ? TUNE[theme][k] : TUNE[k]);
+const tuneSet = (k, v) => { if (k === 'lineA' || k === 'inkA') TUNE[theme][k] = v; else TUNE[k] = v; };
+
+/* ============================================================ engine state */
+const cv = document.getElementById('field'), ctx = cv.getContext('2d');
+const composer = document.getElementById('composer'), prompt = document.getElementById('prompt');
+let auto = true, dpr = 1, W = 0, H = 0, U = 100, di = 0, sub = 0, theme = 'light', seed = 1, speed = 1;
+let still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let content = { x: 0, y: 0, w: 0, h: 0 }, box = { x: 0, y: 0, w: 0, h: 0 }, focal = { x: 0, y: 0 }, floorY = 0, content0 = content, box0 = box;   // *0: the page as if unscrolled — rows are laid out against it, so scrolling never resizes a cell   // floorY: where usable rows stop (a host's drawer top, else the viewport bottom); the canvas may run on below it
+let drift = 0, firstK = 0, firstX = 0, events = [], nextOpen = 0, focusT = 0, focusV = 0, pulse = 0, keyTick = 0, send = null, raf = 0, last = 0, clock = 0, gh = 0;
+/* a camera over the whole sheet (uniform scale a, then translate e,f in CSS px): a host can push in on a cell and every line stays vector-sharp */
+const cam = { a: 1, e: 0, f: 0 };
+const camT = () => ctx.setTransform(dpr * cam.a, 0, 0, dpr * cam.a, dpr * cam.e, dpr * cam.f);
+let arriveT0 = -1e9, dirSwitchT0 = -1e9, focusLines = null, focusSpawn = false;
+const rowFade = { high: 0, low: 0 };                // the free row lines fade and slide in on their own clock, not at the speed the box moves
+const pointer = { x: -1e4, y: -1e4, on: false, ui: false }, sp = { x: -1e4, y: -1e4 };
+const SCALE = [1, 1.5, 1, 2, 1.5, 1, 2.5, 1.5], FALL = [1, 0.42, 0.14, 0.04];
+const T_TICKS = 220, T_OPEN0 = 120, T_OPEN = 950, T_BUILD0 = 380, T_CLOSE = 860, ARRIVE_MS = 1300;
+const fx = [];                                     // short-lived grid effects pushed by the styles' clickGrid hooks
+
+const dirObj = () => DIRS[di], subObj = () => DIRS[di].subs[sub];
+const union = (els) => els.filter(Boolean).map((e) => e.getBoundingClientRect()).filter((b) => b.width || b.height).reduce((a, b) => ({ x: Math.min(a.x, b.left), y: Math.min(a.y, b.top), r: Math.max(a.r, b.right), b: Math.max(a.b, b.bottom) }), { x: 1e9, y: 1e9, r: -1e9, b: -1e9 });
+/* a host page (chrome.html) can place the canvas anywhere and tell the grid what to keep clear of:
+   window.__gridHost = { canvasBox: true, live: true, avoid: () => elements, ui: 'css selector', noUrl: true } */
+const HOST = window.__gridHost || {};
+let OX = 0, OY = 0, frameAvoid = [];
+const canvasBox = () => { if (!HOST.canvasBox) return { x: 0, y: 0, w: innerWidth, h: innerHeight }; const r = cv.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; };
+/* DOM rects, in canvas space */
+function measure() {
+  const cb = canvasBox(); OX = cb.x; OY = cb.y;
+  const u = union(['head', 'subline', 'composer', 'pills', 'examples'].map((id) => document.getElementById(id)));
+  content = { x: u.x - OX - 20, y: u.y - OY - 20, w: u.r - u.x + 40, h: u.b - u.y + 40 };
+  const b = composer.getBoundingClientRect(); box = { x: b.left - OX, y: b.top - OY, w: b.width, h: b.height }; focal = { x: box.x + box.w / 2, y: box.y + box.h / 2 };
+  frameAvoid = avoidRects().map((a) => ({ x: a.x + 10, y: a.y + 10, w: a.w - 20, h: a.h - 20 }));
+  const off = HOST.scrollY ? HOST.scrollY() * (1 - (HOST.parallax ?? 0)) : 0;    // the canvas scrolls at the parallax rate, the page at 1×
+  content0 = { ...content, y: content.y + off }; box0 = { ...box, y: box.y + off };
+  floorY = clamp((HOST.floor ? HOST.floor() - OY - 12 : HOST.canvasBox ? innerHeight - OY : H) + off, 0, H);   // 12: clear of the avoid padding, so the band above the drawer is usable
+}
+const avoidRects = () => (HOST.avoid ? HOST.avoid().map((el) => { const b = el.getBoundingClientRect(); return { x: b.left - OX - 10, y: b.top - OY - 10, w: b.width + 20, h: b.height + 20 }; }).filter((r) => r.w > 20 && r.h > 20) : []);
+const overlaps = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+function layout() {
+  dpr = Math.min(2, devicePixelRatio || 1);
+  const cb = canvasBox(); W = Math.max(1, Math.round(cb.w)); H = Math.max(1, Math.round(cb.h));
+  cv.width = W * dpr; cv.height = H * dpr; if (!HOST.canvasBox) { cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
+  measure();
+  U = HOST.canvasBox ? clamp(TUNE.unit, 64, Math.max(72, W / 3)) : W < 700 ? Math.min(72, TUNE.unit) : clamp(TUNE.unit, 72, Math.max(72, W / 6));   // a host sets the unit itself (the home page has a phone preset); the standalone page keeps its narrow-screen cap
+}
+const baseW = (k) => U * SCALE[(hashN(seed, k) * SCALE.length) | 0];
+
+/* vertical lines: base positions, plus a local displacement from each opening cell (only neighbours give way),
+   plus, on focus, the two lines nearest the box edges sliding onto them so the box becomes a true cell */
+function lineSet(evList) {                                                     // evList: [{ k, A, At }] to predict a layout; defaults to the live cells
+  const list = evList || events;
+  const out = []; let x = firstX - drift, k = firstK;
+  while (x < W + U * 4) { out.push({ k, base: x }); x += baseW(k); k++; }
+  if (!evList) while (out.length > 2 && out[1].base < -U * 4) { firstX += baseW(firstK); firstK++; out.shift(); }
+  /* an open cell is rigid: its column is its base width plus its opening. The opening is taken out of the other columns on each side,
+     in proportion to what each can give, never below 60% of a visible column's width; columns off screen take whatever is left.
+     Deterministic, and nothing next to an open cell is ever squeezed to a sliver. */
+  const n = out.length - 1, w0 = [], w = [], rig = new Array(Math.max(0, n)).fill(0), col = new Map(out.map((l, i) => [l.k, i])), open = [];
+  for (let i = 0; i < n; i++) { w0[i] = out[i + 1].base - out[i].base; w[i] = w0[i]; }
+  for (const ev of list) { const c = col.get(ev.k); if (c === undefined || c >= n || ev.A <= 0.01) continue; rig[c] = Math.max(rig[c], clamp(ev.A / Math.max(1, ev.At))); open.push([ev, c]); }
+  const visible = (i) => out[i + 1].base > 0 && out[i].base < W;
+  const take = (idx, amount) => {
+    const cap = idx.map((i) => (visible(i) ? Math.max(0, (w[i] - 0.6 * w0[i]) * (1 - rig[i])) : Math.max(0, (w[i] - 1) * (1 - rig[i]))));
+    const total = cap.reduce((s, v) => s + v, 0); if (total <= 0) return;
+    const t = Math.min(amount, total); idx.forEach((i, j) => { w[i] -= (cap[j] / total) * t; });
+  };
+  for (const [ev, c] of open) {
+    const a = ev.A / 2; w[c] += ev.A;
+    take([...Array(c).keys()], a); take([...Array(n - c - 1).keys()].map((j) => c + 1 + j), a);
+  }
+  out[0].x = out[0].base; for (let i = 0; i < n; i++) out[i + 1].x = out[i].x + w[i];
+  if (evList) return out;
+  if (focusV > 0.001 && focusLines) {
+    const edges = [box.x - 14, box.x + box.w + 14];
+    focusLines.forEach((k, e) => { const l = k === null ? null : out.find((q) => q.k === k); if (l) l.x += (edges[e] - l.x) * focusV; });
+  }
+  return out;
+}
+/* on focus, pick the two lines that will frame the box, once, so they never swap mid-slide */
+function pickFocusLines() {
+  const out = lineSet(); if (out.length < 2) return null;
+  return [box.x - 14, box.x + box.w + 14].map((ex) => { let best = null; for (const l of out) if (!best || Math.abs(l.x - ex) < Math.abs(best.x - ex)) best = l; return best && Math.abs(best.x - ex) < U * 0.9 ? best.k : null; });
+}
+function rowsBase() {
+  const top0 = content0.y, bot0 = content0.y + content0.h;                          // the free lines hang off the unfocused hero, so focus only moves the two lines that frame it
+  const top = top0 + (box0.y - 16 - top0) * focusV, bot = bot0 + (box0.y + box0.h + 16 - bot0) * focusV;
+  const ha = rowFade.high, la = rowFade.low;                                      // the free lines always exist; while there is no room they sit on the edge, hidden
+  const F = floorY || H;
+  const lines = [{ id: 'high', y: top0 * 0.5 * ha, fixed: false, a: ha }, { id: 'top', y: top, fixed: true, a: 1 }, { id: 'bot', y: bot, fixed: true, a: 1 }, { id: 'low', y: F - (F - bot0) * 0.44 * la, fixed: false, a: la }];
+  for (let k = 1; k <= (TUNE.rowsX | 0); k++) { const y0 = lines[3].y, y = y0 + ((F - y0) * k) / ((TUNE.rowsX | 0) + 1); lines.push({ id: 'x' + k, y, fixed: false, a: la }); }   // a denser sheet splits the free space below into more rows
+  if (F < H - 1) lines.push({ id: 'floor', y: F, fixed: true, a: 1 });          // the sheet continues under the host's drawer, but no cell opens there
+  const base = [0, ...lines.map((l) => l.y), H], fixed = [true, ...lines.map((l) => l.fixed), true], ids = ['edge0', ...lines.map((l) => l.id), 'edgeH'], alpha = lines.map((l) => l.a);
+  return { base, fixed, ids, top, bot, top0, bot0, alpha };
+}
+/* the free row lines re-proportion the sheet every few seconds (ease-in-out, never while they bound an open cell) */
+const rowOff = {};
+const rowOffAt = (s, T) => s.from + (s.to - s.from) * E.inOutCubic(clamp((T - s.t0) / s.dur));
+function breathe(T) {
+  if (still) return;
+  const { base, fixed, ids } = rowsBase();
+  for (let i = 1; i < base.length - 1; i++) {
+    if (fixed[i]) continue;
+    const s = (rowOff[ids[i]] ||= { from: 0, to: 0, t0: 0, dur: 1, next: T + 2500 + Math.random() * 2500 });
+    const locked = events.some((ev) => ev.edgeIds && ev.edgeIds.includes(ids[i]));
+    if (!locked && T > s.next) {
+      const room = Math.max(0, Math.min(base[i] - base[i - 1], base[i + 1] - base[i]) - 110), cur = rowOffAt(s, T);
+      s.from = cur; s.to = (Math.random() * 2 - 1) * Math.min(TUNE.breathe, room); s.t0 = T; s.dur = 1500 + Math.random() * 700; s.next = T + TUNE.breathePeriod * 1000 * (0.75 + Math.random() * 0.5);
+    }
+  }
+}
+function rows(T = clock) {
+  const { base, fixed, ids, top, bot, alpha } = rowsBase(), e = base.slice();
+  for (let i = 1; i < e.length - 1; i++) if (!fixed[i] && rowOff[ids[i]]) e[i] += rowOffAt(rowOff[ids[i]], T) * alpha[i - 1];
+  for (const ev of events) if (ev.Vt) { e[ev.bi] -= ev.V * ev.vTop; e[ev.bi + (ev.span || 1)] += ev.V * ev.vBot; }
+  const bands = [];
+  const la = (i) => (i === 0 || i === e.length - 1 ? 1 : alpha[i - 1]);
+  for (let i = 0; i < e.length - 1; i++) bands.push({ y: e[i], h: e[i + 1] - e[i], content: base[i] >= top - 1 && base[i + 1] <= bot + 1, ghost: ((la(i) < 0.5 || la(i + 1) < 0.5) && e[i + 1] - e[i] < 90) || base[i] >= (floorY || H) - 1 });   // a hidden line lies on the edge, so only the sliver it leaves is unusable
+  return { ys: e.slice(1, -1), alpha, bands, base, fixed, ids };
+}
+function verticalRoom(rw, bi, span, h) {
+  const top = bi, bot = bi + span, last = rw.base.length - 1;
+  const occupied = (band) => events.some((ev) => band >= ev.bi && band < ev.bi + (ev.span || 1));
+  const canTop = top > 0 && !rw.fixed[top] && !occupied(bi - 1), canBot = bot < last && !rw.fixed[bot] && !occupied(bot);
+  const roomTop = canTop ? Math.max(0, rw.bands[bi - 1].h - 100) : 0, roomBot = canBot ? Math.max(0, rw.bands[bot].h - 100) : 0;
+  const want = Math.min(h * 0.38, TUNE.openV);
+  if (canTop && canBot) { const v = Math.min(want, 2 * Math.min(roomTop, roomBot)); return { Vt: v, vTop: 0.5, vBot: 0.5 }; }
+  if (canTop) return { Vt: Math.min(want, roomTop), vTop: 1, vBot: 0 };
+  if (canBot) return { Vt: Math.min(want, roomBot), vTop: 0, vBot: 1 };
+  return { Vt: 0, vTop: 0, vBot: 0 };
+}
+function targetOpen(k) { const want = clamp(baseW(k) * 1.35 * TUNE.openW, U * 0.9, U * 3.2); return Math.min(want, 1.8 * baseW(k - 1), 1.8 * baseW(k + 1), W * 0.42 - baseW(k)); }
+function spawn(now, opts = {}) {
+  const ls = lineSet(), rw = rows(), rng = rngFrom(seed * 131 + events.length * 7 + (now | 0)), style = opts.style || subObj(), gap = TUNE.gap || style.spacing || 3;   // TUNE.gap overrides the style's column spacing (density)
+  const settling = events.filter((e) => e.tout < 0).map((e) => ({ k: e.k, A: e.At, At: e.At }));
+  const pushed = new Set(); for (const e of events) if (e.Vt > 0) { if (e.vTop > 0) pushed.add(e.bi); if (e.vBot > 0) pushed.add(e.bi + (e.span || 1)); }   // lines another cell is stretching: they spring back when it closes
+  const cands = [], av = avoidRects(), why = (spawn.why = {}), log = (spawn.log = []), no = (k) => { why[k] = (why[k] || 0) + 1; if (spawn.cur) log.push([k, ...spawn.cur]); };
+  for (let n = 0; n < ls.length - 1; n++) {
+    const L = ls[n], R = ls[n + 1], k = L.k, A = targetOpen(k), cx = (L.base + R.base) / 2, fw = baseW(k) + A;
+    if (A < U * 0.4) { no('narrow'); continue; }
+    rw.bands.forEach((band, bi) => [1, 2].forEach((span) => {
+      const b2 = rw.bands[bi + 1]; if (span === 2 && (!b2 || b2.content || band.content)) return;
+      const r = { x: cx - fw / 2, y: band.y, w: fw, h: band.h + (span === 2 ? b2.h : 0) };
+      spawn.cur = [bi, span, r.x | 0, r.y | 0, r.w | 0, r.h | 0];
+      if (r.h < TUNE.minH || band.ghost || (span === 2 && b2.ghost)) return no('short');
+      if (opts.at && !(opts.at.x >= L.x && opts.at.x <= R.x && opts.at.y >= band.y && opts.at.y <= band.y + band.h)) return;
+      const mg = HOST.margin ?? 0.08;
+      if (!opts.at && !opts.any && (r.x < W * mg || r.x + r.w > W * (1 - mg))) return no('margin');
+      if (r.x + r.w < 0 || r.x > W) return;
+      if (pushed.has(bi) || pushed.has(bi + span)) return no('pushed');
+      /* where everything settles once this cell is open: this cell, and every open cell the opening shifts, must stay clear of the chrome */
+      const ps = lineSet([...settling, { k, A, At: A }]), pn = ps.findIndex((l) => l.k === k), bandH = r.h;
+      const pr = pn >= 0 && pn + 1 < ps.length ? { x: ps[pn].x, y: r.y, w: ps[pn + 1].x - ps[pn].x, h: bandH } : r;
+      if (av.some((a) => overlaps(r, a) || overlaps(pr, a))) return no('chrome');                // never under the host's chrome, cards or trays
+      if (!opts.at && !opts.any && (pr.x < W * mg || pr.x + pr.w > W * (1 - mg))) return no('margin');
+      if (events.some((e) => { if (!e.rect || e.tout >= 0) return false; const qn = ps.findIndex((l) => l.k === e.k); if (qn < 0 || qn + 1 >= ps.length) return false; const q = { x: ps[qn].x, y: e.rect.y, w: ps[qn + 1].x - ps[qn].x, h: e.rect.h }; return av.some((a) => overlaps(q, a)); })) return no('shift');
+      if (band.content && !(r.x + r.w < content.x - 8 || r.x > content.x + content.w + 8)) return no('content');
+      if (events.some((e) => { const dk = Math.abs(e.k - k); return dk < gap || (dk < 3 && e.bi === bi); })) return no('spacing');
+      const shared = events.filter((e) => e.bi < bi + span && bi < e.bi + (e.span || 1));
+      if (shared.some((e) => e.Vt > 0)) return no('band');                          // a band another cell is stretching is not shared: its lines are that cell's   // neighbours share a vertical line, so they are kept apart
+      if (style.fits && !style.fits({ x: r.x + drift, y: r.y, w: r.w, h: r.h })) return no('fits');   // e.g. a trails window with no lane in it
+      const cand = { k, bi, span, A, fw, h: r.h, cx, cy: band.y + r.h / 2, shared: shared.length > 0 };
+      cands.push(cand); if (span === 2) cands.push(cand);
+    }));
+  }
+  if (!cands.length) return false;
+  let c;
+  if (opts.prefer) c = cands.sort(opts.prefer)[0];
+  else if (!opts.at && events.length) {                                           // the emptiest part of the sheet, but not always the same one
+    for (const q of cands) q.score = Math.min(...events.map((ev) => Math.hypot(ev.scx - (q.cx + drift), (ev.scy - q.cy) * 1.4)));
+    c = pick(rng, cands.sort((p, q) => q.score - p.score).slice(0, 3));
+  } else c = pick(rng, cands);
+  const er = rngFrom((rng() * 1e9) | 0), vr = c.shared ? { Vt: 0, vTop: 0, vBot: 0 } : verticalRoom(rw, c.bi, c.span, c.h), fh = c.h + vr.Vt;
+  const hold = opts.keep ? 1e9 : TUNE.hold * 1000 * (0.7 + er() * 0.6);
+  events.push({ k: c.k, bi: c.bi, span: c.span, At: c.A, A: 0, ...vr, V: 0, edgeIds: [rw.ids[c.bi], rw.ids[c.bi + c.span]], fw: c.fw, fh, scx: c.cx + drift, scy: c.cy, t0: opts.t0 ?? now, style, st: null, pend: { er }, exitAt: T_BUILD0 + style.buildMs / TUNE.buildSpeed + hold, hv: 0, keep: !!opts.keep, fast: opts.fast ? 2 : 1 });
+  for (const id of [rw.ids[c.bi], rw.ids[c.bi + c.span]]) { const s = rowOff[id]; if (s) { const cur = rowOffAt(s, now); s.from = s.to = cur; s.t0 = now; s.dur = 1; } }   // a breath in flight on an edge line stops where it is
+  return true;
+}
+/* the composition and the style's build run a frame after the cell starts to open (it is empty until T_BUILD0), so opening never waits on them */
+function buildEvent(ev) {
+  const { er } = ev.pend, style = ev.style, fw = ev.fw, fh = ev.fh, lat = latticeFor(fw, fh);
+  const g = style.compose ? style.compose(er, fw, fh, lat) : null;
+  ev.st = style.build({ w: fw, h: fh, rng: er, g, lat, pal: palFor(theme, dirObj().surface) }); ev.pend = null;
+}
+const liveCount = () => events.filter((e) => !e.keep).length;
+const maxLiveFor = (style) => TUNE.maxLive + (style.extraLive || 0);
+function exitNow(ev, now) { const e = now - ev.t0; ev.exitAt = Math.max(Math.min(ev.exitAt, e), T_BUILD0 + 200); }
+function phase(ev, now, dt = 0) {
+  const e = still ? T_BUILD0 + ev.style.buildMs + 400 : now - ev.t0, sp = TUNE.buildSpeed * ev.fast;
+  const closeAt = ev.exitAt + (ev.style.exitMs / sp) * 0.62;
+  const opening = E.outExpo(prog(e, T_OPEN0, T_OPEN / ev.fast)), closing = E.inOutCubic(prog(e, closeAt, T_CLOSE));
+  const Araw = still ? ev.At : ev.At * opening * (1 - closing), cap = 28 * (dt / 16.7);   // 14px per side per frame at most, so a line never teleports
+  ev.A = ev.Ap === undefined ? Araw : dt > 0 ? clamp(Araw, ev.Ap - cap, ev.Ap + cap) : ev.Ap; ev.Ap = ev.A;   // time stopped (dt 0): hold, never snap to the target
+  ev.V = still ? ev.Vt : ev.Vt * opening * (1 - closing);
+  ev.openFrac = opening; ev.closeFrac = closing;
+  ev.tin = (e - T_BUILD0) * sp; ev.tout = still ? -1 : (e - ev.exitAt) * sp;
+  ev.ticks = E.outCubic(prog(e, 0, T_TICKS)) * (1 - E.outCubic(prog(e, closeAt + T_CLOSE - 120, 240)));
+  ev.done = !still && e > closeAt + T_CLOSE + 140;
+}
+
+/* cell chrome: corner ticks first, then the edges draw out from the bottom-left corner as the lines part, and retract toward the top-right as they close */
+function chrome(c, r, ev, pal, guide) {
+  const col = guide ? pal.guide : pal.ink;
+  c.strokeStyle = css(col, 0.9); c.lineWidth = 1;
+  const s = 7 * ev.ticks;
+  if (s > 0.3) {
+    c.beginPath();
+    for (const [x, y, dx, dy] of [[r.x, r.y, 1, 1], [r.x + r.w, r.y, -1, 1], [r.x, r.y + r.h, 1, -1], [r.x + r.w, r.y + r.h, -1, -1]]) { c.moveTo(x + dx * s, y); c.lineTo(x, y); c.lineTo(x, y + dy * s); }
+    c.stroke();
+  }
+  const per = r.w + r.h, a = ev.closeFrac * per, b = ev.openFrac * per;
+  if (b - a > 1) {
+    c.strokeStyle = css(col, 0.5);
+    const half = (p1, p2, p3) => { const pp = new Path2D(); pp.moveTo(...p1); pp.lineTo(...p2); pp.lineTo(...p3); strokePart(c, { path: pp, len: per }, a, b); };
+    half([r.x, r.y + r.h], [r.x, r.y], [r.x + r.w, r.y]);
+    half([r.x, r.y + r.h], [r.x + r.w, r.y + r.h], [r.x + r.w, r.y]);
+  }
+}
+
+/* ============================================================ send: commit → propagate → pave → hand-over → back */
+const SEND = { commit: 120, propagate: 900, colStep: 55, colDur: 650, hold: 900, ...(HOST.send || {}) };   // a host can shorten the hand-over
+function startSend() {
+  if (send) return;
+  if (HOST.onSend) HOST.onSend(prompt.value);
+  if (HOST.send && HOST.send.mode === 'cut') { auto = false; events.forEach((ev) => { ev.keep = false; exitNow(ev, clock); }); if (HOST.onSend) HOST.onSend(prompt.value); prompt.blur(); wake(); return; }   // no transition: the host shows its next screen at once
+  if (HOST.send && HOST.send.mode === 'dissolve') {                            // the sheet dissolves: cells take themselves apart, the lines break up and go; then the host cuts to the builder
+    auto = false; send = { t0: clock, dissolve: true }; document.body.classList.add('sending'); prompt.blur();
+    events.forEach((ev) => { ev.keep = false; ev.fast = 2; exitNow(ev, clock); }); wake(); return;
+  }
+  const now = clock; send = { t0: now, back: null }; document.body.classList.add('sending'); prompt.blur();
+  for (let k = 0; k < 7; k++) if (!spawn(now, { any: true, keep: true, fast: true, t0: now + SEND.commit + k * 90, prefer: (p, q) => Math.abs(p.cx - focal.x) - Math.abs(q.cx - focal.x) })) break;
+  wake();
+}
+const DISSOLVE_MS = () => (HOST.send && HOST.send.dissolveMs) || 600;
+let dissolved = false;                                                          // the sheet stays gone after a send until the host brings the home back (cancelSend)
+function dissolveState(now) {
+  if (!send || !send.dissolve) return 0;
+  const p = still ? 1 : clamp((now - send.t0) / DISSOLVE_MS());
+  if (p >= 1) { send = null; dissolved = true; document.body.classList.add('opened'); document.body.classList.remove('sending'); }   // both at once: the host arrives and settles in the same tick
+  return p;
+}
+function paveState(now, ls) {
+  if (!send || send.dissolve) return null;
+  const e = now - send.t0 - SEND.commit - SEND.propagate;
+  const cols = []; for (let n = 0; n < ls.length - 1; n++) cols.push({ x: ls[n].x, w: ls[n + 1].x - ls[n].x, rank: 0 });
+  cols.sort((p, q) => Math.abs(p.x + p.w / 2 - focal.x) - Math.abs(q.x + q.w / 2 - focal.x)).forEach((col, i) => { col.rank = i; });
+  const full = SEND.colStep * cols.length + SEND.colDur;
+  if (!send.back && e > full + SEND.hold) { send.back = now; document.body.classList.remove('opened'); events.forEach((ev) => { ev.keep = false; exitNow(ev, now); }); }
+  if (!send.opened && e > full - (SEND.openLead ?? 150)) { send.opened = true; document.body.classList.add('opened'); }   // the host may bring the builder in while the last columns are still landing
+  const back = send.back ? now - send.back : -1;
+  if (send.back && back > SEND.colStep * cols.length + SEND.colDur + 50) { send = null; dissolved = true; document.body.classList.remove('sending'); return null; }
+  return { cols, e, back, commit: clamp((now - send.t0) / SEND.commit) };
+}
+
+/* ============================================================ the sheet: lines, shockwaves, per-variant hover and click */
+const ripples = [], RIPPLE_MS = 1150;
+function disp(x, y, T, vertical) {
+  let d = 0;
+  for (const r of ripples) {
+    const age = T - r.t0; if (r.wave !== 'circle' || age < 0 || age > RIPPLE_MS) continue;
+    const dx = x - (r.x - (drift - r.d0)), dy = y - r.y, dd = Math.hypot(dx, dy) || 1, k = dd - age * 0.85;
+    d += (22 * TUNE.clickK * (1 - age / RIPPLE_MS) ** 2 * Math.exp(-(k * k) / (2 * 34 * 34)) * Math.sin(k / 9) * (vertical ? dx : dy)) / dd;
+  }
+  return d;
+}
+const bending = (T) => ripples.some((r) => r.wave === 'circle' && T - r.t0 < RIPPLE_MS);
+function vLine(x, y0, y1, T, bend) { if (!bend) { ctx.moveTo(x, y0); ctx.lineTo(x, y1); return; } for (let y = y0; y <= y1 + 0.1; y += 12) { const px = x + disp(x, y, T, true); y === y0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y); } }
+function hLine(y, x0, x1, T, bend) { if (!bend) { ctx.moveTo(x0, y); ctx.lineTo(x1, y); return; } for (let x = x0; x <= x1 + 0.1; x += 12) { const py = y + disp(x, y, T, false); x === x0 ? ctx.moveTo(x, py) : ctx.lineTo(x, py); } }
+function cellAt(ls, rw, x, y) {
+  const n = ls.findIndex((l, i) => i < ls.length - 1 && x >= l.x && x < ls[i + 1].x), bi = rw.bands.findIndex((b) => y >= b.y && y < b.y + b.h);
+  if (n < 0 || bi < 0) return null;
+  const r = { x: ls[n].x, y: rw.bands[bi].y, w: ls[n + 1].x - ls[n].x, h: rw.bands[bi].h };
+  if (events.some((ev) => ev.rect && x > ev.rect.x && x < ev.rect.x + ev.rect.w && y > ev.rect.y && y < ev.rect.y + ev.rect.h)) return null;
+  const inContent = rw.bands[bi].content && overlaps(r, { x: content.x - 8, y: content.y, w: content.w + 16, h: content.h });   // no hover in a cell that runs under the hero text; opaque chrome (drawer, sidebar) simply covers its part
+  return { key: ls[n].k + ':' + bi, k: ls[n].k, bi, r, content: inContent, lat: latticeFor(r.w, r.h) };
+}
+function nearestLines(ls, rw, x, y) {
+  let lx = ls[0]?.x ?? 0; for (const l of ls) if (Math.abs(l.x - x) < Math.abs(lx - x)) lx = l.x;
+  let ly = rw.ys[0] ?? 0; for (const yy of rw.ys) if (Math.abs(yy - y) < Math.abs(ly - y)) ly = yy;
+  return { lx, ly };
+}
+/* the hover context every style's hoverGrid gets: the resolved cell (or null), its lattice, the eased presence, and the sheet */
+let hoverCell = null, hoverKey = '', hoverIn = 0, hoverAt = 0, hoverPrev = null;
+function hoverContext(ls, rw, pal, dt, T) {
+  const live = pointer.on && !pointer.ui && !send && !still;
+  const cur = live ? cellAt(ls, rw, sp.x, sp.y) : null;
+  const key = cur ? cur.key : '';                                              // a cell beside the composer hovers too; its drawing is clipped around the hero text
+  if (key !== hoverKey) {
+    if (hoverKey && key && hoverCell && hoverIn > 0.02) hoverPrev = { cell: hoverCell, on0: hoverIn, t0: T, since: T - hoverAt };   // moving cell to cell: the old one fades out on its own
+    hoverKey = key; if (key) { hoverIn = 0; hoverAt = T; hoverCell = { ...cur, enter: { x: sp.x, y: sp.y } }; }
+  }
+  if (key) { hoverIn += (1 - hoverIn) * (1 - Math.exp(-dt / 120)); if (hoverCell) { hoverCell.r = cur.r; hoverCell.lat = cur.lat; } }
+  else hoverIn *= Math.exp(-dt / 220);
+  if (hoverPrev) { const n = liveRectOf(ls, rw, hoverPrev.cell); if (n) { hoverPrev.cell.r = n; hoverPrev.cell.lat = latticeFor(n.w, n.h); } }
+  gh += ((live ? 1 : 0) - gh) * (1 - Math.exp(-dt / 160));
+  const k = TUNE.hoverK;
+  const cell = hoverIn > 0.005 ? hoverCell : null;
+  const base = { sp: { x: sp.x, y: sp.y }, gh: gh * k, ls, rw, pal, t: T, dt, near: nearestLines(ls, rw, sp.x, sp.y), W, H, focal, box, drift };
+  const out = [];
+  if (hoverPrev) { const a = hoverPrev.on0 * (1 - E.outCubic(clamp((T - hoverPrev.t0) / 180))); if (a < 0.005) hoverPrev = null; else out.push({ ...base, cell: hoverPrev.cell, on: a * k, since: hoverPrev.since + (T - hoverPrev.t0), sheet: { x: hoverPrev.cell.r.x + drift, y: hoverPrev.cell.r.y } }); }
+  if (cell) out.push({ ...base, cell, on: hoverIn * k, since: T - hoverAt, sheet: { x: cell.r.x + drift, y: cell.r.y } });
+  return out;
+}
+/* a grid cell's rect as it is this frame, from its column line and band (both stable) */
+function liveRectOf(ls, rw, cell) {
+  if (!cell) return null; const n = ls.findIndex((l) => l.k === cell.k), b = rw.bands[cell.bi];
+  return n < 0 || n + 1 >= ls.length || !b ? null : { x: ls[n].x, y: b.y, w: ls[n + 1].x - ls[n].x, h: b.h };
+}
+function drawFx(c, pal, T, dt, ls, rw) {
+  for (let i = fx.length - 1; i >= 0; i--) {
+    const f = fx[i], age = T - f.t0; if (age > f.life) { fx.splice(i, 1); continue; }
+    const F = { pal, t: T, dt, W, H, drift, rect: f.live && f.cell ? liveRectOf(ls, rw, f.cell) : null };
+    c.save();
+    if (!f.live) c.translate(-(drift - f.d0), 0);
+    else if (F.rect) { c.beginPath(); c.rect(F.rect.x, F.rect.y, F.rect.w, F.rect.h); c.clip(); }
+    f.draw(c, age / f.life, age, F); c.restore();
+  }
+}
+function drawShockwave(c, ls, rw, pal, d, T) {
+  const col = d.lines === 'guide' ? pal.guide : pal.ink;
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const rp = ripples[i], age = T - rp.t0; if (age > RIPPLE_MS) { ripples.splice(i, 1); continue; }
+    if (rp.wave !== 'circle') continue;
+    const R = age * 0.85, a = (1 - age / RIPPLE_MS) ** 1.5 * TUNE.clickK;
+    c.strokeStyle = css(col, 0.55 * a); c.lineWidth = 1; c.beginPath(); c.arc(rp.x - (drift - rp.d0), rp.y, R, 0, TAU); c.stroke();     // the front, riding the sheet
+    if (rp.cell && age < 160) { const n = ls.findIndex((l) => l.k === rp.cell.k), b = rw.bands[rp.cell.bi]; if (n >= 0 && n + 1 < ls.length && b) { c.fillStyle = css(col, 0.9 * (1 - age / 160)); c.fillRect(ls[n].x, b.y, ls[n + 1].x - ls[n].x, b.h); } }
+  }
+  const marks = [];
+  for (const l of ls) for (const y of rw.ys) {
+    let a = 0;
+    for (const rp of ripples) { const age = T - rp.t0; if (age < 0 || age > RIPPLE_MS) continue; const dx = l.x - (rp.x - (drift - rp.d0)), dy = y - rp.y, k = (rp.wave === 'lattice' ? Math.abs(dx) + Math.abs(dy) : Math.hypot(dx, dy)) - age * 0.85; a += Math.exp(-(k * k) / (2 * 26 * 26)) * (1 - age / RIPPLE_MS); }
+    if (a > 0.03) marks.push([l.x + disp(l.x, y, T, true), y + disp(l.x, y, T, false), Math.min(1, a * TUNE.clickK)]);
+  }
+  for (const [x, y, a] of marks) { const z = 2 + 5 * a; c.fillStyle = css(col, a); c.fillRect(x - z / 2, y - z / 2, z, z); }
+}
+function drawGrid(ls, rw, pal, d, T, gridA = 1, dis = 0) {
+  const bend = bending(T), arr = still ? 1 : clamp((T - arriveT0) / (HOST.arriveMs || ARRIVE_MS)), sw = still ? 1 : clamp((T - dirSwitchT0) / 700);
+  const vIn = (i) => E.outExpo(clamp(arr * 2.2 - i * 0.08)), hIn = (i) => Math.min(E.outExpo(clamp(arr * 2.2 - 0.3 - i * 0.12)), E.outExpo(clamp(sw * 1.6 - i * 0.15)));
+  const guide = d.lines === 'guide', lineCol = guide ? mixc(pal.page, pal.guide, 0.22 * TUNE[theme].lineA) : pal.line;
+  const la0 = pal.lineA * gridA;                                                    // a style can quiet the sheet (the trails want it nearly invisible)
+  ctx.lineWidth = 1; ctx.strokeStyle = css(lineCol, la0);
+  if (dis > 0) ctx.setLineDash([Math.max(0.5, 16 * (1 - dis)), 2 + 26 * dis]);   // dissolving: every line breaks into shorter dashes with wider gaps, each from its own offset
+  const up = HOST.arrive && HOST.arrive.v === 'up', fromRight = HOST.arrive && HOST.arrive.h === 'left';   // a host can draw the sheet in from the bottom and the right
+  ls.forEach((l, i) => { ctx.beginPath(); if (dis > 0) ctx.lineDashOffset = hashN(seed, l.k + 7) * 40; const v = vIn(fromRight ? ls.length - 1 - i : i); if (up) vLine(l.x, H - H * v, H, T, bend); else vLine(l.x, 0, H * v, T, bend); ctx.stroke(); });
+  rw.ys.forEach((y, i) => {
+    const la = rw.alpha[i]; if (la < 0.01) return;
+    ctx.strokeStyle = css(lineCol, la0 * la); ctx.beginPath();
+    const gaps = [], reach = W * hIn(up ? rw.ys.length - 1 - i : i), lo = fromRight ? W - reach : 0, hi = fromRight ? W : reach;
+    for (const ev of events) { const r = ev.rect; if (!r || ev.span !== 2 || y <= r.y + 1 || y >= r.y + r.h - 1) continue; const f = E.outCubic(clamp(ev.openFrac * 1.15)) * (1 - E.inOutCubic(clamp(ev.closeFrac * 1.3))), c = r.x + r.w / 2, hw = (r.w / 2) * f; if (hw > 0.5) gaps.push([c - hw, c + hw]); }
+    gaps.sort((a, b) => a[0] - b[0]); let x0 = 0;
+    const seg = (a, b) => { const s0 = Math.max(a, lo), s1 = Math.min(b, hi); if (s1 > s0) hLine(y, s0, s1, T, bend); };
+    for (const [a, b] of gaps) { if (a > x0) seg(x0, a); x0 = Math.max(x0, b); }
+    if (W > x0) seg(x0, W);
+    if (dis > 0) ctx.lineDashOffset = hashN(seed, i + 31) * 40;
+    ctx.stroke();
+  });
+  if (guide) {
+    const inCell = (x, y) => events.some((ev) => ev.rect && x > ev.rect.x - 5 && x < ev.rect.x + ev.rect.w + 5 && y > ev.rect.y - 5 && y < ev.rect.y + ev.rect.h + 5);
+    ctx.strokeStyle = css(pal.guide, 0.35 * gridA); ctx.beginPath();
+    for (const l of ls) rw.ys.forEach((y, i) => { if (rw.alpha[i] < 0.5 || inCell(l.x, y)) return; ctx.moveTo(l.x - 4, y); ctx.lineTo(l.x + 4, y); ctx.moveTo(l.x, y - 4); ctx.lineTo(l.x, y + 4); });
+    ctx.stroke();
+  }
+}
+/* the composer's own cell on focus: the lines have framed the box, the style draws its response inside the frame */
+function boxCell(ls, rw) {
+  const y0 = rw.ys[rw.ids.indexOf('top') - 1], y1 = rw.ys[rw.ids.indexOf('bot') - 1];
+  let l0 = focusLines && focusLines[0] !== null ? ls.find((l) => l.k === focusLines[0]) : null, l1 = focusLines && focusLines[1] !== null ? ls.find((l) => l.k === focusLines[1]) : null;
+  if (!l0) for (const l of ls) if (l.x <= box.x + 4 && (!l0 || l.x > l0.x)) l0 = l;
+  if (!l1) for (const l of ls) if (l.x >= box.x + box.w - 4 && (!l1 || l.x < l1.x)) l1 = l;
+  if (!l0 || !l1 || y0 === undefined || y1 === undefined) return null;
+  return { x: l0.x, y: y0, w: l1.x - l0.x, h: y1 - y0 };
+}
+
+/* Embed controls: a pause freezes source clocks; a new layout runs the
+   source cell exit followed by the source sheet arrival. */
+let reseedFlow = null;
+function resetSeed(nextSeed) {
+  seed = nextSeed; firstK = 0; firstX = -U * 3; drift = 0; events = [];
+  Object.keys(rowOff).forEach((key) => delete rowOff[key]);
+  arriveT0 = clock; nextOpen = clock + ARRIVE_MS + 300;
+}
+function advanceReseed(T) {
+  const flow = reseedFlow; if (!flow) return;
+  if (flow.phase === 'closing') {
+    if (events.length) return;
+    resetSeed(flow.seed); flow.phase = 'arriving'; flow.until = clock + ARRIVE_MS + 300;
+    return;
+  }
+  if (flow.phase !== 'arriving' || T < flow.until) return;
+  if (flow.queued) {
+    flow.queued = false; flow.phase = 'closing';
+    events.forEach((ev) => { ev.keep = false; exitNow(ev, clock); });
+    return;
+  }
+  reseedFlow = null; auto = true; HOST.paused = flow.returnPaused;
+  if (!HOST.paused) nextOpen = clock;
+  flow.resolve();
+}
+function reseedTransition(nextSeed) {
+  const next = Number.isFinite(+nextSeed) ? (+nextSeed | 0) : ((Math.random() * 1e6) | 0);
+  if (still || HOST.paused) {
+    if (reseedFlow) { reseedFlow.resolve(); reseedFlow = null; }
+    resetSeed(next);
+    if (still) seedStill(); else seedPaused();
+    frame(performance.now()); return Promise.resolve();
+  }
+  if (reseedFlow) { reseedFlow.seed = next; reseedFlow.queued = true; return reseedFlow.promise; }
+  let resolve; const promise = new Promise((done) => { resolve = done; });
+  reseedFlow = { seed: next, phase: 'closing', returnPaused: !!HOST.paused, queued: false, promise, resolve };
+  auto = false; events.forEach((ev) => { ev.keep = false; exitNow(ev, clock); });
+  advanceReseed(clock); wake(); return promise;
+}
+function inspectCell() {
+  auto = false; events = [];
+  if (!spawn(clock, { any: true, keep: true, prefer: (a, b) => b.fw * b.h - a.fw * a.h })) return null;
+  const ev = events[events.length - 1];
+  if (ev.pend) buildEvent(ev);
+  ev.t0 = clock - T_BUILD0 - (ev.style.buildMs + 400) / TUNE.buildSpeed;
+  ev.exitAt = 1e9; phase(ev, clock, 0);
+  return ev.t0;
+}
+function settlePausedEvent(ev) {
+  if (ev.pend) buildEvent(ev);
+  ev.t0 = clock - T_BUILD0 - (ev.style.buildMs + 400) / TUNE.buildSpeed;
+  ev.exitAt = 1e9; ev.keep = true; ev.embedStatic = true; phase(ev, clock, 0);
+}
+function seedPaused() {
+  events = []; auto = false;
+  for (let k = 0; k < 3; k++) {
+    if (!spawn(clock, { any: true, keep: true })) break;
+    settlePausedEvent(events[events.length - 1]);
+  }
+}
+/* ============================================================ frame */
+function frame(now) {
+  raf = 0;
+  if (HOST.live) measure();
+  const realDt = Math.min(64, now - (last || now)); last = now;
+  const dt = realDt * speed; clock += dt; const T = clock;
+  if (!still) drift += (TUNE.drift * dt * (1 - focusV)) / 1000;                 // the sheet holds still while the box is focused, so the lines framing it stay put
+  const kx = 1 - Math.exp(-dt / 70); sp.x += (pointer.x - sp.x) * kx; sp.y += (pointer.y - sp.y) * kx;
+  focusV += (focusT - focusV) * (still ? 1 : 1 - Math.exp(-dt / (focusT ? 200 : 260)));
+  if (!focusT && focusV < 0.001) focusLines = null;
+  { const rb = rowsBase(), kf = still ? 1 : 1 - Math.exp(-dt / 350); rowFade.high += ((rb.top0 > (TUNE.rowsX ? 150 : 220) ? 1 : 0) - rowFade.high) * kf; rowFade.low += (((floorY || H) - rb.bot0 > 260 ? 1 : 0) - rowFade.low) * kf; }
+  pulse *= Math.exp(-dt / 260);
+  breathe(T);
+  const d = dirObj(), pal = palFor(theme, d.surface), style = subObj();
+  if (!still && !send && auto && T > nextOpen && T - arriveT0 > ARRIVE_MS + 300) { if (liveCount() < maxLiveFor(style)) spawn(T); nextOpen = T + TUNE.cadence * 1000 * (0.7 + Math.random() * 0.6); }
+  if (focusSpawn && focusV > 0.9) { focusSpawn = false; if (liveCount() < maxLiveFor(style)) spawn(T, { any: true, prefer: (p, q) => Math.abs(p.cx - focal.x) - Math.abs(q.cx - focal.x) }); }   // once the box is framed, not while it is being framed
+  if (still) events.forEach((ev) => ev.pend && buildEvent(ev)); else { const pend = events.find((ev) => ev.pend); if (pend) buildEvent(pend); }
+  for (const ev of events) phase(ev, T, dt);
+  for (const ev of events) if (!ev.keep && ev.rect && ev.tout < 0 && ev.openFrac > 0.98 && frameAvoid.some((a) => overlaps(ev.rect, a))) exitNow(ev, T);   // a neighbour closing relaxed the columns and pushed this cell under the chrome: it closes rather than sit covered
+  events = events.filter((e) => !e.done);
+  advanceReseed(T);
+  const ls = lineSet(), rw = rows(T);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const revealing = !!(send && send.back && SEND.reveal);                        // the host has put its next screen under the canvas: draw only the flood, so the drain uncovers it
+  if (revealing) ctx.clearRect(0, 0, W, H); else { ctx.fillStyle = css(pal.page); ctx.fillRect(0, 0, W, H); }
+  camT();
+  const drainDur = SEND.colStep * (ls.length - 1) * 0.6 + SEND.colDur;
+  const dis = revealing || dissolved ? 1 : dissolveState(T) || (send && send.back ? clamp((T - send.back) / drainDur) : 0);   // the sheet dissolves as the flood drains, so what is left is an empty page
+  drawGrid(ls, rw, pal, d, T, (style.gridA ?? 1) * (1 - E.inCubic(dis)), dis); ctx.setLineDash([]); ctx.lineDashOffset = 0;
+  /* hover: the ruler runs right up to the composer, headline and chips, and stops 6px short of each */
+  for (const hk of hoverContext(ls, rw, pal, dt, T)) if (hk.on > 0.005 && style.hoverGrid) { const r = hk.cell.r; ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); const cut = frameAvoid.filter((q) => overlaps(r, q)); if (cut.length) { cut.forEach((q) => ctx.rect(q.x - 6, q.y - 6, q.w + 12, q.h + 12)); ctx.clip('evenodd'); } else ctx.clip(); style.hoverGrid(ctx, hk); ctx.restore(); }
+  if (focusV > 0.005 && style.focusCell) { const bc = boxCell(ls, rw); if (bc) { ctx.save(); ctx.beginPath(); ctx.rect(bc.x, bc.y, bc.w, bc.h); ctx.clip(); style.focusCell(ctx, bc, { pal, f: focusV, t: T, dt, pulse, keyTick, box, lat: latticeFor(bc.w, bc.h), drift }); ctx.restore(); } }
+  drawFx(ctx, pal, T, dt, ls, rw);
+  drawShockwave(ctx, ls, rw, pal, d, T);
+  for (const ev of events) {
+    const n = ls.findIndex((l) => l.k === ev.k); if (n < 0 || n + 1 >= ls.length) continue;
+    const band = rw.bands[ev.bi]; if (!band) continue;
+    const bh = band.h + (ev.span === 2 && rw.bands[ev.bi + 1] ? rw.bands[ev.bi + 1].h : 0);
+    const r = { x: ls[n].x, y: band.y, w: ls[n + 1].x - ls[n].x, h: bh };
+    ev.rect = r;
+    if (!ev.st || r.x > W || r.x + r.w < 0) continue;
+    const ox = r.x + r.w / 2 - ev.fw / 2, oy = r.y + r.h / 2 - ev.fh / 2; ev.draw = { ox, oy };   // centred on the live rect, so a settled cell draws exactly what it was composed for
+    const inCell = pointer.on && sp.x > r.x && sp.x < r.x + r.w && sp.y > r.y && sp.y < r.y + r.h && !send;
+    ev.hv += ((inCell ? 1 : 0) - ev.hv) * (1 - Math.exp(-dt / 140));
+    const hp = { x: sp.x - ox, y: sp.y - oy }, hvK = ev.hv * TUNE.hoverK;
+    const K = { tin: ev.tin, tout: ev.tout, t: T, dt, pal, w: ev.fw, h: ev.fh, hv: hvK, hp, pulse, alpha: 1, focal: { x: focal.x - ox, y: focal.y - oy }, clicks: ev.clicks || [], sheet: { x: ox + drift, y: oy }, drift,
+      hover: (x, y) => (hvK > 0.001 ? hvK * smooth(78, 0, Math.hypot(x - hp.x, y - hp.y)) : 0), m: { a: dpr, e: ox * dpr, f: oy * dpr } };
+    const dim = (focusV > 0 && !ev.keep ? 1 - 0.4 * focusV : 1) * (1 - dis); if (dim <= 0.005) continue;   // cells go with the sheet
+    ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip(); ctx.translate(ox, oy); ctx.globalAlpha = dim; K.alpha = dim;
+    ev.style.draw(ctx, ev.st, K);
+    if (ev.clicks && ev.style.click) for (const ck of ev.clicks) ev.style.click(ctx, ev.st, K, ck);
+    ev.clicks = (ev.clicks || []).filter((ck) => T - ck.t0 < 1400);
+    ctx.restore(); camT();
+    chrome(ctx, r, ev, pal, d.lines === 'guide');
+  }
+  const pv = paveState(T, ls);
+  if (pv) {
+    /* how the flood feels is the host's: its easing (in/out), a feathered leading edge, and whether the box flashes on commit */
+    const col0 = pal.pave || pal.ink, easeIn = E[SEND.easeIn] || E.outExpo, easeOut = E[SEND.easeOut] || E.inOutCubic, fe = SEND.feather || 0;
+    if (pv.commit < 1 && SEND.flash !== false) { const bc = boxCell(ls, rw); if (bc) { ctx.fillStyle = css(col0, E.outCubic(pv.commit)); ctx.fillRect(bc.x, bc.y, bc.w, bc.h); } }
+    const fy = clamp(focal.y, H * 0.05, H * 0.95);                               // the page paves out from the composer's row, up and down, and drains back to it
+    for (const col of pv.cols) {
+      const up = easeIn(prog(pv.e, col.rank * SEND.colStep, SEND.colDur));
+      const down = pv.back >= 0 ? easeOut(prog(pv.back, (pv.cols.length - col.rank) * SEND.colStep * 0.6, SEND.colDur)) : 0;
+      const grow = up * (1 - down); if (grow <= 0.002) continue;
+      const y0 = fy - fy * grow, y1 = y0 + H * grow, x = col.x - 0.5, w = col.w + 1;
+      if (!fe || grow >= 0.999) { ctx.fillStyle = css(col0); ctx.fillRect(x, y0, w, y1 - y0); continue; }
+      const f = Math.min(fe, (y1 - y0) / 2), g = ctx.createLinearGradient(0, y0, 0, y1), a = f / (y1 - y0);   // soft top and bottom edges while the column moves
+      g.addColorStop(0, css(col0, 0)); g.addColorStop(a, css(col0, 1)); g.addColorStop(1 - a, css(col0, 1)); g.addColorStop(1, css(col0, 0));
+      ctx.fillStyle = g; ctx.fillRect(x, y0, w, y1 - y0);
+    }
+  }
+  if (HOST.overlay) { camT(); HOST.overlay(ctx, { T, dt, pal, cam, dpr, W, H, events }); }   // the host draws over the sheet in the same frame, under the same camera
+  if (!still && !HOST.paused) raf = requestAnimationFrame(frame);
+}
+function wake() { if (!HOST.paused && !raf) { last = 0; raf = requestAnimationFrame(frame); } }
+
+/* ============================================================ panel */
+const $ = (id) => document.getElementById(id);
+function renderPanel() {
+  const d = dirObj(), s = subObj();
+  $('pLine').textContent = s.line; $('pSeed').textContent = `seed ${seed}`;
+  $('pName').textContent = `${codeOf(di, sub)} · ${d.name} · ${s.name}`;
+  $('dirs').innerHTML = DIRS.map((dd, i) => `<i>${dd.n} ${dd.name}</i>` + dd.subs.map((ss, j) => `<button data-d="${i}" data-s="${j}" aria-pressed="${i === di && j === sub}">${dd.n}${ss.key} ${ss.name}</button>`).join('') + (dd.subs.length < 2 ? '<span></span>' : '')).join('');
+  document.querySelector('[data-act="motion"]').textContent = still ? 'Reduced motion' : 'Motion on';
+  document.querySelector('[data-act="slow"]').textContent = `Speed ${speed === 1 ? '1×' : speed + '×'}`;
+  document.querySelector('[data-act="palette"]').textContent = `Palette: ${PALETTE.name}`; document.querySelector('[data-act="palette"]').title = PALETTES[PALETTE.name].label;
+  renderTune();
+  if (!HOST.noUrl) try { history.replaceState(null, '', `?v=${codeOf(di, sub)}&t=${theme}&pal=${PALETTE.name}&seed=${seed}${tuneDirty() ? '&tune=' + encodeURIComponent(JSON.stringify(TUNE)) : ''}`); } catch {}
+}
+const tuneDirty = () => JSON.stringify(TUNE) !== JSON.stringify(TUNE_DEFAULTS);
+const fmt = (v, unit) => (Number.isInteger(v) ? v : +v.toFixed(2)) + (unit === '×' || unit === '' ? unit : ' ' + unit);
+function renderTune() {
+  const el = $('tune');
+  el.innerHTML = TUNE_SPEC.map(([k, label, min, max, step, unit]) => `<label for="tn_${k}">${label}${k === 'lineA' || k === 'inkA' ? ` (${theme})` : ''}</label><input id="tn_${k}" type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${tuneGet(k)}"><output>${fmt(tuneGet(k), unit)}</output>`).join('')
+    + '<div class="row2"><button data-act="copytune">Copy tune</button><button data-act="resettune">Reset</button></div>';
+}
+$('tune').addEventListener('input', (e) => {
+  const r = e.target.closest('input[type=range]'); if (!r) return;
+  const k = r.dataset.k, v = +r.value; tuneSet(k, v); r.nextElementSibling.textContent = fmt(v, TUNE_SPEC.find((t) => t[0] === k)[5]);
+  if (k === 'unit') { layout(); firstX = -U * 3; drift = 0; }
+  if (!HOST.noUrl) try { history.replaceState(null, '', `?v=${codeOf(di, sub)}&t=${theme}&pal=${PALETTE.name}&seed=${seed}&tune=${encodeURIComponent(JSON.stringify(TUNE))}`); } catch {}
+  wake();
+});
+function switchDirection(nd, ns) {
+  const wasDir = di; di = nd; sub = clamp(ns, 0, DIRS[nd].subs.length - 1) | 0;
+  if (send) { send = null; document.body.classList.remove('sending', 'opened'); } dissolved = false;
+  document.body.dataset.surface = DIRS[di].surface || '';
+  fx.length = 0; ripples.length = 0;
+  events.forEach((ev) => { ev.keep = false; exitNow(ev, clock); ev.exitAt = Math.min(ev.exitAt, clock - ev.t0); });
+  if (wasDir !== nd) dirSwitchT0 = clock;
+  nextOpen = clock + (wasDir !== nd ? 900 : 500);
+  renderPanel();
+  if (still) seedStill(); wake();
+}
+function reseed() { seed = (Math.random() * 1e6) | 0; firstK = 0; firstX = -U * 3; drift = 0; events = []; nextOpen = clock + 500; renderPanel(); if (still) seedStill(); else spawn(clock); wake(); }
+function seedStill() { events = []; for (let k = 0; k < 3; k++) spawn(clock, { any: true, keep: true }); if (!raf) { last = 0; raf = requestAnimationFrame(frame); } }
+$('dirs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) switchDirection(+b.dataset.d, +b.dataset.s); });
+$('panelHead').addEventListener('click', () => $('panel').classList.toggle('min'));
+document.querySelector('.tools').addEventListener('click', (e) => {
+  const act = e.target.closest('button')?.dataset.act;
+  if (act === 'theme') { theme = theme === 'light' ? 'dark' : 'light'; document.body.dataset.theme = theme; events.forEach((ev) => exitNow(ev, clock)); nextOpen = clock + 600; renderPanel(); wake(); }
+  if (act === 'motion') { still = !still; events = []; renderPanel(); if (still) seedStill(); else spawn(clock); wake(); }
+  if (act === 'reseed') reseed();
+  if (act === 'open') { spawn(clock, { any: true }); wake(); }
+  if (act === 'slow') { speed = speed === 1 ? 0.25 : speed === 0.25 ? 0.1 : 1; renderPanel(); }
+  if (act === 'palette') { const ks = Object.keys(PALETTES); PALETTE.name = ks[(ks.indexOf(PALETTE.name) + 1) % ks.length]; ghostTilings.clear(); renderPanel(); wake(); }
+});
+$('tune').addEventListener('click', (e) => {
+  const act = e.target.closest('button')?.dataset.act;
+  if (act === 'copytune') { navigator.clipboard?.writeText(JSON.stringify(TUNE)); e.target.textContent = 'Copied'; setTimeout(() => { e.target.textContent = 'Copy tune'; }, 900); }
+  if (act === 'resettune') { Object.assign(TUNE, JSON.parse(JSON.stringify(TUNE_DEFAULTS))); layout(); renderPanel(); wake(); }
+});
+
+/* ============================================================ inputs */
+addEventListener('resize', () => { TUNE.unit=Math.min(128,Math.max(72,innerWidth/4)); TUNE.minH=Math.min(130,innerHeight/4); layout(); if (still) seedStill(); else if (HOST.paused) seedPaused(); wake(); });
+addEventListener('pointermove', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  pointer.x = e.clientX - OX; pointer.y = e.clientY - OY; if (!pointer.on) { sp.x = pointer.x; sp.y = pointer.y; } pointer.on = true;
+  pointer.ui = !!e.target.closest('.panel, #composer, .pills, h1, .sub' + (HOST.ui ? ', ' + HOST.ui : ''));
+});
+document.addEventListener('pointerleave', () => { pointer.on = false; });
+function clickAt(x, y) {
+  const ls = lineSet(), rw = rows(), hit = events.find((ev) => ev.rect && x > ev.rect.x && x < ev.rect.x + ev.rect.w && y > ev.rect.y && y < ev.rect.y + ev.rect.h);
+  if (hit) {                                                       // inside an open cell: the variant's own click, in cell space
+    const ox = hit.rect.x + hit.rect.w / 2 - hit.fw / 2, oy = hit.rect.y + hit.rect.h / 2 - hit.fh / 2;
+    (hit.clicks ||= []).push({ x: x - ox, y: y - oy, t0: clock }); wake(); return;
+  }
+  const cell = cellAt(ls, rw, x, y), style = subObj(), wave = style.wave || 'circle';
+  if (wave !== 'none') { ripples.push({ x, y, t0: clock, cell, d0: drift, wave }); if (ripples.length > 4) ripples.shift(); }
+  if (style.clickGrid) style.clickGrid({ x, y, cell, ls, rw, pal: palFor(theme, dirObj().surface), t: clock, drift, driftV: TUNE.drift, fx: (draw, life, o = {}) => fx.push({ t0: clock, life, draw, d0: drift, live: !!o.live, cell: o.cell || null }), near: nearestLines(ls, rw, x, y), W, H });
+  if (style.clickOpens !== false) spawn(clock, { at: { x, y } });
+  wake();
+}
+addEventListener('pointerdown', (e) => {
+  if (e.button !== 0 || send || still || e.target.closest('button, a, input, textarea, select, form, .panel' + (HOST.ui ? ', ' + HOST.ui : ''))) return;
+  clickAt(e.clientX - OX, e.clientY - OY);
+});
+/* focus moves the two lines that frame the box and the rows just above and below it; any cell they bound closes first, so no open cell is ever resized */
+const boundByFocus = (ev) => (focusLines && (focusLines.includes(ev.k) || focusLines.includes(ev.k + 1))) || (ev.edgeIds || []).some((id) => id === 'top' || id === 'bot');
+prompt.addEventListener('focus', () => { if (!focusLines) focusLines = pickFocusLines(); events.forEach((ev) => { if (!ev.keep && boundByFocus(ev)) { ev.fast = 2; exitNow(ev, clock); } }); focusT = 1; focusSpawn = true; wake(); });
+prompt.addEventListener('blur', () => { events.forEach((ev) => { if (!ev.keep && boundByFocus(ev)) { ev.fast = 2; exitNow(ev, clock); } }); focusT = 0; focusSpawn = false; wake(); });
+prompt.addEventListener('input', () => { pulse = 1; keyTick++; });
+prompt.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); startSend(); } });
+composer.addEventListener('submit', (e) => { e.preventDefault(); startSend(); });
+/* the standalone page's chips; a host with its own composer owns them */
+if (!HOST.noKeys) document.querySelectorAll('.pill').forEach((b) => b.addEventListener('click', () => { prompt.value = `Build me a ${b.textContent.toLowerCase()}`; prompt.focus(); pulse = 1; keyTick += 3; }));
+addEventListener('keydown', (e) => {
+  if (HOST.noKeys || e.target === prompt || e.target.closest?.('.tune')) return;   // a host that has its own keys (the chrome) keeps these off
+  const dk = DIRS.findIndex((dd) => String(dd.n) === e.key), sk = DIRS[di].subs.findIndex((ss) => ss.key === e.key.toUpperCase());
+  if (dk >= 0) switchDirection(dk, sub); else if (sk >= 0 && e.key.length === 1) switchDirection(di, sk);
+  if (e.key === 't') document.querySelector('[data-act="theme"]').click();
+  if (e.key === 'r') reseed();
+  if (e.key === 's') document.querySelector('[data-act="slow"]').click();
+  if (e.key === 'p') document.querySelector('[data-act="palette"]').click();
+  if (e.key === 'd') { DUO.i = (DUO.i + 1) % DUOS.length; wake(); }
+  if (e.key === ' ') { e.preventDefault(); spawn(clock, { any: true }); wake(); }
+});
+
+/* ============================================================ boot */
+const q = new URLSearchParams(location.search);
+const vq = fromCode(window.__gridVariant);
+di = vq ? vq[0] : clamp(+(q.get('d') || 0), 0, DIRS.length - 1) | 0; sub = vq ? vq[1] : clamp(+(q.get('s') || 0), 0, DIRS[di].subs.length - 1) | 0; theme = q.get('t') === 'dark' ? 'dark' : 'light';
+seed = q.has('seed') ? +q.get('seed') | 0 : (Math.random() * 1e6) | 0;
+if (PALETTES[q.get('pal')]) PALETTE.name = q.get('pal');
+if (PAVE_TONES[q.get('pave')]) PAVE.tone = q.get('pave');
+if (q.get('present') === '1' && !HOST.canvasBox) { const pn = document.getElementById('panel'); if (pn) pn.style.display = 'none'; }   // embeds and the deck: no panel
+if (q.has('tune')) { try { const t = JSON.parse(q.get('tune')); Object.assign(TUNE, t); TUNE.light = { ...TUNE_DEFAULTS.light, ...(t.light || {}) }; TUNE.dark = { ...TUNE_DEFAULTS.dark, ...(t.dark || {}) }; } catch {} }
+document.body.dataset.theme = theme;
+layout(); firstX = -U * 3; document.body.dataset.surface = DIRS[di].surface || ''; renderPanel();
+{ const rb = rowsBase(); rowFade.high = rb.top0 > (TUNE.rowsX ? 150 : 220) ? 1 : 0; rowFade.low = (floorY || H) - rb.bot0 > 260 ? 1 : 0; }   // start settled, no fade on load
+document.fonts.load('700 100px "Roboto Slab"').finally(() => {
+  arriveT0 = clock; setTimeout(() => document.body.classList.add('arrived'), still ? 0 : ARRIVE_MS * 0.55);
+  if (still) { document.body.classList.add('arrived'); seedStill(); } else { nextOpen = clock + ARRIVE_MS + 300; }
+  wake();
+});
+window.__grid = {
+  playback: (playing) => {
+    cancelAnimationFrame(raf); raf = 0; last = 0;
+    if (playing && still && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      still = false; events.forEach(settlePausedEvent);
+    }
+    HOST.paused = !playing;
+    if (reseedFlow) reseedFlow.returnPaused = !playing;
+    if (playing) {
+      const staticCells = events.filter((ev) => ev.embedStatic);
+      staticCells.forEach((ev) => { ev.embedStatic = false; ev.keep = false; ev.exitAt = (clock - ev.t0) + TUNE.hold * 1000; });
+      if (staticCells.length) auto = true;
+      wake();
+    } else frame(performance.now());
+  },
+  reseedTransition,
+  cancelReseed: () => { const pending = reseedFlow; reseedFlow = null; pending?.resolve(); },
+  inspectCell,
+  resetScene: () => { events = []; auto = false; speed = 1; },
+  viewport: () => ({ w: W, h: H, scale: HOST.displayScale || 1 }),
+  openCell: () => {
+    if (events.length >= 3) events.shift();
+    const count = events.length; spawn(clock,{any:true,keep:still});
+    if (HOST.paused && !still && events[count]) settlePausedEvent(events[count]);
+    if(HOST.paused) frame(performance.now()); else wake();
+  },
+
+  choose: switchDirection, reseed, send: startSend, open: (at) => spawn(clock, at ? { at } : { any: true }), setTheme: (t) => { theme = t; document.body.dataset.theme = t; renderPanel(); },
+  rowOffDbg: () => JSON.parse(JSON.stringify({ rowOff, clock, ev: events.map((v) => ({ id: v.t0 | 0, ids: v.edgeIds, tout: v.tout | 0, keep: v.keep })) })),
+  /* film direction: the camera, time, a chosen cell, and the cells as the host needs to read them */
+  lib: { css, pieceOutline, strokePart, pieceTurn, drawPiece, pieceK },                           // the drawing helpers a host's overlay may use
+  setCamera: (a, ex, fy) => { cam.a = a; cam.e = ex; cam.f = fy; wake(); },
+  timeScale: (s) => { speed = s; },
+  spawnWith: (o) => { const n0 = events.length, ok = spawn(clock, o || {}); wake(); return ok ? events[n0].t0 : null; },
+  cell: (id) => events.find((ev) => ev.t0 === id) || null,
+  release: (id, holdMs = 0) => { const ev = events.find((v) => v.t0 === id); if (ev) { ev.keep = false; ev.exitAt = Math.max(T_BUILD0 + 200, clock - ev.t0 + holdMs); } wake(); },
+  audit: () => {
+    const ls = lineSet(), vis = []; for (let i = 0; i < ls.length - 1; i++) if (ls[i + 1].x > 0 && ls[i].x < W) vis.push(ls[i + 1].x - ls[i].x);
+    const rw = rows(); return { rowIds: rw.ids, rowYs: rw.ys.map((v) => Math.round(v)), rowAlpha: rw.alpha.map((v) => +v.toFixed(2)), floorY: Math.round(floorY), top0: Math.round(content0.y), W, H, U, minCol: Math.min(...vis), cols: vis.map((v) => Math.round(v)), cells: events.filter((ev) => ev.st && ev.rect && ev.draw).map((ev) => ({
+      settled: ev.openFrac > 0.98 && ev.closeFrac < 0.001 && ev.tout < 0 && ev.tin > ev.style.buildMs + 200, r: ev.rect, fw: ev.fw, fh: ev.fh, ox: ev.draw.ox, oy: ev.draw.oy, bi: ev.bi, span: ev.span, k: ev.k,
+      ids: ev.edgeIds, id: ev.t0 | 0, Vt: ev.Vt, V: ev.V, ext: ev.style.extent ? ev.style.extent(ev.st, ev.fw, ev.fh) : null, kind: ev.st.bp ? ev.st.bp.kind : null, chrome: frameAvoid.some((a) => overlaps(ev.rect, a)) })) };
+  },
+  exitAll: () => events.forEach((ev) => exitNow(ev, clock)), cancelSend: () => { if (send) { send = null; document.body.classList.remove('sending', 'opened'); } dissolved = false; wake(); }, state: () => ({ di, sub, events: events.map((e) => ({ k: e.k, bi: e.bi, span: e.span, tin: e.tin | 0, A: e.A | 0, V: e.V | 0 })), rows: rows().ys.map((y) => y | 0) }),
+  setSpeed: (s) => { speed = s; renderPanel(); }, clock: () => clock, auto: (v) => { auto = v; },
+  pointerAt: (x, y) => { pointer.x = x; pointer.y = y; pointer.on = true; pointer.ui = false; sp.x = x; sp.y = y; }, pointerOff: () => { pointer.on = false; },
+  clickAt, setPave: (v) => { if (PAVE_TONES[v]) { PAVE.tone = v; wake(); } }, setSend: (o) => { if (o && !send) Object.assign(SEND, o); }, setPalette: (v) => { if (PALETTES[v]) { PALETTE.name = v; ghostTilings.clear(); renderPanel(); } }, focus: () => prompt.focus(), blur: () => prompt.blur(), arrive: () => { arriveT0 = clock; }, tune: (k, v) => { tuneSet(k, v); if (k === 'unit') layout(); renderTune(); },
+  tick: (n = 1, ms = 16) => { cancelAnimationFrame(raf); raf = 0; for (let k = 0; k < n; k++) { const now = performance.now(); last = now - ms; frame(now); } cancelAnimationFrame(raf); raf = 0; },
+  renderNow: () => { cancelAnimationFrame(raf); raf = 0; last = 0; frame(performance.now()); },
+  seek: (t) => { clock = t; wake(); }, cells: () => events.map((e) => ({ rect: e.rect, fw: e.fw, fh: e.fh, t0: e.t0, build: e.style.buildMs, exit: e.style.exitMs, exitAt: e.exitAt })),
+  exitAt: (t) => events.forEach((ev) => { ev.exitAt = t - ev.t0; }),
+  flush: () => events.forEach((ev) => { if (ev.pend) buildEvent(ev); if (ev.st && ev.st.gen) { while (!ev.st.gen.next().done); ev.st.gen = null; } }), code: () => codeOf(di, sub), spawnAuto: () => spawn(clock),
+ why: () => spawn.why, log: () => spawn.log, load: () => ({ cells: events.length, ripples: ripples.length, fx: fx.length, rects: events.map((ev) => ev.rect).filter(Boolean) }), page: () => palFor(theme, dirObj().surface), lines: () => lineSet().map((l) => [l.k, +l.x.toFixed(2)]), fxInfo: () => { const ls = lineSet(), rw = rows(); return fx.map((f) => ({ live: f.live, cell: f.cell && { k: f.cell.k, bi: f.cell.bi, r: f.cell.r }, now: f.cell && liveRectOf(ls, rw, f.cell) })); }, pick: (v) => { const r = fromCode(v); if (r) switchDirection(r[0], r[1]); return !!r; },
+};
+
+})();
+</script><script>// Host bridge: parent owns whether an embed may play; source owns the pixels.
+(() => {
+  const G = window.__grid;
+  if (!G) return;
+  const film = window.__film;
+  let requested = false, stage = film ? 'film' : 'grid', progress = 1;
+
+  const instance = new URLSearchParams(location.search).get('instance');
+  const send = (data) => parent.postMessage({ channel: 'breathing-grid', instance, ...data }, '*');
+  const active = () => requested && !document.hidden;
+  const inspect = () => {
+    if (!film) return;
+    G.playback(false);
+    film.inspect(stage, progress);
+  };
+  const apply = () => {
+    if (film) {
+      if (stage === 'film') film.playback(active());
+      else inspect();
+    } else G.playback(active());
+  };
+
+  addEventListener('message', (event) => {
+    if (event.source !== parent || event.data?.channel !== 'breathing-grid') return;
+    const { action, value } = event.data;
+    if (action === 'configure' && value) {
+      if (['light', 'dark'].includes(value.theme)) G.setTheme(value.theme);
+      if (Number.isFinite(value.scale) && value.scale > 0 && value.scale <= 1) window.__gridHost.displayScale = value.scale;
+      if (film && ['film', 'geometry', 'timing'].includes(value.stage)) stage = value.stage;
+      requested = Boolean(value.playing);
+      if (film && stage === 'film') film.replay();
+      apply(); G.renderNow();
+      send({ configured: true, finished: film?.status().finished || false });
+      return;
+    }
+    if (action === 'playback') { requested = Boolean(value); apply(); }
+    if (action === 'scale' && Number.isFinite(value) && value > 0 && value <= 1) {
+      window.__gridHost.displayScale = value;
+      if (film) film.refresh(); else G.renderNow();
+    }
+    if (action === 'theme' && ['light', 'dark'].includes(value)) {
+      G.setTheme(value);
+      if (film) film.refresh(); else G.renderNow();
+    }
+    if (action === 'open' && !film) G.openCell();
+    if (action === 'reseed') {
+      if (film) film.reseed(value, active());
+      else G.reseedTransition(value);
+    }
+    if (action === 'stage' && film && ['film', 'geometry', 'timing'].includes(value)) {
+      stage = value; progress = 1; if (stage === 'film') film.replay(); apply(); send({ stage });
+    }
+    if (action === 'replay' && film) { stage = 'film'; film.replay(); apply(); }
+    if (action === 'scrub' && film && Number.isFinite(value)) {
+      stage = 'timing'; progress = Math.max(0, Math.min(1, value)); inspect(); send({ progress });
+    }
+  });
+  addEventListener('visibilitychange', apply);
+  addEventListener('pagehide', () => { requested = false; apply(); });
+  addEventListener('resize', () => {
+    if (film) film.refresh(); else G.renderNow();
+  });
+  addEventListener('load', () => {
+    G.renderNow();
+    send({ ready: true, variant: film ? 'film' : G.code(), paused: true });
+  });
+})();
+</script></body></html>

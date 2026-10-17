@@ -1,4 +1,5 @@
 import { sketches } from "../sketches/index.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 const FRAME_INTERVAL = 1000 / 60;
 
@@ -89,6 +90,9 @@ const initializeSketchbook = (root) => {
   let frameCount = 0;
   let fpsWindowStart = 0;
   let lastFps = 0;
+  let stageVisible = false;
+
+  const canAnimate = () => running && stageVisible && isMotionActive();
 
   const updateUrl = () => {
     const nextUrl = new URL(window.location.href);
@@ -125,7 +129,7 @@ const initializeSketchbook = (root) => {
     if (!activeSketch) return;
     const delta = lastTimestamp ? Math.min(0.1, (timestamp - lastTimestamp) / 1000) : 0;
     lastTimestamp = timestamp;
-    if (running) elapsed += delta;
+    if (canAnimate()) elapsed += delta;
 
     try {
       activeSketch.frame?.({
@@ -156,7 +160,7 @@ const initializeSketchbook = (root) => {
     frameHandle = 0;
 
     if (
-      running &&
+      canAnimate() &&
       lastDrawTimestamp &&
       timestamp - lastDrawTimestamp < FRAME_INTERVAL - 1
     ) {
@@ -166,7 +170,7 @@ const initializeSketchbook = (root) => {
 
     lastDrawTimestamp = timestamp;
     renderFrame(timestamp);
-    if (running && !document.hidden) frameHandle = window.requestAnimationFrame(tick);
+    if (canAnimate() && !document.hidden) frameHandle = window.requestAnimationFrame(tick);
   };
 
   const requestFrame = () => {
@@ -433,9 +437,32 @@ const initializeSketchbook = (root) => {
   reducedMotion.addEventListener("change", (event) => {
     if (event.matches) setRunning(false);
   });
+  onMotionChange(() => {
+    lastTimestamp = 0;
+    lastDrawTimestamp = 0;
+    if (!isMotionActive() && frameHandle) {
+      window.cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
+    }
+    requestFrame();
+  });
 
   const resizeObserver = new ResizeObserver(resize);
+  const stageObserver = new IntersectionObserver(
+    ([entry]) => {
+      stageVisible = Boolean(entry?.isIntersecting);
+      lastTimestamp = 0;
+      lastDrawTimestamp = 0;
+      if (!stageVisible && frameHandle) {
+        window.cancelAnimationFrame(frameHandle);
+        frameHandle = 0;
+      }
+      if (stageVisible) requestFrame();
+    },
+    { rootMargin: "120px 0px", threshold: 0.01 }
+  );
   resizeObserver.observe(stage);
+  stageObserver.observe(stage);
   updatePauseState();
   updateFullscreenState();
   resize();

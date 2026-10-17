@@ -1,4 +1,5 @@
 import { SURFACE_ASCII_RAMP } from "./structural-glyph-field.js";
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 
 export const DITHER_DISPERSAL_DURATION = 920;
 
@@ -186,6 +187,11 @@ export const createDitherPixelDisperser = (root, field) => {
 
   const render = (now) => {
     frame = 0;
+    if (!isMotionActive()) {
+      bursts = [];
+      context.clearRect(0, 0, surface.width, surface.height);
+      return;
+    }
     const minimumFrameInterval = constrainedMode ? 1000 / 30 : 1000 / 60;
     if (lastDrawTime && now - lastDrawTime < minimumFrameInterval - 1) {
       frame = requestAnimationFrame(render);
@@ -247,6 +253,7 @@ export const createDitherPixelDisperser = (root, field) => {
   };
 
   const disperse = (items, origin, startedAt = performance.now()) => {
+    if (!isMotionActive()) return false;
     if (!items.length) return false;
     const totalBudget = saveData
       ? SAVE_DATA_TOTAL_GLYPHS
@@ -270,5 +277,20 @@ export const createDitherPixelDisperser = (root, field) => {
     return true;
   };
 
-  return { disperse };
+  const stop = () => {
+    bursts = [];
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = 0;
+    lastDrawTime = 0;
+    context.clearRect(0, 0, surface.width, surface.height);
+  };
+  const unsubscribeMotion = onMotionChange((state) => {
+    if (!state.active) stop();
+  });
+
+  window.addEventListener("pagehide", (event) => {
+    if (!event.persisted) unsubscribeMotion();
+  }, { once: true });
+
+  return { disperse, destroy: () => { stop(); unsubscribeMotion(); } };
 };

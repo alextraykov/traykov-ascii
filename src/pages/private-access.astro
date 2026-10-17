@@ -1,0 +1,45 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
+import SiteNav from "../components/SiteNav.astro";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Private work — password required"
+      description="Password entry for selected private work."
+      path="/private-access/"
+      noindex={true}
+    />
+  </head>
+  <body data-page-type="private-access">
+    <SiteNav active="work" />
+
+    <main id="top" class="private-access section-shell">
+      <section class="private-access__panel" aria-labelledby="private-access-title">
+        <p>Private work</p>
+        <h1 id="private-access-title">Password required</h1>
+        <p data-private-access-message>Enter the shared password to view selected private work.</p>
+        <form action="/api/private-work?action=login" method="post">
+          <input type="hidden" name="returnTo" value="" />
+          <label for="private-access-password">Password</label>
+          <input
+            id="private-access-password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            maxlength="512"
+          />
+          <button type="submit">Continue</button>
+        </form>
+        <p class="private-access__note">Access expires automatically. You can lock the collection from any private page.</p>
+      </section>
+    </main>
+
+    <SiteFooter omitBookingEmbed={true} />
+  </body>
+</html>

@@ -401,6 +401,14 @@ if (root) {
   const sampleContext = sampleCanvas.getContext("2d", { alpha: false, willReadFrequently: true });
   const loader = new SVGLoader();
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const sharedMotionIsActive = () => window.__traykovMotion?.isActive?.() ?? !reduceMotion.matches;
+  const canRender = () => !destroyed && !document.hidden && stageVisible;
+  const canAnimate = () => canRender() && !isPaused && !reduceMotion.matches && sharedMotionIsActive();
+  const clearTrail = () => {
+    trailBuffer.fill(0);
+    hasTrail = false;
+    lastTrailTime = 0;
+  };
 
   const setStatus = (message, isError = false) => {
     if (!statusLine) return;
@@ -788,7 +796,7 @@ if (root) {
   };
 
   const addTrail = (centerX, centerY, strength = 1) => {
-    if (state.hover <= 0) return;
+    if (state.hover <= 0 || !canAnimate()) return;
     let added = false;
     const radius = clamp(cols * 0.046, 4, 14);
     const minX = Math.max(0, Math.floor(centerX - radius));
@@ -1378,15 +1386,16 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
   };
 
   const scheduleRender = () => {
-    if (pendingRenderFrame || destroyed || document.hidden || !stageVisible) return;
+    if (pendingRenderFrame || !canRender()) return;
     pendingRenderFrame = requestAnimationFrame(render);
   };
 
   const render = (time = 0) => {
     pendingRenderFrame = 0;
-    if (destroyed || document.hidden || !stageVisible) return;
+    if (!canRender()) return;
+    const animate = canAnimate();
     const frameInterval = root.dataset.view === "ascii" ? 1000 / 30 : 1000 / 60;
-    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+    if (animate && lastRenderTime && time - lastRenderTime < frameInterval - 1) {
       scheduleRender();
       return;
     }
@@ -1394,18 +1403,19 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
     const delta = Math.min(80, Math.max(0, time - lastRenderTime)) / 1000;
     lastRenderTime = time;
 
-    if (!isPaused && !reduceMotion.matches) turntableAngle += delta * Math.PI * state.speed;
+    if (animate) turntableAngle += delta * Math.PI * state.speed;
     mark.rotation.x = state.rotationX;
     mark.rotation.y = state.rotationY + (reduceMotion.matches ? 0.8 : turntableAngle);
-    mark.rotation.z = state.rotationZ + Math.sin(time * 0.00055) * state.wobble;
+    mark.rotation.z = state.rotationZ + Math.sin((animate ? time : 0) * 0.00055) * state.wobble;
 
     renderer.render(scene, camera);
-    updateTrail(time);
-    if (time - lastAsciiTime > 34) {
+    if (animate) updateTrail(time);
+    else if (hasTrail) clearTrail();
+    if (time - lastAsciiTime > 34 || !animate) {
       lastAsciiTime = time;
-      toAscii(time);
+      toAscii(animate ? time : 0);
     }
-    if (!reduceMotion.matches && (!isPaused || hasTrail)) scheduleRender();
+    if (animate) scheduleRender();
   };
 
   const readStoredWorkspace = () => {
@@ -1781,8 +1791,29 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
   });
 
   const onVisibilityChange = () => scheduleRender();
+  const onSharedMotionChange = () => {
+    if (!sharedMotionIsActive()) clearTrail();
+    lastRenderTime = 0;
+    if (pendingRenderFrame) cancelAnimationFrame(pendingRenderFrame);
+    pendingRenderFrame = 0;
+    scheduleRender();
+  };
+  const onPageHide = (event) => {
+    if (!event.persisted) {
+      destroy();
+      return;
+    }
+    if (pendingRenderFrame) cancelAnimationFrame(pendingRenderFrame);
+    pendingRenderFrame = 0;
+  };
+  const onPageShow = (event) => {
+    if (!event.persisted) return;
+    lastRenderTime = 0;
+    scheduleRender();
+  };
   document.addEventListener("visibilitychange", onVisibilityChange);
   reduceMotion.addEventListener("change", onVisibilityChange);
+  window.addEventListener("traykov-motion-change", onSharedMotionChange);
 
   const destroy = () => {
     if (destroyed) return;
@@ -1794,6 +1825,9 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
     stageObserver?.disconnect();
     document.removeEventListener("visibilitychange", onVisibilityChange);
     reduceMotion.removeEventListener("change", onVisibilityChange);
+    window.removeEventListener("traykov-motion-change", onSharedMotionChange);
+    window.removeEventListener("pagehide", onPageHide);
+    window.removeEventListener("pageshow", onPageShow);
     if (activeGroup) disposeGroup(activeGroup);
     frontMaterial.dispose();
     sideMaterial.dispose();
@@ -1802,7 +1836,8 @@ export function createSvgAsciiObject(settings = svgAsciiSettings) {
     renderer.forceContextLoss();
     renderer.domElement.remove();
   };
-  window.addEventListener("pagehide", destroy, { once: true });
+  window.addEventListener("pagehide", onPageHide);
+  window.addEventListener("pageshow", onPageShow);
 
   setPresetState("clean", false);
   updateMaterials();

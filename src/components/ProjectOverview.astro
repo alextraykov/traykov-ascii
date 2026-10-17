@@ -1,0 +1,105 @@
+---
+import OverviewVideo from "./OverviewVideo.astro";
+import type { HomepageOverview } from "../lib/homepage-overviews";
+
+type Props = {
+  overview: HomepageOverview;
+  index: number;
+};
+
+const { overview } = Astro.props;
+const { study, lead, supporting, background, problem, impact } = overview;
+const overviewId = `${study.id}-overview`;
+const leadCaptionId = `${overviewId}-lead-caption`;
+---
+
+<article id={overviewId} class="project-overview" data-project-overview={study.id} aria-labelledby={`${overviewId}-title`}>
+  {lead.kind === "video" ? (
+    <OverviewVideo video={lead} studyTitle={study.title} captionId={leadCaptionId} lead />
+  ) : (
+    <figure class="project-overview__recording project-overview__recording--lead" data-reveal="rise" data-reveal-duration="340">
+      <img
+        class="project-overview__media"
+        src={lead.src}
+        width={lead.width}
+        height={lead.height}
+        alt={lead.alt || `${study.title}: ${lead.title}`}
+        aria-describedby={leadCaptionId}
+        loading="lazy"
+      />
+      <figcaption id={leadCaptionId} class="project-overview__caption">
+        <span class="project-overview__caption-label">{lead.label}</span>
+        <span class="project-overview__caption-detail visually-hidden">
+          <strong>{lead.title}</strong>
+          <span>{lead.description}</span>
+        </span>
+      </figcaption>
+    </figure>
+  )}
+
+  <header class="project-overview__header">
+    <div class="project-overview__copy">
+      <h3 id={`${overviewId}-title`} data-project-overview-title data-case-id={study.id}>
+        <a href={study.href}>{study.title}</a>
+      </h3>
+      <p class="project-overview__summary">{study.summary}</p>
+    </div>
+  </header>
+
+  <dl class="project-overview__context">
+    <div>
+      <dt>Background</dt>
+      <dd>{background}</dd>
+    </div>
+    <div>
+      <dt>Problem</dt>
+      <dd>{problem}</dd>
+    </div>
+  </dl>
+
+  <div class="project-overview__supporting" aria-label={`More ${study.title} product evidence`}>
+    {supporting.map((media, mediaIndex) => {
+      const captionId = `${overviewId}-supporting-${mediaIndex}-caption`;
+
+      return media.kind === "video" ? (
+        <OverviewVideo video={media} studyTitle={study.title} captionId={captionId} />
+      ) : (
+        <figure class="project-overview__recording">
+          <img
+            class="project-overview__media"
+            src={media.src}
+            width={media.width}
+            height={media.height}
+            alt={media.alt || `${study.title}: ${media.title}`}
+            aria-describedby={captionId}
+            loading="lazy"
+          />
+          <figcaption id={captionId} class="project-overview__caption">
+            <span class="project-overview__caption-label">{media.label}</span>
+            <span class="project-overview__caption-detail">
+              <strong>{media.title}</strong>
+              <span>{media.description}</span>
+            </span>
+          </figcaption>
+        </figure>
+      );
+    })}
+  </div>
+
+  <footer class="project-overview__footer">
+    <div class="project-overview__impact">
+      <p>Impact</p>
+      <dl>
+        {impact.map((item) => (
+          <div>
+            <dt>{item.label}</dt>
+            <dd>{item.description}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <a class="project-overview__link" href={study.href} data-project-overview-link data-ascii-action="primary">
+      Read full case study <span aria-hidden="true">↗</span>
+    </a>
+  </footer>
+</article>

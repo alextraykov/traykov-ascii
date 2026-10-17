@@ -1,3 +1,5 @@
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
+
 const roots = document.querySelectorAll("[data-product-systems-kit]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -67,10 +69,13 @@ const initializeKit = (root) => {
     if (moveFocus) button.focus();
   };
 
-  const finishOpening = () => {
+  const finishOpening = ({ focus = true } = {}) => {
+    window.clearTimeout(openingTimer);
+    openingTimer = undefined;
     root.dataset.state = "open";
     status.textContent = "Inventory open";
     window.clearTimeout(focusTimer);
+    if (!focus) return;
     focusTimer = window.setTimeout(
       () => itemButtons[0]?.focus(),
       Number.isFinite(focusDelay) ? focusDelay : 0
@@ -79,12 +84,13 @@ const initializeKit = (root) => {
 
   const openKit = () => {
     window.clearTimeout(openingTimer);
-    root.dataset.state = reduceMotion.matches ? "open" : "opening";
-    status.textContent = reduceMotion.matches ? "Inventory open" : "Releasing latches";
+    const animate = !reduceMotion.matches && isMotionActive();
+    root.dataset.state = animate ? "opening" : "open";
+    status.textContent = animate ? "Releasing latches" : "Inventory open";
     openButton.setAttribute("aria-expanded", "true");
     openState.setAttribute("aria-hidden", "false");
 
-    if (reduceMotion.matches) {
+    if (!animate) {
       finishOpening();
       return;
     }
@@ -133,6 +139,10 @@ const initializeKit = (root) => {
 
   reduceMotion.addEventListener?.("change", () => {
     if (reduceMotion.matches && root.dataset.state === "opening") finishOpening();
+  });
+
+  onMotionChange((state) => {
+    if (!state.active && root.dataset.state === "opening") finishOpening({ focus: false });
   });
 };
 

@@ -21,14 +21,10 @@ import "../styles/global.css";
     <SiteNav />
 
     <main id="top" class="notes-index section-shell">
-      <section class="notes-hero" aria-labelledby="cv-title" data-reveal="rise">
-        <div class="notes-hero__meta">
-          <span>AT.CV / 2014—NOW</span>
-          <span>SOFIA, BULGARIA</span>
-        </div>
+      <section class="notes-hero" aria-labelledby="cv-title" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <div class="notes-hero__copy">
-          <p class="section-kicker">Work experience</p>
-          <h1 id="cv-title">CV.</h1>
+          <h1 id="cv-title">Experience.</h1>
+          <p class="notes-hero__lede">Sofia, Bulgaria · 2014—now.</p>
           <dl>
             <div>
               <dt>EXPERIENCE</dt>
@@ -46,18 +42,13 @@ import "../styles/global.css";
         </div>
       </section>
 
-      <section id="experience" class="about-experience" aria-labelledby="experience-title" data-reveal="rise">
-        <div class="section-heading">
-          <p class="section-kicker">Experience</p>
-          <h2 id="experience-title">The whole path, not just the recent bit.</h2>
-        </div>
-
-        <div class="experience-list" data-reveal-group>
+      <section id="experience" class="about-experience" aria-label="Experience">
+        <div class="experience-list">
           {experience.map((item) => (
             <article class="experience-item">
               <div>
                 <p>{item.period}</p>
-                <h3>{item.company} - {item.role}</h3>
+                <h2>{item.company} - {item.role}</h2>
               </div>
               <div>
                 <p>{item.body}</p>

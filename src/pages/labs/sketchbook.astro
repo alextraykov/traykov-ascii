@@ -21,10 +21,9 @@ import "../../styles/global.css";
     <SiteNav />
 
     <main id="top" class="labs-tool-shell section-shell">
-      <section class="labs-tool-hero">
+      <section class="labs-tool-hero" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <a href="/labs/" data-scramble>← All labs</a>
         <div>
-          <p class="section-kicker">Lab 05 / Local sketch environment</p>
           <h1>Creative coding sketchbook</h1>
           <p>
             A low-friction place for dither, ASCII, pixel, and LCD studies. Tweak live
@@ -39,7 +38,6 @@ import "../../styles/global.css";
 
       <section class="labs-tool-notes" aria-label="Sketchbook notes">
         <article>
-          <span>01 / Run</span>
           <h2>One local command</h2>
           <p>
             Run <code>npm run sketches</code>. Astro opens this route and hot reloads every
@@ -47,7 +45,6 @@ import "../../styles/global.css";
           </p>
         </article>
         <article>
-          <span>02 / Make</span>
           <h2>Copy the template</h2>
           <p>
             Start in <code>src/sketches/_template.js</code>, add the sketch to
@@ -55,7 +52,6 @@ import "../../styles/global.css";
           </p>
         </article>
         <article>
-          <span>03 / Keep</span>
           <h2>Capture the actual canvas</h2>
           <p>
             Press <code>S</code> at any point. The PNG uses the rendered canvas resolution,

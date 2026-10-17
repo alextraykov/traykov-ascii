@@ -21,10 +21,9 @@ import "../../styles/global.css";
     <SiteNav />
 
     <main id="top" class="labs-tool-shell section-shell">
-      <section class="labs-tool-hero rhizome-hero">
+      <section class="labs-tool-hero rhizome-hero" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <a href="/labs/" data-scramble>← All labs</a>
         <div>
-          <p class="section-kicker">Lab 06 / GPU cellular field</p>
           <h1>Rhizome Field</h1>
           <p>
             A male fern cross-section rebuilt as two coupled geometries: packed ground tissue
@@ -39,8 +38,7 @@ import "../../styles/global.css";
 
       <section class="rhizome-explainer" aria-labelledby="rhizome-math-title">
         <header>
-          <p class="section-kicker">Model / not mythology</p>
-          <h2 id="rhizome-math-title">There is mathematics here. There is not one magic equation.</h2>
+          <h2 id="rhizome-math-title">A model, not one magic equation.</h2>
           <p>
             The pale field is ground tissue. The dense ovals are compatible with meristeles:
             vascular strands visible when a fern dictyostele is cut across. Their exact positions
@@ -50,7 +48,6 @@ import "../../styles/global.css";
 
         <div class="rhizome-equations">
           <article>
-            <span>01 / Slice</span>
             <h3>Weighted Voronoi tissue</h3>
             <code>Dᵢ(x) = ‖Mᵢ(x − pᵢ)‖² − wᵢ</code>
             <p>
@@ -60,7 +57,6 @@ import "../../styles/global.css";
             </p>
           </article>
           <article>
-            <span>02 / Wall</span>
             <h3>Two nearest cells</h3>
             <code>W(x) = 1 − smoothstep(t, t + ε, F₂ − F₁)</code>
             <p>
@@ -70,7 +66,6 @@ import "../../styles/global.css";
             </p>
           </article>
           <article>
-            <span>03 / Stele</span>
             <h3>Elliptical vascular fields</h3>
             <code>Eₖ(x) = ‖diag(1/aₖ, 1/bₖ) R(−θₖ)(x − cₖ)‖ − 1</code>
             <p>

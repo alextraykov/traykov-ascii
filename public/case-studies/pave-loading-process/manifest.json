@@ -1,0 +1,1892 @@
+{
+  "source": "02-process/timeline.html from the supplied Pave loading archive",
+  "recorded_capture_count": 43,
+  "reference_image_count": 3,
+  "reel_shot_count": 82,
+  "duration_seconds": 20,
+  "reel": "public/case-studies/media/pave-loading-process.mp4",
+  "poster": "public/case-studies/media/pave-loading-process-poster.jpg",
+  "source_images": [
+    {
+      "entry": "001",
+      "title": "The brief: make the logo carry the wait",
+      "source": "assets/ref-base44-contact-sheet.png",
+      "archive": "archive/001-ref-base44-contact-sheet.png",
+      "caption": "The base44 reference at 6fps — a glyph rearranging, never tweening.",
+      "kind": "reference"
+    },
+    {
+      "entry": "001",
+      "title": "The brief: make the logo carry the wait",
+      "source": "assets/ref-croc-mosaic.png",
+      "archive": "archive/001-ref-croc-mosaic.png",
+      "caption": "Reunion: a silhouette rebuilt as a mosaic.",
+      "kind": "reference"
+    },
+    {
+      "entry": "001",
+      "title": "The brief: make the logo carry the wait",
+      "source": "assets/ref-pave-mark.png",
+      "archive": "archive/001-ref-pave-mark.png",
+      "caption": "The mark. The curve is the frame; the square is the stage.",
+      "kind": "reference"
+    },
+    {
+      "entry": "001",
+      "title": "The brief: make the logo carry the wait",
+      "source": "assets/entry-001-lab.png",
+      "archive": "archive/001-entry-001-lab.png",
+      "caption": "First lab: three directions side by side.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "002",
+      "title": "First look",
+      "source": "assets/entry-002-review.png",
+      "archive": "archive/002-entry-002-review.png",
+      "caption": "Three variants, awaiting judgement.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "003",
+      "title": "Rejected: “build a grid and animate coherently”",
+      "source": "assets/entry-003-loop-states.png",
+      "archive": "archive/003-entry-003-loop-states.png",
+      "caption": "The ring’s rest states, walked one step at a time.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "003",
+      "title": "Rejected: “build a grid and animate coherently”",
+      "source": "assets/entry-003-transitions.png",
+      "archive": "archive/003-entry-003-transitions.png",
+      "caption": "Mid-transition: cells travelling, not crossfading.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "006",
+      "title": "Pave green, and a trail",
+      "source": "assets/entry-006-green-choreo.png",
+      "archive": "archive/006-entry-006-green-choreo.png",
+      "caption": "The green phase: square forming, block dividing, trails mid-morph.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "007",
+      "title": "“The square goes to the middle”",
+      "source": "assets/entry-007-square-stage.png",
+      "archive": "archive/007-entry-007-square-stage.png",
+      "caption": "First attempt at the idea. The bowl slid away; it needed to un-draw instead.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "009",
+      "title": "“Animate the SVG itself”",
+      "source": "assets/entry-009-retract-mid.png",
+      "archive": "archive/009-entry-009-retract-mid.png",
+      "caption": "The bowl un-drawing along its own curve.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "009",
+      "title": "“Animate the SVG itself”",
+      "source": "assets/entry-009-drawgrid-v.png",
+      "archive": "archive/009-entry-009-drawgrid-v.png",
+      "caption": "Verticals draw first…",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "009",
+      "title": "“Animate the SVG itself”",
+      "source": "assets/entry-009-drawgrid-h.png",
+      "archive": "archive/009-entry-009-drawgrid-h.png",
+      "caption": "…then horizontals.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "009",
+      "title": "“Animate the SVG itself”",
+      "source": "assets/entry-009-redraw-mid.png",
+      "archive": "archive/009-entry-009-redraw-mid.png",
+      "caption": "The reverse: the bowl re-draws tip-first.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "010",
+      "title": "Main features, four easings, and an audit",
+      "source": "assets/entry-010-feature-shapes.png",
+      "archive": "archive/010-entry-010-feature-shapes.png",
+      "caption": "The six features, as audited.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "011",
+      "title": "The matrix: nothing travels",
+      "source": "assets/entry-011-reveal-wave.png",
+      "archive": "archive/011-entry-011-reveal-wave.png",
+      "caption": "The light-up wave. Nothing moves.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "012",
+      "title": "Centred, and invisible",
+      "source": "assets/entry-012-final-icons.png",
+      "archive": "archive/012-entry-012-final-icons.png",
+      "caption": "Centred icons on an invisible matrix.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "013",
+      "title": "The real icons, at 16×16",
+      "source": "assets/entry-013-eleven-icons.png",
+      "archive": "archive/013-entry-013-eleven-icons.png",
+      "caption": "The eleven icons, generated from source.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "013",
+      "title": "The real icons, at 16×16",
+      "source": "assets/entry-013-icon-sources.png",
+      "archive": "archive/013-entry-013-icon-sources.png",
+      "caption": "The originals they came from.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "014",
+      "title": "The chip learns to speak",
+      "source": "assets/entry-014-mini-states.png",
+      "archive": "archive/014-entry-014-mini-states.png",
+      "caption": "Nine states, mapped to what the agent is actually doing.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "015",
+      "title": "Into the builder",
+      "source": "assets/entry-015-builder.png",
+      "archive": "archive/015-entry-015-builder.png",
+      "caption": "In situ for the first time.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "016",
+      "title": "Particles, and a hidden click",
+      "source": "assets/entry-016-particles.png",
+      "archive": "archive/016-entry-016-particles.png",
+      "caption": "The icons answering the cursor.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "017",
+      "title": "Even strokes, and a finish from anywhere",
+      "source": "assets/entry-017-data-uniform.png",
+      "archive": "archive/017-entry-017-data-uniform.png",
+      "caption": "Even strokes, fixed in the pipeline rather than by hand.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "017",
+      "title": "Even strokes, and a finish from anywhere",
+      "source": "assets/entry-017-repel6.png",
+      "archive": "archive/017-entry-017-repel6.png",
+      "caption": "The wider repel field.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "020",
+      "title": "Too timid — bring trails and shade",
+      "source": "assets/entry-020-heat-frames.png",
+      "archive": "archive/020-entry-020-heat-frames.png",
+      "caption": "Heat as material: trails, afterimages, wake.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "022",
+      "title": "Shuffle the order",
+      "source": "assets/entry-022-motif-sample.png",
+      "archive": "archive/022-entry-022-motif-sample.png",
+      "caption": "From the shuffled reel.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "023",
+      "title": "More motion, and a cross",
+      "source": "assets/entry-023-motion-reel.png",
+      "archive": "archive/023-entry-023-motion-reel.png",
+      "caption": "Fourteen motifs, sampled.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "023",
+      "title": "More motion, and a cross",
+      "source": "assets/entry-023-builder.png",
+      "archive": "archive/023-entry-023-builder.png",
+      "caption": "Running in the builder.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "028",
+      "title": "A dot matrix can’t morph",
+      "source": "assets/entry-028-b-vs-b2.png",
+      "archive": "archive/028-entry-028-b-vs-b2.png",
+      "caption": "Springy (left) versus strict LED physics (right).",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "029",
+      "title": "Five by five",
+      "source": "assets/entry-029-b3-reel.png",
+      "archive": "archive/029-entry-029-b3-reel.png",
+      "caption": "The 5×5 motif reel.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "029",
+      "title": "Five by five",
+      "source": "assets/entry-029-ignite.png",
+      "archive": "archive/029-entry-029-ignite.png",
+      "caption": "Pointer ignite: the pixels answer the cursor.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "029",
+      "title": "Five by five",
+      "source": "assets/entry-029-mini-states.png",
+      "archive": "archive/029-entry-029-mini-states.png",
+      "caption": "The chip states, redesigned.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "030",
+      "title": "White leads, green follows",
+      "source": "assets/entry-030-ghost-fixed.png",
+      "archive": "archive/030-entry-030-ghost-fixed.png",
+      "caption": "The spiral, opening clean.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "031",
+      "title": "A trigger on every animation",
+      "source": "assets/entry-031-per-stage-complete.png",
+      "archive": "archive/031-entry-031-per-stage-complete.png",
+      "caption": "Every chip and stage, its own trigger.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "032",
+      "title": "The finish grows out of the frame",
+      "source": "assets/entry-032-completion-fill.png",
+      "archive": "archive/032-entry-032-completion-fill.png",
+      "caption": "Interrupted mid-motif: flood, retract, home, mark.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "033",
+      "title": "Dissolve the hand-off; chips into a chat",
+      "source": "assets/entry-033-chip-chat.png",
+      "archive": "archive/033-entry-033-chip-chat.png",
+      "caption": "The chip where it actually lives.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "034",
+      "title": "Failure burns red",
+      "source": "assets/entry-034-builder-chips.png",
+      "archive": "archive/034-entry-034-builder-chips.png",
+      "caption": "Failure in red; researching scanning.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "035",
+      "title": "A front door",
+      "source": "assets/entry-035-landing.png",
+      "archive": "archive/035-entry-035-landing.png",
+      "caption": "The first front door.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "036",
+      "title": "Strip the wait bare",
+      "source": "assets/entry-036-minimal-wait.png",
+      "archive": "archive/036-entry-036-minimal-wait.png",
+      "caption": "Only the animation, the promise, and the tip.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "037",
+      "title": "Show it, don’t describe it",
+      "source": "assets/entry-037-landing-v2.png",
+      "archive": "archive/037-entry-037-landing-v2.png",
+      "caption": "Two live sections, three links.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "038",
+      "title": "A way back, and no chrome",
+      "source": "assets/entry-038-chips-in-chat.png",
+      "archive": "archive/038-entry-038-chips-in-chat.png",
+      "caption": "The chip at the end of the transcript.",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "040",
+      "title": "Audited against reality: the chip learns its fallbacks",
+      "source": "assets/entry-040-fifteen-states.png",
+      "archive": "archive/040-entry-040-fifteen-states.png",
+      "caption": "All fifteen chip states in the chat transcript, each with its host copy",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "042",
+      "title": "The prototype turns realistic",
+      "source": "assets/entry-042-realistic-turn.png",
+      "archive": "archive/042-entry-042-realistic-turn.png",
+      "caption": "Mid-build: the plan card with a working chip on the active step, the nudge line narrating, and the 5x5 loader in the preview pane",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "043",
+      "title": "Clearing the frame for a recording",
+      "source": "assets/entry-043-demo-mode.png",
+      "archive": "archive/043-entry-043-demo-mode.png",
+      "caption": "The builder in demo mode: a clean still frame with a single corner hint",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "044",
+      "title": "One dark, no chrome",
+      "source": "assets/entry-044-clean-frame.png",
+      "archive": "archive/044-entry-044-clean-frame.png",
+      "caption": "The builder mid-build: one continuous dark, the mark alone in the rail, nothing but the work in frame",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "045",
+      "title": "Every animation at once",
+      "source": "assets/entry-045-motif-grid.png",
+      "archive": "archive/045-entry-045-motif-grid.png",
+      "caption": "Thirteen dot-matrix animations in a grid, each labelled underneath",
+      "kind": "recorded-iteration"
+    },
+    {
+      "entry": "046",
+      "title": "Each animation, beside how it ends",
+      "source": "assets/entry-046-pairs.png",
+      "archive": "archive/046-entry-046-pairs.png",
+      "caption": "Thirteen cards, each pairing an animation with its completion, finishes rippling out of sync",
+      "kind": "recorded-iteration"
+    }
+  ],
+  "supporting_assets": {
+    "states": {
+      "loading": "states/loading.png",
+      "warming": "states/warming.png",
+      "thinking": "states/thinking.png",
+      "still-thinking": "states/still-thinking.png",
+      "almost-ready": "states/almost-ready.png",
+      "working": "states/working.png",
+      "researching": "states/researching.png",
+      "pipeline": "states/pipeline.png",
+      "waiting": "states/waiting.png",
+      "degraded": "states/degraded.png",
+      "reconnecting": "states/reconnecting.png",
+      "disconnected": "states/disconnected.png",
+      "stopped": "states/stopped.png",
+      "success": "states/success.png",
+      "failure": "states/failure.png"
+    },
+    "entry_042": {
+      "plan": "turn-042/plan.png",
+      "nudge": "turn-042/nudge.png",
+      "preview": "turn-042/preview.png"
+    },
+    "state_chip_crops": {
+      "loading": {
+        "x": 8,
+        "y": 221,
+        "width": 26,
+        "height": 26
+      },
+      "warming": {
+        "x": 8,
+        "y": 257,
+        "width": 26,
+        "height": 26
+      },
+      "thinking": {
+        "x": 8,
+        "y": 293,
+        "width": 26,
+        "height": 26
+      },
+      "still-thinking": {
+        "x": 8,
+        "y": 331,
+        "width": 26,
+        "height": 26
+      },
+      "almost-ready": {
+        "x": 8,
+        "y": 369,
+        "width": 26,
+        "height": 26
+      },
+      "working": {
+        "x": 8,
+        "y": 407,
+        "width": 26,
+        "height": 26
+      },
+      "researching": {
+        "x": 8,
+        "y": 450,
+        "width": 26,
+        "height": 26
+      },
+      "pipeline": {
+        "x": 8,
+        "y": 494,
+        "width": 26,
+        "height": 26
+      },
+      "waiting": {
+        "x": 8,
+        "y": 532,
+        "width": 26,
+        "height": 26
+      },
+      "degraded": {
+        "x": 8,
+        "y": 570,
+        "width": 26,
+        "height": 26
+      },
+      "reconnecting": {
+        "x": 8,
+        "y": 608,
+        "width": 26,
+        "height": 26
+      },
+      "disconnected": {
+        "x": 8,
+        "y": 650,
+        "width": 19,
+        "height": 26
+      },
+      "stopped": {
+        "x": 8,
+        "y": 692,
+        "width": 26,
+        "height": 26
+      },
+      "success": {
+        "x": 8,
+        "y": 730,
+        "width": 26,
+        "height": 26
+      },
+      "failure": {
+        "x": 8,
+        "y": 768,
+        "width": 26,
+        "height": 26
+      }
+    }
+  },
+  "shots": [
+    {
+      "order": 1,
+      "entry": "001",
+      "source": "assets/entry-001-lab.png",
+      "archive": "archive/001-entry-001-lab.png",
+      "source_caption": "First lab: three directions side by side.",
+      "crop": {
+        "x": 28,
+        "y": 260,
+        "width": 430,
+        "height": 405
+      },
+      "frame": "reel/001-entry-001.jpg",
+      "label": "FIRST DIRECTIONS",
+      "pose_label": "MOSAIC",
+      "duration": 0.2
+    },
+    {
+      "order": 2,
+      "entry": "001",
+      "source": "assets/entry-001-lab.png",
+      "archive": "archive/001-entry-001-lab.png",
+      "source_caption": "First lab: three directions side by side.",
+      "crop": {
+        "x": 482,
+        "y": 260,
+        "width": 430,
+        "height": 405
+      },
+      "frame": "reel/002-entry-001.jpg",
+      "label": "FIRST DIRECTIONS",
+      "pose_label": "COUNTER",
+      "duration": 0.2
+    },
+    {
+      "order": 3,
+      "entry": "001",
+      "source": "assets/entry-001-lab.png",
+      "archive": "archive/001-entry-001-lab.png",
+      "source_caption": "First lab: three directions side by side.",
+      "crop": {
+        "x": 936,
+        "y": 260,
+        "width": 430,
+        "height": 405
+      },
+      "frame": "reel/003-entry-001.jpg",
+      "label": "FIRST DIRECTIONS",
+      "pose_label": "SEED",
+      "duration": 0.2
+    },
+    {
+      "order": 4,
+      "entry": "002",
+      "source": "assets/entry-002-review.png",
+      "archive": "archive/002-entry-002-review.png",
+      "source_caption": "Three variants, awaiting judgement.",
+      "crop": {
+        "x": 32,
+        "y": 275,
+        "width": 450,
+        "height": 420
+      },
+      "frame": "reel/004-entry-002.jpg",
+      "label": "REVIEW / NO CHANGE",
+      "pose_label": "MOSAIC / REVIEW",
+      "duration": 0.2
+    },
+    {
+      "order": 5,
+      "entry": "002",
+      "source": "assets/entry-002-review.png",
+      "archive": "archive/002-entry-002-review.png",
+      "source_caption": "Three variants, awaiting judgement.",
+      "crop": {
+        "x": 495,
+        "y": 275,
+        "width": 450,
+        "height": 420
+      },
+      "frame": "reel/005-entry-002.jpg",
+      "label": "REVIEW / NO CHANGE",
+      "pose_label": "COUNTER / REVIEW",
+      "duration": 0.5
+    },
+    {
+      "order": 6,
+      "entry": "002",
+      "source": "assets/entry-002-review.png",
+      "archive": "archive/002-entry-002-review.png",
+      "source_caption": "Three variants, awaiting judgement.",
+      "crop": {
+        "x": 950,
+        "y": 275,
+        "width": 450,
+        "height": 420
+      },
+      "frame": "reel/006-entry-002.jpg",
+      "label": "REVIEW / NO CHANGE",
+      "pose_label": "SEED / REVIEW",
+      "duration": 0.2
+    },
+    {
+      "order": 7,
+      "entry": "003",
+      "source": "assets/entry-003-loop-states.png",
+      "archive": "archive/003-entry-003-loop-states.png",
+      "source_caption": "The ring’s rest states, walked one step at a time.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/007-entry-003.jpg",
+      "label": "NOISE REJECTED",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 8,
+      "entry": "003",
+      "source": "assets/entry-003-loop-states.png",
+      "archive": "archive/003-entry-003-loop-states.png",
+      "source_caption": "The ring’s rest states, walked one step at a time.",
+      "crop": {
+        "x": 660,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/008-entry-003.jpg",
+      "label": "NOISE REJECTED",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 9,
+      "entry": "003",
+      "source": "assets/entry-003-loop-states.png",
+      "archive": "archive/003-entry-003-loop-states.png",
+      "source_caption": "The ring’s rest states, walked one step at a time.",
+      "crop": {
+        "x": 1100,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/009-entry-003.jpg",
+      "label": "NOISE REJECTED",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 10,
+      "entry": "003",
+      "source": "assets/entry-003-transitions.png",
+      "archive": "archive/003-entry-003-transitions.png",
+      "source_caption": "Mid-transition: cells travelling, not crossfading.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/010-entry-003.jpg",
+      "label": "NOISE REJECTED",
+      "pose_label": "SHARED CELLS",
+      "duration": 0.2
+    },
+    {
+      "order": 11,
+      "entry": "003",
+      "source": "assets/entry-003-transitions.png",
+      "archive": "archive/003-entry-003-transitions.png",
+      "source_caption": "Mid-transition: cells travelling, not crossfading.",
+      "crop": {
+        "x": 220,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/011-entry-003.jpg",
+      "label": "NOISE REJECTED",
+      "pose_label": "CELLS TRAVEL",
+      "duration": 0.5
+    },
+    {
+      "order": 12,
+      "entry": "003",
+      "source": "assets/entry-003-transitions.png",
+      "archive": "archive/003-entry-003-transitions.png",
+      "source_caption": "Mid-transition: cells travelling, not crossfading.",
+      "crop": {
+        "x": 440,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/012-entry-003.jpg",
+      "label": "NOISE REJECTED",
+      "pose_label": "GAPS RAIN IN",
+      "duration": 0.2
+    },
+    {
+      "order": 13,
+      "entry": "006",
+      "source": "assets/entry-006-green-choreo.png",
+      "archive": "archive/006-entry-006-green-choreo.png",
+      "source_caption": "The green phase: square forming, block dividing, trails mid-morph.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/013-entry-006.jpg",
+      "label": "GREEN + TRAILS",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 14,
+      "entry": "006",
+      "source": "assets/entry-006-green-choreo.png",
+      "archive": "archive/006-entry-006-green-choreo.png",
+      "source_caption": "The green phase: square forming, block dividing, trails mid-morph.",
+      "crop": {
+        "x": 660,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/014-entry-006.jpg",
+      "label": "GREEN + TRAILS",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 15,
+      "entry": "006",
+      "source": "assets/entry-006-green-choreo.png",
+      "archive": "archive/006-entry-006-green-choreo.png",
+      "source_caption": "The green phase: square forming, block dividing, trails mid-morph.",
+      "crop": {
+        "x": 1100,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/015-entry-006.jpg",
+      "label": "GREEN + TRAILS",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 16,
+      "entry": "007",
+      "source": "assets/entry-007-square-stage.png",
+      "archive": "archive/007-entry-007-square-stage.png",
+      "source_caption": "First attempt at the idea. The bowl slid away; it needed to un-draw instead.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/016-entry-007.jpg",
+      "label": "THE SQUARE IS THE STAGE",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 17,
+      "entry": "009",
+      "source": "assets/entry-009-retract-mid.png",
+      "archive": "archive/009-entry-009-retract-mid.png",
+      "source_caption": "The bowl un-drawing along its own curve.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/017-entry-009.jpg",
+      "label": "DRAW THE MARK",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 18,
+      "entry": "009",
+      "source": "assets/entry-009-drawgrid-v.png",
+      "archive": "archive/009-entry-009-drawgrid-v.png",
+      "source_caption": "Verticals draw first…",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/018-entry-009.jpg",
+      "label": "DRAW THE MARK",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 19,
+      "entry": "009",
+      "source": "assets/entry-009-drawgrid-h.png",
+      "archive": "archive/009-entry-009-drawgrid-h.png",
+      "source_caption": "…then horizontals.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/019-entry-009.jpg",
+      "label": "DRAW THE MARK",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.5
+    },
+    {
+      "order": 20,
+      "entry": "009",
+      "source": "assets/entry-009-redraw-mid.png",
+      "archive": "archive/009-entry-009-redraw-mid.png",
+      "source_caption": "The reverse: the bowl re-draws tip-first.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/020-entry-009.jpg",
+      "label": "DRAW THE MARK",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 21,
+      "entry": "010",
+      "source": "assets/entry-010-feature-shapes.png",
+      "archive": "archive/010-entry-010-feature-shapes.png",
+      "source_caption": "The six features, as audited.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/021-entry-010.jpg",
+      "label": "FEATURE ICONS",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 22,
+      "entry": "010",
+      "source": "assets/entry-010-feature-shapes.png",
+      "archive": "archive/010-entry-010-feature-shapes.png",
+      "source_caption": "The six features, as audited.",
+      "crop": {
+        "x": 880,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/022-entry-010.jpg",
+      "label": "FEATURE ICONS",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 23,
+      "entry": "010",
+      "source": "assets/entry-010-feature-shapes.png",
+      "archive": "archive/010-entry-010-feature-shapes.png",
+      "source_caption": "The six features, as audited.",
+      "crop": {
+        "x": 1540,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/023-entry-010.jpg",
+      "label": "FEATURE ICONS",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 24,
+      "entry": "011",
+      "source": "assets/entry-011-reveal-wave.png",
+      "archive": "archive/011-entry-011-reveal-wave.png",
+      "source_caption": "The light-up wave. Nothing moves.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/024-entry-011.jpg",
+      "label": "FIXED GRID",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 25,
+      "entry": "011",
+      "source": "assets/entry-011-reveal-wave.png",
+      "archive": "archive/011-entry-011-reveal-wave.png",
+      "source_caption": "The light-up wave. Nothing moves.",
+      "crop": {
+        "x": 440,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/025-entry-011.jpg",
+      "label": "FIXED GRID",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.5
+    },
+    {
+      "order": 26,
+      "entry": "011",
+      "source": "assets/entry-011-reveal-wave.png",
+      "archive": "archive/011-entry-011-reveal-wave.png",
+      "source_caption": "The light-up wave. Nothing moves.",
+      "crop": {
+        "x": 660,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/026-entry-011.jpg",
+      "label": "FIXED GRID",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 27,
+      "entry": "012",
+      "source": "assets/entry-012-final-icons.png",
+      "archive": "archive/012-entry-012-final-icons.png",
+      "source_caption": "Centred icons on an invisible matrix.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/027-entry-012.jpg",
+      "label": "INVISIBLE MATRIX",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 28,
+      "entry": "012",
+      "source": "assets/entry-012-final-icons.png",
+      "archive": "archive/012-entry-012-final-icons.png",
+      "source_caption": "Centred icons on an invisible matrix.",
+      "crop": {
+        "x": 660,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/028-entry-012.jpg",
+      "label": "INVISIBLE MATRIX",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 29,
+      "entry": "012",
+      "source": "assets/entry-012-final-icons.png",
+      "archive": "archive/012-entry-012-final-icons.png",
+      "source_caption": "Centred icons on an invisible matrix.",
+      "crop": {
+        "x": 1100,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/029-entry-012.jpg",
+      "label": "INVISIBLE MATRIX",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 30,
+      "entry": "013",
+      "source": "assets/entry-013-eleven-icons.png",
+      "archive": "archive/013-entry-013-eleven-icons.png",
+      "source_caption": "The eleven icons, generated from source.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/030-entry-013.jpg",
+      "label": "SOURCE ICONS",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 31,
+      "entry": "013",
+      "source": "assets/entry-013-eleven-icons.png",
+      "archive": "archive/013-entry-013-eleven-icons.png",
+      "source_caption": "The eleven icons, generated from source.",
+      "crop": {
+        "x": 1100,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/031-entry-013.jpg",
+      "label": "SOURCE ICONS",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 32,
+      "entry": "013",
+      "source": "assets/entry-013-eleven-icons.png",
+      "archive": "archive/013-entry-013-eleven-icons.png",
+      "source_caption": "The eleven icons, generated from source.",
+      "crop": {
+        "x": 2200,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/032-entry-013.jpg",
+      "label": "SOURCE ICONS",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 33,
+      "entry": "013",
+      "source": "assets/entry-013-icon-sources.png",
+      "archive": "archive/013-entry-013-icon-sources.png",
+      "source_caption": "The originals they came from.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 160,
+        "height": 160
+      },
+      "frame": "reel/033-entry-013.jpg",
+      "label": "SOURCE ICONS",
+      "pose_label": "SOURCE ICONS",
+      "duration": 0.2
+    },
+    {
+      "order": 34,
+      "entry": "013",
+      "source": "assets/entry-013-icon-sources.png",
+      "archive": "archive/013-entry-013-icon-sources.png",
+      "source_caption": "The originals they came from.",
+      "crop": {
+        "x": 480,
+        "y": 0,
+        "width": 160,
+        "height": 160
+      },
+      "frame": "reel/034-entry-013.jpg",
+      "label": "SOURCE ICONS",
+      "pose_label": "SOURCE ICONS",
+      "duration": 0.2
+    },
+    {
+      "order": 35,
+      "entry": "013",
+      "source": "assets/entry-013-icon-sources.png",
+      "archive": "archive/013-entry-013-icon-sources.png",
+      "source_caption": "The originals they came from.",
+      "crop": {
+        "x": 960,
+        "y": 0,
+        "width": 160,
+        "height": 160
+      },
+      "frame": "reel/035-entry-013.jpg",
+      "label": "SOURCE ICONS",
+      "pose_label": "SOURCE ICONS",
+      "duration": 0.2
+    },
+    {
+      "order": 36,
+      "entry": "014",
+      "source": "assets/entry-014-mini-states.png",
+      "archive": "archive/014-entry-014-mini-states.png",
+      "source_caption": "Nine states, mapped to what the agent is actually doing.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 448,
+        "height": 250
+      },
+      "frame": "reel/036-entry-014.jpg",
+      "label": "THE CHIP SPEAKS",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.5
+    },
+    {
+      "order": 37,
+      "entry": "015",
+      "source": "assets/entry-015-builder.png",
+      "archive": "archive/015-entry-015-builder.png",
+      "source_caption": "In situ for the first time.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": "reel/037-entry-015.jpg",
+      "label": "IN THE BUILDER",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 38,
+      "entry": "016",
+      "source": "assets/entry-016-particles.png",
+      "archive": "archive/016-entry-016-particles.png",
+      "source_caption": "The icons answering the cursor.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 112,
+        "height": 112
+      },
+      "frame": "reel/038-entry-016.jpg",
+      "label": "POINTER RESPONSE",
+      "pose_label": "REST",
+      "duration": 0.2
+    },
+    {
+      "order": 39,
+      "entry": "016",
+      "source": "assets/entry-016-particles.png",
+      "archive": "archive/016-entry-016-particles.png",
+      "source_caption": "The icons answering the cursor.",
+      "crop": {
+        "x": 224,
+        "y": 0,
+        "width": 112,
+        "height": 112
+      },
+      "frame": "reel/039-entry-016.jpg",
+      "label": "POINTER RESPONSE",
+      "pose_label": "SCATTER",
+      "duration": 0.2
+    },
+    {
+      "order": 40,
+      "entry": "016",
+      "source": "assets/entry-016-particles.png",
+      "archive": "archive/016-entry-016-particles.png",
+      "source_caption": "The icons answering the cursor.",
+      "crop": {
+        "x": 336,
+        "y": 0,
+        "width": 112,
+        "height": 112
+      },
+      "frame": "reel/040-entry-016.jpg",
+      "label": "POINTER RESPONSE",
+      "pose_label": "SETTLE",
+      "duration": 0.2
+    },
+    {
+      "order": 41,
+      "entry": "017",
+      "source": "assets/entry-017-data-uniform.png",
+      "archive": "archive/017-entry-017-data-uniform.png",
+      "source_caption": "Even strokes, fixed in the pipeline rather than by hand.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 112,
+        "height": 112
+      },
+      "frame": "reel/041-entry-017.jpg",
+      "label": "FINISH FROM ANYWHERE",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 42,
+      "entry": "017",
+      "source": "assets/entry-017-repel6.png",
+      "archive": "archive/017-entry-017-repel6.png",
+      "source_caption": "The wider repel field.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 112,
+        "height": 112
+      },
+      "frame": "reel/042-entry-017.jpg",
+      "label": "FINISH FROM ANYWHERE",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 43,
+      "entry": "020",
+      "source": "assets/entry-020-heat-frames.png",
+      "archive": "archive/020-entry-020-heat-frames.png",
+      "source_caption": "Heat as material: trails, afterimages, wake.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/043-entry-020.jpg",
+      "label": "HEAT + TRAILS",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 44,
+      "entry": "020",
+      "source": "assets/entry-020-heat-frames.png",
+      "archive": "archive/020-entry-020-heat-frames.png",
+      "source_caption": "Heat as material: trails, afterimages, wake.",
+      "crop": {
+        "x": 660,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/044-entry-020.jpg",
+      "label": "HEAT + TRAILS",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 45,
+      "entry": "020",
+      "source": "assets/entry-020-heat-frames.png",
+      "archive": "archive/020-entry-020-heat-frames.png",
+      "source_caption": "Heat as material: trails, afterimages, wake.",
+      "crop": {
+        "x": 1100,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/045-entry-020.jpg",
+      "label": "HEAT + TRAILS",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 46,
+      "entry": "022",
+      "source": "assets/entry-022-motif-sample.png",
+      "archive": "archive/022-entry-022-motif-sample.png",
+      "source_caption": "From the shuffled reel.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/046-entry-022.jpg",
+      "label": "SEEDED SHUFFLE",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 47,
+      "entry": "023",
+      "source": "assets/entry-023-motion-reel.png",
+      "archive": "archive/023-entry-023-motion-reel.png",
+      "source_caption": "Fourteen motifs, sampled.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/047-entry-023.jpg",
+      "label": "MORE MOTIFS",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 48,
+      "entry": "023",
+      "source": "assets/entry-023-motion-reel.png",
+      "archive": "archive/023-entry-023-motion-reel.png",
+      "source_caption": "Fourteen motifs, sampled.",
+      "crop": {
+        "x": 1320,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/048-entry-023.jpg",
+      "label": "MORE MOTIFS",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 49,
+      "entry": "023",
+      "source": "assets/entry-023-motion-reel.png",
+      "archive": "archive/023-entry-023-motion-reel.png",
+      "source_caption": "Fourteen motifs, sampled.",
+      "crop": {
+        "x": 2420,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/049-entry-023.jpg",
+      "label": "MORE MOTIFS",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 50,
+      "entry": "023",
+      "source": "assets/entry-023-builder.png",
+      "archive": "archive/023-entry-023-builder.png",
+      "source_caption": "Running in the builder.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": "reel/050-entry-023.jpg",
+      "label": "MORE MOTIFS",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 51,
+      "entry": "028",
+      "source": "assets/entry-028-b-vs-b2.png",
+      "archive": "archive/028-entry-028-b-vs-b2.png",
+      "source_caption": "Springy (left) versus strict LED physics (right).",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 440,
+        "height": 220
+      },
+      "frame": "reel/051-entry-028.jpg",
+      "label": "NO MORPHING",
+      "pose_label": "SPRING / FIXED COMPARISON",
+      "duration": 0.5
+    },
+    {
+      "order": 52,
+      "entry": "029",
+      "source": "assets/entry-029-b3-reel.png",
+      "archive": "archive/029-entry-029-b3-reel.png",
+      "source_caption": "The 5×5 motif reel.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/052-entry-029.jpg",
+      "label": "FIVE BY FIVE",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 53,
+      "entry": "029",
+      "source": "assets/entry-029-b3-reel.png",
+      "archive": "archive/029-entry-029-b3-reel.png",
+      "source_caption": "The 5×5 motif reel.",
+      "crop": {
+        "x": 1320,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/053-entry-029.jpg",
+      "label": "FIVE BY FIVE",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.5
+    },
+    {
+      "order": 54,
+      "entry": "029",
+      "source": "assets/entry-029-b3-reel.png",
+      "archive": "archive/029-entry-029-b3-reel.png",
+      "source_caption": "The 5×5 motif reel.",
+      "crop": {
+        "x": 2420,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/054-entry-029.jpg",
+      "label": "FIVE BY FIVE",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 55,
+      "entry": "029",
+      "source": "assets/entry-029-ignite.png",
+      "archive": "archive/029-entry-029-ignite.png",
+      "source_caption": "Pointer ignite: the pixels answer the cursor.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/055-entry-029.jpg",
+      "label": "FIVE BY FIVE",
+      "pose_label": "AT REST",
+      "duration": 0.2
+    },
+    {
+      "order": 56,
+      "entry": "029",
+      "source": "assets/entry-029-ignite.png",
+      "archive": "archive/029-entry-029-ignite.png",
+      "source_caption": "Pointer ignite: the pixels answer the cursor.",
+      "crop": {
+        "x": 220,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/056-entry-029.jpg",
+      "label": "FIVE BY FIVE",
+      "pose_label": "POINTER IGNITE",
+      "duration": 0.2
+    },
+    {
+      "order": 57,
+      "entry": "029",
+      "source": "assets/entry-029-mini-states.png",
+      "archive": "archive/029-entry-029-mini-states.png",
+      "source_caption": "The chip states, redesigned.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 448,
+        "height": 250
+      },
+      "frame": "reel/057-entry-029.jpg",
+      "label": "FIVE BY FIVE",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 58,
+      "entry": "030",
+      "source": "assets/entry-030-ghost-fixed.png",
+      "archive": "archive/030-entry-030-ghost-fixed.png",
+      "source_caption": "The spiral, opening clean.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/058-entry-030.jpg",
+      "label": "WHITE LEADS GREEN",
+      "pose_label": "RECORDED POSE 01 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 59,
+      "entry": "030",
+      "source": "assets/entry-030-ghost-fixed.png",
+      "archive": "archive/030-entry-030-ghost-fixed.png",
+      "source_caption": "The spiral, opening clean.",
+      "crop": {
+        "x": 880,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/059-entry-030.jpg",
+      "label": "WHITE LEADS GREEN",
+      "pose_label": "RECORDED POSE 02 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 60,
+      "entry": "030",
+      "source": "assets/entry-030-ghost-fixed.png",
+      "archive": "archive/030-entry-030-ghost-fixed.png",
+      "source_caption": "The spiral, opening clean.",
+      "crop": {
+        "x": 1540,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/060-entry-030.jpg",
+      "label": "WHITE LEADS GREEN",
+      "pose_label": "RECORDED POSE 03 / 03",
+      "duration": 0.2
+    },
+    {
+      "order": 61,
+      "entry": "031",
+      "source": "assets/entry-031-per-stage-complete.png",
+      "archive": "archive/031-entry-031-per-stage-complete.png",
+      "source_caption": "Every chip and stage, its own trigger.",
+      "crop": {
+        "x": 42,
+        "y": 72,
+        "width": 364,
+        "height": 350
+      },
+      "frame": "reel/061-entry-031.jpg",
+      "label": "COMPLETE FROM ANY STAGE",
+      "pose_label": "WARMING / THINKING",
+      "duration": 0.2
+    },
+    {
+      "order": 62,
+      "entry": "031",
+      "source": "assets/entry-031-per-stage-complete.png",
+      "archive": "archive/031-entry-031-per-stage-complete.png",
+      "source_caption": "Every chip and stage, its own trigger.",
+      "crop": {
+        "x": 42,
+        "y": 426,
+        "width": 364,
+        "height": 350
+      },
+      "frame": "reel/062-entry-031.jpg",
+      "label": "COMPLETE FROM ANY STAGE",
+      "pose_label": "PIPELINE / SUCCESS",
+      "duration": 0.2
+    },
+    {
+      "order": 63,
+      "entry": "032",
+      "source": "assets/entry-032-completion-fill.png",
+      "archive": "archive/032-entry-032-completion-fill.png",
+      "source_caption": "Interrupted mid-motif: flood, retract, home, mark.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/063-entry-032.jpg",
+      "label": "SEED THE FINISH",
+      "pose_label": "LIT SEED",
+      "duration": 0.2
+    },
+    {
+      "order": 64,
+      "entry": "032",
+      "source": "assets/entry-032-completion-fill.png",
+      "archive": "archive/032-entry-032-completion-fill.png",
+      "source_caption": "Interrupted mid-motif: flood, retract, home, mark.",
+      "crop": {
+        "x": 880,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/064-entry-032.jpg",
+      "label": "SEED THE FINISH",
+      "pose_label": "FLOOD",
+      "duration": 0.5
+    },
+    {
+      "order": 65,
+      "entry": "032",
+      "source": "assets/entry-032-completion-fill.png",
+      "archive": "archive/032-entry-032-completion-fill.png",
+      "source_caption": "Interrupted mid-motif: flood, retract, home, mark.",
+      "crop": {
+        "x": 1760,
+        "y": 0,
+        "width": 220,
+        "height": 220
+      },
+      "frame": "reel/065-entry-032.jpg",
+      "label": "SEED THE FINISH",
+      "pose_label": "RETRACT",
+      "duration": 0.2
+    },
+    {
+      "order": 66,
+      "entry": "033",
+      "source": "assets/entry-033-chip-chat.png",
+      "archive": "archive/033-entry-033-chip-chat.png",
+      "source_caption": "The chip where it actually lives.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 454,
+        "height": 605
+      },
+      "frame": "reel/066-entry-033.jpg",
+      "label": "CHIP IN CHAT",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 67,
+      "entry": "034",
+      "source": "assets/entry-034-builder-chips.png",
+      "archive": "archive/034-entry-034-builder-chips.png",
+      "source_caption": "Failure in red; researching scanning.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 479,
+        "height": 194
+      },
+      "frame": "reel/067-entry-034.jpg",
+      "label": "FAILURE SIGNAL",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 68,
+      "entry": "035",
+      "source": "assets/entry-035-landing.png",
+      "archive": "archive/035-entry-035-landing.png",
+      "source_caption": "The first front door.",
+      "crop": {
+        "x": 210,
+        "y": 45,
+        "width": 1010,
+        "height": 560
+      },
+      "frame": "reel/068-entry-035.jpg",
+      "label": "A FRONT DOOR",
+      "pose_label": "THE BUILD WAIT",
+      "duration": 0.2
+    },
+    {
+      "order": 69,
+      "entry": "036",
+      "source": "assets/entry-036-minimal-wait.png",
+      "archive": "archive/036-entry-036-minimal-wait.png",
+      "source_caption": "Only the animation, the promise, and the tip.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": "reel/069-entry-036.jpg",
+      "label": "THE MINIMUM WAIT",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 70,
+      "entry": "037",
+      "source": "assets/entry-037-landing-v2.png",
+      "archive": "archive/037-entry-037-landing-v2.png",
+      "source_caption": "Two live sections, three links.",
+      "crop": {
+        "x": 240,
+        "y": 120,
+        "width": 800,
+        "height": 530
+      },
+      "frame": "reel/070-entry-037.jpg",
+      "label": "SHOW IT LIVE",
+      "pose_label": "BUILDER WAIT",
+      "duration": 0.2
+    },
+    {
+      "order": 71,
+      "entry": "037",
+      "source": "assets/entry-037-landing-v2.png",
+      "archive": "archive/037-entry-037-landing-v2.png",
+      "source_caption": "Two live sections, three links.",
+      "crop": {
+        "x": 240,
+        "y": 655,
+        "width": 800,
+        "height": 460
+      },
+      "frame": "reel/071-entry-037.jpg",
+      "label": "SHOW IT LIVE",
+      "pose_label": "CHIP IN CONTEXT",
+      "duration": 0.2
+    },
+    {
+      "order": 72,
+      "entry": "038",
+      "source": "assets/entry-038-chips-in-chat.png",
+      "archive": "archive/038-entry-038-chips-in-chat.png",
+      "source_caption": "The chip at the end of the transcript.",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 950
+      },
+      "frame": "reel/072-entry-038.jpg",
+      "label": "IN THE TRANSCRIPT",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 73,
+      "entry": "040",
+      "source": "assets/entry-040-fifteen-states.png",
+      "archive": "archive/040-entry-040-fifteen-states.png",
+      "source_caption": "All fifteen chip states in the chat transcript, each with its host copy",
+      "crop": {
+        "x": 8,
+        "y": 165,
+        "width": 418,
+        "height": 330
+      },
+      "frame": "reel/073-entry-040.jpg",
+      "label": "FIFTEEN STATES",
+      "pose_label": "LADDER / WORK",
+      "duration": 0.2
+    },
+    {
+      "order": 74,
+      "entry": "040",
+      "source": "assets/entry-040-fifteen-states.png",
+      "archive": "archive/040-entry-040-fifteen-states.png",
+      "source_caption": "All fifteen chip states in the chat transcript, each with its host copy",
+      "crop": {
+        "x": 8,
+        "y": 455,
+        "width": 418,
+        "height": 330
+      },
+      "frame": "reel/074-entry-040.jpg",
+      "label": "FIFTEEN STATES",
+      "pose_label": "EXCEPTIONS / FINISH",
+      "duration": 0.5
+    },
+    {
+      "order": 75,
+      "entry": "042",
+      "source": "assets/entry-042-realistic-turn.png",
+      "archive": "archive/042-entry-042-realistic-turn.png",
+      "source_caption": "Mid-build: the plan card with a working chip on the active step, the nudge line narrating, and the 5x5 loader in the preview pane",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": "reel/075-entry-042.jpg",
+      "label": "RECORDED CONTRACT",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.5
+    },
+    {
+      "order": 76,
+      "entry": "043",
+      "source": "assets/entry-043-demo-mode.png",
+      "archive": "archive/043-entry-043-demo-mode.png",
+      "source_caption": "The builder in demo mode: a clean still frame with a single corner hint",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": "reel/076-entry-043.jpg",
+      "label": "DEMO FRAME",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 77,
+      "entry": "044",
+      "source": "assets/entry-044-clean-frame.png",
+      "archive": "archive/044-entry-044-clean-frame.png",
+      "source_caption": "The builder mid-build: one continuous dark, the mark alone in the rail, nothing but the work in frame",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": "reel/077-entry-044.jpg",
+      "label": "ONE CONTINUOUS DARK",
+      "pose_label": "RECORDED CAPTURE",
+      "duration": 0.2
+    },
+    {
+      "order": 78,
+      "entry": "045",
+      "source": "assets/entry-045-motif-grid.png",
+      "archive": "archive/045-entry-045-motif-grid.png",
+      "source_caption": "Thirteen dot-matrix animations in a grid, each labelled underneath",
+      "crop": {
+        "x": 165,
+        "y": 30,
+        "width": 340,
+        "height": 235
+      },
+      "frame": "reel/078-entry-045.jpg",
+      "label": "MOTIF GRID",
+      "pose_label": "MATRIX / ROULETTE",
+      "duration": 0.2
+    },
+    {
+      "order": 79,
+      "entry": "045",
+      "source": "assets/entry-045-motif-grid.png",
+      "archive": "archive/045-entry-045-motif-grid.png",
+      "source_caption": "Thirteen dot-matrix animations in a grid, each labelled underneath",
+      "crop": {
+        "x": 520,
+        "y": 30,
+        "width": 360,
+        "height": 235
+      },
+      "frame": "reel/079-entry-045.jpg",
+      "label": "MOTIF GRID",
+      "pose_label": "SPIRAL / RADAR",
+      "duration": 0.2
+    },
+    {
+      "order": 80,
+      "entry": "046",
+      "source": "assets/entry-046-pairs.png",
+      "archive": "archive/046-entry-046-pairs.png",
+      "source_caption": "Thirteen cards, each pairing an animation with its completion, finishes rippling out of sync",
+      "crop": {
+        "x": 46,
+        "y": 255,
+        "width": 380,
+        "height": 225
+      },
+      "frame": "reel/080-entry-046.jpg",
+      "label": "MOTIF / FINISH PAIRS",
+      "pose_label": "FULL LOOP / FINISH",
+      "duration": 0.2
+    },
+    {
+      "order": 81,
+      "entry": "046",
+      "source": "assets/entry-046-pairs.png",
+      "archive": "archive/046-entry-046-pairs.png",
+      "source_caption": "Thirteen cards, each pairing an animation with its completion, finishes rippling out of sync",
+      "crop": {
+        "x": 450,
+        "y": 255,
+        "width": 380,
+        "height": 225
+      },
+      "frame": "reel/081-entry-046.jpg",
+      "label": "MOTIF / FINISH PAIRS",
+      "pose_label": "MATRIX RAIN / FINISH",
+      "duration": 0.6
+    },
+    {
+      "order": 82,
+      "entry": "046",
+      "source": "assets/entry-046-pairs.png",
+      "archive": "archive/046-entry-046-pairs.png",
+      "source_caption": "Thirteen cards, each pairing an animation with its completion, finishes rippling out of sync",
+      "crop": {
+        "x": 854,
+        "y": 255,
+        "width": 380,
+        "height": 225
+      },
+      "frame": "reel/082-entry-046.jpg",
+      "label": "MOTIF / FINISH PAIRS",
+      "pose_label": "ROULETTE / FINISH",
+      "duration": 0.2
+    }
+  ],
+  "playback_speed": 2
+}

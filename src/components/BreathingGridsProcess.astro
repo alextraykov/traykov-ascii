@@ -1,0 +1,41 @@
+---
+import BreathingGrid from "./BreathingGrid.astro";
+import OverviewVideo from "./OverviewVideo.astro";
+import type { HomepageVideo } from "../lib/homepage-overviews";
+
+const paveOverview: HomepageVideo = {
+  kind: "video",
+  src: "/case-studies/media/pave-portfolio-loop.mp4",
+  poster: "/case-studies/media/homepage-posters/pave-overview.jpg",
+  width: 960,
+  height: 540,
+  title: "Pave in 26 seconds",
+  description: "A quick look at the builder, Plan Mode, versioning, Direct Edit, and an early workflow idea.",
+  label: "Pave product overview"
+};
+---
+
+<section class="pave-loading-process" aria-label="Breathing grids for Pave">
+  <section class="pave-loading-process__chapter" id="breathing-grids-film" aria-labelledby="breathing-grids-film-title">
+    <h2 id="breathing-grids-film-title">The geometry behind the grid.</h2>
+    <BreathingGrid id="breathing-breakdown" initialVariant="film" />
+    <p>Blocks and Pixel dither were unshipped explorations. Both were cut. How it’s built starts with an empty grid, zooms into one cell’s wireframe, and holds so you can inspect its geometry.</p>
+  </section>
+
+  <section class="pave-loading-process__chapter" id="breathing-grids-blocks" aria-labelledby="breathing-grids-blocks-title">
+    <h2 id="breathing-grids-blocks-title">Blocks</h2>
+    <p>The shapes share a square module: quarters and halves come from the same circles; bars and arches occupy whole multiples of the same unit. Edges land on device pixels, so the composition can change without opening seams. Squares unfold, arcs sweep, and discs grow; a corner-ordered delay connects those different motions. The How it’s built tab exposes the construction grid, outlines, curve guides, and the timing view for each part’s delay and easing.</p>
+  </section>
+
+  <section class="pave-loading-process__chapter" id="breathing-grids-dither" aria-labelledby="breathing-grids-dither-title">
+    <h2 id="breathing-grids-dither-title">Pixel dither</h2>
+    <p>Pixel dither carries the same tiling onto an ordered pixel grid. A two-colour Bayer-8 threshold turns the same geometry into shaded pixels. Domes, rims, and short cast shadows suggest depth without adding another palette. Rotation dissolves into a new orientation; the cursor brightens the pixels it crosses. The surface changes while the composition rules stay shared.</p>
+  </section>
+
+  <p>Colour has limits too: red is reserved for small figures, never a full cell background. In dark mode, the grounds become dark surfaces and the figures carry the greens. These are prototype decisions you can inspect here; neither direction reached the product, and there is no measured usability outcome to claim.</p>
+
+  <section class="pave-loading-process__chapter pave-loading-process__chapter--next" aria-labelledby="pave-overview-title">
+    <h2 id="pave-overview-title"><a href="/case-studies/designing-pave/">Explore Designing Pave</a></h2>
+    <OverviewVideo video={paveOverview} studyTitle="Pave" captionId="pave-overview-caption" lead />
+  </section>
+</section>

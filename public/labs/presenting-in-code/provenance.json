@@ -1,0 +1,26 @@
+{
+  "sourceArchive": "presentations-in-code.zip",
+  "sourceArchiveSha256": "37651a562a06973a1820609b9f2bdb463f1161586416adbc3a11c7ce6751bd48",
+  "sourceEntryDate": "2026-10-07 10:36",
+  "sourceRuntimeSha256": "2d9af60ed9e588ed917dcc85892ea27381313e8fc464e4dbba268b2380581262",
+  "sourceStylesSha256": "009fa00f6c23a43e09133974bc22b3bfae6211ed995047c22d0943073f348283",
+  "tutorialSlides": 13,
+  "tutorialStates": 45,
+  "skills": 10,
+  "adaptations": [
+    "Tutorial-only reference-deck registry; unknown deck hashes return to #making-of.",
+    "Shared screen class roots renamed as prescribed by original vite.tutorial.config.ts.",
+    "Local Geist fonts replace Google Fonts requests; existing third-party notices retained.",
+    "Named exports expose unchanged live primitives for the continuous website; no slide host is mounted on the website.",
+    "Shadow DOM isolates original component CSS; :root selectors map to :host.",
+    "Website adapter adds responsive artwork fitting, native-size measured notes and projected component focus; source geometry and measurement functions are reused.",
+    "Website layer transitions use portfolio duration/stagger tokens and shared reduced/paused state; original standalone deck timing remains unchanged.",
+    "Five no-JavaScript stills are captured from the working website primitives; ten skill files and original blueprint asset are unchanged.",
+    "Direct live-screen pointing uses original projected component geometry with rendered corner anchors; hover identifies, click/tap/keyboard pins genuine layer lift/dim/zoom, and an on-screen control resets inspection.",
+    "Website orthographic stack and plane matrices are composed into equivalent 2D plane transforms in both browsers, preserving source geometry and motion while avoiding WebKit flattened-face painting.",
+    "All website demonstrations expose native measured on-screen targets and controls; original Camera and BlueprintScreen produce actual framing and reversible state changes. Camera rectangles are derived from live layout for complete-component framing, while original standalone close-ups remain unchanged.",
+    "Original anchor measurement follows the selected component and measured footer note during visible transitions/resize. Website camera/FLIP uses portfolio spatial/fade durations and original cut lifecycle for reduced/paused motion; the original frame probe exposes in-screen sample controls and readings."
+  ],
+  "versionNote": "Uses the owner-identified Desktop folder, byte-identical to the accompanying archive. It contains all 13 tutorial slides and 45 states. Later episode/campaign packaging mentioned in the session history is not present here and has not been invented.",
+  "sourceFolder": "Desktop/presentations-in-code (identified by the owner)"
+}

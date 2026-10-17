@@ -19,19 +19,17 @@ import "../styles/global.css";
     <SiteNav />
 
     <main class="explainer-shell">
-      <section class="explainer-hero">
-        <p class="section-kicker">ASCII shader system</p>
+      <section class="explainer-hero" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <h1>From moving light to symbols.</h1>
         <p>
-          The shader makes a tiny grayscale image. The ASCII layer samples that image, adds dither,
+          The ASCII shader system makes a tiny grayscale image. The ASCII layer samples that image, adds dither,
           then chooses symbols. Hover and click operate on the same grid.
         </p>
       </section>
 
       <section class="diagram-card wide">
         <div class="diagram-copy">
-          <p class="section-kicker">01 / Pipeline</p>
-          <h2>Shader field to glyph field</h2>
+          <h2>01. Shader field to glyph field</h2>
         </div>
         <svg class="pipeline-diagram" viewBox="0 0 1120 330" role="img" aria-label="ASCII shader pipeline">
           <defs>
@@ -76,8 +74,7 @@ import "../styles/global.css";
       <section class="diagram-grid">
         <article class="diagram-card">
           <div class="diagram-copy">
-            <p class="section-kicker">02 / Sampling</p>
-            <h2>Cells sample light.</h2>
+            <h2>02. Cells sample light.</h2>
             <p>Each grid cell reads local brightness. Dense light becomes dense symbols.</p>
           </div>
           <div class="sample-diagram" aria-hidden="true">
@@ -94,8 +91,7 @@ import "../styles/global.css";
 
         <article class="diagram-card">
           <div class="diagram-copy">
-            <p class="section-kicker">03 / Dither</p>
-            <h2>Threshold pattern breaks bands.</h2>
+            <h2>03. Threshold pattern breaks bands.</h2>
             <p>A Bayer matrix nudges neighboring cells differently, then time adds a small motion term.</p>
           </div>
           <div class="bayer-diagram" aria-hidden="true">
@@ -108,8 +104,7 @@ import "../styles/global.css";
 
         <article class="diagram-card">
           <div class="diagram-copy">
-            <p class="section-kicker">04 / Interaction</p>
-            <h2>Hover and click edit grid state.</h2>
+            <h2>04. Hover and click edit grid state.</h2>
             <p>Hover turns cells on. Click injects energy into a small damped wave simulation.</p>
           </div>
           <svg class="interaction-diagram" viewBox="0 0 520 260" role="img" aria-label="Hover and click grid diagram">
@@ -126,8 +121,7 @@ import "../styles/global.css";
 
         <article class="diagram-card">
           <div class="diagram-copy">
-            <p class="section-kicker">05 / Pave card mark</p>
-            <h2>Same shader, logo mask.</h2>
+            <h2>05. Same shader, logo mask.</h2>
             <p>The card mark samples the same field, but only emits symbols inside a Pave-shaped mask.</p>
           </div>
           <div class="mask-diagram" aria-hidden="true">
@@ -144,7 +138,8 @@ import "../styles/global.css";
     <style>
       .explainer-page {
         min-height: 100svh;
-        background: #050505;
+        background: var(--paper);
+        color: var(--ink);
       }
 
       .explainer-shell {
@@ -173,7 +168,7 @@ import "../styles/global.css";
 
       .explainer-hero p,
       .diagram-copy p {
-        color: rgba(243, 243, 240, 0.68);
+        color: var(--text-soft);
         line-height: 1.55;
       }
 
@@ -184,8 +179,8 @@ import "../styles/global.css";
       }
 
       .diagram-card {
-        border: 1px solid rgba(243, 243, 240, 0.16);
-        background: #080808;
+        border: var(--hairline) solid var(--edge-soft);
+        background: var(--surface-raised);
         padding: clamp(18px, 3vw, 30px);
       }
 
@@ -203,28 +198,28 @@ import "../styles/global.css";
         width: 100%;
         height: auto;
         margin-top: 24px;
-        color: rgba(243, 243, 240, 0.76);
+        color: var(--text-soft);
       }
 
       .node rect,
       .cell-grid rect {
-        fill: #101010;
-        stroke: rgba(243, 243, 240, 0.22);
+        fill: var(--surface-field);
+        stroke: var(--edge-soft);
       }
 
       .node text {
-        fill: rgba(243, 243, 240, 0.86);
+        fill: var(--ink);
         font: 700 20px var(--mono);
       }
 
       .node .mono {
-        fill: rgba(243, 243, 240, 0.58);
+        fill: var(--text-soft);
         font-size: 15px;
       }
 
       .node .big,
       .node .glyph {
-        fill: #f3f3f0;
+        fill: var(--ink);
         font-size: 24px;
       }
 
@@ -249,8 +244,8 @@ import "../styles/global.css";
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 1px;
-        border: 1px solid rgba(243, 243, 240, 0.18);
-        background: rgba(243, 243, 240, 0.12);
+        border: var(--hairline) solid var(--edge-soft);
+        background: var(--hover-surface);
       }
 
       .field-grid span,
@@ -274,12 +269,12 @@ import "../styles/global.css";
 
       .diagram-arrow {
         font: 700 11px var(--mono);
-        color: rgba(243, 243, 240, 0.58);
+        color: var(--text-soft);
         text-transform: uppercase;
       }
 
       .glyph-panel {
-        color: #f3f3f0;
+        color: var(--ink);
         font: 800 22px/1.35 var(--mono);
         white-space: pre;
       }
@@ -290,19 +285,19 @@ import "../styles/global.css";
 
       .bayer-diagram span {
         min-height: 58px;
-        color: rgba(243, 243, 240, 0.78);
+        color: var(--text-soft);
       }
 
       .cell-grid .active {
-        fill: #f3f3f0;
+        fill: var(--ink);
       }
 
       .cell-grid .wave {
-        fill: #f3f3f0;
+        fill: var(--ink);
       }
 
       .wave-line {
-        stroke: #f3f3f0;
+        stroke: var(--ink);
         marker-end: none;
       }
 
@@ -317,7 +312,7 @@ import "../styles/global.css";
       .mask-diagram div:last-child {
         display: grid;
         gap: 10px;
-        color: rgba(243, 243, 240, 0.62);
+        color: var(--text-soft);
         font: 700 12px var(--mono);
         text-transform: uppercase;
       }
@@ -330,6 +325,9 @@ import "../styles/global.css";
         }
       }
     </style>
+    <script>
+      import "../scripts/motion/index.js";
+    </script>
     <SiteAnalytics />
   </body>
 </html>

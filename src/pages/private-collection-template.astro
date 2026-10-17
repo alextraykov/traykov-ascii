@@ -1,0 +1,30 @@
+---
+import CaseStudyPage from "../components/CaseStudyPage.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+
+// Build-only neutral templates, removed from public output by build-private-work.
+const study = {
+  id: "__PRIVATE_CASE_ID__",
+  title: "__PRIVATE_TITLE__",
+  summary: "__PRIVATE_SUMMARY__",
+  group: "Pave",
+  tags: [],
+  status: "",
+  readTime: "",
+  body: "",
+  href: "/__PRIVATE_CARD_PATH__/",
+  order: 0,
+  sourcePath: ""
+};
+const card = { ...study, id: "__PRIVATE_CARD_ID__", title: "__PRIVATE_CARD_TITLE__", summary: "__PRIVATE_CARD_SUMMARY__", status: "__PRIVATE_CARD_STATUS__", readTime: "__PRIVATE_CARD_READ_TIME__" };
+---
+
+<CaseStudyPage contentLayout="project-grid" study={study} previousStudy={{ id: "designing-pave", title: "Designing Pave" }} privateTemplate={{ mode: "collection" }}>
+  <template slot="server-templates" data-private-card-template>
+    <ProjectCard study={card} href="/__PRIVATE_CARD_PATH__/" action="Read case study" />
+  </template>
+</CaseStudyPage>
+
+<script>
+  import "../scripts/project-card-ascii-dispersal.js";
+</script>

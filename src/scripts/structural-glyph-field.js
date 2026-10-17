@@ -1,3 +1,5 @@
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
+
 export const SURFACE_ASCII_RAMP = [" ", "·", "•", "+", "*", "✦", "✶", "✷", "✸", "✹"];
 
 const SLOW_FIELD_WIDTH = 0.26;
@@ -7,7 +9,6 @@ const SOURCE_RECOVERY_MS = 420;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } = {}) {
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let cols = 1;
   let rows = 1;
   let mask = new Uint8Array(1);
@@ -145,7 +146,7 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
   };
 
   const burst = (point, strength = 1) => {
-    if (reducedMotion.matches) return;
+    if (!isMotionActive()) return;
     const radius = Math.max(5, Math.min(13, cols * 0.075));
     const candidates = [];
     for (let y = Math.max(0, Math.floor(point.y - radius)); y <= Math.min(rows - 1, Math.ceil(point.y + radius)); y += 1) {
@@ -351,6 +352,7 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
   };
 
   const onPointerMove = (event) => {
+    if (!isMotionActive()) return;
     stopExit();
     const point = eventToGrid(event);
     const now = performance.now();
@@ -380,7 +382,7 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
     if (!pointerPoint) return;
     stopExit();
     hoverPoint.heat = 0;
-    if (reducedMotion.matches) {
+    if (!isMotionActive()) {
       particles = [];
       sourceLift.fill(0);
       pointerPoint = null;
@@ -429,7 +431,7 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
         pointerVelocity
       );
       previous = point;
-      if (progress < 1) {
+      if (progress < 1 && isMotionActive()) {
         pointerExitFrame = requestAnimationFrame(continueOutside);
       } else {
         pointerExitFrame = 0;
@@ -442,7 +444,7 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
   };
 
   const onPointerDown = (event) => {
-    if (event.button !== 0 || reducedMotion.matches) return;
+    if (event.button !== 0 || !isMotionActive()) return;
     const point = eventToGrid(event);
     if (!hasObjectAt(point.x, point.y)) return;
     burst(point);
@@ -451,6 +453,17 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
   root.addEventListener("pointermove", onPointerMove, { passive: true });
   root.addEventListener("pointerleave", onPointerLeave, { passive: true });
   root.addEventListener("pointerdown", onPointerDown, { passive: true });
+  const unsubscribeMotion = onMotionChange((state) => {
+    if (state.active) return;
+    stopExit();
+    particles = [];
+    sourceLift.fill(0);
+    trail.fill(0);
+    pointerPoint = null;
+    pointerTime = 0;
+    pointerVelocity = { x: 0, y: 0 };
+    hoverPoint = { x: 0, y: 0, heat: 0 };
+  });
 
   return {
     resize,
@@ -464,6 +477,7 @@ export function createStructuralGlyphField(root, { ramp = SURFACE_ASCII_RAMP } =
       root.removeEventListener("pointermove", onPointerMove);
       root.removeEventListener("pointerleave", onPointerLeave);
       root.removeEventListener("pointerdown", onPointerDown);
+      unsubscribeMotion();
     }
   };
 }

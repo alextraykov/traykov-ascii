@@ -191,6 +191,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     listening: false
   };
   let isVisible = true;
+  let motionEnabled = false;
   let pendingFrame = null;
   let pointerExitFrame = null;
   let lastPointerPoint = null;
@@ -205,6 +206,17 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     lineDurationRatio: isMeTurntable ? 0.56 : 0.5,
     enabled: controls.enableReveal > 0
   });
+  let asciiEntranceStarted = false;
+  const startAsciiEntrance = () => {
+    if (root.closest("[data-motion-standalone]") || window.__traykovMotion?.isHistoryRestore?.()) {
+      asciiEntranceStarted = true;
+      asciiReveal.finish();
+      return;
+    }
+    if (asciiEntranceStarted || !isVisible || !motionEnabled) return;
+    asciiEntranceStarted = true;
+    asciiReveal.start();
+  };
 
   const disposeGroup = (group) => {
     group.traverse((node) => {
@@ -274,7 +286,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
         lineDurationRatio: isMeTurntable ? 0.56 : 0.5,
         enabled: controls.enableReveal > 0
       });
-      if (isVisible) asciiReveal.start();
+      startAsciiEntrance();
     }
     updateSettingsPayload();
   };
@@ -720,7 +732,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const handleDeviceOrientation = (event) => {
-    if (!useDeviceMotion || reduceMotion.matches) return;
+    if (!useDeviceMotion || !canAnimate()) return;
     const beta = Number(event.beta);
     const gamma = Number(event.gamma);
     if (!Number.isFinite(beta) || !Number.isFinite(gamma)) return;
@@ -732,7 +744,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const handleDeviceMotion = (event) => {
-    if (!useDeviceMotion || reduceMotion.matches) return;
+    if (!useDeviceMotion || !canAnimate()) return;
     const source = event.acceleration || event.accelerationIncludingGravity;
     if (!source) return;
 
@@ -767,7 +779,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const startDeviceMotion = () => {
-    if (!useDeviceMotion || motion.listening || reduceMotion.matches) return;
+    if (!useDeviceMotion || motion.listening || !canAnimate()) return;
     motion.listening = true;
     root.classList.add("has-device-motion");
     window.addEventListener("deviceorientation", handleDeviceOrientation, { passive: true });
@@ -775,7 +787,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const requestDeviceMotion = async (requiresGesture = false) => {
-    if (!useDeviceMotion || motion.listening || reduceMotion.matches) return;
+    if (!useDeviceMotion || motion.listening || !canAnimate()) return;
     const orientationRequest = globalThis.DeviceOrientationEvent?.requestPermission;
     const motionRequest = globalThis.DeviceMotionEvent?.requestPermission;
 
@@ -799,7 +811,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const updateDeviceMotionPhysics = (delta) => {
-    if (!useDeviceMotion || reduceMotion.matches) return;
+    if (!useDeviceMotion || !canAnimate()) return;
     const smoothing = 1 - Math.exp(-delta * 9.5);
     motion.tiltX += (motion.targetTiltX - motion.tiltX) * smoothing;
     motion.tiltY += (motion.targetTiltY - motion.tiltY) * smoothing;
@@ -1085,10 +1097,11 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   document.querySelectorAll("[data-obj-control]").forEach((control) => {
     const name = control.dataset.objControl;
     const output = document.querySelector(`[data-obj-output="${name}"]`);
-    const update = () => {
+    const update = (event) => {
       const value = Number(control.value);
       if (output) output.textContent = Number.isInteger(value) ? String(value) : value.toFixed(2);
       applyControlValue(name, value);
+      if (event) requestRender();
     };
     control.addEventListener("input", update);
     control.addEventListener("change", update);
@@ -1151,6 +1164,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const handlePointerMove = (event) => {
+    if (!canAnimate()) return;
     stopPointerExit();
     const point = eventToGrid(event);
     const now = performance.now();
@@ -1177,16 +1191,18 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
       markHoverPoint(point);
       addTrail(point.x, point.y);
       if (controls.hover > 0) emitSmearParticles(point, pointerVelocity);
+      requestRender();
       return;
     }
     if (isSmearing) dragSmearParticles(movement, pointerVelocity);
+    requestRender();
   };
 
   const handlePointerLeave = (event) => {
-    if (!lastPointerPoint) return;
+    if (!canAnimate() || !lastPointerPoint) return;
     stopPointerExit();
 
-    if (reduceMotion.matches) {
+    if (!canAnimate()) {
       hoverPoint.heat = 0;
       lastPointerPoint = null;
       clearSmear();
@@ -1254,14 +1270,16 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   };
 
   const handlePointerDown = (event) => {
+    if (!canAnimate()) return;
     requestDeviceMotion(true);
     const point = eventToGrid(event);
     if (!hasObjectAt(point.x, point.y)) return;
-    if (!reduceMotion.matches) emitClickBurst(point);
+    if (canAnimate()) emitClickBurst(point);
     markHoverPoint(point, 1.2);
     markExplosionPoint(point, 1);
     addTrail(point.x, point.y, 1.15);
     injectRipple(point.x, point.y);
+    requestRender();
   };
 
   root.addEventListener("pointermove", handlePointerMove, { passive: true });
@@ -1273,14 +1291,20 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
   motionGestureTarget.addEventListener("touchstart", () => requestDeviceMotion(true), { passive: true });
 
   root.addEventListener("turntable-controls:update", (event) => {
-    const wasVisible = isVisible;
-    isVisible = true;
-    if (!wasVisible) asciiReveal.start();
     const values = event.detail || {};
     Object.entries(values).forEach(([name, value]) => {
       if (Object.hasOwn(controls, name)) applyControlValue(name, Number(value));
     });
+    requestRender();
   });
+
+  const canAnimate = () => motionEnabled && !reduceMotion.matches;
+
+  const requestRender = () => {
+    if (isVisible && !document.hidden && !pendingFrame) {
+      pendingFrame = requestAnimationFrame(render);
+    }
+  };
 
   const render = (time = 0) => {
     pendingFrame = null;
@@ -1290,7 +1314,7 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
       : coarsePointer
         ? MOBILE_ASCII_FRAME_INTERVAL
         : STAGE_ASCII_FRAME_INTERVAL;
-    if (lastRenderTime && time - lastRenderTime < frameInterval - 1) {
+    if (canAnimate() && lastRenderTime && time - lastRenderTime < frameInterval - 1) {
       pendingFrame = requestAnimationFrame(render);
       return;
     }
@@ -1299,43 +1323,60 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     lastRenderTime = time;
 
     const isStaticReveal = root.classList.contains("is-ascii-line-revealing") && !root.classList.contains("about-turntable");
-    if (!isStaticReveal) updateDeviceMotionPhysics(delta);
-    if (!reduceMotion.matches && !isStaticReveal) {
+    if (!isStaticReveal && canAnimate()) updateDeviceMotionPhysics(delta);
+    if (canAnimate() && !isStaticReveal) {
       turntableAngle += delta * Math.PI * (controls.speed + Math.abs(motion.spin) * 0.34);
     }
-    model.rotation.x = reduceMotion.matches || isStaticReveal ? -0.2 : -0.2 + motion.tiltY * 0.26 + motion.shake * 0.06;
-    model.rotation.y = reduceMotion.matches || isStaticReveal ? 0.82 : turntableAngle + motion.tiltX * 0.62 + motion.spin;
+    model.rotation.x = !canAnimate() || isStaticReveal ? -0.2 : -0.2 + motion.tiltY * 0.26 + motion.shake * 0.06;
+    model.rotation.y = !canAnimate() || isStaticReveal ? 0.82 : turntableAngle + motion.tiltX * 0.62 + motion.spin;
     model.rotation.z =
-      reduceMotion.matches || isStaticReveal
+      !canAnimate() || isStaticReveal
         ? -0.05
         : -0.05 + Math.sin(time * 0.00055) * 0.018 - motion.tiltX * 0.16 + motion.tiltY * 0.045;
     renderer.render(scene, camera);
-    stepRipple();
-    updateTrail(time);
+    if (canAnimate()) stepRipple();
+    if (canAnimate()) updateTrail(time);
 
-    if (time - lastAscii > frameInterval || reduceMotion.matches) {
+    if (time - lastAscii > frameInterval || !canAnimate()) {
       lastAscii = time;
       toAscii(time);
     }
 
-    if (!reduceMotion.matches) pendingFrame = requestAnimationFrame(render);
+    if (canAnimate()) pendingFrame = requestAnimationFrame(render);
   };
 
   const onEligibility = (event) => {
     const wasVisible = isVisible;
-    isVisible = Boolean(event.detail?.active);
+    const wasAnimated = motionEnabled;
+    isVisible = Boolean(event.detail?.render ?? event.detail?.active);
+    motionEnabled = Boolean(event.detail?.active);
     if (!isVisible) {
       if (pendingFrame) cancelAnimationFrame(pendingFrame);
       pendingFrame = null;
       return;
     }
     lastRenderTime = 0;
-    if (!wasVisible) asciiReveal.start();
-    if (!pendingFrame) pendingFrame = requestAnimationFrame(render);
+    if (!motionEnabled) {
+      trailBuffer.fill(0);
+      waveCurrent.fill(0);
+      wavePrevious.fill(0);
+      waveNext.fill(0);
+      hasTrail = false;
+      hasRipple = false;
+      hoverPoint.heat = 0;
+      explosionPoint.heat = 0;
+      clearSmear();
+      asciiReveal.finish();
+    }
+    if (motionEnabled && (!wasVisible || !wasAnimated)) startAsciiEntrance();
+    requestRender();
   };
   root.addEventListener("turntable-eligibility", onEligibility);
 
-  const resizeObserver = new ResizeObserver(resize);
+  const resizeObserver = new ResizeObserver(() => {
+    resize();
+    requestRender();
+  });
   resizeObserver.observe(root);
   root.style.setProperty("--pave-ascii-glow", controls.glow);
   resize();
@@ -1343,8 +1384,8 @@ transformed.y -= uMotionTilt.y * (0.22 + abs(position.x) * 0.042);
     .then(() => {
       updateSettingsPayload();
       requestDeviceMotion(false);
-      if (isVisible) asciiReveal.start();
-      pendingFrame = requestAnimationFrame(render);
+      startAsciiEntrance();
+      requestRender();
     })
     .catch((error) => {
       asciiReveal.finish();

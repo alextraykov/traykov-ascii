@@ -14,6 +14,7 @@
 
 <script>
   import { createSketch } from "../sketches/blocktype-dither.js";
+  import { isMotionActive, onMotionChange } from "../scripts/motion/lifecycle.js";
 
   const PRESET = Object.freeze({
     pitch: 8,
@@ -35,7 +36,6 @@
 
     root.dataset.ready = "true";
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const pointer = {
       x: 0.5,
       y: 0.5,
@@ -60,24 +60,25 @@
     let visible = false;
     let destroyed = false;
 
-    const shouldAnimate = () =>
-      visible && !reducedMotion.matches && !document.hidden && !destroyed;
+    const canRender = () => visible && !document.hidden && !destroyed;
+    const shouldAnimate = () => canRender() && isMotionActive();
 
     const render = (timestamp: number) => {
       frameHandle = 0;
-      const delta = lastTimestamp
+      const animate = shouldAnimate();
+      const delta = animate && lastTimestamp
         ? Math.min(0.1, (timestamp - lastTimestamp) / 1000)
         : 0;
 
       lastTimestamp = timestamp;
-      if (!reducedMotion.matches) elapsed += delta;
+      if (animate) elapsed += delta;
       sketch.frame?.({ time: elapsed, delta, width, height, dpr });
 
       if (shouldAnimate()) frameHandle = window.requestAnimationFrame(render);
     };
 
     const requestFrame = () => {
-      if (!frameHandle && !document.hidden && !destroyed) {
+      if (!frameHandle && canRender()) {
         frameHandle = window.requestAnimationFrame(render);
       }
     };
@@ -108,12 +109,16 @@
       requestFrame();
     };
 
-  const resizeObserver = new ResizeObserver(resize);
+    const resizeObserver = new ResizeObserver(resize);
     const intersectionObserver = new IntersectionObserver(
       ([entry]) => {
         visible = Boolean(entry?.isIntersecting);
         lastTimestamp = 0;
 
+        if (!visible && frameHandle) {
+          window.cancelAnimationFrame(frameHandle);
+          frameHandle = 0;
+        }
         if (visible) requestFrame();
       },
       { rootMargin: "120px 0px" }
@@ -121,29 +126,56 @@
 
     canvas.addEventListener("pointermove", updatePointer);
     canvas.addEventListener("pointerenter", updatePointer);
-  canvas.addEventListener("pointerleave", () => {
-    pointer.inside = false;
-    requestFrame();
-  });
-  document.addEventListener("visibilitychange", () => {
+    const handlePointerLeave = () => {
+      pointer.inside = false;
+      requestFrame();
+    };
+    const handleVisibilityChange = () => {
       lastTimestamp = 0;
       if (!document.hidden && visible) requestFrame();
-    });
-    reducedMotion.addEventListener("change", () => {
+    };
+    const unsubscribeMotion = onMotionChange(() => {
       lastTimestamp = 0;
+      if (!isMotionActive() && frameHandle) {
+        window.cancelAnimationFrame(frameHandle);
+        frameHandle = 0;
+      }
       requestFrame();
     });
+    const handlePageHide = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        if (frameHandle) window.cancelAnimationFrame(frameHandle);
+        frameHandle = 0;
+        return;
+      }
+      destroy();
+    };
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      lastTimestamp = 0;
+      if (visible) requestFrame();
+    };
+    canvas.addEventListener("pointerleave", handlePointerLeave);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     const destroy = () => {
       if (destroyed) return;
       destroyed = true;
-    window.cancelAnimationFrame(frameHandle);
-    resizeObserver.disconnect();
-    intersectionObserver.disconnect();
-    sketch.destroy?.();
-  };
+      window.cancelAnimationFrame(frameHandle);
+      resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      unsubscribeMotion();
+      canvas.removeEventListener("pointermove", updatePointer);
+      canvas.removeEventListener("pointerenter", updatePointer);
+      canvas.removeEventListener("pointerleave", handlePointerLeave);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", handlePageHide);
+      window.removeEventListener("pageshow", handlePageShow);
+      sketch.destroy?.();
+    };
 
-    window.addEventListener("pagehide", destroy, { once: true });
+    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("pageshow", handlePageShow);
     resizeObserver.observe(canvas);
     intersectionObserver.observe(canvas);
     resize();

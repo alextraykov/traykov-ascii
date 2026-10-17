@@ -1,0 +1,587 @@
+---
+import CaseContactPrompt from "./CaseContactPrompt.astro";
+import BreathingGridsProcess from "./BreathingGridsProcess.astro";
+import PaveLoadingProcess from "./PaveLoadingProcess.astro";
+import PaveTurntable from "./PaveTurntable.astro";
+import PrivateWorkLink from "./PrivateWorkLink.astro";
+import SiteAnalytics from "./SiteAnalytics.astro";
+import SiteHead from "./SiteHead.astro";
+import SiteFooter from "./SiteFooter.astro";
+import SynapseSysTurntable from "./SynapseSysTurntable.astro";
+import SiteNav from "./SiteNav.astro";
+import { getCaseStudyHeadings, renderMarkdown } from "../lib/content";
+import { addLocalImageDimensions, getLocalImageDimensions } from "../lib/local-image-dimensions";
+import { isPublicCaseStudy } from "../lib/public-case-studies";
+import "../styles/global.css";
+
+// Private templates contain neutral markers only. Confidential values are filled
+// by the authenticated server after this exact shared page has been built.
+const { study, parentStudy, previousStudy, nextStudy, privateTemplate, contentLayout = "case-study-body" } = Astro.props;
+const isPublicStudy = !privateTemplate && isPublicCaseStudy(study.id);
+
+const caseHref = (item: { id: string }) => `/case-studies/${item.id}/`;
+const usePaveTurntable = study.id === "designing-pave" || Boolean(privateTemplate);
+const usePaveBreathingGridsProcess = study.id === "pave-breathing-grids";
+const usePaveLoadingProcess = study.id === "pave-loading-animation";
+const usePaveArtifactProcess = usePaveBreathingGridsProcess || usePaveLoadingProcess;
+const useSynapseTurntable = study.id === "synapse-sys";
+const hasTurntable = usePaveTurntable || useSynapseTurntable;
+const caseTheme = privateTemplate ? "pave" : ["designing-pave", "pave-blueprint", "pave-breathing-grids", "pave-loading-animation"].includes(study.id)
+  ? "pave"
+  : ["synapse-sys", "designing-synapse-sys"].includes(study.id)
+    ? "synapse"
+    : undefined;
+const caseBreadcrumb = parentStudy
+  ? { href: caseHref(parentStudy), label: `← ${parentStudy.title}` }
+  : { href: "/#work", label: "← Work" };
+const caseMeta = privateTemplate ? "__PRIVATE_META__" : [study.status, study.readTime]
+  .filter(Boolean)
+  .join(" / ");
+const defaultCaseHeadings = privateTemplate?.mode === "case"
+  ? [{ id: "__PRIVATE_HEADING_ID__", text: "__PRIVATE_HEADING_TEXT__", depth: 2 }]
+  : getCaseStudyHeadings(study.body);
+const paveLoadingProcessHeadings = [
+  { id: "pave-process-reel", text: "The iterations", depth: 2 },
+  { id: "pave-process-states", text: "The chip follows the work", depth: 2 },
+  { id: "pave-process-finish", text: "Finish from the frame you have", depth: 2 }
+];
+const breathingGridsProcessHeadings = [
+  { id: "breathing-grids-film", text: "A background built from a grid, then taken apart.", depth: 2 },
+  { id: "breathing-grids-blocks", text: "Blocks", depth: 2 },
+  { id: "breathing-grids-dither", text: "Pixel dither", depth: 2 }
+];
+const caseHeadings = usePaveBreathingGridsProcess
+  ? breathingGridsProcessHeadings
+  : usePaveLoadingProcess
+    ? paveLoadingProcessHeadings
+    : defaultCaseHeadings;
+const hasReadingTools = privateTemplate?.mode === "case" || caseHeadings.length > 1 || Boolean(study.walkthroughVideo);
+const walkthroughPoster = study.walkthroughPoster ?? study.image;
+const walkthroughPreviewVideo =
+  study.id === "synapse-sys"
+    ? "/case-studies/media/synapse-product-preview-avatar.mp4"
+    : study.walkthroughVideo;
+const walkthroughLabel = study.walkthroughLabel ?? "Watch walkthrough";
+const pagePath = privateTemplate ? "/__PRIVATE_PATH__/" : `/case-studies/${study.id}/`;
+const pageUrl = new URL(pagePath, "https://traykov.cc").toString();
+const pageTitle = `${study.title} — Product Design Case Study | Alexander Traykov`;
+const metaDescription = study.summary
+  ? `${study.summary} A product design case study by Alexander Traykov.`
+  : `${study.title}, a product design case study by Alexander Traykov.`;
+const breadcrumbItems = [
+  { "@type": "ListItem", position: 1, name: "Home", item: "https://traykov.cc/" },
+  { "@type": "ListItem", position: 2, name: "Work", item: "https://traykov.cc/#work" },
+  ...(parentStudy
+    ? [
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: parentStudy.title,
+          item: new URL(caseHref(parentStudy), "https://traykov.cc").toString()
+        }
+      ]
+    : []),
+  {
+    "@type": "ListItem",
+    position: parentStudy ? 4 : 3,
+    name: study.title,
+    item: pageUrl
+  }
+];
+const structuredData = isPublicStudy ? [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${pageUrl}#article`,
+    headline: study.title,
+    description: metaDescription,
+    mainEntityOfPage: pageUrl,
+    image: new URL(study.image ?? "/og-image.png", "https://traykov.cc").toString(),
+    keywords: study.tags,
+    author: { "@id": "https://traykov.cc/#person" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${pageUrl}#breadcrumbs`,
+    itemListElement: breadcrumbItems
+  }
+] : undefined;
+const contactPromptByStudy: Record<string, { title: string; body: string }> = {
+  "designing-pave": {
+    title: "Building an AI product that has to survive the demo?",
+    body: "Bring me the interaction, workflow, or trust knot. We can unpack it together in 30 focused minutes."
+  },
+  "synapse-sys": {
+    title: "Making a complicated AI system feel dependable?",
+    body: "Bring me the product model, graph, or failure state. We can unpack it together in 30 focused minutes."
+  }
+};
+const contactPrompt = contactPromptByStudy[study.id] ?? {
+  title: "Working through a similarly messy product problem?",
+  body: "Bring me the context and the awkward part. We can unpack it together in 30 focused minutes."
+};
+const useCompactContactPrompt = usePaveArtifactProcess;
+const caseContactTitle = useCompactContactPrompt
+  ? "Working on something similar? Let me help"
+  : contactPrompt.title;
+const caseContactBody = useCompactContactPrompt ? "" : contactPrompt.body;
+const caseBodyHtml = privateTemplate ? "__PRIVATE_BODY__" : await addLocalImageDimensions(renderMarkdown(study.body));
+const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.image) : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title={pageTitle}
+      description={metaDescription}
+      path={pagePath}
+      image={study.image ?? "/og-image.png"}
+      ogType="article"
+      noindex={!isPublicStudy}
+      structuredData={structuredData}
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="case" data-case-id={study.id} data-case-theme={caseTheme}>
+
+    <SiteNav active="work" variant="case" />
+
+    <main id="top" class="case-page">
+      {!parentStudy && <section class:list={["case-hero", hasTurntable && "case-hero--turntable"]} aria-labelledby="case-title">
+        {usePaveTurntable ? (
+          <PaveTurntable
+            class="case-hero-turntable"
+            asciiClass="case-hero-turntable__ascii"
+            renderSize={0.94}
+            ariaLabel=""
+          />
+        ) : useSynapseTurntable ? (
+          <SynapseSysTurntable
+            class="case-hero-turntable"
+            asciiClass="case-hero-turntable__ascii"
+            renderSize={0.94}
+            ariaLabel=""
+          />
+        ) : (
+          <div class="ascii-stage compact-stage" data-ascii-shader>
+            <canvas aria-hidden="true"></canvas>
+            <pre aria-hidden="true" lang="bg"></pre>
+          </div>
+        )}
+
+        <div class="case-hero-copy section-shell" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+          <nav class="case-breadcrumb" aria-label="Breadcrumb">
+            <a href={caseBreadcrumb.href}>{caseBreadcrumb.label}</a>
+          </nav>
+          {caseMeta && <p class="case-hero-meta">{caseMeta}</p>}
+          <h1 id="case-title">{study.title}</h1>
+          {study.summary && <p class="case-hero-summary">{study.summary}</p>}
+        </div>
+      </section>}
+
+      <article class="case-study case-detail section-shell">
+        {parentStudy && (
+          <>
+            <h1 id="case-title" class="visually-hidden">{study.title}</h1>
+            <nav class="case-breadcrumb" aria-label="Breadcrumb">
+              <span>Mini-study · </span>
+              <a href={caseHref(parentStudy)}>Part of {parentStudy.title}</a>
+            </nav>
+          </>
+        )}
+        <div class:list={["case-reader-layout", hasReadingTools && "case-reader-layout--with-tools"]}>
+          {hasReadingTools && (
+            <aside
+              class="case-reading-tools"
+              data-case-reading-tools
+              data-reveal="fade"
+              data-reveal-delay="240"
+              aria-label="Case study reading tools"
+            >
+              <span class="visually-hidden" data-case-progress-readout aria-hidden="true">Reading progress 0%</span>
+              {study.walkthroughVideo && (
+                <div class="case-walkthrough">
+                  <a
+                    class="case-walkthrough__trigger"
+                    href={study.walkthroughVideo}
+                    data-case-walkthrough-open
+                    aria-haspopup="dialog"
+                    aria-label={`Play ${walkthroughLabel}`}
+                  >
+                    <span class="case-walkthrough__avatar" aria-hidden="true">
+                      <video
+                        src={walkthroughPreviewVideo}
+                        muted
+                        playsinline
+                        preload="none"
+                        poster={walkthroughPoster}
+                      ></video>
+                    </span>
+                    <span class="case-walkthrough__copy">
+                      <span>Skip read</span>
+                      <strong>{walkthroughLabel}</strong>
+                    </span>
+                  </a>
+                </div>
+              )}
+
+              {(privateTemplate?.mode === "case" || caseHeadings.length > 1) && (
+                <nav class="case-toc" aria-label="On this case">
+                  <p>On this case</p>
+                  <button
+                    class="case-toc__toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="case-toc-list"
+                    data-case-toc-toggle
+                  >
+                    <span class="case-toc__toggle-label">On this case</span>
+                    <strong data-case-toc-current>{caseHeadings[0]?.text}</strong>
+                    <span class="case-toc__position" data-case-toc-position>
+                      01 / {privateTemplate ? "__PRIVATE_HEADING_COUNT__" : String(caseHeadings.length).padStart(2, "0")}
+                    </span>
+                    <span class="case-toc__mark" data-case-toc-mark aria-hidden="true">+</span>
+                  </button>
+                  <ol id="case-toc-list">
+                    {privateTemplate && <Fragment set:html={"<!--PRIVATE_TOC_START-->"} />}
+                    {caseHeadings.map((heading) => (
+                      <li class={`case-toc__item case-toc__item--depth-${heading.depth}`}>
+                        <a href={`#${heading.id}`} data-case-target={heading.id}>
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                    {privateTemplate && <Fragment set:html={"<!--PRIVATE_TOC_END-->"} />}
+                  </ol>
+                </nav>
+              )}
+            </aside>
+          )}
+
+          <div class="case-body">
+            {study.image && !usePaveTurntable && !parentStudy && (
+              <figure class="case-cover">
+                <img
+                  src={study.image}
+                  alt=""
+                  loading="eager"
+                  width={caseCoverDimensions?.width}
+                  height={caseCoverDimensions?.height}
+                />
+              </figure>
+            )}
+            <div class={contentLayout}>
+              <Fragment set:html={caseBodyHtml} />
+              {usePaveBreathingGridsProcess && <BreathingGridsProcess />}
+              {usePaveLoadingProcess && <PaveLoadingProcess />}
+            </div>
+          </div>
+        </div>
+
+        {study.walkthroughVideo && (
+          <dialog class="case-walkthrough-modal" aria-labelledby="case-walkthrough-modal-title" data-case-walkthrough-modal>
+            <div class="case-walkthrough-modal__header">
+              <h2 id="case-walkthrough-modal-title">{walkthroughLabel}</h2>
+              <button class="case-walkthrough-modal__close" type="button" data-case-walkthrough-close aria-label="Close video">
+                x
+              </button>
+            </div>
+            <video
+              src={study.walkthroughVideo}
+              controls
+              playsinline
+              preload="none"
+              poster={walkthroughPoster}
+              data-case-walkthrough-video
+            ></video>
+          </dialog>
+        )}
+
+        <CaseContactPrompt
+          caseTitle={privateTemplate ? "private work" : study.title}
+          title={caseContactTitle}
+          body={caseContactBody}
+          compact={useCompactContactPrompt}
+        />
+        {study.id === "designing-pave" && <PrivateWorkLink placement="case" />}
+      </article>
+
+      {!parentStudy && (
+        <nav class="case-sibling-nav case-sibling-nav--bottom section-shell" aria-label="More case studies" data-reveal="rise">
+          {previousStudy && (
+            <a href={caseHref(previousStudy)} data-case-direction="previous">
+              <span data-scramble data-scramble-label="Previous case">Previous case</span>
+              <strong>{previousStudy.title}</strong>
+            </a>
+          )}
+          {nextStudy && (
+            <a href={caseHref(nextStudy)} data-case-direction="next">
+              <span data-scramble data-scramble-label="Next case">Next case</span>
+              <strong>{nextStudy.title}</strong>
+            </a>
+          )}
+          {(!previousStudy || !nextStudy) && (
+            <span class="case-sibling-nav__empty">More case studies coming soon</span>
+          )}
+        </nav>
+      )}
+    </main>
+
+    <slot name="server-templates" />
+
+    <SiteFooter omitBookingEmbed={Boolean(privateTemplate)}>
+      {privateTemplate && <form slot="actions" action="/api/private-work?action=logout" method="post"><button class="private-work__lock" type="submit">Lock private work</button></form>}
+    </SiteFooter>
+
+    <script is:inline src="/ascii-shader.js?v=case-pages-4"></script>
+    {useSynapseTurntable && <script src="/synapse-mini-canvas.js" defer></script>}
+    {usePaveArtifactProcess && (
+      <script>
+        import { initializeOverviewVideos } from "../scripts/overview-video.js";
+
+        initializeOverviewVideos();
+      </script>
+    )}
+    <script>
+      import { initCaseMedia } from "../scripts/case-media.js";
+
+      initCaseMedia();
+    </script>
+    <script>
+      import { registerTurntables } from "../scripts/turntable-loader.js";
+
+      registerTurntables(
+        "[data-pave-turntable]",
+        () => import("../scripts/pave-symbol-turntable.js"),
+        (module, root) => module.initializePaveTurntable(root)
+      );
+      registerTurntables(
+        "[data-sasi-logo-turntable]",
+        () => import("../scripts/sasi-logo-turntable.js"),
+        (module, root) => module.initializeSasiLogoTurntable(root)
+      );
+    </script>
+      <script is:inline>
+      (() => {
+        const links = Array.from(document.querySelectorAll("[data-case-target]")).filter(
+          (link) => link instanceof HTMLAnchorElement
+        );
+        const sections = links
+          .map((link) => document.getElementById(link.dataset.caseTarget || ""))
+          .filter(Boolean);
+        const tocRoot = document.querySelector(".case-toc");
+        const tocList = document.querySelector(".case-toc ol");
+        const tocToggle = document.querySelector("[data-case-toc-toggle]");
+        const tocCurrent = document.querySelector("[data-case-toc-current]");
+        const tocPosition = document.querySelector("[data-case-toc-position]");
+        const tocMark = document.querySelector("[data-case-toc-mark]");
+        const readingTools = document.querySelector("[data-case-reading-tools]");
+        const walkthroughTrigger = document.querySelector("[data-case-walkthrough-open]");
+        const walkthroughModal = document.querySelector("[data-case-walkthrough-modal]");
+        const walkthroughClose = document.querySelector("[data-case-walkthrough-close]");
+        const walkthroughVideo = walkthroughModal?.querySelector("[data-case-walkthrough-video]");
+        const compactToc = window.matchMedia("(max-width: 900px)");
+        let tocObserver;
+        let resizeFrame = 0;
+        let fallbackFrame = 0;
+        let pinnedTargetId = "";
+
+        const clearPinnedTarget = () => {
+          pinnedTargetId = "";
+        };
+
+        const setTocExpanded = (expanded) => {
+          if (!(tocRoot instanceof HTMLElement) || !(tocToggle instanceof HTMLButtonElement)) return;
+          tocRoot.dataset.open = String(expanded);
+          tocToggle.setAttribute("aria-expanded", String(expanded));
+          if (tocMark instanceof HTMLElement) tocMark.textContent = expanded ? "-" : "+";
+        };
+
+        const activate = (id) => {
+          let activeLink;
+          links.forEach((link) => {
+            if (link.dataset.caseTarget === id) {
+              link.setAttribute("aria-current", "location");
+              activeLink = link;
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
+
+          if (!(activeLink instanceof HTMLElement)) return;
+          if (tocCurrent instanceof HTMLElement) tocCurrent.textContent = activeLink.textContent?.trim() || "";
+          if (tocPosition instanceof HTMLElement) {
+            const activeIndex = links.indexOf(activeLink) + 1;
+            tocPosition.textContent = `${String(activeIndex).padStart(2, "0")} / ${String(links.length).padStart(2, "0")}`;
+          }
+        };
+
+        const getReadingOffset = () => {
+          const probe = document.createElement("span");
+          probe.setAttribute("aria-hidden", "true");
+          probe.style.position = "absolute";
+          probe.style.visibility = "hidden";
+          probe.style.blockSize = "var(--case-reading-offset)";
+          document.body.append(probe);
+          const offset = Math.ceil(probe.getBoundingClientRect().height);
+          probe.remove();
+          const compactToolsOffset =
+            compactToc.matches && readingTools instanceof HTMLElement
+              ? Math.ceil(readingTools.getBoundingClientRect().height)
+              : 0;
+          return Math.max(1, offset + compactToolsOffset);
+        };
+
+        const activateHash = () => {
+          const id = window.location.hash.slice(1);
+          const section = sections.find((candidate) => candidate.id === id);
+          if (!section) return false;
+          activate(section.id);
+          return true;
+        };
+
+        const buildObserver = () => {
+          if (!("IntersectionObserver" in window)) return;
+
+          tocObserver?.disconnect();
+          if (compactToc.matches) {
+            queueFallbackUpdate();
+            return;
+          }
+          const offset = getReadingOffset();
+          const bottomMargin = Math.max(0, window.innerHeight - offset - 1);
+          tocObserver = new IntersectionObserver(
+            (entries) => {
+              const activeEntry = entries.find((entry) => entry.isIntersecting);
+              if (activeEntry?.target instanceof HTMLElement) activate(activeEntry.target.id);
+            },
+            {
+              rootMargin: `-${offset}px 0px -${bottomMargin}px 0px`,
+              threshold: 0
+            }
+          );
+          sections.forEach((section) => tocObserver.observe(section));
+        };
+
+        const queueObserverRebuild = () => {
+          if (resizeFrame) return;
+          resizeFrame = window.requestAnimationFrame(() => {
+            resizeFrame = 0;
+            buildObserver();
+          });
+        };
+
+        const queueFallbackUpdate = () => {
+          if ("IntersectionObserver" in window && !compactToc.matches) return;
+          if (fallbackFrame) return;
+          fallbackFrame = window.requestAnimationFrame(() => {
+            fallbackFrame = 0;
+            if (pinnedTargetId) {
+              activate(pinnedTargetId);
+              return;
+            }
+            const offset =
+              compactToc.matches && readingTools instanceof HTMLElement
+                ? Math.ceil(readingTools.getBoundingClientRect().bottom)
+                : getReadingOffset();
+            let active = sections[0];
+            sections.forEach((section) => {
+              if (section.getBoundingClientRect().top <= offset + 1) active = section;
+            });
+            if (Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 1) {
+              active = sections[sections.length - 1];
+            }
+            if (active) activate(active.id);
+          });
+        };
+
+        if (links.length > 0) {
+          if (tocRoot instanceof HTMLElement && tocToggle instanceof HTMLButtonElement) {
+            tocRoot.dataset.caseTocEnhanced = "true";
+            setTocExpanded(false);
+            tocToggle.addEventListener("click", () => {
+              setTocExpanded(tocToggle.getAttribute("aria-expanded") !== "true");
+            });
+            document.addEventListener("click", (event) => {
+              if (event.target instanceof Node && !tocRoot.contains(event.target)) setTocExpanded(false);
+            });
+            document.addEventListener("keydown", (event) => {
+              if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) {
+                clearPinnedTarget();
+              }
+              if (event.key !== "Escape" || tocToggle.getAttribute("aria-expanded") !== "true") return;
+              setTocExpanded(false);
+              tocToggle.focus();
+            });
+            document.addEventListener("pointerdown", clearPinnedTarget, { passive: true });
+            window.addEventListener("wheel", clearPinnedTarget, { passive: true });
+          }
+
+          if (!activateHash()) activate(sections[0]?.id);
+          links.forEach((link) =>
+            link.addEventListener("click", (event) => {
+              const id = link.dataset.caseTarget || "";
+              const target = document.getElementById(id);
+              if (compactToc.matches && target instanceof HTMLElement) {
+                event.preventDefault();
+                pinnedTargetId = id;
+                setTocExpanded(false);
+                const nextHash = `#${id}`;
+                if (window.location.hash !== nextHash) window.history.pushState(null, "", nextHash);
+                target.scrollIntoView({ block: "start", inline: "nearest", behavior: "instant" });
+              }
+              activate(id);
+            })
+          );
+          window.addEventListener("hashchange", activateHash);
+
+          if ("IntersectionObserver" in window) {
+            buildObserver();
+            window.addEventListener("resize", queueObserverRebuild, { passive: true });
+            window.addEventListener("scroll", queueFallbackUpdate, { passive: true });
+          } else {
+            queueFallbackUpdate();
+            window.addEventListener("scroll", queueFallbackUpdate, { passive: true });
+            window.addEventListener("resize", queueFallbackUpdate, { passive: true });
+          }
+
+          compactToc.addEventListener?.("change", () => {
+            const current = links.find((link) => link.getAttribute("aria-current") === "location");
+            if (current) activate(current.dataset.caseTarget || "");
+            setTocExpanded(false);
+          });
+        }
+
+        walkthroughTrigger?.addEventListener("click", (event) => {
+          if (!(walkthroughModal instanceof HTMLDialogElement)) return;
+          try {
+            walkthroughModal.showModal();
+          } catch {
+            return;
+          }
+          event.preventDefault();
+          walkthroughVideo?.play().catch(() => {});
+        });
+
+        walkthroughClose?.addEventListener("click", () => {
+          if (walkthroughModal instanceof HTMLDialogElement) walkthroughModal.close();
+        });
+
+        walkthroughModal?.addEventListener("click", (event) => {
+          if (event.target === walkthroughModal && walkthroughModal instanceof HTMLDialogElement) {
+            walkthroughModal.close();
+          }
+        });
+
+        walkthroughModal?.addEventListener("close", () => {
+          walkthroughVideo?.pause();
+          walkthroughTrigger?.focus();
+        });
+      })();
+    </script>
+    <script>import "../scripts/private-demos.js";</script>
+    {!privateTemplate && <SiteAnalytics />}
+  </body>
+</html>

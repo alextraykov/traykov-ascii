@@ -46,25 +46,25 @@ const bookingPageUrl = (() => {
 
     <main id="top" class="contact-page">
       <section class="contact-hero section-shell" aria-labelledby="contact-title">
-        <div class="contact-hero__copy" data-reveal="rise">
-          <p class="section-kicker">Contact</p>
-          <h1 id="contact-title">Start with a message.</h1>
+        <div class="contact-hero__copy" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
+          <h1 id="contact-title">Get in touch.</h1>
           <p>
-            It goes to <a href="mailto:hi@traykov.cc">hi@traykov.cc</a>. I usually reply in
+            Email me at <a href="mailto:hi@traykov.cc">hi@traykov.cc</a>. I usually reply in
             half a day or less.
           </p>
         </div>
 
         <div class="contact-layout" data-reveal-group>
-          <form
-            class="contact-form"
-            action="/api/contact"
-            method="post"
-            data-contact-form
-            aria-describedby="contact-form-status"
-          >
+          {
+            turnstileSiteKey ? (
+              <form
+                class="contact-form"
+                action="/api/contact"
+                method="post"
+                data-contact-form
+                aria-describedby="contact-form-status"
+              >
             <div class="contact-form__heading">
-              <span>01 / Write</span>
               <h2>Tell me what you’re working on.</h2>
             </div>
 
@@ -112,8 +112,6 @@ const bookingPageUrl = (() => {
               />
             </label>
 
-            {
-              turnstileSiteKey ? (
                 <div class="contact-form__verification">
                   <div
                     class="cf-turnstile"
@@ -123,13 +121,6 @@ const bookingPageUrl = (() => {
                   ></div>
                   <p>Spam check by Cloudflare Turnstile.</p>
                 </div>
-              ) : (
-                <p class="contact-form__configuration">
-                  Secure sending is not configured yet. Email{" "}
-                  <a href="mailto:hi@traykov.cc">hi@traykov.cc</a> directly.
-                </p>
-              )
-            }
 
             <p
               id="contact-form-status"
@@ -141,14 +132,13 @@ const bookingPageUrl = (() => {
 
             <div class="contact-form__submit">
               <p>Sends directly to my inbox. Your address is only used to reply.</p>
-              <button
-                type="submit"
-                disabled={!turnstileSiteKey}
-                data-ascii-action="primary"
-                data-ascii-stream
-                data-ascii-burst
-                data-contact-submit
-              >
+                <button
+                  type="submit"
+                  data-ascii-action="primary"
+                  data-ascii-stream
+                  data-ascii-burst
+                  data-contact-submit
+                >
                 <span data-contact-submit-label>Send message</span>
                 <span aria-hidden="true">↗</span>
               </button>
@@ -160,19 +150,31 @@ const bookingPageUrl = (() => {
                 <a href="mailto:hi@traykov.cc">hi@traykov.cc</a> instead.
               </p>
             </noscript>
-          </form>
+              </form>
+            ) : (
+              <section class="contact-direct" data-contact-direct aria-labelledby="contact-direct-title">
+                <div class="contact-direct__copy">
+                  <h2 id="contact-direct-title">Tell me what you’re working on.</h2>
+                  <p>Send me a little context about the project or problem.</p>
+                </div>
+                <a href="mailto:hi@traykov.cc" data-ascii-action="primary">
+                  <span>Write to hi@traykov.cc</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </section>
+            )
+          }
 
           <aside class="contact-call" aria-labelledby="contact-call-title">
-            <span>02 / Talk</span>
             <div>
-              <h2 id="contact-call-title">Book a call</h2>
+              <h2 id="contact-call-title">Prefer a call?</h2>
               <p>Thirty minutes. No pitch, no pressure.</p>
             </div>
             <a
               id="book-a-call"
               href={bookingPageUrl}
               data-booking-modal-open
-              data-ascii-action="inverse"
+              data-ascii-action="primary"
               data-ascii-stream
               data-ascii-burst
             >

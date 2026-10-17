@@ -1,0 +1,8 @@
+---
+const { name, kind = "camera", label, image, class: className = "" } = Astro.props;
+---
+<div class:list={["pc-artwork", className]} data-pc-artwork={name} data-pc-kind={kind} role="group" aria-label={label}>
+  <div class="pc-artwork__mount" data-pc-mount></div>
+  <img class="pc-artwork__fallback" src={image ?? `/labs/presenting-in-code/web/stills/${name}.png`} alt={label} width="1440" height="833" loading={name === "hero" ? "eager" : "lazy"} />
+  <noscript><p class="pc-artwork__nojs">Static view. Enable JavaScript to try the live demonstration.</p></noscript>
+</div>

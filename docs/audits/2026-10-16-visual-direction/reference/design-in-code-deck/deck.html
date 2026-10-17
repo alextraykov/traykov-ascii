@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designers working in code</title>
+<style>@font-face{font-family:"Geist";src:url("fonts/Geist-Variable.woff2") format("woff2");font-weight:100 900}@font-face{font-family:"Geist Mono";src:url("fonts/GeistMono-Variable.woff2") format("woff2");font-weight:100 900}</style>
+<style>
+:root{--page:#f8faf9;--ink:#111715;--ink2:#474d52;--ink3:#64707c;--edge:#dee2e6;--accent:#04764e;--tint:#e8faf3;--break:#b8421f;--btint:#ffe8e0;--mono:"Geist Mono",ui-monospace,Menlo,monospace;--sans:Geist,system-ui,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--page);overflow:hidden;color:var(--ink);font-family:var(--mono);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--k,1))}
+.s{position:absolute;inset:0;padding:88px 120px;display:none;flex-direction:column}
+.s.on{display:flex}
+.top{display:flex;justify-content:space-between;font-size:20px;color:var(--ink3);margin-bottom:48px}
+h1{font-family:var(--mono);font-weight:500;font-size:84px;line-height:1.05;letter-spacing:-.03em;margin:0 0 28px;max-width:1600px}
+h2{font-family:var(--mono);font-weight:500;font-size:52px;letter-spacing:-.025em;margin:0 0 18px;line-height:1.1}
+p.l{font-family:var(--sans);font-size:30px;color:var(--ink2);margin:0 0 36px;max-width:1500px;line-height:1.4}
+pre{font-family:var(--mono);font-size:23px;line-height:1.4;margin:0;color:var(--ink);white-space:pre}
+.r{color:var(--break)}.g{color:var(--accent)}.m{color:var(--ink3)}.b{font-weight:600}
+.cols{display:grid;grid-template-columns:1.15fr 1fr;gap:64px;align-items:start}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.notes{font-family:var(--sans);font-size:27px;line-height:1.45;color:var(--ink2)}
+.notes p{margin:0 0 20px}.notes b{color:var(--ink);font-weight:600}
+.box{border:1.5px solid var(--ink);padding:28px 30px;background:#fff}
+.box.good{border-color:var(--accent);background:var(--tint)}
+.lab{font-size:20px;margin-bottom:14px;color:var(--ink3)}
+.foot{position:absolute;left:120px;right:120px;bottom:52px;display:flex;justify-content:space-between;font-size:18px;color:var(--ink3)}
+.logos{display:grid;grid-template-columns:repeat(4,1fr);border-top:1.5px solid var(--ink);border-left:1.5px solid var(--ink)}
+.logos div{border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);padding:20px 24px;font-size:21px;line-height:1.35;background:#fff}
+.logos b{display:block;font-family:var(--sans);font-size:29px;margin-bottom:6px;letter-spacing:-.01em}
+.q{font-family:var(--sans);font-size:36px;line-height:1.35;margin:0 0 24px;display:flex;gap:28px}
+.q span{font-family:var(--mono);color:var(--accent);font-size:28px;padding-top:6px}
+.opt h3{font-family:var(--mono);font-weight:500;font-size:32px;margin:6px 0 16px;letter-spacing:-.02em}
+.opt .k{font-size:19px;color:var(--ink3);margin-top:14px}
+.opt .v{font-family:var(--sans);font-size:23px;line-height:1.35}
+
+/* animation: terminal style, no easing */
+.ln{display:block;width:max-content;clip-path:inset(0 100% 0 0)}
+.s.on .ln{animation:type var(--du) steps(var(--n)) forwards;animation-delay:var(--dl)}
+@keyframes type{to{clip-path:inset(0 -12% 0 0)}}
+.s.on .ln.x{animation:type var(--du) steps(var(--n)) forwards,flash .5s steps(1) forwards;animation-delay:var(--dl),var(--dx)}
+@keyframes flash{0%{background:var(--break);color:#fff}25%{background:none;color:inherit}50%{background:var(--break);color:#fff}75%,100%{background:none;color:inherit}}
+.cur{display:inline-block;opacity:0;color:var(--ink)}
+.s.on .cur{animation:show 0s steps(1) forwards,bl 1s steps(1) infinite;animation-delay:var(--dl),var(--dl)}
+@keyframes show{to{opacity:1}}
+.fade{opacity:0}
+.s.on .fade{animation:snap .28s steps(1) forwards;animation-delay:calc(var(--d,0) * 1ms + 300ms)}
+@keyframes snap{0%{opacity:0}30%{opacity:1}50%{opacity:.15}70%,100%{opacity:1}}
+.blink{animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
+.st.hot{background:var(--accent);color:#fff}
+.st.hot.err{background:var(--break)}
+.tcur{color:var(--accent)}
+.thread{border:1.5px solid var(--break);background:#fff}
+@media (prefers-reduced-motion:reduce){.ln,.fade,.cur{clip-path:none!important;opacity:1!important;animation:none!important}.blink{animation:none}}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 -->
+<section class="s on">
+  <div class="top"><span>Alexander Traykov · for Daniel</span><span>15 Oct 2026 · draft</span></div>
+  <h1 class="scr">Designers working in code</h1>
+  <p class="l fade">How it went on Bebop 2 and on Pave, what we learned, and three ways the team could start. It is not impossible. It is harder than Figma, and we should plan for that.</p>
+<pre class="draw">
+  ┌────────────┐                     ┌────────────┐                     ┌────────────┐
+  │  designer  │ <span class="pipe">──────────────────▶</span> │    code    │ <span class="pipe">──────────────────▶</span> │  product   │
+  └────────────┘   intent, motion    └────────────┘   less guessing     └────────────┘
+</pre>
+  <div class="foot"><span>→ next</span><span>1 / 12</span></div>
+</section>
+
+<!-- 2 -->
+<section class="s">
+  <div class="top"><span>outside Quickbase</span><span></span></div>
+  <h2 class="scr">Companies that already work this way</h2>
+  <p class="l fade">Different setups, same direction. Designers use LLMs to work in code. The setups range from HTML files to production PRs.</p>
+  <div class="logos fade" style="--d:150">
+    <div><b>Anthropic</b>Every designer pushes a PR in onboarding. A /prototype skill makes 5 HTML variants.</div>
+    <div><b>OpenAI</b>“Prototypes, not PRDs.” Designers on Codex submit PRs.</div>
+    <div><b>Notion</b>Shared prototype repo. A /deploy command hides git.</div>
+    <div><b>Stripe</b>Protodash: design system through MCP. PMs use it too.</div>
+    <div><b>Vercel</b>v0 gives every chat a branch, a PR and a preview.</div>
+    <div><b>Ramp</b>“Work starts in an LLM… then Figma for polish.”</div>
+    <div><b>Jane Street</b>Designer submits the prototype. Engineers rebuild it.</div>
+    <div><b>Atlassian</b>12,000+ AI prototypes. 85% of designers and PMs use it.</div>
+    <div><b>Adobe</b>Protopack: setup, GitHub, MCP, hosting behind the firewall.</div>
+    <div><b>Microsoft</b>UX engineers set designers up in secure environments.</div>
+    <div><b>Dropbox · GitLab</b>Champions, staging branches, a 5-hour course.</div>
+    <div><b>Hinge Health</b>100% of designers shipped a PR in one month.</div>
+  </div>
+  <p class="l fade" style="--d:300;margin-top:24px;font-size:25px">Industry survey: 50% of designers have shipped AI-written code to production. Airtable hires for “Cursor, Claude Code or Figma Make, not just static screens”.</p>
+  <div class="foot"><span>sources: research/01–02</span><span>2 / 12</span></div>
+</section>
+
+<!-- 2b -->
+<section class="s">
+  <div class="top"><span>inside Quickbase</span><span></span></div>
+  <h2 class="scr">What we have already done with AI at Quickbase</h2>
+  <div class="cols" style="margin-top:24px;grid-template-columns:1.25fr 1fr">
+<pre class="draw" style="font-size:21px">
+  $ ls design/ai --how-we-work
+  bebop2 motion PRs        <span class="g b">9</span> merged in huey, engineering review
+  Claude Design process    v1 (Chavdar), Bebop 2 as <span class="g b">65</span> components
+  Design Spine plugin      <span class="g b">7</span> Claude skills, with Eva (Jul)
+  bebop-rapid kit          <span class="g b">24</span> Bebop 2 components, preview/branch
+  vibe-design (Pave)       <span class="g b">29</span> prototype pages, token + a11y tests
+  pave-ds-mcp              <span class="g b">9</span> tools, specs from <span class="g b">605</span> Figma symbols
+  bebop2-baseline          <span class="g b">43</span> components, <span class="g b">1,130</span> checks (hackathon)
+  Pave design audit        <span class="g b">2,123</span> style gaps found
+  motion audit             <span class="g b">153</span> broken transitions, <span class="g b">84</span> files
+  design-qa-audit skill    Playwright + axe, designer verdict
+  <span class="r b">✗ adoption: mostly one person. 642 of 1,003 gaps still open</span>
+</pre>
+<pre class="draw" style="font-size:21px">
+  $ ls design/ai --what-we-shipped
+  Pipelines AI             57 → <span class="g b">862</span> accounts / month
+                           Aug 2024 → Aug 2026, ~15×
+  AI umbrella (Pendo)      67 → <span class="g b">924</span> accounts
+                           May 2024 → Jun 2026
+  AI Troubleshooting       <span class="g b">969</span> accounts in 5 months
+                           32.5% follow-through
+  Pave share               0.2% → <span class="g b">10–12%</span> of weekly
+                           actives after the new header
+                           and builder release
+
+  $ who-else-prototypes-with-ai
+  PMs        Kevin, Simona, Ryan (Claude Design, HTML)
+  engineers  Ilia: /huey-design skill, PAv2 redesign
+  designers  Johnny: hosted HTML prototype
+             <span class="m">"you could have had me fooled"</span>
+</pre>
+  </div>
+  <div class="foot"><span>data and sources: <a href="data/quickbase-ai-initiatives.md" style="color:inherit">data/quickbase-ai-initiatives.md</a></span><span></span></div>
+</section>
+
+<!-- 3 -->
+<section class="s">
+  <div class="top"><span>what we have done · Core</span><span></span></div>
+  <h2 class="scr">How it worked on Bebop 2</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+  me + Claude Code               huey repo
+  ┌────────────────┐  branch   ┌──────────────────┐
+  │ "add press     │ <span class="pipe">────────▶</span> │ libs/bebop2-     │
+  │  feedback to   │           │   components     │
+  │  Button"       │           └────────┬─────────┘
+  └────────────────┘                    │ PR
+                                        ▼
+  ┌──────────────────┐         ┌──────────────────┐
+  │ Storybook review │ <span class="pipe">◀───────</span> │ CI  <span class="bar" data-w="7"></span> │
+  │ plain · reduced  │         └──────────────────┘
+  │ slow · light/dark│
+  └────────┬─────────┘
+           │ engineers review
+           ▼
+  ┌──────────────────┐
+  │ Radoslav, Marin  │ <span class="pipe">────────▶</span>  merged ✓ × <span class="count g b" data-to="9">0</span>
+  │ tests, keyboard  │
+  └──────────────────┘
+</pre>
+    <div class="notes fade" style="--d:600">
+      <p><b>I write the change with Claude.</b> Claude handles the branch, the PR and the CI fixes.</p>
+      <p><b>Engineers review it like any other PR.</b> They asked for tests and raised a keyboard point. That made the work better.</p>
+      <p><b>Review happens in Storybook,</b> in plain, reduced-motion and slow-motion modes, light and dark.</p>
+      <p><b>Nine motion PRs merged.</b> For example QDS-78, press feedback on Button and pagination.</p>
+      <p class="m" style="font-size:23px">Harder parts: an OpenSpec and approval process, and CI runs only Jest, so lint and typecheck are by hand.</p>
+    </div>
+  </div>
+  <div class="foot"><span>huey PR #51442 and others</span><span>3 / 12</span></div>
+</section>
+
+<!-- 4 -->
+<section class="s">
+  <div class="top"><span>what we have done · Pave</span><span></span></div>
+  <h2 class="scr">How it works on Pave</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+  qb-ai-studio · read + write access
+  ┌──────────────────────────────────┐
+  │ <span class="spin g">|</span> localhost:3004   running       │
+  │   my own realm, real components  │
+  └────────────────┬─────────────────┘
+          ┌────────┴──────────┐
+          ▼                   ▼
+  ┌───────────────┐   ┌───────────────┐
+  │ prototypes    │   │ PRs           │
+  │ the full      │   │ restyle,      │
+  │ experience    │   │ tokens, motion│
+  └───────┬───────┘   └───────┬───────┘
+          │                   │
+          ▼                   ▼
+  ┌───────────────┐   ┌───────────────┐
+  │ private       │   │ engineers     │
+  │ GitHub Pages  │   │ review, merge │
+  └───────┬───────┘   └───────────────┘
+          │
+          ▼
+   .md specs <span class="pipe">─────────────▶</span> engineers' LLMs
+</pre>
+    <div class="notes fade" style="--d:600">
+      <p><b>I run the production repo locally,</b> against my own realm, with the real components.</p>
+      <p><b>I build prototypes there and open PRs,</b> for example the model picker and restyle fixes.</p>
+      <p><b>Prototypes are hosted on a private GitHub Pages site.</b> Each one comes with markdown specs for engineers.</p>
+      <p class="m" style="font-size:23px">Harder parts: local setup, Jenkins and manual deploys, a very long CLAUDE.md, and eight code owners with no designer among them.</p>
+    </div>
+  </div>
+  <div class="foot"><span></span><span>4 / 12</span></div>
+</section>
+
+<!-- 5 -->
+<section class="s">
+  <div class="top"><span>flags</span><span></span></div>
+  <h2 class="scr">What went wrong on Pave</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+  my prototype suite: everything at once
+  ┌────────────────────────────────────────────┐
+  │ nav · chat · builder · settings · motion   │
+  │ onboarding · themes · users · permissions  │
+  └────────────────────────────────────────────┘
+        <span class="blink r b">?</span>               <span class="blink r b">?</span>               <span class="blink r b">?</span>
+        │               │               │
+   ┌────┴─────┐    ┌────┴─────┐    ┌────┴─────┐
+   │ engineer │    │ content  │    │    PM    │
+   └──────────┘    └──────────┘    └──────────┘
+   "which part     "where do I     "I need a
+    is mine?"       write the       GitHub
+                    copy?"          seat"
+
+  <span class="r">not hosted on a website <span class="pipe">──▶</span> it got lost</span>
+</pre>
+    <div class="notes fade" style="--d:600">
+      <p><b class="r">No Figma frames meant friction</b> for content designers and PMs. Content had no easy place to see the design and write the copy for it.</p>
+      <p><b class="r">They needed GitHub access</b> to see anything in a repo.</p>
+      <p><b class="r">If I didn't host a prototype on a website, it got lost.</b></p>
+      <p><b class="r">Figma is clearer about what the deliverable is:</b> one set of frames per feature. My suite showed the whole experience, so engineers weren't sure what to focus on.</p>
+    </div>
+  </div>
+  <div class="foot"><span></span><span>5 / 12</span></div>
+</section>
+
+<!-- 6 -->
+<section class="s">
+  <div class="top"><span>benefits</span><span></span></div>
+  <h2 class="scr">What worked well on Pave</h2>
+  <p class="l fade">Markdown deliverables next to every prototype. Engineers feed them to their LLMs, so the build starts much closer to the design intent.</p>
+  <div class="cols">
+<pre class="draw">
+  feature/
+  ├── <span class="g b">components.md</span>     which primitive, new variants
+  ├── <span class="g b">interactions.md</span>   click, hover, drag, keyboard
+  ├── <span class="g b">motion.md</span>         durations, easing tokens,
+  │                     reduced motion
+  ├── <span class="g b">states.md</span>         the state machine
+  └── <span class="g b">edge-cases.md</span>     empty, long text, no access,
+                        slow network
+           │
+           ▼
+  engineer's Claude / Copilot <span class="pipe">───────▶</span> build
+</pre>
+<pre class="draw">
+  states.md
+
+     ┌──────────┐
+     │ <span class="st" data-k="0">idle</span>     │
+     └────┬─────┘
+          │ submit
+          ▼
+     ┌──────────┐
+     │ <span class="st" data-k="1">loading</span>  │
+     └────┬─────┘
+       ┌──┴─────────┐
+       ▼            ▼
+  ┌─────────┐  ┌─────────┐
+  │ <span class="st" data-k="2">success</span> │  │ <span class="st err" data-k="3">error</span>   │
+  └─────────┘  └────┬────┘
+                    │ retry ──▶ loading
+</pre>
+  </div>
+  <div class="foot"><span></span><span>6 / 12</span></div>
+</section>
+
+<!-- 7 -->
+<section class="s">
+  <div class="top"><span>options</span><span></span></div>
+  <h2 class="scr">Three options</h2>
+  <p class="l fade">Same direction, different cost. A designer can move from one option to the next when they are ready.</p>
+  <div class="cols3">
+    <div class="box good opt fade" style="--d:200">
+      <pre class="m">option 1   git <span class="g">[░░░]</span></pre>
+      <h3>HTML files + README</h3>
+      <div class="k">who</div><div class="v">Everyone, from day one</div>
+      <div class="k">output</div><div class="v">A clickable HTML prototype with intent, motion and delight, a states page, and a README with build instructions</div>
+      <div class="k">engineers</div><div class="v">Build from it</div>
+      <div class="k">needs</div><div class="v">Claude Code. No GitHub seat.</div>
+    </div>
+    <div class="box opt fade" style="--d:400">
+      <pre class="m">option 2   git <span class="g">[██░]</span></pre>
+      <h3>Work in the repo</h3>
+      <div class="k">who</div><div class="v">Designers with access and a working local setup</div>
+      <div class="k">output</div><div class="v">Design examples running locally with real components. PRs as support for engineers</div>
+      <div class="k">engineers</div><div class="v">Take the PR as it is, or adapt it</div>
+      <div class="k">needs</div><div class="v">GitHub seat, setup guide, one engineer buddy. This is how I work on Pave now.</div>
+    </div>
+    <div class="box opt fade" style="--d:600">
+      <pre class="m">option 3   git <span class="g">[███]</span></pre>
+      <h3>Full design engineering</h3>
+      <div class="k">who</div><div class="v">A few people who want it</div>
+      <div class="k">output</div><div class="v">Production UI: components, states, motion, shipped</div>
+      <div class="k">engineers</div><div class="v">Review and merge. They own logic and data</div>
+      <div class="k">needs</div><div class="v">All of option 2, plus the design system in code, CI checks and a review agreement</div>
+    </div>
+  </div>
+  <div class="foot"><span></span><span>7 / 12</span></div>
+</section>
+
+<!-- 8 -->
+<section class="s">
+  <div class="top"><span>option 1</span><span></span></div>
+  <h2 class="scr">Option 1: HTML files and a README</h2>
+  <p class="l fade">The lowest foundation. It works today with no repo and no GitHub seat. Any browser opens it.</p>
+  <div class="cols">
+<pre class="draw">
+  <span class="b">feature-name/</span>
+  │
+  ├── <span class="g b">prototype.html</span>     the flow, clickable
+  │                      real motion and timings
+  │                      the delight moments
+  │
+  ├── <span class="g b">states.html</span>        every state on one page
+  │                      default · hover · focus
+  │                      loading · empty · error
+  │                      light · dark · reduced motion
+  │
+  ├── <span class="g b">README.md</span>          build instructions
+  │
+  └── <span class="m">figma/</span>             <span class="m">static frames, if needed</span>
+</pre>
+<pre class="draw">
+  <span class="b">README.md</span>
+  ┌──────────────────────────────────────┐
+  │ 1. what this is and why              │
+  │ 2. components (Pave or Bebop 2)      │
+  │ 3. tokens: colour, space, type       │
+  │ 4. motion: duration + easing         │
+  │ 5. states and when each one shows    │
+  │ 6. copy, approved by content         │
+  │ 7. a11y: keyboard, focus, contrast   │
+  │ 8. what is fake (data, auth)         │
+  │ 9. open questions                    │
+  └──────────────────────────────────────┘
+  <span class="m">Claude drafts it from the prototype.
+  The designer checks it.</span>
+</pre>
+  </div>
+  <div class="foot"><span></span><span>8 / 12</span></div>
+</section>
+
+<!-- 9 -->
+<section class="s">
+  <div class="top"><span>option 2</span><span></span></div>
+  <h2 class="scr">Option 2: work in the repo, support engineers with PRs</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+  designer laptop
+  ┌──────────────────────────────────┐
+  │ <span class="spin g">|</span> production repo, running       │
+  │   design examples on localhost   │
+  │   real components, real tokens   │
+  └────────────────┬─────────────────┘
+                   │ /share
+                   ▼
+  ┌──────────────────────────────────┐
+  │ PR   label: design support       │
+  │ CI   <span class="bar" data-w="10"></span>             │
+  │ + .md specs + screen recording   │
+  └────────────────┬─────────────────┘
+                   │
+                   ▼
+  ┌──────────────────────────────────┐
+  │ engineer takes it or adapts it   │
+  │ engineer merges                  │
+  └──────────────────────────────────┘
+</pre>
+    <div class="notes fade" style="--d:600">
+      <p><b>Designers run the product locally</b> and build design examples with the real components.</p>
+      <p><b>The PR supports the engineer.</b> It is a strong suggestion, not the final code. Engineers decide what to keep.</p>
+      <p><b>Claude handles the git work.</b> The designer reviews the diff and the preview.</p>
+      <p class="m" style="font-size:23px">Needs: GitHub seats (still blocked), a setup guide that works, and one engineer buddy per repo.</p>
+    </div>
+  </div>
+  <div class="foot"><span></span><span>9 / 12</span></div>
+</section>
+
+<!-- 10 -->
+<section class="s">
+  <div class="top"><span>option 3</span><span></span></div>
+  <h2 class="scr">Option 3: full design engineering</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+                ┌──────────────────────────┐
+                │  design engineer         │
+                │  UI, states, motion, a11y│
+                └────────────┬─────────────┘
+                             │ owns the front end
+                             ▼
+   ┌───────────────────────────────────────────────┐
+   │ production PR                                 │
+   │ [x] components [x] states [x] motion [x] tests│
+   │ CI  <span class="bar" data-w="16"></span>                     │
+   └───────────────────────┬───────────────────────┘
+                           │
+                           ▼
+                ┌──────────────────────────┐
+                │  engineer                │
+                │  logic, data, review     │
+                └────────────┬─────────────┘
+                             ▼
+                          shipped ✓
+</pre>
+    <div class="notes fade" style="--d:600">
+      <p><b>Designers own the UI layer in production.</b> Engineers own logic and data, and review every PR.</p>
+      <p><b>This is the Bebop 2 motion work at a bigger scope.</b></p>
+      <p><b>Only for a few people,</b> and only when the design system is complete in code and CI checks the basics.</p>
+      <p class="m" style="font-size:23px">Needs: everything in option 2, plus an agreement with engineering on what designers can merge into.</p>
+    </div>
+  </div>
+  <div class="foot"><span></span><span>10 / 12</span></div>
+</section>
+
+<!-- 11 -->
+<section class="s">
+  <div class="top"><span>friction</span><span></span></div>
+  <h2 class="scr">Friction we should expect</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+  $ open prototype --as content-designer
+  <span class="r b">✗ 404  no GitHub seat</span>
+  $ open prototype --as pm
+  <span class="r b">✗ 404  no GitHub seat</span>
+  $ find prototype "nav v2"
+  <span class="r b">✗ not found. it was never hosted</span>
+  $ engineer --what-do-i-build
+  <span class="r b">✗ unclear. one suite, nine features</span>
+  $ content --write-copy
+  <span class="r b">✗ no frames to write next to</span>
+  $ setup --new-designer
+  <span class="r b">✗ days, not hours: seat, local env, realm</span>
+  $ review --ai-code
+  <span class="r b">✗ pushback. see next slide</span>
+  $ claude-design --open
+  <span class="r b">✗ closes 14 Dec 2026</span>
+</pre>
+    <div class="notes fade" style="--d:2600">
+      <p><b class="r">These will happen.</b> Most of them already happened on Pave.</p>
+      <p><b>Option 1 avoids the access errors</b>, because an HTML file opens anywhere.</p>
+      <p><b>Options 2 and 3 hit all of them.</b> Setup and seats cost days per person, and the review friction grows with the size of the PR.</p>
+      <p class="m" style="font-size:23px">Planning for these is part of the work. Nobody should be surprised by them.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Pave, Sep–Oct 2026</span><span></span></div>
+</section>
+
+<!-- 11b -->
+<section class="s">
+  <div class="top"><span>friction</span><span></span></div>
+  <h2 class="scr">Engineering pushback on AI code</h2>
+  <div class="cols" style="margin-top:28px">
+<pre class="draw">
+  PR  design support: press feedback on Button
+  ┌──────────────────────────────────────────────┐
+  │ <span class="m">eng</span>  was this written by AI?                 │
+  │ <span class="m">eng</span>  explain the render cycle here           │
+  │ <span class="m">eng</span>  why not useMemo? what about SSR?        │
+  │ <span class="m">eng</span>  this isn't how we'd do it               │
+  │                                              │
+  │ <span class="m">designer</span>  the motion and states are the      │
+  │           point. the code is a suggestion.   │
+  └──────────────────────────────────────────────┘
+  <span class="r b">[!] the review is about the designer,</span>
+  <span class="r b">    not about the design</span>
+</pre>
+    <div class="notes fade" style="--d:1800">
+      <p><b class="r">Engineers can be defensive about AI code.</b> Some are dismissive when the deliverable is AI-written.</p>
+      <p><b class="r">Some press designers on engineering topics</b>, because we now deliver in code. It is not productive, and it happens.</p>
+      <p><b>It makes designers stop.</b> One bad review and people go back to Figma.</p>
+      <p class="m" style="font-size:23px">This needs a manager-level agreement with engineering leads before we start: what a design PR is, what reviewers judge, and what they don't.</p>
+    </div>
+  </div>
+  <div class="foot"><span></span><span></span></div>
+</section>
+
+<!-- 12 -->
+<section class="s">
+  <div class="top"><span>to talk about</span><span></span></div>
+  <h2 class="scr" style="margin-bottom:44px">Questions for us</h2>
+  <div class="q fade" style="--d:100"><span>01</span>Do we start everyone on option 1 and let people move up when ready?</div>
+  <div class="q fade" style="--d:200"><span>02</span>Where do we host prototypes so PMs, content and engineers can open them without GitHub?</div>
+  <div class="q fade" style="--d:300"><span>03</span>Will engineers on Core and Pave accept HTML + README and .md specs as the handoff?</div>
+  <div class="q fade" style="--d:400"><span>04</span>Who wants to try it on a real feature before Claude Design closes on 14 Dec?</div>
+  <div class="q fade" style="--d:500"><span>05</span>How do we agree with engineering leads on what a design PR is and how it is reviewed?</div>
+  <div class="q fade" style="--d:600"><span>06</span>When is Figma still the right tool?</div>
+  <div class="foot"><span>full research: design-in-code/research/</span><span>12 / 12</span></div>
+</section>
+
+</div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S=[...document.querySelectorAll('.s')];let i=0,tick=0;
+const vis=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent};
+document.querySelectorAll('pre.draw').forEach(pre=>{
+  const lines=pre.innerHTML.replace(/^\n/,'').replace(/\n$/,'').split('\n');let t=350;
+  pre.innerHTML=lines.map(l=>{const txt=vis(l);const n=Math.max(1,txt.length);const du=Math.max(40,Math.min(n*4,220));
+    const x=/✗|\[!\]/.test(txt)?' x':'';const dl=t;t+=du+(x?120:15);
+    return `<span class="ln${x}" style="--n:${n};--du:${du}ms;--dl:${dl}ms;--dx:${dl+du}ms">${l||' '}</span>`}).join('')
+    +`<span class="cur" style="--dl:${t}ms">█</span>`;
+});
+document.querySelectorAll('.pipe').forEach((p,k)=>{p.dataset.t=p.textContent;p.dataset.o=k*5});
+document.querySelectorAll('.bar').forEach(b=>{const w=+b.dataset.w;b.textContent='['+'.'.repeat(w)+']   '});
+document.querySelectorAll('.scr').forEach(h=>h.dataset.t=h.textContent);
+
+function fit(){document.documentElement.style.setProperty('--k',Math.min(innerWidth/1920,innerHeight/1080))}
+function scramble(h){
+  if(reduce)return;const t=h.dataset.t;let k=0;h.textContent='';
+  const id=setInterval(()=>{k+=1;h.innerHTML=t.slice(0,k)+(k<t.length?'<span class="tcur">█</span>':'');if(k>=t.length)clearInterval(id)},22);
+}
+function count(el){const to=+el.dataset.to;let v=0;el.textContent='0';
+  if(reduce){el.textContent=to;return}
+  setTimeout(()=>{const id=setInterval(()=>{v++;el.textContent=v;if(v>=to)clearInterval(id)},140)},1500)}
+function go(n){
+  i=Math.max(0,Math.min(S.length-1,n));
+  S.forEach((s,k)=>s.classList.toggle('on',k===i));
+  history.replaceState(null,'','#'+(i+1));
+  const s=S[i];s.querySelectorAll('.scr').forEach(scramble);s.querySelectorAll('.count').forEach(count);
+  s.dataset.t0=tick;
+}
+S.forEach((s,k)=>{const f=s.querySelector('.foot span:last-child');if(f)f.textContent=(k+1)+' / '+S.length});
+const SP='|/-\\';const ORDER=[0,1,2,0,1,3];
+setInterval(()=>{
+  tick++;if(reduce)return;const s=S[i];
+  s.querySelectorAll('.pipe').forEach(p=>{
+    const t=[...p.dataset.t];const back=t[0]==='◀';const head=t[t.length-1]==='▶';
+    const body=back?t.slice(1):(head?t.slice(0,-1):t);const L=body.length;
+    const pos=(tick+ +p.dataset.o)%(L+4);
+    const out=body.map((c,k)=>{const kk=back?L-1-k:k;return (kk===pos||kk===pos-1)?'<span class="g b">━</span>':c});
+    p.innerHTML=(back?'◀':'')+out.join('')+(head?'▶':'');
+  });
+  s.querySelectorAll('.spin').forEach(e=>e.textContent=SP[tick%4]);
+  s.querySelectorAll('.bar').forEach(b=>{
+    const w=+b.dataset.w,cyc=w+10,f=Math.min(w,(tick-(+s.dataset.t0||0))%cyc);
+    b.innerHTML='['+'#'.repeat(f)+'.'.repeat(w-f)+'] '+(f>=w?'<span class="g b">ok</span>':'  ');
+  });
+  const step=ORDER[Math.floor(tick/9)%ORDER.length];
+  s.querySelectorAll('.st').forEach(e=>e.classList.toggle('hot',+e.dataset.k===step));
+},90);
+
+addEventListener('resize',fit);fit();
+addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key))go(i+1);if(['ArrowLeft','PageUp'].includes(e.key))go(i-1)});
+addEventListener('click',e=>{if(e.target.closest('a'))return;go(e.clientX>innerWidth/3?i+1:i-1)});
+go(location.hash?parseInt(location.hash.slice(1))-1:0);
+</script>
+</body>
+</html>

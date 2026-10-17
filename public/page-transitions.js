@@ -1,7 +1,6 @@
 (() => {
   const storageKey = "traykov-page-transition";
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const compactViewport = window.matchMedia("(max-width: 700px)");
   const root = document.documentElement;
   const body = document.body;
   if (!body) return;
@@ -26,15 +25,21 @@
   const classify = (value) => {
     const url = value instanceof URL ? value : new URL(value, window.location.href);
     const path = normalizePath(url);
-    const caseMatch = path.match(/^\/case-studies\/(designing-pave|synapse-sys)\/$/);
+    const caseMatch = path.match(/^\/case-studies\/([^/]+)\/$/);
 
     if (path === "/") return { type: "home", path, hash: url.hash, scoped: true };
     if (path === "/about/") return { type: "about", path, hash: url.hash, scoped: true };
+    if (path === "/contact/") return { type: "contact", path, hash: url.hash, scoped: true };
+    if (path === "/notes/") return { type: "notes", path, hash: url.hash, scoped: true };
+    if (path.startsWith("/notes/")) return { type: "note", path, hash: url.hash, scoped: true };
+    if (path === "/labs/") return { type: "labs", path, hash: url.hash, scoped: true };
+    if (path.startsWith("/labs/")) return { type: "studio", path, hash: url.hash, scoped: true };
     if (caseMatch) {
       return { type: "case", path, hash: url.hash, caseId: caseMatch[1], scoped: true };
     }
 
-    return { type: "other", path, hash: url.hash, scoped: false };
+    const isDocument = !/\.[a-z\d]+$/i.test(url.pathname) && !path.startsWith("/api/");
+    return { type: "editorial", path, hash: url.hash, scoped: isDocument };
   };
 
   const currentRoute = classify(window.location.href);
@@ -63,6 +68,12 @@
     if (value.endsWith("ms")) return Number.parseFloat(value);
     if (value.endsWith("s")) return Number.parseFloat(value) * 1000;
     return fallback;
+  };
+
+  const canUseTransitions = () => {
+    const state = window.__traykovMotion?.getState?.();
+    if (state) return !state.reduced && !state.paused && !state.hidden;
+    return !reducedMotion.matches && root.dataset.motionPreference !== "paused" && !document.hidden;
   };
 
   const getTransitionKind = (from, to) => {
@@ -96,7 +107,6 @@
       fromHash: from.hash || "",
       toHash: to.hash || "",
       caseId,
-      sharedMedia: false,
       createdAt: Date.now()
     };
   };
@@ -116,34 +126,6 @@
     root.dataset.pageTransitionActive = "true";
     if (context.caseId) root.dataset.transitionCase = context.caseId;
     body.dataset.navDirection = context.direction;
-  };
-
-  const getSharedMedia = (context) => {
-    if (!context.caseId) return null;
-    if (body.dataset.pageType === "home") {
-      return document.querySelector(`.project-card[data-case-id="${context.caseId}"] .project-mark`);
-    }
-    if (body.dataset.pageType === "case") {
-      return context.kind === "home-case"
-        ? document.querySelector("[data-case-transition-media]")
-        : document.querySelector(".case-hero-turntable");
-    }
-    return null;
-  };
-
-  const prepareSharedElements = (context) => {
-    if (context.caseId && body.dataset.pageType === "home") {
-      const selectedCard = document.querySelector(`.project-card[data-case-id="${context.caseId}"]`);
-      selectedCard?.setAttribute("data-transition-selected", "true");
-    }
-
-    if (context.sharedMedia) {
-      const media = getSharedMedia(context);
-      if (media instanceof HTMLElement) {
-        media.dataset.transitionShared = "true";
-        media.style.viewTransitionName = "project-media";
-      }
-    }
   };
 
   const broadcastTransitionState = (active, phase) => {
@@ -166,7 +148,6 @@
 
   const prepareOutgoing = (context) => {
     setContextAttributes(context);
-    prepareSharedElements(context);
     body.classList.add("is-page-transitioning");
     pauseTransitionMedia();
     broadcastTransitionState(true, "outgoing");
@@ -174,23 +155,13 @@
 
   const prepareIncoming = (context) => {
     setContextAttributes(context);
-    prepareSharedElements(context);
     body.classList.add("is-page-arriving");
-    // The outgoing page is already captured. Let the incoming turntable initialize
-    // behind the shared poster instead of blocking it until the poster disappears.
     broadcastTransitionState(false, "incoming");
   };
 
   const clearTransitionState = () => {
     window.clearTimeout(entryCleanupTimer);
     body.classList.remove("is-page-transitioning", "is-page-arriving", "is-page-leaving");
-    document.querySelectorAll("[data-transition-selected]").forEach((element) => {
-      element.removeAttribute("data-transition-selected");
-    });
-    document.querySelectorAll("[data-transition-shared]").forEach((element) => {
-      element.removeAttribute("data-transition-shared");
-      element.style.removeProperty("view-transition-name");
-    });
     [
       "transitionIncoming",
       "transitionKind",
@@ -206,6 +177,9 @@
     body.dataset.pageReady = "true";
   };
 
+  const isHistoryRestore = () =>
+    window.performance.getEntriesByType("navigation")[0]?.type === "back_forward";
+
   const syncNavPosition = () => {
     body.classList.toggle("is-nav-at-top", window.scrollY <= topThreshold);
   };
@@ -216,52 +190,51 @@
     window.addEventListener("resize", syncNavPosition);
   }
 
-  if (incomingContext?.transport === "native" && !reducedMotion.matches) {
+  if (incomingContext?.transport === "native" && canUseTransitions() && !isHistoryRestore()) {
     prepareIncoming(incomingContext);
     finishEntry();
     entryCleanupTimer = window.setTimeout(
       clearTransitionState,
-      tokenMilliseconds("--dur-6", 720) + tokenMilliseconds("--dur-3", 260)
+      tokenMilliseconds("--dur-2", 180)
     );
   } else {
     if (incomingContext) prepareIncoming(incomingContext);
     if (incomingContext?.direction) body.dataset.navDirection = incomingContext.direction;
-    if (reducedMotion.matches) {
+    if (reducedMotion.matches || isHistoryRestore() || !canUseTransitions()) {
       finishEntry();
     } else {
       requestAnimationFrame(() => requestAnimationFrame(finishEntry));
     }
     if (incomingContext) {
-      entryCleanupTimer = window.setTimeout(clearTransitionState, tokenMilliseconds("--dur-6", 720));
+      entryCleanupTimer = window.setTimeout(
+        clearTransitionState,
+        reducedMotion.matches || isHistoryRestore() || !canUseTransitions()
+          ? 0
+          : tokenMilliseconds("--dur-2", 180)
+      );
     }
   }
 
+  window.__traykovIncomingNativeTransition?.finished.then(clearTransitionState, clearTransitionState);
+
   window.addEventListener("pagereveal", (event) => {
-    if (!event.viewTransition || !incomingContext || reducedMotion.matches) return;
-    event.viewTransition.finished.finally(clearTransitionState);
+    // A superseding navigation can skip a native transition before it is ready.
+    event.viewTransition?.ready.catch(() => {});
+    if (isHistoryRestore()) event.viewTransition?.skipTransition?.();
+    if (!event.viewTransition || !incomingContext || !canUseTransitions()) return;
+    event.viewTransition.finished.then(clearTransitionState, clearTransitionState);
   });
 
   window.addEventListener("pageswap", (event) => {
     if (!supportsNativeTransitions || !event.viewTransition) return;
+    event.viewTransition.ready.catch(() => {});
+    event.viewTransition.finished.catch(() => {});
     const destinationUrl = event.activation?.entry?.url;
     if (!destinationUrl) return;
     const nextRoute = classify(destinationUrl);
 
-    if (reducedMotion.matches || !currentRoute.scoped || !nextRoute.scoped) {
+    if (!canUseTransitions() || !currentRoute.scoped || !nextRoute.scoped) {
       event.viewTransition?.skipTransition();
-      return;
-    }
-
-    const nextKind = getTransitionKind(currentRoute, nextRoute);
-    if (nextKind === "editorial") {
-      const context =
-        pendingContext && pendingContext.toPath === nextRoute.path
-          ? pendingContext
-          : createContext(currentRoute, nextRoute, "fallback");
-      context.transport = "fallback";
-      context.createdAt = Date.now();
-      storeContext(context);
-      event.viewTransition.skipTransition();
       return;
     }
 
@@ -289,16 +262,15 @@
 
     const nextRoute = classify(target);
     if (nextRoute.path === currentRoute.path) {
-      if (target.hash === currentRoute.hash) event.preventDefault();
+      // In-page anchors use native navigation. currentRoute describes the page
+      // at load time, so it must not suppress a later return to that hash.
       return;
     }
     if (!currentRoute.scoped || !nextRoute.scoped) return;
 
-    const transitionKind = getTransitionKind(currentRoute, nextRoute);
-    const transport =
-      supportsNativeTransitions && !reducedMotion.matches && transitionKind !== "editorial"
-        ? "native"
-        : "fallback";
+    if (!canUseTransitions()) return;
+
+    const transport = supportsNativeTransitions && canUseTransitions() ? "native" : "fallback";
     const context = createContext(currentRoute, nextRoute, transport);
     pendingContext = context;
     storeContext(context);
@@ -321,21 +293,16 @@
       }
     }
 
-    if (reducedMotion.matches) return;
+    if (transport !== "native") return;
 
     navigationLocked = true;
     prepareOutgoing(context);
+  });
 
-    if (transport === "native") return;
-
-    event.preventDefault();
-    body.classList.add("is-page-leaving");
-    const navigationDelay =
-      compactViewport.matches && context.kind === "home-case"
-        ? 0
-        : tokenMilliseconds("--dur-3", 260);
-    window.setTimeout(() => {
-      window.location.assign(target.href);
-    }, navigationDelay);
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    pendingContext = undefined;
+    finishEntry();
+    clearTransitionState();
   });
 })();

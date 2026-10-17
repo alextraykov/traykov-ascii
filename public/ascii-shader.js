@@ -1,4 +1,17 @@
 const ASCII_RAMP = " .:+*#%@";
+const MOTION_EVENT = "traykov-motion-change";
+
+const getMotionState = () =>
+  window.__traykovMotion?.getState?.() || {
+    active: !document.hidden && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  };
+
+const subscribeMotion = (callback) => {
+  const listener = (event) => callback(event.detail || getMotionState());
+  window.addEventListener(MOTION_EVENT, listener);
+  callback(getMotionState());
+  return () => window.removeEventListener(MOTION_EVENT, listener);
+};
 
 const fragmentSource = `
 precision highp float;
@@ -103,7 +116,9 @@ class AsciiShader {
       antialias: false,
       preserveDrawingBuffer: true
     });
-    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.frame = 0;
+    this.visible = false;
+    this.destroyed = false;
     this.lastAscii = 0;
     this.lastTrailTime = 0;
     this.pixelBuffer = new Uint8Array(4);
@@ -134,17 +149,36 @@ class AsciiShader {
       this.gl.STATIC_DRAW
     );
 
-    this.interactionTarget.addEventListener("pointermove", (event) => this.handlePointerMove(event), {
+    this.onPointerMove = (event) => this.handlePointerMove(event);
+    this.onPointerDown = (event) => this.handlePointerDown(event);
+    this.interactionTarget.addEventListener("pointermove", this.onPointerMove, {
       passive: true
     });
-    this.interactionTarget.addEventListener("pointerdown", (event) => this.handlePointerDown(event), {
+    this.interactionTarget.addEventListener("pointerdown", this.onPointerDown, {
       passive: true
     });
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(this.root);
+    this.intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        this.visible = Boolean(entry?.isIntersecting);
+        this.syncMotion();
+      },
+      { rootMargin: "120px 0px", threshold: 0.01 }
+    );
+    this.intersectionObserver.observe(this.root);
+    this.unsubscribeMotion = subscribeMotion(() => this.syncMotion());
+    this.onPageHide = (event) => {
+      this.cancelFrame();
+      if (!event.persisted) this.destroy();
+    };
+    this.onPageShow = (event) => {
+      if (event.persisted) this.syncMotion();
+    };
+    window.addEventListener("pagehide", this.onPageHide);
+    window.addEventListener("pageshow", this.onPageShow);
     this.resize();
-    requestAnimationFrame((time) => this.render(time));
   }
 
   createShader(type, source) {
@@ -195,6 +229,38 @@ class AsciiShader {
     this.effectCanvas.style.width = `${rect.width}px`;
     this.effectCanvas.style.height = `${rect.height}px`;
     this.effectContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    this.requestRender();
+  }
+
+  canRender() {
+    return this.visible && !document.hidden && !this.destroyed;
+  }
+
+  canAnimate() {
+    return this.canRender() && getMotionState().active;
+  }
+
+  cancelFrame() {
+    if (this.frame) cancelAnimationFrame(this.frame);
+    this.frame = 0;
+  }
+
+  requestRender() {
+    if (!this.frame && this.canRender()) {
+      this.frame = requestAnimationFrame((time) => this.render(time));
+    }
+  }
+
+  syncMotion() {
+    if (!this.canAnimate()) {
+      this.cancelFrame();
+      this.trailBuffer?.fill(0);
+      this.waveCurrent?.fill(0);
+      this.wavePrevious?.fill(0);
+      this.waveNext?.fill(0);
+      this.lastTrailTime = 0;
+    }
+    this.requestRender();
   }
 
   eventToGrid(event) {
@@ -211,14 +277,18 @@ class AsciiShader {
   handlePointerMove(event) {
     const point = this.eventToGrid(event);
     this.mouse = point;
-    this.addTrail(point.x, point.y);
+    if (this.canAnimate()) this.addTrail(point.x, point.y);
+    this.requestRender();
   }
 
   handlePointerDown(event) {
     const point = this.eventToGrid(event);
     this.mouse = point;
-    this.addTrail(point.x, point.y, 1.15);
-    this.injectWave(point.x, point.y);
+    if (this.canAnimate()) {
+      this.addTrail(point.x, point.y, 1.15);
+      this.injectWave(point.x, point.y);
+    }
+    this.requestRender();
   }
 
   addTrail(centerX, centerY, strength = 1) {
@@ -303,7 +373,10 @@ class AsciiShader {
   }
 
   render(time) {
-    const seconds = this.reducedMotion ? 4.2 : time * 0.001;
+    this.frame = 0;
+    if (!this.canRender()) return;
+    const animated = this.canAnimate();
+    const seconds = animated ? time * 0.001 : 4.2;
     const gl = this.gl;
     gl.useProgram(this.program);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
@@ -312,18 +385,16 @@ class AsciiShader {
     gl.uniform2f(this.resolutionLocation, this.cols, this.rows);
     gl.uniform1f(this.timeLocation, seconds);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    this.stepWave();
+    if (animated) this.stepWave();
 
-    if (time - this.lastAscii > 58 || this.reducedMotion) {
+    if (time - this.lastAscii > 58 || !animated) {
       this.lastAscii = time;
-      this.updateTrail(time);
+      if (animated) this.updateTrail(time);
       this.pre.textContent = this.toAscii(seconds);
       this.drawAscii();
     }
 
-    if (!this.reducedMotion) {
-      requestAnimationFrame((next) => this.render(next));
-    }
+    if (animated) this.requestRender();
   }
 
   toAscii(seconds) {
@@ -411,6 +482,19 @@ class AsciiShader {
       Array.from({ length: 100 }, (_, x) => ASCII_RAMP[(x + y) % ASCII_RAMP.length]).join("")
     ).join("\n");
   }
+
+  destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
+    this.cancelFrame();
+    this.resizeObserver?.disconnect();
+    this.intersectionObserver?.disconnect();
+    this.unsubscribeMotion?.();
+    this.interactionTarget?.removeEventListener("pointermove", this.onPointerMove);
+    this.interactionTarget?.removeEventListener("pointerdown", this.onPointerDown);
+    window.removeEventListener("pagehide", this.onPageHide);
+    window.removeEventListener("pageshow", this.onPageShow);
+  }
 }
 
 document.querySelectorAll("[data-ascii-shader]").forEach((stage) => {
@@ -433,7 +517,9 @@ class ProjectAsciiMark {
       preserveDrawingBuffer: true
     });
     this.lastAscii = 0;
-    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.frame = 0;
+    this.visible = false;
+    this.destroyed = false;
     this.rows = PAVE_MARK_MASK.length;
     this.cols = Math.max(...PAVE_MARK_MASK.map((line) => line.length));
     this.pixelBuffer = new Uint8Array(this.cols * this.rows * 4);
@@ -458,7 +544,24 @@ class ProjectAsciiMark {
     this.resize();
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(this.root);
-    requestAnimationFrame((time) => this.render(time));
+    this.intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        this.visible = Boolean(entry?.isIntersecting);
+        this.syncMotion();
+      },
+      { rootMargin: "120px 0px", threshold: 0.01 }
+    );
+    this.intersectionObserver.observe(this.root);
+    this.unsubscribeMotion = subscribeMotion(() => this.syncMotion());
+    this.onPageHide = (event) => {
+      this.cancelFrame();
+      if (!event.persisted) this.destroy();
+    };
+    this.onPageShow = (event) => {
+      if (event.persisted) this.syncMotion();
+    };
+    window.addEventListener("pagehide", this.onPageHide);
+    window.addEventListener("pageshow", this.onPageShow);
   }
 
   createShader(type, source) {
@@ -489,10 +592,38 @@ class ProjectAsciiMark {
     this.gl.viewport(0, 0, this.cols, this.rows);
     this.pre.style.fontSize = `${Math.max(7, rect.width / (this.cols * 0.58))}px`;
     this.pre.style.lineHeight = `${rect.height / this.rows}px`;
+    this.requestRender();
+  }
+
+  canRender() {
+    return this.visible && !document.hidden && !this.destroyed;
+  }
+
+  canAnimate() {
+    return this.canRender() && getMotionState().active;
+  }
+
+  cancelFrame() {
+    if (this.frame) cancelAnimationFrame(this.frame);
+    this.frame = 0;
+  }
+
+  requestRender() {
+    if (!this.frame && this.canRender()) {
+      this.frame = requestAnimationFrame((time) => this.render(time));
+    }
+  }
+
+  syncMotion() {
+    if (!this.canAnimate()) this.cancelFrame();
+    this.requestRender();
   }
 
   render(time) {
-    const seconds = this.reducedMotion ? 3.6 : time * 0.001;
+    this.frame = 0;
+    if (!this.canRender()) return;
+    const animated = this.canAnimate();
+    const seconds = animated ? time * 0.001 : 3.6;
     const gl = this.gl;
     gl.useProgram(this.program);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
@@ -502,14 +633,12 @@ class ProjectAsciiMark {
     gl.uniform1f(this.timeLocation, seconds);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    if (time - this.lastAscii > 70 || this.reducedMotion) {
+    if (time - this.lastAscii > 70 || !animated) {
       this.lastAscii = time;
       this.pre.textContent = this.toAscii(seconds);
     }
 
-    if (!this.reducedMotion) {
-      requestAnimationFrame((next) => this.render(next));
-    }
+    if (animated) this.requestRender();
   }
 
   toAscii(seconds) {
@@ -545,6 +674,17 @@ class ProjectAsciiMark {
     }
 
     return lines.join("\n");
+  }
+
+  destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
+    this.cancelFrame();
+    this.resizeObserver?.disconnect();
+    this.intersectionObserver?.disconnect();
+    this.unsubscribeMotion?.();
+    window.removeEventListener("pagehide", this.onPageHide);
+    window.removeEventListener("pageshow", this.onPageShow);
   }
 }
 

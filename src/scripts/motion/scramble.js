@@ -1,38 +1,67 @@
 export const SCRAMBLE_RAMP = " .:+*#%@";
 
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+import { isHistoryRestore, isMotionActive, onMotionChange } from "./lifecycle.js";
+
 const activeFrames = new WeakMap();
+const activeElements = new Set();
+
+function getVisualTarget(element) {
+  if (!(element instanceof HTMLElement)) return element;
+  return element.querySelector(":scope > [data-scramble-visual]") || element;
+}
+
+function getDuration(element, fallback = 260) {
+  const explicitDuration = Number(element.dataset.scrambleDuration);
+  if (Number.isFinite(explicitDuration) && explicitDuration >= 0) return explicitDuration;
+
+  const token = getComputedStyle(document.documentElement).getPropertyValue("--dur-3").trim();
+  if (token.endsWith("ms")) return Number.parseFloat(token) || fallback;
+  if (token.endsWith("s")) {
+    const seconds = Number.parseFloat(token);
+    return Number.isFinite(seconds) ? seconds * 1000 : fallback;
+  }
+  return fallback;
+}
 
 export function getScrambleLabel(element) {
+  const target = getVisualTarget(element);
   const label =
+    target.dataset.scrambleLabel ||
     element.dataset.scrambleLabel ||
+    target.dataset.scrambleSource ||
     element.dataset.scrambleSource ||
+    target.dataset.scramble ||
     element.dataset.scramble ||
+    target.textContent ||
     element.textContent ||
     "";
 
+  target.dataset.scrambleLabel = label;
   element.dataset.scrambleLabel = label;
   return label;
 }
 
 export function scrambleElement(element, options = {}) {
-  const label = getScrambleLabel(element);
-  const duration = Number(options.duration ?? element.dataset.scrambleDuration ?? 420);
+  const target = getVisualTarget(element);
+  const label = getScrambleLabel(target);
+  const duration = Number(options.duration ?? getDuration(target));
   const reverse = Boolean(options.reverse);
 
-  if (reducedMotion.matches || duration <= 0) {
-    element.textContent = label;
+  if (!isMotionActive() || duration <= 0) {
+    target.textContent = label;
     return Promise.resolve();
   }
 
   const chars = Array.from(label);
-  const token = (activeFrames.get(element) || 0) + 1;
+  const token = (activeFrames.get(target) || 0) + 1;
   const start = performance.now();
-  activeFrames.set(element, token);
+  activeFrames.set(target, token);
+  activeElements.add(target);
 
   return new Promise((resolve) => {
     const tick = (now) => {
-      if (activeFrames.get(element) !== token) {
+      if (activeFrames.get(target) !== token) {
+        activeElements.delete(target);
         resolve();
         return;
       }
@@ -40,7 +69,7 @@ export function scrambleElement(element, options = {}) {
       const progress = Math.min(1, (now - start) / duration);
       const resolved = Math.floor(chars.length * progress);
 
-      element.textContent = chars
+      target.textContent = chars
         .map((character, index) => {
           if (character === " ") return " ";
           const order = reverse ? chars.length - index - 1 : index;
@@ -53,7 +82,8 @@ export function scrambleElement(element, options = {}) {
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
-        element.textContent = label;
+        target.textContent = label;
+        activeElements.delete(target);
         resolve();
       }
     };
@@ -62,7 +92,47 @@ export function scrambleElement(element, options = {}) {
   });
 }
 
+export function settleScramble(element) {
+  const target = getVisualTarget(element);
+  const token = (activeFrames.get(target) || 0) + 1;
+  activeFrames.set(target, token);
+  target.textContent = getScrambleLabel(target);
+  activeElements.delete(target);
+}
+
+function installStableLabel(element) {
+  if (
+    !(element instanceof HTMLElement) ||
+    element.dataset.scrambleAccessible === "true" ||
+    element.matches("[data-identity-rotator], [data-identity-prefix]")
+  ) {
+    return;
+  }
+
+  const label = getScrambleLabel(element);
+  const visual = document.createElement("span");
+  visual.dataset.scrambleVisual = "true";
+  visual.dataset.scrambleLabel = label;
+  visual.setAttribute("aria-hidden", "true");
+  visual.textContent = label;
+  const stable = document.createElement("span");
+  stable.className = "visually-hidden";
+  stable.textContent = label;
+
+  element.replaceChildren(visual, stable);
+  element.dataset.scrambleAccessible = "true";
+}
+
 export function prepareScrambleElement(element) {
+  if (
+    element.closest(
+      ".site-nav, .site-footer, .footer-links, .case-toc, .case-sibling-nav, .case-contact-prompt, .contact-call, .published-item, .labs-tool-hero, [data-reading-control]"
+    )
+  ) {
+    element.textContent = getScrambleLabel(element);
+    return;
+  }
+  installStableLabel(element);
   getScrambleLabel(element);
 
   if (element.dataset.scrambleReady === "true") return;
@@ -71,19 +141,20 @@ export function prepareScrambleElement(element) {
   const trigger = element.dataset.scrambleTrigger || "hover";
   const host = element.closest("a, button, summary, [tabindex]") || element;
 
+  const visual = getVisualTarget(element);
+
   if (trigger === "load") {
-    scrambleElement(element);
+    if (isHistoryRestore()) settleScramble(visual);
+    else scrambleElement(visual);
     return;
   }
 
   if (trigger === "reveal") return;
 
-  host.addEventListener("pointerenter", () => scrambleElement(element));
-  host.addEventListener("focus", () => scrambleElement(element));
+  host.addEventListener("pointerenter", () => scrambleElement(visual));
+  host.addEventListener("focus", () => scrambleElement(visual));
   host.addEventListener("pointerleave", () => {
-    const token = (activeFrames.get(element) || 0) + 1;
-    activeFrames.set(element, token);
-    element.textContent = getScrambleLabel(element);
+    settleScramble(visual);
   });
 }
 
@@ -98,3 +169,11 @@ if (document.readyState === "loading") {
 } else {
   initScramble();
 }
+
+onMotionChange((state) => {
+  if (state.active && !state.historyRestore) return;
+  activeElements.forEach((element) => settleScramble(element));
+  document.querySelectorAll("[data-scramble], [data-footer-scramble]").forEach((element) => {
+    if (element instanceof HTMLElement) settleScramble(element);
+  });
+});

@@ -1,4 +1,4 @@
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+import { isMotionActive, onMotionChange } from "./motion/lifecycle.js";
 const MAX_INITIALIZATION_RETRIES = 1;
 let webglSupport;
 
@@ -41,7 +41,7 @@ export function registerTurntables(selector, load, initialize) {
       ? root.closest("[data-ascii-playground]")
       : null;
     let intersecting = false;
-    let interacting = reducedMotion.matches || !hoverTarget;
+    let interacting = !hoverTarget;
     let initialized = false;
     let instance;
     let destroyed = false;
@@ -51,18 +51,19 @@ export function registerTurntables(selector, load, initialize) {
 
     const isSelected = () =>
       !playground || playground.dataset.activeTurntable === root.dataset.playgroundTurntable;
-    const isActive = () =>
+    const canRender = () =>
       !failed &&
       intersecting &&
+      interacting &&
+      isSelected() &&
       !document.hidden &&
-      document.documentElement.dataset.pageTransitionActive !== "true" &&
-      (reducedMotion.matches || interacting) &&
-      isSelected();
+      document.documentElement.dataset.pageTransitionActive !== "true";
+    const canAnimate = () => canRender() && isMotionActive();
 
     const update = async () => {
       if (destroyed) return;
-      let active = isActive();
-      if (active && !initialized) {
+      let renderable = canRender();
+      if (renderable && !initialized) {
         if (!supportsWebGL()) {
           failed = true;
           showTurntableFallback(root);
@@ -73,8 +74,8 @@ export function registerTurntables(selector, load, initialize) {
         initialized = true;
         try {
           const module = await load();
-          active = !destroyed && isActive();
-          if (active) {
+          renderable = !destroyed && canRender();
+          if (renderable) {
             instance = initialize(module, root);
             retryCount = 0;
             window.clearTimeout(retryTimer);
@@ -92,7 +93,7 @@ export function registerTurntables(selector, load, initialize) {
           if (permanentRendererFailure || retryCount >= MAX_INITIALIZATION_RETRIES) {
             failed = true;
             showTurntableFallback(root);
-          } else if (isActive() && !retryTimer) {
+          } else if (canRender() && !retryTimer) {
             const retryDelay = Math.min(400 * (2 ** retryCount), 3200);
             retryCount += 1;
             retryTimer = window.setTimeout(() => {
@@ -102,8 +103,12 @@ export function registerTurntables(selector, load, initialize) {
           }
         }
       }
-      active = isActive();
-      root.dispatchEvent(new CustomEvent("turntable-eligibility", { detail: { active } }));
+      renderable = canRender();
+      root.dispatchEvent(
+        new CustomEvent("turntable-eligibility", {
+          detail: { active: canAnimate(), render: renderable }
+        })
+      );
     };
 
     const observer = new IntersectionObserver(
@@ -133,16 +138,14 @@ export function registerTurntables(selector, load, initialize) {
     hoverTarget?.addEventListener("pointerleave", onLeave);
     hoverTarget?.addEventListener("focusin", onEnter);
     hoverTarget?.addEventListener("focusout", onLeave);
-    reducedMotion.addEventListener?.("change", update);
+    const unsubscribeMotion = onMotionChange(update, { immediate: false });
 
     const selectionObserver = playground
       ? new MutationObserver(() => update())
       : null;
     selectionObserver?.observe(playground, { attributes: true, attributeFilter: ["data-active-turntable"] });
 
-    window.addEventListener(
-      "pagehide",
-      () => {
+    const destroy = () => {
         destroyed = true;
         window.clearTimeout(retryTimer);
         observer.disconnect();
@@ -153,10 +156,20 @@ export function registerTurntables(selector, load, initialize) {
         hoverTarget?.removeEventListener("pointerleave", onLeave);
         hoverTarget?.removeEventListener("focusin", onEnter);
         hoverTarget?.removeEventListener("focusout", onLeave);
-        reducedMotion.removeEventListener?.("change", update);
+        unsubscribeMotion();
         instance?.destroy?.();
-      },
-      { once: true }
-    );
+    };
+    window.addEventListener("pagehide", (event) => {
+      if (event.persisted) {
+        root.dispatchEvent(
+          new CustomEvent("turntable-eligibility", { detail: { active: false, render: false } })
+        );
+        return;
+      }
+      destroy();
+    });
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) update();
+    });
   });
 }

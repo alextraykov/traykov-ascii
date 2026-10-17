@@ -16,14 +16,14 @@ import "../styles/global.css";
       path="/image-trail/"
       noindex
     />
+    <script src="/page-transitions.js" defer></script>
   </head>
   <body class="dither-trail-page">
     <SiteNav />
 
     <main>
-      <section class="dither-trail-prototype" aria-labelledby="trail-title">
+      <section class="dither-trail-prototype" aria-labelledby="trail-title" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <div class="dither-trail-prototype__copy">
-          <p class="section-kicker">Interaction study / 01</p>
           <h1 id="trail-title">Big images.<br />Two inks.<br />One trail.</h1>
           <p>
             A slower, poster-scale cursor trail for the portfolio. Move to reveal; click to disperse.
@@ -33,6 +33,9 @@ import "../styles/global.css";
         <DitherImageTrail images={imageTrailImages} />
       </section>
     </main>
+    <script>
+      import "../scripts/motion/index.js";
+    </script>
     <SiteAnalytics />
   </body>
 </html>

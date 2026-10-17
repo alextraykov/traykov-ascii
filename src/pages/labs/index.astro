@@ -113,6 +113,25 @@ const labs = [
       ".:+*#%@   [ F₂ − F₁ ]  .:+*",
       " .:+*#%@  .:+*#%@  .:+*#%@ "
     ].join("\n")
+  },
+  {
+    id: "presenting-in-code",
+    number: "07",
+    title: "Presentations in Code",
+    description:
+      "Try camera zooms, live annotations and exploded interfaces. Take ten reusable skills.",
+    href: "/labs/presenting-in-code/",
+    action: "Open tutorial",
+    status: "Interactive tutorial",
+    tags: ["Live interface", "Camera", "Layers", "10 skills"],
+    preview: [
+      "┌─ BACKGROUND ───────────────────────────────┐",
+      "│ ┌─ WORKSPACE ────────────────────────────┐ │",
+      "│ │ ┌─ COMPOSER ─────────────────────────┐ │ │",
+      "│ │ └────────────────────────────────────┘ │ │",
+      "│ └────────────────────────────────────────┘ │",
+      "└────────────────────────────────────────────┘"
+    ].join("\n")
   }
 ];
 ---
@@ -131,37 +150,34 @@ const labs = [
     <SiteNav />
 
     <main id="top" class="labs-shell section-shell">
-      <section class="labs-hero">
-        <div class="labs-hero__meta">
-          <span>AT.LABS / {String(labs.length).padStart(2, "0")} public experiments</span>
-          <span>No signup / exports stay local</span>
-        </div>
+      <section class="labs-hero" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <div class="labs-hero__copy">
           <h1>Labs</h1>
+          <p class="labs-hero__lede">
+            {labs.length} public experiments. No signup; exports stay local.
+          </p>
         </div>
       </section>
 
       <section class="labs-directory" aria-labelledby="labs-directory-title">
         <header>
-          <p id="labs-directory-title">Available now</p>
+          <h2 id="labs-directory-title">Available now</h2>
         </header>
 
-        <div class="project-grid labs-grid" data-reveal-group>
+        <div class="project-grid labs-grid">
           {
-            labs.map((lab, index) => (
+            labs.map((lab) => (
               <article
                 id={`lab-${lab.id}`}
                 class="project-card project-card--direct project-card--construction labs-project-card"
-                data-reveal="rise"
-                data-reveal-delay={String(Math.min(index, 6) * 60)}
               >
                 <a class="project-card__body" href={lab.href} aria-label={lab.action}>
-                  <div class="project-mark labs-project-card__preview" aria-hidden="true">
+                  <div class="project-mark labs-project-card__preview" aria-hidden="true" data-motion-artwork>
                     <pre>{lab.preview}</pre>
                   </div>
                   <div class="project-copy">
                     <span class="project-index" data-scramble data-scramble-trigger="hover">
-                      {lab.number} / Lab / {lab.status}
+                      {lab.number} / {lab.status}
                     </span>
                     <h3>{lab.title}</h3>
                     <p>{lab.description}</p>

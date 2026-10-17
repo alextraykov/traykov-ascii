@@ -13,6 +13,7 @@ const staticPaths = [
   "/notes/",
   "/labs/",
   "/labs/ascii-banner/",
+  "/labs/presenting-in-code/",
   "/labs/product-systems-kit/",
   "/labs/rhizome-field/",
   "/labs/sketchbook/",

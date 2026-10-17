@@ -1,0 +1,22 @@
+---
+import CaseStudyPage from "../components/CaseStudyPage.astro";
+
+// Build-only neutral template. build-private-work removes this output route.
+// Do not import private-work-source or the authenticated bundle into Astro.
+const study = {
+  id: "__PRIVATE_CASE_ID__",
+  title: "__PRIVATE_TITLE__",
+  summary: "__PRIVATE_SUMMARY__",
+  group: "Pave",
+  tags: [],
+  status: "",
+  readTime: "",
+  body: ""
+};
+---
+
+<CaseStudyPage
+  study={study}
+  previousStudy={{ id: "designing-pave", title: "Designing Pave" }}
+  privateTemplate={{ mode: "case" }}
+/>

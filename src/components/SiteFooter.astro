@@ -4,6 +4,8 @@ type FooterLink = {
   href: string;
 };
 
+const { omitBookingEmbed = false } = Astro.props;
+
 const defaultBookingUrl = "https://cal.com/alexander-cqn5aq/30min";
 const bookingUrl =
   import.meta.env.PUBLIC_CAL_BOOKING_URL ??
@@ -51,7 +53,7 @@ const bookingEmbedUrl = (() => {
     <nav class="footer-links" aria-label="Footer">
       {siteLinks.map((link) => (
         <a href={link.href} aria-label={link.label}>
-          <span data-scramble data-scramble-label={link.label}>{link.label}</span>
+          {link.label}
         </a>
       ))}
     </nav>
@@ -59,6 +61,7 @@ const bookingEmbedUrl = (() => {
     <div class="site-footer__meta" aria-label="Footer details">
       <span>Sofia, Bulgaria · 2026</span>
       <div class="site-footer__meta-actions">
+        <slot name="actions" />
         <a
           class="site-footer__machine-link"
           href="/llms.txt"
@@ -70,17 +73,16 @@ const bookingEmbedUrl = (() => {
           </svg>
         </a>
         <a href="#top" aria-label="Back to top">
-          <span data-scramble data-scramble-label="Back to top">Back to top</span>
+          Back to top
         </a>
       </div>
     </div>
   </div>
 
-  {bookingEmbedUrl && (
+  {!omitBookingEmbed && bookingEmbedUrl && (
     <dialog class="footer-booking-modal" aria-labelledby="footer-booking-modal-title" data-footer-booking-modal>
       <div class="footer-booking-modal__header">
         <div>
-          <span>30 focused minutes</span>
           <h2 id="footer-booking-modal-title">Pick a time that works.</h2>
         </div>
         <button

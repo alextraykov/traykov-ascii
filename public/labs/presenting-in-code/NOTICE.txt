@@ -1,0 +1,22 @@
+Recovered tutorial supplied by Alexander Traykov from Desktop/presentations-in-code.
+The same files are present in presentations-in-code.zip, SHA-256
+37651a562a06973a1820609b9f2bdb463f1161586416adbc3a11c7ce6751bd48.
+
+The tutorial's slide components, wording, interaction logic, timing tokens,
+skills, and blueprint image are reused from that working package. The website
+adapter exposes its live primitives in native page sections with isolated
+styles, responsive visual fitting, measured notes and optional frame sampling.
+The website's layer timing follows the portfolio tokens; the reference deck
+retains its original timing. The host
+restricts the app to the tutorial route. It renames the two shared screen
+class roots as prescribed by the original tutorial build configuration.
+The supplied bundle still contains dormant fictional-product modules; they
+are not reachable as a deck. This is a compiled distribution, not the
+missing editable React project or the later episode/campaign package.
+
+Alexander Traykov has authorized MIT licensing for his authored tutorial,
+skills, posts, and the portfolio host adapter; see LICENSE.txt. Third-party
+runtime code remains under its original license notices embedded in the
+bundle and is not relicensed by this grant. Local Geist fonts are from the
+portfolio's installed @fontsource packages and remain under the SIL Open Font
+License included at deck/assets/GEIST-LICENSE.txt.

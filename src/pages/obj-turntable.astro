@@ -15,8 +15,11 @@ import "../styles/global.css";
       path="/obj-turntable/"
     />
     <script src="/page-transitions.js" defer></script>
+    <script>
+      import "../scripts/motion/index.js";
+    </script>
   </head>
-  <body class="pave-turntable-page">
+  <body data-motion-standalone class="pave-turntable-page">
     <SiteNav />
 
     <ObjTurntable

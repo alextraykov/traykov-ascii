@@ -10,7 +10,8 @@ const GROUPS = [
   ".breathing-grid__variants",
   ".breathing-grid__inspector > [role='group']",
   ".playground-flip-tabs",
-  ".pave-turntable-tabs"
+  ".pave-turntable-tabs",
+  ".pc-controls"
 ].join(", ");
 
 // The panel each group controls: it gets the band sweep when the selection changes.

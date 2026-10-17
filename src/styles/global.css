@@ -17542,72 +17542,370 @@ html[data-motion-state="active"] body[data-page-type="about"] .about-hero--trail
   }
 }
 
-/* 26 PAGE TRANSITIONS (round 3) ─ the bar stays put. The page you leave dithers out in three steps
-   (dense, half, sparse); the page you open arrives with the band sweep: ten hard bands, top to
-   bottom. Borrowed order, no screen artefacts. Reduced motion keeps the instant swap. */
-::view-transition-old(page-main) {
+/* 26 PAGE TRANSITIONS (round 3) ─ one dither dissolve across the whole viewport. The new page is
+   drawn over the old one through the ordered dither, 2 → 4 → 6 → solid, one step every 50ms, so the
+   old page shows through the gaps until it is gone: no blank frames, no slide, no fade. The snapshot
+   is the viewport itself (root), so leaving from any scroll position dissolves exactly what was on
+   screen. The bar is its own group and stays put. Reduced or paused motion swaps instantly. */
+:root[data-transition-transport="native"] main {
+  view-transition-name: none;
+}
+
+::view-transition-old(root) {
   opacity: 1;
-  animation: page-dither-out 150ms steps(1, end) both;
+  animation: none;
 }
 
-::view-transition-new(page-main) {
-  animation: page-continuity-in var(--sweep) steps(10, end) 90ms both;
-}
-
-@keyframes page-dither-out {
-  0% {
-    -webkit-mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  33% {
-    -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  66% {
-    -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
-  }
-  100% {
-    -webkit-mask: var(--dither-1) 0 0 / var(--dither-size) var(--dither-size);
-    mask: var(--dither-1) 0 0 / var(--dither-size) var(--dither-size);
-    opacity: 0;
-  }
+::view-transition-new(root) {
+  opacity: 1;
+  animation: page-continuity-in 200ms steps(1, end) both;
 }
 
 @keyframes page-continuity-in {
-  from {
-    clip-path: inset(0 0 100% 0);
+  0% {
+    -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
   }
-
-  to {
-    clip-path: inset(0);
+  25% {
+    -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  }
+  50% {
+    -webkit-mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
+  }
+  75%,
+  100% {
+    -webkit-mask: none;
+    mask: none;
   }
 }
 
-/* Browsers without cross-document view transitions get the same band sweep on arrival. */
+/* Browsers without cross-document view transitions: the arriving page resolves through the same
+   dither from paper. */
 html:not([data-transition-transport="native"]) body.is-page-arriving main {
-  animation: motion-editorial-in var(--sweep) steps(10, end) both;
+  animation: motion-editorial-in 200ms steps(1, end) both;
 }
 
 @keyframes motion-editorial-in {
-  from {
-    clip-path: inset(0 0 100% 0);
+  0% {
+    -webkit-mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-2) 0 0 / var(--dither-size) var(--dither-size);
   }
-
-  to {
-    clip-path: inset(0);
+  25% {
+    -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  }
+  50% {
+    -webkit-mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
+    mask: var(--dither-6) 0 0 / var(--dither-size) var(--dither-size);
+  }
+  75%,
+  100% {
+    -webkit-mask: none;
+    mask: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(page-main),
-  ::view-transition-new(page-main),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
   html body.is-page-arriving main {
     animation: none !important;
   }
 }
 
-html:is([data-motion-preference="paused"]) ::view-transition-old(page-main),
-html:is([data-motion-preference="paused"]) ::view-transition-new(page-main) {
+html[data-motion-preference="paused"] ::view-transition-old(root),
+html[data-motion-preference="paused"] ::view-transition-new(root) {
   animation: none !important;
+}
+
+/* The SVG studio scrolls, so its bar needs paper behind it (the full-screen tool pages keep a
+   transparent bar over their stage). */
+:root body.portfolio-studio-page .site-nav.site-nav {
+  background: var(--paper);
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+/* 27 PRESENTATIONS IN CODE (round 3) ─ the page uses the shared kit: button roles in the markup,
+   segmented control groups (with the dither handoff), the stage list as a cell rail like the case
+   index, quiet disclosures with a pixel chevron, and a quiet back link. */
+:root .pc-shell a.pc-button[data-ascii-action] {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root .pc-shell .pc-kicker a {
+  position: relative;
+  padding-bottom: 3px;
+  color: var(--ink);
+  font: 500 14px / 1.3 var(--sans);
+  text-decoration: none;
+}
+
+:root .pc-shell .pc-kicker a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root .pc-shell .pc-kicker a:is(:hover, :focus-visible)::after {
+  -webkit-mask: none;
+  mask: none;
+}
+
+/* Control groups in the demo bars are one ink-ruled segmented group. */
+:root .pc-shell .pc-controls {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border: var(--hairline) solid var(--ink);
+}
+
+:root .pc-shell .pc-controls > button {
+  position: relative;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-right: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-soft);
+}
+
+:root .pc-shell .pc-controls > button:last-child {
+  border-right: 0;
+}
+
+:root .pc-shell .pc-controls > button[aria-pressed="true"]:not([data-segmented-ready] > *) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:root .pc-shell .pc-controls > button::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--marker-height);
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+}
+
+:root .pc-shell .pc-controls > button:is(:hover, :focus-visible):not([aria-pressed="true"])::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+/* Breakdown stages: a cell rail. The current stage is a solid cell and ink; no bar behind text. */
+:root .pc-shell .pc-layer-steps {
+  counter-reset: none;
+  border-top: var(--hairline) solid var(--line);
+}
+
+:root .pc-shell .pc-layer-steps li {
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .pc-shell .pc-layer-steps button {
+  display: grid;
+  grid-template-columns: 6px 2.4ch minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 400 15px / 1.3 var(--sans);
+  text-align: left;
+}
+
+:root .pc-shell .pc-layer-steps button::before {
+  content: "";
+  width: 6px;
+  height: 20px;
+  background: var(--cell-empty);
+}
+
+:root .pc-shell .pc-layer-steps button > span:first-child {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .pc-shell .pc-layer-steps button[aria-pressed="true"] {
+  background: transparent;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+:root .pc-shell .pc-layer-steps button[aria-pressed="true"]::before {
+  background: var(--ink);
+}
+
+:root .pc-shell .pc-layer-steps button[aria-pressed="true"] > span:first-child {
+  color: var(--ink);
+}
+
+:root .pc-shell .pc-layer-steps button:not(:disabled):is(:hover, :focus-visible):not([aria-pressed="true"]) {
+  background: transparent;
+  color: var(--ink);
+}
+
+/* Disclosures: a quiet word with a pixel chevron that flips when open. */
+:root .pc-shell details > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--ink);
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  list-style: none;
+  cursor: pointer;
+}
+
+:root .pc-shell details > summary::-webkit-details-marker {
+  display: none;
+}
+
+:root .pc-shell details > summary::after {
+  content: "";
+  width: 9px;
+  height: 6px;
+  background: var(--ink);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 6' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h3v2H0zM6 0h3v2H6zM2 2h2v2H2zM5 2h2v2H5zM3 4h3v2H3z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 6' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h3v2H0zM6 0h3v2H6zM2 2h2v2H2zM5 2h2v2H5zM3 4h3v2H3z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+}
+
+:root .pc-shell details[open] > summary::after {
+  transform: scaleY(-1);
+}
+
+:root .pc-shell details > summary::before {
+  content: none;
+}
+
+/* Labels and readings in Departure 11, normal case. */
+:root .pc-shell :is(.pc-caption, .pc-readings, .pc-host-address, .pc-layer-key, .pc-layer-guide p) {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .pc-shell .pc-layer-steps li:has(~ li button[aria-pressed="true"]) button::before {
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / 4px 4px;
+  mask: var(--dither-3) 0 0 / 4px 4px;
+}
+
+:root .pc-shell .pc-layer-steps li:has(~ li button[aria-pressed="true"]) button {
+  color: var(--text-soft);
+}
+
+/* Note source line: plain words, one dither rule above, a quiet link when there is an original. */
+:root .note-source {
+  align-items: center;
+  border: 0;
+  padding-top: var(--space-3);
+  background-image: none;
+  position: relative;
+}
+
+:root .note-source::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / 4px 4px;
+  mask: var(--dither-4) 0 0 / 4px 4px;
+}
+
+:root .note-source > span {
+  color: var(--text-soft);
+  font: 500 14px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Note header: a quiet back link with a dither rule; date and reading time in Departure 11. */
+:root .note-page__back a {
+  position: relative;
+  padding-bottom: 3px;
+  color: var(--ink);
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+}
+
+:root .note-page__back a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root .note-page__back a:is(:hover, :focus-visible)::after {
+  -webkit-mask: none;
+  mask: none;
+}
+
+:root .note-header__meta,
+:root .note-header__meta :is(time, span) {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .note-figure figcaption,
+:root .note-page figcaption {
+  font: 400 var(--type-px-11) / 1.5 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Phones and narrow tablets: five stages in one row. Each stacks its cell (as a bar), number and name. */
+@media (max-width: 900px) {
+  :root .pc-shell .pc-layer-steps button {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 4px auto auto;
+    row-gap: 6px;
+    justify-items: start;
+    align-content: start;
+    min-height: 48px;
+    padding: 8px 6px;
+    overflow: hidden;
+  }
+
+  :root .pc-shell .pc-layer-steps button::before {
+    width: 100%;
+    height: 4px;
+  }
+
+  :root .pc-shell .pc-layer-steps button > span:last-child {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+  }
 }

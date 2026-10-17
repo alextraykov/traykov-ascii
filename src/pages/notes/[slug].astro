@@ -86,7 +86,7 @@ const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
         <header class="note-header" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
           <div class="note-header__utility">
             <nav class="note-page__back" aria-label="Notes">
-              <a href="/notes/">← ALL NOTES</a>
+              <a href="/notes/">← All notes</a>
             </nav>
             <div class="note-header__meta">
               <time datetime={note.publishedAt}>{published}</time>
@@ -120,22 +120,21 @@ const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
           <footer class="note-source">
             {note.source === "substack" && note.sourceUrl ? (
               <>
-                <span>SOURCE / SUBSTACK</span>
-                <a href={note.sourceUrl} target="_blank" rel="noreferrer">
-                  ORIGINAL POST ↗
+                <span>First published on Substack</span>
+                <a href={note.sourceUrl} target="_blank" rel="noreferrer" data-ascii-action="text">
+                  Read the original <span aria-hidden="true">↗</span>
                 </a>
               </>
             ) : note.source === "legacy" && note.sourceUrl ? (
               <>
-                <span>SOURCE / TRAYKOV.CC ARCHIVE</span>
-                <a href={note.sourceUrl} target="_blank" rel="noreferrer">
-                  ORIGINAL FILE ↗
+                <span>From the traykov.cc archive</span>
+                <a href={note.sourceUrl} target="_blank" rel="noreferrer" data-ascii-action="text">
+                  Original file <span aria-hidden="true">↗</span>
                 </a>
               </>
             ) : (
               <>
-                <span>SOURCE / TRAYKOV.CC</span>
-                <span>PUBLISHED LOCALLY</span>
+                <span>Published on traykov.cc</span>
               </>
             )}
           </footer>

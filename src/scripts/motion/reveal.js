@@ -17,6 +17,9 @@ function markIn(element, { animate = true } = {}) {
   element.dataset.revealState = "in";
 
   if (!animate || !isMotionActive() || isHistoryRestore()) return;
+  // Arriving through a page transition: the page dissolve is the entrance, so content already in
+  // view lands whole instead of snapping in piece by piece. Later scroll reveals still animate.
+  if (document.documentElement.dataset.transitionIncoming === "true") return;
 
   // Round 3: only elements that actually animate get the stepped snap (or band sweep for media).
   element.dataset.revealAnimate = "true";

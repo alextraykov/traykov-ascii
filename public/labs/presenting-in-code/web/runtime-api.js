@@ -58,6 +58,18 @@ const boundaryStyle = `
 .web-art__target path { fill: none; stroke: var(--lld-hover-ring); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .web-art[data-outlines="true"] [data-morph] { outline: var(--lld-blueprint-width) solid var(--lld-hover-ring); outline-offset: var(--lld-blueprint-width); }
 .web-art[data-motion="reduce"] *, .web-art[data-motion="reduce"] *::before, .web-art[data-motion="reduce"] *::after { animation: none !important; transition: none !important; }
+/* traykov.cc round 3: the stage controls use the site's shared kit (the host page's tokens reach
+   this shadow root through inherited custom properties). Plain words on a hairline, an under-marker
+   on hover, solid ink for the pressed state, Departure for readings. */
+.web-art__screen-toolbar { min-height: 44px; gap: 0; padding: 0 0 0 12px; background: var(--paper, #fbfbf8); border-bottom: 1px solid var(--line, #d8d7d0); color: var(--ink, #080808); font: 500 13px/1.3 "Geist Sans", sans-serif; }
+.web-art__screen-toolbar .web-art__reset, .web-art__reset { position: relative; min-height: 44px; padding: 0 14px; border: 0; border-left: 1px solid var(--line, #d8d7d0); border-radius: 0; background: transparent; box-shadow: none; color: var(--ink, #080808); font: 500 13px/1.2 "Geist Sans", sans-serif; cursor: pointer; }
+.web-art__reset:hover:not(:disabled), .web-art__reset:focus-visible { box-shadow: inset 0 -3px 0 var(--ink, #080808); }
+.web-art__reset[aria-pressed="true"] { background: var(--ink, #080808); color: var(--paper, #fbfbf8); }
+.web-art__reset:disabled { color: var(--muted, #8a8a84); cursor: default; }
+.web-art__sample-reading { background: var(--paper, #fbfbf8); color: var(--ink, #080808); font: 400 11px/1.4 "Departure Mono Local", "Departure Mono", "Geist Mono", monospace; }
+.web-art__open span { padding: 12px 18px; border: 1px solid var(--ink, #080808); background: var(--paper, #fbfbf8); color: var(--ink, #080808); font: 500 14px/1.2 "Geist Sans", sans-serif; }
+.web-art__open:hover span, .web-art__open:focus-visible span { box-shadow: inset 6px 0 0 var(--ink, #080808); }
+.web-art__annotation { border-radius: 0; }
 `;
 
 const stops = [cameraStops.input, cameraStops.panel, cameraStops.cards];

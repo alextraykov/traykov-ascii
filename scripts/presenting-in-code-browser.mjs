@@ -417,7 +417,7 @@ async function verifyWebsite(browser, name) {
     await expect.poll(() => art(page, "hero").locator(".bp-frame").evaluate((node) => getComputedStyle(node).backgroundColor)).not.toBe(lightSurface);
     await demo(page, "hero").getByRole("button", { name: "Dark screen", exact: true }).click();
     await capture(page, `${name}-hero-light`);
-    await page.locator('[data-theme-toggle]').click();
+    await page.locator('.site-nav [data-theme-toggle]').click();
     await capture(page, `${name}-hero-dark`);
     await noOverflow(page);
 

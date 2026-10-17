@@ -66,7 +66,15 @@ const SHOTS = [
     }
   },
   { id: "ascii-banner", route: "/labs/ascii-banner/", anchor: ".ascii-banner-studio", inset: { x: 0, width: 0.5 } },
-  { id: "presenting-in-code", route: "/labs/presenting-in-code/", anchor: ".pc-demo--hero", inset: { x: 0, width: 0.72 } }
+  { id: "presenting-in-code", route: "/labs/presenting-in-code/", anchor: ".pc-demo--layers", inset: { x: 0.1, width: 0.8 }, offsetY: 46,
+    // Show the exploded "Lift" stage, the page's most distinctive view.
+    setup: async (page) => {
+      await page.locator(".pc-demo--layers").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(800);
+      await page.locator('[data-pc-stage="3"]').click({ timeout: 5000 }).catch(() => {});
+      await page.waitForTimeout(1800);
+    }
+  }
 ];
 
 async function encode(page, png) {
@@ -135,7 +143,7 @@ for (const shot of SHOTS) {
     // Optional inset: a horizontal slice of the anchor (fractions of its width), kept at 4:3.
     const x = box.x + (shot.inset ? box.width * shot.inset.x : 0);
     const width = Math.min(shot.inset ? box.width * shot.inset.width : box.width, 1440 - x);
-    const clip = { x, y: Math.max(0, box.y), width, height: (width * HEIGHT) / WIDTH };
+    const clip = { x, y: Math.max(0, box.y + (shot.offsetY || 0)), width, height: (width * HEIGHT) / WIDTH };
     const png = await page.screenshot({ clip });
     const { url, quality } = await encode(encoder, png);
     const bytes = Buffer.from(url.slice(url.indexOf(",") + 1), "base64");

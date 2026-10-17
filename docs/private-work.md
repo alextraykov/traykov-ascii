@@ -1,5 +1,7 @@
 # Private work access
 
+The public entry points (the "Private work" block on Home and on Designing Pave) render only when the build sets `PUBLIC_PRIVATE_WORK_ENABLED=true`. Leave it unset until the host has `PRIVATE_WORK_PASSWORD_HASH`, a session secret of at least 32 bytes, `PRIVATE_WORK_WAF_CONFIGURED=1` and a prebuilt bundle (below). Otherwise `/private/` fails closed with a 503, and the links would lead nowhere. `/private-access/` itself stays routable either way.
+
 `/private-access/` is a generic public password form. `/private/`, its two allowlisted study paths, and every private media response are served by `api/private-work.js`; Astro never builds their HTML or media into `dist/`.
 
 ## Private input schema

@@ -4,11 +4,18 @@ type Props = {
 };
 
 const { placement = "home" }: Props = Astro.props;
+
+// Private work stays hidden until it is configured on the host (password hash, session secret,
+// release gate and a prebuilt bundle; see docs/private-work.md). Set
+// PUBLIC_PRIVATE_WORK_ENABLED=true for the build to show this entry point again.
+const enabled = import.meta.env.PUBLIC_PRIVATE_WORK_ENABLED === "true";
 ---
 
-<aside class:list={["private-work-link", `private-work-link--${placement}`]} aria-label="Private work">
-  <p>Private work</p>
-  <h2>Password required</h2>
-  <p>Selected work is available with a shared password.</p>
-  <a href="/private/" data-ascii-action="secondary">Open private access <span aria-hidden="true">→</span></a>
-</aside>
+{enabled && (
+  <aside class:list={["private-work-link", `private-work-link--${placement}`]} aria-label="Private work">
+    <p>Private work</p>
+    <h2>Password required</h2>
+    <p>Selected work is available with a shared password.</p>
+    <a href="/private/" data-ascii-action="secondary">Open private access <span aria-hidden="true">→</span></a>
+  </aside>
+)}

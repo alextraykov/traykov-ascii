@@ -51,7 +51,6 @@ const files = [
   "src/lib/homepage-overviews.ts",
   "src/lib/substack.ts",
   "src/lib/public-case-studies.ts",
-  "src/content/notes/the-cemetery-loop.json",
   "src/styles/global.css",
   "src/scripts/motion/index.js",
   "src/scripts/motion/reveal.js",
@@ -131,7 +130,6 @@ const cemeteryModelFiles = [
 ];
 
 const cemeteryRuntimeFiles = [
-  "src/content/notes/the-cemetery-loop.json",
   "src/components/WebCemeterySketch.astro",
   "src/scripts/web-cemetery.js",
   "src/sketches/shaders/web-cemetery.js",
@@ -700,7 +698,7 @@ const checks = [
     "LLM orientation links crawler surfaces and factual search topics",
     has("public/llms.txt", "https://traykov.cc/sitemap.xml") &&
       has("public/llms.txt", "https://traykov.cc/rss.xml") &&
-      has("public/llms.txt", "https://traykov.cc/notes/the-cemetery-loop/") &&
+      !has("public/llms.txt", "the-cemetery-loop") &&
       has("public/llms.txt", "AI product design") &&
       has("public/llms.txt", "Enterprise UX") &&
       has("public/llms.txt", "Design engineering") &&
@@ -789,8 +787,8 @@ const checks = [
       size("public/labs/rhizome-field/male-fern-rhizome.webp") <= 250_000
   ],
   [
-    "Cemetery loop keeps its deterministic, fallback-first WebGL contract",
-    has("src/content/notes/the-cemetery-loop.json", '"visual": "web-cemetery"') &&
+    "Cemetery sketch stays deterministic and fallback-first while its note is unpublished",
+    !has("src/lib/substack.ts", "the-cemetery-loop") &&
       has("src/scripts/web-cemetery.js", "seed: 1847") &&
       cemeteryModelFiles.length === 5 &&
       cemeteryModelFiles.every(exists) &&

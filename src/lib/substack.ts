@@ -3,7 +3,6 @@ import designOutsideDesignDraft from "../content/notes/design-outside-design.jso
 import internetFeelsDeadDraft from "../content/notes/the-internet-feels-dead.json";
 import localDraft from "../content/notes/prompting-is-not-taste.json";
 import confidenceDraft from "../content/notes/the-confidence-crutch.json";
-import cemeteryLoopDraft from "../content/notes/the-cemetery-loop.json";
 import aiProductDesignerOwnershipDraft from "../content/notes/what-an-ai-product-designer-owns-in-an-enterprise-product.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
 import legacyManifest from "../content/notes/legacy/index.json";
@@ -57,7 +56,6 @@ const localDrafts: LocalNoteDraft[] = [
   designOutsideDesignDraft,
   internetFeelsDeadDraft,
   confidenceDraft,
-  cemeteryLoopDraft,
   localDraft,
   aiProductDesignerOwnershipDraft,
   titlesDraft

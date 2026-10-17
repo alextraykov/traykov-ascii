@@ -1,6 +1,7 @@
 // Captures one real screen per Labs tool for the Labs index cards.
 // Usage: npm run build && node scripts/capture-labs-screens.mjs
-// Writes public/labs/screens/<id>.webp at 960×600, each at most 40 KB.
+// Writes public/labs/screens/<id>.webp at 960×720 (4:3), each at most 40 KB. Each crop is framed on
+// the tool's own output with a sliver of its controls, so a small thumbnail still reads.
 //
 // The pages are served straight from dist/ through request interception, and every
 // other host is blocked, so the capture is offline and repeatable.
@@ -18,7 +19,7 @@ const out = join(root, "public/labs/screens");
 const { chromium } = createRequire(join(root, "package.json"))("playwright");
 
 const WIDTH = 960;
-const HEIGHT = 600;
+const HEIGHT = 720;
 const MAX_BYTES = 40_000;
 const TYPES = {
   ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css",
@@ -43,8 +44,8 @@ const SHOTS = [
     id: "playground",
     route: "/playground/",
     anchor: ".playground-stage",
-    // The stage fills the window; frame the figure and the controls below the bar.
-    clip: { x: 300, y: 64, width: 1140 },
+    // The stage fills the window: frame the figure with the edge of the controls panel.
+    clip: { x: 360, y: 150, width: 800 },
     setup: async (page) => {
       await page.evaluate((frame) => {
         const layer = [...document.querySelectorAll(".playground-stage pre")][1];
@@ -57,14 +58,15 @@ const SHOTS = [
   {
     id: "svg-ascii-studio",
     route: "/svg-ascii-studio/",
-    anchor: ".s2-card",
+    anchor: ".s2-stage",
+    inset: { x: 0.16, width: 0.68 },
     setup: async (page) => {
       await page.locator("[data-load-sample]").first().click();
       await page.waitForTimeout(3000);
     }
   },
-  { id: "ascii-banner", route: "/labs/ascii-banner/", anchor: ".ascii-banner-studio" },
-  { id: "presenting-in-code", route: "/labs/presenting-in-code/", anchor: ".pc-demo--hero" }
+  { id: "ascii-banner", route: "/labs/ascii-banner/", anchor: ".ascii-banner-studio", inset: { x: 0, width: 0.5 } },
+  { id: "presenting-in-code", route: "/labs/presenting-in-code/", anchor: ".pc-demo--hero", inset: { x: 0, width: 0.72 } }
 ];
 
 async function encode(page, png) {
@@ -130,8 +132,10 @@ for (const shot of SHOTS) {
     await page.waitForTimeout(1200);
     const box = shot.clip || (await page.locator(shot.anchor).first().boundingBox());
     if (!box) throw new Error(`no ${shot.anchor}`);
-    const width = Math.min(box.width, 1440 - box.x);
-    const clip = { x: box.x, y: Math.max(0, box.y), width, height: (width * HEIGHT) / WIDTH };
+    // Optional inset: a horizontal slice of the anchor (fractions of its width), kept at 4:3.
+    const x = box.x + (shot.inset ? box.width * shot.inset.x : 0);
+    const width = Math.min(shot.inset ? box.width * shot.inset.width : box.width, 1440 - x);
+    const clip = { x, y: Math.max(0, box.y), width, height: (width * HEIGHT) / WIDTH };
     const png = await page.screenshot({ clip });
     const { url, quality } = await encode(encoder, png);
     const bytes = Buffer.from(url.slice(url.indexOf(",") + 1), "base64");

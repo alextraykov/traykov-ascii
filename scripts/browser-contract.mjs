@@ -31,11 +31,6 @@ const browserRoutes = Object.freeze([
     name: "contact",
     path: "/contact/",
     requiredSelectors: ["#contact-title", ".contact-call"]
-  },
-  {
-    name: "cemetery-loop",
-    path: "/notes/the-cemetery-loop/",
-    requiredSelectors: [".note-header h1", "[data-web-cemetery]", ".note-body"]
   }
 ]);
 const generatedImageRoots = Object.freeze(["case-studies", "notes"]);

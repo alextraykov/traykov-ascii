@@ -33,7 +33,6 @@ I can summarize this portfolio, but I cannot inspect the work on your behalf. Pl
 - [Design outside design](https://traykov.cc/notes/design-outside-design/)
 - [Prompting is not taste](https://traykov.cc/notes/prompting-is-not-taste/)
 - [The confidence crutch](https://traykov.cc/notes/the-confidence-crutch/)
-- [The cemetery loop](https://traykov.cc/notes/the-cemetery-loop/)
 - [What’s the actual point of titles?](https://traykov.cc/notes/whats-the-actual-point-of-titles/)
 
 ## Public Case Studies

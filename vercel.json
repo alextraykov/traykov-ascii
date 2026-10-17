@@ -24,6 +24,16 @@
   ],
   "redirects": [
     {
+      "source": "/notes/the-cemetery-loop/",
+      "destination": "/notes/",
+      "permanent": false
+    },
+    {
+      "source": "/notes/the-cemetery-loop",
+      "destination": "/notes/",
+      "permanent": false
+    },
+    {
       "source": "/case-studies/",
       "destination": "/#work",
       "permanent": false

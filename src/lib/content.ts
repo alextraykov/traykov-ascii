@@ -535,9 +535,12 @@ function renderCaseCompare(source: string): string {
       const alt = plainMarkdownText(caption || `${title}: ${label}`);
       return `<div class="case-compare__panel" data-case-compare-panel="${index}" data-active="${
         index === 0 ? "true" : "false"
-      }"><div class="case-compare__media">${renderCaseMedia(src, alt, poster)}</div><p class="case-compare__caption"><span class="case-compare__label">${esc(
-        label
-      )}</span>${renderCaseTag(tag)}${caption ? `<span>${inlineMarkdown(caption)}</span>` : ""}</p></div>`;
+      }"><div class="case-compare__media">${renderCaseMedia(src, alt, poster)}</div><p class="case-compare__caption">${
+        // A tag that repeats the label ("Before" / "Before") is shown once, as the status chip.
+        tag && tag.toLowerCase() === label.toLowerCase()
+          ? renderCaseTag(tag)
+          : `<span class="case-compare__label">${esc(label)}</span>${renderCaseTag(tag)}`
+      }${caption ? `<span>${inlineMarkdown(caption)}</span>` : ""}</p></div>`;
     })
     .join("");
 

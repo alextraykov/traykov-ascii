@@ -1,0 +1,70 @@
+---
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHead from "../components/SiteHead.astro";
+import SiteNav from "../components/SiteNav.astro";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead
+      title="Page not found — Alexander Traykov"
+      description="This page does not exist. Go back to the work, notes or labs."
+      path="/404/"
+      noindex={true}
+    />
+    <script src="/page-transitions.js" defer></script>
+  </head>
+  <body data-page-type="not-found">
+    <SiteNav />
+
+    <main id="top" class="not-found section-shell">
+      <div class="not-found__field cells" aria-hidden="true" data-not-found-field></div>
+      <p class="visually-hidden">Error 404</p>
+      <h1>This page isn’t here.</h1>
+      <p class="not-found__lede">The link may be old. The work and the notes are a good place to start.</p>
+      <div class="not-found__actions">
+        <a href="/#work" data-ascii-action="secondary">Go to the work</a>
+        <a href="/notes/" data-ascii-action="text">Read the notes <span aria-hidden="true">→</span></a>
+      </div>
+    </main>
+
+    <SiteFooter />
+    <SiteAnalytics />
+
+    <script>
+      import { createCells, runField, setLevel, curves } from "../scripts/motion/cells.js";
+
+      // "404" drawn in block cells (5×7 glyphs). It resolves through the dither, left to right.
+      const GLYPHS = {
+        "4": ["1...1", "1...1", "1...1", "11111", "....1", "....1", "....1"],
+        "0": [".111.", "1...1", "1...1", "1...1", "1...1", "1...1", ".111."]
+      };
+      const host = document.querySelector("[data-not-found-field]");
+      if (host instanceof HTMLElement) {
+        const rows = 7;
+        const pattern = Array.from({ length: rows }, (_, row) =>
+          ["4", "0", "4"].map((char) => GLYPHS[char][row]).join(".")
+        );
+        const cols = pattern[0].length;
+        host.style.setProperty("--cells", String(cols));
+        const cells = createCells(host, cols * rows, { clear: true });
+        const on = cells.map((_, index) => pattern[Math.floor(index / cols)][index % cols] === "1");
+        runField({
+          values: cells.map((_, index) => ((index % cols) + Math.floor(index / cols)) / (cols + rows - 2)),
+          total: 600,
+          curve: curves.out,
+          steps: 4,
+          stepMs: 30,
+          render: (stepAt) => cells.forEach((cell, index) => {
+            if (!on[index]) return;
+            setLevel(cell, Math.max(0, Math.min(8, (stepAt(index) + 1) * 2)));
+          }),
+          done: () => cells.forEach((cell, index) => setLevel(cell, on[index] ? 8 : 0))
+        });
+      }
+    </script>
+  </body>
+</html>

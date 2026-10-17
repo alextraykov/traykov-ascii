@@ -768,7 +768,11 @@ async function waitForOverviewVideo(page, video, predicate, timeout = 3_000) {
 }
 
 async function moveOverviewVideoOffscreen(page, video) {
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  // Instant, like moveOverviewVideoBelowHeader: the site scrolls smoothly, and a smooth scroll still
+  // running when the next step jumps back would carry the video under the header mid-assertion.
+  await page.evaluate(() =>
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" })
+  );
   return waitForOverviewVideo(
     page,
     video,
@@ -2385,7 +2389,7 @@ async function assertResponsiveNavigation(result, page, mode, route, viewport) {
       !state.brand.visible ||
       !state.controls.visible ||
       !state.nav.visible ||
-      state.nav.links.length !== 4 ||
+      state.nav.links.length !== 5 ||
       !state.logicalOrder.brandBeforeNav ||
       !state.logicalOrder.navBeforeControls;
     const themeFailure = state.themes.some(

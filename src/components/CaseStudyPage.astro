@@ -34,6 +34,14 @@ const caseTheme = privateTemplate ? "pave" : ["designing-pave", "pave-blueprint"
 const caseBreadcrumb = parentStudy
   ? { href: caseHref(parentStudy), label: `← ${parentStudy.title}` }
   : { href: "/#work", label: "← Work" };
+// Status as density: the denser the cell, the further the work shipped.
+const caseStatusLevel = (() => {
+  const status = (study.status || "").toLowerCase();
+  if (/launched|shipped|live/.test(status)) return 8;
+  if (/beta/.test(status)) return 5;
+  if (/prototype|handoff/.test(status)) return 3;
+  return 1;
+})();
 const caseMeta = privateTemplate ? "__PRIVATE_META__" : [study.status, study.readTime]
   .filter(Boolean)
   .join(" / ");
@@ -175,7 +183,22 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
           <nav class="case-breadcrumb" aria-label="Breadcrumb">
             <a href={caseBreadcrumb.href}>{caseBreadcrumb.label}</a>
           </nav>
-          {caseMeta && <p class="case-hero-meta">{caseMeta}</p>}
+          {privateTemplate ? (
+            caseMeta && <p class="case-hero-meta">{caseMeta}</p>
+          ) : (
+            (study.status || study.readTime) && (
+              <p class="case-hero-meta">
+                {study.status && (
+                  <span class="case-status" data-status-level={caseStatusLevel}>
+                    <i class="cell" data-level={String(caseStatusLevel)} aria-hidden="true"></i>
+                    {study.status.charAt(0).toUpperCase() + study.status.slice(1)}
+                  </span>
+                )}
+                {study.status && study.readTime && <span aria-hidden="true"> · </span>}
+                {study.readTime && <span>{/read$/i.test(study.readTime) ? study.readTime : `${study.readTime} read`}</span>}
+              </p>
+            )
+          )}
           <h1 id="case-title">{study.title}</h1>
           {study.summary && <p class="case-hero-summary">{study.summary}</p>}
         </div>
@@ -473,8 +496,9 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
           });
         };
 
+        // Position is the source of truth on every scroll frame: a fast fling can carry a heading
+        // past the observer's 1px reading line without it ever intersecting.
         const queueFallbackUpdate = () => {
-          if ("IntersectionObserver" in window && !compactToc.matches) return;
           if (fallbackFrame) return;
           fallbackFrame = window.requestAnimationFrame(() => {
             fallbackFrame = 0;
@@ -582,6 +606,7 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
       })();
     </script>
     <script>import "../scripts/private-demos.js";</script>
+    <script>import "../scripts/case-index.js";</script>
     {!privateTemplate && <SiteAnalytics />}
   </body>
 </html>

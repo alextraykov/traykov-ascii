@@ -16,7 +16,7 @@ import "../styles/global.css";
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="explainer-page">
-    <SiteNav />
+    <SiteNav motionControl="nav" />
 
     <main class="explainer-shell">
       <section class="explainer-hero" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
@@ -156,14 +156,21 @@ import "../styles/global.css";
       .explainer-hero h1,
       .diagram-copy h2 {
         margin: 10px 0 0;
-        font-family: var(--mono);
+        font-family: var(--font-pixel);
+        font-weight: 400;
         letter-spacing: 0;
-        text-transform: uppercase;
+        text-transform: none;
       }
 
       .explainer-hero h1 {
-        font-size: clamp(42px, 8vw, 112px);
-        line-height: 0.92;
+        font-size: var(--type-px-66);
+        line-height: 1.05;
+      }
+
+      @media (max-width: 700px) {
+        .explainer-hero h1 {
+          font-size: var(--type-px-44);
+        }
       }
 
       .explainer-hero p,
@@ -189,8 +196,8 @@ import "../styles/global.css";
       }
 
       .diagram-copy h2 {
-        font-size: clamp(24px, 3vw, 42px);
-        line-height: 1;
+        font-size: var(--type-px-33);
+        line-height: 1.1;
       }
 
       .pipeline-diagram,

@@ -13,9 +13,12 @@ function initializeTimeline(root) {
 
   const activate = (id) => {
     let activeLink;
+    const activeIndex = links.findIndex((link) => link.dataset.homepageTimelineTarget === id);
 
-    links.forEach((link) => {
-      if (link.dataset.homepageTimelineTarget === id) {
+    // One cell per entry: solid for the current entry, light for the ones above it, empty below.
+    links.forEach((link, index) => {
+      link.dataset.railState = index < activeIndex ? "read" : index === activeIndex ? "current" : "unread";
+      if (index === activeIndex) {
         link.setAttribute("aria-current", "location");
         activeLink = link;
       } else {
@@ -50,29 +53,25 @@ function initializeTimeline(root) {
 
   if (!activateHash()) activate(targets[0].id);
 
-  if ("IntersectionObserver" in window) {
-    const visibleTargets = new Set();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) visibleTargets.add(entry.target);
-          else visibleTargets.delete(entry.target);
-        });
-
-        const activeTarget = [...visibleTargets]
-          .filter((target) => target instanceof HTMLElement)
-          .sort(
-            (first, second) =>
-              Math.abs(first.getBoundingClientRect().top - window.innerHeight * 0.2) -
-              Math.abs(second.getBoundingClientRect().top - window.innerHeight * 0.2)
-          )[0];
-        if (activeTarget instanceof HTMLElement) activate(activeTarget.id);
-      },
-      { rootMargin: "-16% 0px -72% 0px", threshold: 0 }
-    );
-
-    targets.forEach((target) => observer.observe(target));
-  }
+  // Position decides on every scroll frame: the active entry is the last one whose top has passed
+  // the reading line (28% down), or the first entry above that. A fling or a jump back to the top
+  // can skip an observer band entirely, so nothing here waits for an intersection.
+  let frame = 0;
+  const sync = () => {
+    frame = 0;
+    const line = window.innerHeight * 0.28;
+    let active = targets[0];
+    targets.forEach((target) => {
+      if (target.getBoundingClientRect().top <= line) active = target;
+    });
+    if (active) activate(active.id);
+  };
+  const queueSync = () => {
+    if (!frame) frame = window.requestAnimationFrame(sync);
+  };
+  window.addEventListener("scroll", queueSync, { passive: true });
+  window.addEventListener("resize", queueSync, { passive: true });
+  if (!window.location.hash) queueSync();
 
   root.dataset.homepageTimelineReady = "true";
 }

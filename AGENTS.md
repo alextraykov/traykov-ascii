@@ -15,7 +15,7 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 - `src/pages/` contains the Astro routes.
 - `src/components/` contains shared Astro components.
 - `src/lib/content.ts` parses frontmatter and renders the custom MDX dialect.
-- `src/scripts/motion/` owns reveal (snap and band sweep), scramble, rise-stagger, blink-adjacent count-up, scroll effects, `cells.js` (dithered cells, the curved stagger, the dither press, cell icons) and `tick.js` (the one shared clock).
+- `src/scripts/motion/` owns reveal (snap and band sweep), scramble, rise-stagger, blink-adjacent count-up, scroll effects, `cells.js` (dithered cells, the curved stagger, the dither press, cell icons) `tick.js` (the one shared clock) and `press.js` (the dither press on every primary and secondary `[data-ascii-action]`).
 - `src/styles/global.css` owns tokens, layout, components, and responsive rules.
 - `case-studies/` contains routable MDX case studies and authoring templates.
 
@@ -31,7 +31,9 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 - Steps inside, curves across: a single mark changes in discrete `steps()`; the delays across many marks follow `--ease-out-expo`-style curves. No blur, slide or spring on text.
 - Density scale (dithered cells, `data-level` 0–8): 8 solid = current, selected, done or shipped; 5 = in progress; 3 = read or supporting; 1 = texture only, never behind text; 0 = not yet.
 - State ladder for every interactive component: rest (hairline); hover (a solid marker arrives at an edge, never a fill behind text); focus (2px ink outline, never removed); pressed or selected (diagonal dither fill to solid); working (a cell loader in place plus a plain word); done (held marker plus a cell check in `--signal-ok`); disabled (dotted outline through the dither, muted text, the reason in words); error (one plain sentence, two short flashes, then still).
-- Three button roles only: primary (one per view, the dither press), secondary, and quiet (text with a dither rule).
+- Three button roles only, set with `data-ascii-action`: `primary` (one per view, the dither press), `secondary`, and `text` (quiet: a word with a dither rule). Do not add per-component button styles; `global.css` section 18 owns them.
+- Segmented controls (`.case-switch`, the Breathing grid groups) share one style: an ink-ruled group whose selected option fills with a stepped wipe. Tool panels (section 23) share labels, sliders, buttons and the select; 36px targets are allowed only there.
+- Labs index cards use real screens from `scripts/capture-labs-screens.mjs` (`npm run build` first). Re-run it after changing a tool's look; each WebP stays at or under 40 KB.
 - Type: Departure Mono (`--font-pixel`) for headings, numbers and short labels, only at `--type-px-*` sizes (multiples of 11px) and weight 400; Geist Sans for reading; Geist Mono for character grids such as diagrams and loaders.
 - Visible copy uses plain words a designer would write; no machine language (commands, paths, error codes) in UI labels.
 - Reduced motion is a hard contract: readable at rest, no parallax, no forced motion.

@@ -17,3 +17,39 @@ The site source is at the repository root. The separate design-study worktree is
 These files were copied into the local repository on 16 October 2026. They have not been committed or pushed. A GitHub connector cannot see local-only changes. Claude Code opened in this folder can work with the local files subject to its permissions.
 
 Follow the root AGENTS.md for repository work. Audit recommendations are advisory and do not authorize implementation, merging, or deployment.
+
+## Round 3 rollout status (17 October 2026)
+
+All work is on branch `round-3/foundations`.
+
+- **R1 Foundations.** Done: dither tokens, cells, the shared clock and the snap/sweep reveal.
+- **R2 SVG studio.** Done: the interface was rebuilt and `studio.js` is unchanged.
+- **R3 Chrome and type.**
+  - Nav with Labs and a quiet theme icon.
+  - Four-column footer with Settings (theme and motion) and Back to top.
+  - Departure headings on 11px multiples.
+- **R4 Actions and selection.**
+  - Three button roles via `data-ascii-action`, with the dither press (`press.js`).
+  - One segmented style for the case switch and the Breathing grid.
+- **R5 Lists and Labs.**
+  - The Labs index lists four tools with real screens (`scripts/capture-labs-screens.mjs`).
+  - Notes and CV rows use the edge marker; search snaps rows back in.
+- **R6 Case pages.**
+  - One reading measure; Departure captions and facts.
+  - Status chips (solid = live, dotted = before or concept).
+  - Sibling nav, with the dotted "coming soon" state.
+  - The compact index uses plain words.
+  - The case index and home rail track position on every scroll frame. Before, a fast fling left them stuck.
+- **R7 Forms and feedback.**
+  - Underline fields and the primary press on submit.
+  - Signal-cell statuses on contact.
+  - A new 404 page with a cell field.
+- **R8 Labs tool kit.** One control set for Playground, the turntable pages, Banner Studio and Presentations in Code: Departure labels, dithered slider rails, plain-word buttons and a chevron select.
+- **R9 Cleanup.** `ascii-control-effects.js` and the superseded button rules are removed. The older override layers in `global.css` remain; the round 3 sections (16–23) sit at the end and win by order.
+
+Not done in this pass:
+
+- The single video player rebuild (only its caption and control were restyled).
+- The `ascii` diagram fence.
+- Stat, quote and cell-chart components.
+- Synapse's empty `synapse-*` fences.

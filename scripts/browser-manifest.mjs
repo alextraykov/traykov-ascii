@@ -93,7 +93,7 @@ export const HARD_BROWSER_ROUTES = Object.freeze([
   {
     name: "labs",
     path: "/labs/",
-    requiredSelectors: ["main h1", ".labs-directory", ".labs-grid"]
+    requiredSelectors: ["main h1", ".labs-directory", ".labs-list"]
   },
   {
     name: "playground",
@@ -183,7 +183,7 @@ export const HARD_BROWSER_ROUTES = Object.freeze([
   {
     name: "svg-ascii-studio",
     path: "/svg-ascii-studio/",
-    requiredSelectors: ["main[data-studio]", ".workbench"]
+    requiredSelectors: ["main[data-studio]", ".s2-card [data-stage]"]
   },
   {
     name: "shader-explainer",

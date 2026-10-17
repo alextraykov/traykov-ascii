@@ -6,6 +6,11 @@ import "./scroll-fx.js";
 import "./count-up.js";
 import "./cells.js";
 import "./tick.js";
+import "./press.js";
+import "./segmented.js";
+import "./cell-range.js";
+import "./video-cells.js";
+import "./point-refresh.js";
 
 const rotatorObservers = new Map();
 const rotatorTimers =
@@ -224,6 +229,11 @@ function initMotionMedia() {
 
 function syncCaseVideo(media) {
   if (!(media instanceof HTMLMediaElement)) return;
+  // A visitor who paused with the cell player keeps it paused until they press play again.
+  if (media.dataset.caseVideoManual === "pause") {
+    media.pause();
+    return;
+  }
 
   const isHovered = media.dataset.caseVideoHovered === "true";
   const canPlay =

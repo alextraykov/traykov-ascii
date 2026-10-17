@@ -5,133 +5,42 @@ import SiteHead from "../../components/SiteHead.astro";
 import SiteNav from "../../components/SiteNav.astro";
 import "../../styles/global.css";
 
+// Round 3: four public tools, each shown by a real screen (scripts/capture-labs-screens.mjs).
+// Sketchbook, Rhizome Field and Product Systems Kit stay routable but are not listed.
 const labs = [
   {
-    id: "banner",
-    number: "01",
+    id: "playground",
+    title: "Turntable Playground",
+    description: "Push, lift and scatter the ASCII turntables from the case studies, then copy the settings.",
+    href: "/playground/",
+    action: "Open the playground",
+    tags: ["3D", "Motion", "Controls"]
+  },
+  {
+    id: "svg-ascii-studio",
+    title: "SVG → 3D ASCII",
+    description: "Drop in a logo, turn it into a spinning ASCII object, pick a look and download it.",
+    href: "/svg-ascii-studio/",
+    action: "Open the studio",
+    tags: ["SVG", "3D", "Export"]
+  },
+  {
+    id: "ascii-banner",
     title: "ASCII Banner Studio",
-    description:
-      "Generate platform-sized ASCII fields, move the composition, tune the glyph material, and export a production-ready PNG.",
+    description: "Make a moving ASCII banner at the right size for LinkedIn, X, YouTube or your own format, then save it.",
     href: "/labs/ascii-banner/",
     action: "Open banner studio",
-    status: "Public tool",
-    tags: ["LinkedIn", "X", "Meta", "YouTube", "Freeform"],
-    preview: [
-      "··············································",
-      "····················••++***✦✶✷✶✦**+••········",
-      "················••+*✦✶✷✸✹✹✸✷✶✦*+••··········",
-      "··················••+**✦✶✷✶✦**+••············",
-      "··············································"
-    ].join("\n")
-  },
-  {
-    id: "turntable",
-    number: "02",
-    title: "SVG → 3D ASCII",
-    description:
-      "Upload an SVG mark, extrude it into a Three.js object, tune the turntable, and export the result.",
-    href: "/svg-ascii-studio/",
-    action: "Open turntable editor",
-    status: "Public tool",
-    tags: ["SVG upload", "3D", "ASCII", "Export"],
-    preview: [
-      "             ·•+*✦✶✷✶✦*+•·",
-      "          ·+✦✷✸✹✹✹✸✷✦+·",
-      "        ·*✶✸✹✹✸✷✶✦*+·",
-      "          ·+✦✶✷✸✷✶✦+·",
-      "             ·•+*✦*+•·"
-    ].join("\n")
-  },
-  {
-    id: "shader",
-    number: "03",
-    title: "Turntable Playground",
-    description:
-      "Stress-test reveal, pressure, lift, click, decay, and recovery across the production ASCII turntables.",
-    href: "/playground",
-    action: "Open shader playground",
-    status: "Working lab",
-    tags: ["GLB", "Motion", "Dispersal", "Controls"],
-    preview: [
-      "SOURCE 100   PRESSURE 00   MEMORY ON",
-      "·········••+++***✦✶✷✸✹✸✷✶✦***+++••·········",
-      "LIFT 00     VELOCITY 00   DETACHED 00",
-      "····••++**✦✶✷✸✹✹✹✸✷✶✦**++••····",
-      "RECOVER READY"
-    ].join("\n")
-  },
-  {
-    id: "product-systems-kit",
-    number: "04",
-    title: "Product Systems Kit",
-    description:
-      "Open a battered engineer's toolbox and inspect the equipment behind the product work.",
-    href: "/labs/product-systems-kit/",
-    action: "Open product systems kit",
-    status: "Interactive inventory",
-    tags: ["Design", "AI", "Build", "Operations"],
-    preview: [
-      "┌────────────────────────────────────────────┐",
-      "│ A.TRAYKOV / PRODUCT SYSTEMS KIT       [••] │",
-      "├──────────┬──────────┬──────────┬──────────┤",
-      "│ DESIGN   │ AI       │ BUILD    │ OPS      │",
-      "└──────────┴──────────┴──────────┴──────────┘"
-    ].join("\n")
-  },
-  {
-    id: "sketchbook",
-    number: "05",
-    title: "Creative Coding Sketchbook",
-    description:
-      "A local-first canvas environment for making, tuning, seeding, and exporting dither, ASCII, pixel, and LCD studies.",
-    href: "/labs/sketchbook/",
-    action: "Open sketchbook",
-    status: "Local playground",
-    tags: ["Dither", "ASCII", "LCD", "Pixel"],
-    preview: [
-      "░▒▓█  .:+*#%@  ░▒▓█  .:+*#%@",
-      " R G B  R G B  R G B  R G B ",
-      "▓▒░  %#+*+.#  ░▒▓  @%#*+:.  ",
-      " R G B  R G B  R G B  R G B ",
-      ".:+*#%@  ░▒▓█  .:+*#%@  ░▒▓█"
-    ].join("\n")
-  },
-  {
-    id: "rhizome-field",
-    number: "06",
-    title: "Rhizome Field",
-    description:
-      "Rebuild a male fern cross-section with weighted cells, vascular fields, Departure Mono Blocktype dither, and ASCII.",
-    href: "/labs/rhizome-field/",
-    action: "Open rhizome field",
-    status: "GPU specimen",
-    tags: ["WebGL", "Voronoi", "Dither", "ASCII"],
-    preview: [
-      " .:+*#%@  .:+*#%@  .:+*#%@ ",
-      ".:+*#%%@   [ XYLEM ]   .:+*",
-      ":+*#%@  (( MERISTELE ))  :+",
-      ".:+*#%@   [ F₂ − F₁ ]  .:+*",
-      " .:+*#%@  .:+*#%@  .:+*#%@ "
-    ].join("\n")
+    tags: ["Banners", "Patterns", "PNG"],
+    // The banner canvas is already dark, so its screen is not inverted in dark mode.
+    invert: false
   },
   {
     id: "presenting-in-code",
-    number: "07",
     title: "Presentations in Code",
-    description:
-      "Try camera zooms, live annotations and exploded interfaces. Take ten reusable skills.",
+    description: "Try camera zooms, live notes and exploded interfaces. Take ten reusable skills.",
     href: "/labs/presenting-in-code/",
-    action: "Open tutorial",
-    status: "Interactive tutorial",
-    tags: ["Live interface", "Camera", "Layers", "10 skills"],
-    preview: [
-      "┌─ BACKGROUND ───────────────────────────────┐",
-      "│ ┌─ WORKSPACE ────────────────────────────┐ │",
-      "│ │ ┌─ COMPOSER ─────────────────────────┐ │ │",
-      "│ │ └────────────────────────────────────┘ │ │",
-      "│ └────────────────────────────────────────┘ │",
-      "└────────────────────────────────────────────┘"
-    ].join("\n")
+    action: "Open the tutorial",
+    tags: ["Camera", "Layers", "10 skills"]
   }
 ];
 ---
@@ -141,56 +50,52 @@ const labs = [
   <head>
     <SiteHead
       title="Labs — Alexander Traykov"
-      description="Public creative-coding tools, interactive product experiments, and an inspectable systems toolkit."
+      description="Public creative-coding tools: an ASCII turntable playground, an SVG to 3D ASCII studio, a banner maker and a tutorial on presenting in code."
       path="/labs/"
     />
     <script src="/page-transitions.js" defer></script>
   </head>
   <body class="labs-page">
-    <SiteNav />
+    <SiteNav active="labs" />
 
     <main id="top" class="labs-shell section-shell">
       <section class="labs-hero" data-reveal="rise" data-reveal-duration="340" data-reveal-page-enter="true">
         <div class="labs-hero__copy">
           <h1>Labs</h1>
           <p class="labs-hero__lede">
-            {labs.length} public experiments. No signup; exports stay local.
+            {labs.length} tools you can use right now. No signup, and everything you make stays on your computer.
           </p>
         </div>
       </section>
 
       <section class="labs-directory" aria-labelledby="labs-directory-title">
-        <header>
-          <h2 id="labs-directory-title">Available now</h2>
-        </header>
-
-        <div class="project-grid labs-grid">
+        <h2 class="visually-hidden" id="labs-directory-title">Available now</h2>
+        <ol class="labs-list" data-reveal-group>
           {
-            labs.map((lab) => (
-              <article
-                id={`lab-${lab.id}`}
-                class="project-card project-card--direct project-card--construction labs-project-card"
-              >
-                <a class="project-card__body" href={lab.href} aria-label={lab.action}>
-                  <div class="project-mark labs-project-card__preview" aria-hidden="true" data-motion-artwork>
-                    <pre>{lab.preview}</pre>
-                  </div>
-                  <div class="project-copy">
-                    <span class="project-index" data-scramble data-scramble-trigger="hover">
-                      {lab.number} / {lab.status}
-                    </span>
-                    <h3>{lab.title}</h3>
-                    <p>{lab.description}</p>
-                    <p class="project-card__tags">{lab.tags.join(" / ")}</p>
-                    <span class="construction-status" data-scramble data-scramble-trigger="hover">
-                      {lab.action}
-                    </span>
-                  </div>
+            labs.map((lab, index) => (
+              <li id={`lab-${lab.id}`} class="labs-item" data-reveal="rise">
+                <a class="labs-item__link" href={lab.href}>
+                  <span class="labs-item__screen" data-motion-artwork>
+                    <img
+                      src={`/labs/screens/${lab.id}.webp`}
+                      alt=""
+                      width="960"
+                      height="600"
+                      loading={index < 2 ? "eager" : "lazy"}
+                      decoding="async"
+                      data-screen-invert={lab.invert === false ? "false" : undefined}
+                    />
+                  </span>
+                  <span class="labs-item__copy">
+                    <span class="labs-item__title">{lab.title}</span>
+                    <span class="labs-item__body">{lab.description}</span>
+                  </span>
+                  <span class="labs-item__action" aria-hidden="true">Open <span class="labs-item__arrow">→</span></span>
                 </a>
-              </article>
+              </li>
             ))
           }
-        </div>
+        </ol>
       </section>
     </main>
 

@@ -3075,33 +3075,6 @@ text-shadow:
   justify-content: flex-end;
 }
 
-.case-contact-prompt__actions a {
-  display: inline-flex;
-  min-height: var(--tap-target);
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2) var(--space-3);
-  font: 800 0.75rem/1 var(--mono);
-  text-transform: uppercase;
-}
-
-.case-contact-prompt__actions a:first-child {
-  border: var(--hairline) solid var(--ink);
-  color: var(--paper);
-  background: var(--ink);
-}
-
-.case-contact-prompt__actions a:last-child:not([data-ascii-action="primary"]) {
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: var(--space-1);
-}
-
-.case-contact-prompt__actions a:first-child:is(:hover, :focus-visible) {
-  color: var(--ink);
-  background: var(--paper);
-}
-
 .case-reader-layout {
   display: grid;
   gap: clamp(20px, 3vw, 40px);
@@ -10334,75 +10307,6 @@ body[data-case-theme="pave"] .case-image-grid--cols-3 .case-image-card {
   }
 }
 
-/* Production actions inherit the component-lab interaction treatment. */
-:where(a, button)[data-ascii-action] {
-  position: relative;
-  display: inline-flex;
-  min-height: var(--tap-target);
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  border: var(--hairline) solid var(--ink);
-  border-radius: var(--radius-0);
-  padding: var(--space-2) var(--space-4);
-  font: 800 0.75rem/1 var(--mono);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    transform var(--dur-2) var(--ease-snap),
-    background-color var(--dur-2) var(--ease-out-expo),
-    border-color var(--dur-2) var(--ease-out-expo),
-    color var(--dur-2) var(--ease-out-expo);
-}
-
-:where(a, button)[data-ascii-action="primary"] {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-:where(a, button)[data-ascii-action="secondary"] {
-  background: var(--panel);
-  color: var(--ink);
-}
-
-:where(a, button)[data-ascii-action="inverse"] {
-  border-color: var(--paper);
-  background: var(--paper);
-  color: var(--ink);
-}
-
-:where(a, button)[data-ascii-action="text"] {
-  min-height: var(--tap-target);
-  border-color: transparent;
-  background: transparent;
-  color: var(--ink);
-  padding-inline: var(--space-2);
-  text-decoration: underline;
-  text-underline-offset: var(--space-1);
-}
-
-:where(a, button)[data-ascii-action]:is(:hover, :focus-visible) {
-  background: var(--paper);
-  color: var(--ink);
-  transform: translateY(calc(var(--space-1) * -0.5));
-}
-
-:where(a, button)[data-ascii-action="secondary"]:is(:hover, :focus-visible) {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-:where(a, button)[data-ascii-action="inverse"]:is(:hover, :focus-visible) {
-  border-color: var(--paper);
-  background: transparent;
-  color: var(--paper);
-}
-
-:where(a, button)[data-ascii-action]:active {
-  transform: translateY(0) scale(0.98);
-}
-
 @media (max-width: 700px) {
   main:not(.about-page) > .about-hero.section-shell {
     --about-hero-min-height: min(760px, calc(100svh - var(--tap-target)));
@@ -14908,4 +14812,2673 @@ html[data-motion="ready"] [data-reveal][data-reveal-media][data-reveal-animate="
     opacity: 1;
     clip-path: none;
   }
+}
+
+/* 17 CHROME AND TYPE (round 3) ─ logo-mark nav with Labs, a quiet theme icon, the footer on one grid,
+   and Departure Mono headings on the 11px grid. Kept at EOF; the older nav/footer layers go in R9. */
+
+:root :is(h1, h2, h3, h4) {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-stretch: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root main h1 {
+  font-size: var(--type-px-66);
+  line-height: 1.05;
+}
+
+:root main h2 {
+  font-size: var(--type-px-33);
+  line-height: 1.15;
+}
+
+:root main :is(h3, h4) {
+  font-size: var(--type-px-22);
+  line-height: 1.2;
+}
+
+/* ── nav ── */
+.site-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding: 0 var(--space-5);
+  border-bottom: var(--hairline) solid var(--line);
+  background: var(--paper);
+  backdrop-filter: none;
+  color: var(--ink);
+}
+
+.site-nav .brand {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0;
+}
+
+.site-nav .brand::before {
+  width: 38px;
+  height: 38px;
+}
+
+.site-footer__mark-logo {
+  display: block;
+  width: 36px;
+  height: 38px;
+  background: var(--ink);
+  filter: none;
+  -webkit-mask: url("/sasi.svg") center / contain no-repeat;
+  mask: url("/sasi.svg") center / contain no-repeat;
+}
+
+.site-nav nav {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-5);
+}
+
+.site-nav nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  padding: 0;
+  color: var(--muted);
+  font: 500 14px / 1 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+}
+
+.site-nav nav a[aria-current="page"],
+.site-nav nav a:hover,
+.site-nav nav a:focus-visible {
+  color: var(--ink);
+}
+
+/* the hover marker, under the link; solid and permanent for the current page */
+.site-nav nav a::after {
+  content: "";
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: var(--space-1);
+  left: 0;
+  width: auto;
+  height: var(--marker-height);
+  background: var(--ink);
+  opacity: 1;
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: none;
+}
+
+.site-nav nav a:hover::after,
+.site-nav nav a:focus-visible::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+.site-nav nav a[aria-current="page"]::after {
+  transform: none;
+}
+
+.site-nav__controls {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: var(--space-1);
+}
+
+/* quiet theme control: a half-filled square, no frame */
+.site-nav .theme-toggle {
+  display: grid;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.site-nav .theme-toggle:hover,
+.site-nav .theme-toggle:focus-visible {
+  border: 0;
+  background: none;
+}
+
+.theme-toggle .hn {
+  -webkit-mask: none;
+  mask: none;
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  background: linear-gradient(90deg, transparent 50%, currentColor 50%);
+  font-size: 0;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.theme-toggle .hn::before,
+.theme-toggle .hn::after {
+  content: none;
+}
+
+.theme-toggle .hn-moon {
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  opacity: 0;
+}
+
+html[data-theme="dark"] .theme-toggle .hn-sun {
+  opacity: 0;
+  transform: none;
+}
+
+html[data-theme="dark"] .theme-toggle .hn-moon {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) .theme-toggle .hn-sun {
+    opacity: 0;
+    transform: none;
+  }
+
+  html:not([data-theme]) .theme-toggle .hn-moon {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the motion setting: plain text, never in the bar except on footer-less tool pages */
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--text-soft);
+  font: 500 14px / 1 var(--sans);
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.motion-toggle[hidden] {
+  display: none;
+}
+
+.motion-toggle__name,
+.motion-toggle__state {
+  display: inline-block;
+  text-transform: lowercase;
+}
+
+.motion-toggle__name::first-letter,
+.motion-toggle__state::first-letter {
+  text-transform: uppercase;
+}
+
+.motion-toggle__state {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+.motion-toggle:hover {
+  color: var(--ink);
+}
+
+/* phones: brand and controls on top, the five links as one row of equal cells */
+@media (max-width: 640px) {
+  .site-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand controls"
+      "nav nav";
+    gap: 0;
+    padding: 0 var(--space-3);
+  }
+
+  .site-nav .brand {
+    grid-area: brand;
+  }
+
+  .site-nav__controls {
+    grid-area: controls;
+  }
+
+  .site-nav nav {
+    grid-area: nav;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+    border-top: var(--hairline) solid var(--line);
+  }
+
+  .site-nav nav a {
+    min-width: 0;
+    font-size: 13px;
+  }
+}
+
+/* ── footer ── */
+.site-footer {
+  margin-top: var(--space-6);
+  border-top: var(--hairline) solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-3);
+}
+
+.site-footer__columns,
+.site-footer__base {
+  grid-column: 1 / -1;
+}
+
+.site-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+
+.site-footer .footer-links,
+.site-footer__settings {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 0;
+}
+
+:root .site-footer .site-footer__heading {
+  margin: 0 0 var(--space-1);
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+.site-footer .footer-links a,
+.site-footer__setting,
+.site-footer .motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap-target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-soft);
+  font: 500 15px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.site-footer .footer-links a:hover,
+.site-footer__setting:hover,
+.site-footer .motion-toggle:hover {
+  color: var(--ink);
+}
+
+.site-footer__setting-value {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+.site-footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-top: var(--space-3);
+  border-top: var(--hairline) solid var(--line);
+}
+
+.site-footer__mark,
+.site-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 500 13px / 1.3 var(--sans);
+  text-decoration: none;
+}
+
+.site-footer__mark:hover,
+.site-footer__top:hover {
+  color: var(--ink);
+}
+
+.site-footer__mark-logo {
+  flex: none;
+  width: 24px;
+  height: 26px;
+}
+
+.site-footer__mark {
+  width: auto;
+  height: auto;
+  place-items: center start;
+}
+
+.site-footer .motion-toggle {
+  flex-basis: auto;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  justify-content: flex-start;
+  padding-inline: 0;
+}
+
+.site-footer .motion-toggle__name {
+  display: inline-block;
+}
+
+.site-footer__progress {
+  --cell-size: 5px;
+  --cell-gap: 1px;
+}
+
+.site-footer__progress .cell {
+  height: 10px;
+}
+
+@media (max-width: 820px) {
+  .site-footer__columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  :root main h1 {
+    font-size: var(--type-px-44);
+    line-height: 1.1;
+  }
+
+  :root main h2 {
+    font-size: var(--type-px-22);
+    line-height: 1.2;
+  }
+}
+
+/* 18 ACTIONS AND SELECTION (round 3) ─ three button roles and one segmented control.
+   Every action is plain words in the sans on a paper ground. Hover is a marker arriving at the
+   left edge; the press is a dither fill (press.js); disabled is a dotted outline. Primary is the
+   one action a view asks for, secondary sits beside it, quiet ("text") is a word with a rule. */
+:root [data-ascii-action]:is(a, button) {
+  position: relative;
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 20px;
+  overflow: hidden;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+  color: var(--ink);
+  font: 500 15px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-decoration: none;
+  text-transform: none;
+  opacity: 1;
+  transform: none;
+  transition: none;
+  cursor: pointer;
+}
+
+:root [data-ascii-action="primary"]:is(a, button) {
+  min-width: 180px;
+}
+
+:root [data-ascii-action]:is(a, button)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-width);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+:root [data-ascii-action]:is(a, button):is(:hover, :focus-visible) {
+  background: var(--paper);
+  color: var(--ink);
+  transform: none;
+}
+
+:root [data-ascii-action]:is(a, button):is(:hover, :focus-visible)::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root [data-ascii-action]:is(a, button) > .fill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: transform 120ms steps(2);
+}
+
+:root [data-ascii-action]:is(a, button):is(:hover, :focus-visible) > .fill-label {
+  transform: translateX(5px);
+}
+
+:root [data-ascii-action]:is(a, button):focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:root [data-ascii-action]:is(a, button).is-filled {
+  background: var(--ink);
+}
+
+:root [data-ascii-action]:is(a, button):is(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+:root [data-ascii-action]:is(a, button):is(:disabled, [aria-disabled="true"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--hairline) solid var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  pointer-events: none;
+}
+
+:root [data-ascii-action]:is(a, button):is(:disabled, [aria-disabled="true"])::after {
+  display: none;
+}
+
+/* Quiet: a word with a dithered rule under it that turns solid on hover. No box. */
+:root [data-ascii-action="text"]:is(a, button) {
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  overflow: visible;
+  border-color: transparent;
+  background: transparent;
+}
+
+:root [data-ascii-action="text"]:is(a, button)::after {
+  top: auto;
+  right: 0;
+  bottom: 10px;
+  width: auto;
+  height: 2px;
+  transform: none;
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root [data-ascii-action="text"]:is(a, button):is(:hover, :focus-visible) {
+  background: transparent;
+}
+
+:root [data-ascii-action="text"]:is(a, button):is(:hover, :focus-visible)::after {
+  -webkit-mask: none;
+  mask: none;
+  transition: none;
+}
+
+:root [data-ascii-action="text"]:is(a, button):is(:hover, :focus-visible) > .fill-label {
+  transform: none;
+}
+
+/* Segmented: one ink-ruled group; the selected option fills with a stepped wipe. Shared by the
+   case figure switch and the Breathing grid views. */
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+  width: fit-content;
+  max-width: 100%;
+  border: var(--hairline) solid var(--ink);
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button {
+  position: relative;
+  isolation: isolate;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  border: 0;
+  border-right: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font: 500 14px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  transition: none;
+  cursor: pointer;
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button:last-child {
+  border-right: 0;
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ink);
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--marker-height);
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  pointer-events: none;
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button:is(:hover, :focus-visible):not([aria-pressed="true"]) {
+  background: transparent;
+  color: var(--ink);
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button:is(:hover, :focus-visible):not([aria-pressed="true"])::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button[aria-pressed="true"] {
+  background: transparent;
+  color: var(--paper);
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button[aria-pressed="true"]::before {
+  clip-path: inset(0);
+  animation: mark-wipe-in var(--switch) steps(4) both;
+}
+
+:root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:root .case-switch button small {
+  margin-left: var(--space-1);
+  color: inherit;
+  opacity: 0.62;
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+/* Tool actions next to a segmented group are quiet words. */
+:root .breathing-grid__actions > button {
+  min-height: 44px;
+  padding: 0 var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font: 500 14px / 1.2 var(--sans);
+  text-transform: none;
+}
+
+:root .breathing-grid__actions > button:is(:hover, :focus-visible) {
+  border: 0;
+  color: var(--ink);
+}
+
+@keyframes mark-wipe-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root [data-ascii-action]:is(a, button) > .fill-label,
+  :root [data-ascii-action]:is(a, button)::after,
+  :root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button::before,
+  :root :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button::after {
+    animation: none;
+    transition: none;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"], [data-motion-state="hidden"]) :is(.case-switch, .breathing-grid__variants, .breathing-grid__inspector > [role="group"]) > button::before {
+  animation: none;
+}
+
+/* Private work on the index and case pages: a quiet block with a secondary action, not a boxed alert. */
+:root .private-work-link {
+  gap: var(--space-2);
+  width: min(100%, 42rem);
+  padding: var(--space-4) 0 0;
+  border: 0;
+  border-top: var(--hairline) solid var(--line);
+  background: transparent;
+}
+
+:root .private-work-link > p:first-child {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root main .private-work-link h2 {
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .private-work-link > p:not(:first-child) {
+  color: var(--text-soft);
+}
+
+:root .private-work-link a[data-ascii-action] {
+  margin-top: var(--space-2);
+}
+
+/* The motion control is JavaScript-only: hidden stays hidden wherever it sits. */
+:root .motion-toggle[hidden],
+:root .site-footer .motion-toggle[hidden] {
+  display: none;
+}
+
+/* 19 LABS INDEX (round 3) ─ four tools, each shown by a real screen. Hover brings a marker under
+   the screen and turns the action rule solid; nothing is drawn behind text. */
+.labs-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.labs-item {
+  min-width: 0;
+}
+
+.labs-item__link {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.labs-item__screen {
+  position: relative;
+  display: block;
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: var(--hairline) solid var(--line);
+  background: var(--paper);
+}
+
+.labs-item__screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+html[data-theme="dark"] .labs-item__screen img:not([data-screen-invert="false"]) {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) .labs-item__screen img:not([data-screen-invert="false"]) {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+.labs-item__screen::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--marker-height);
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  pointer-events: none;
+}
+
+.labs-item__number,
+.labs-item__meta {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root .labs-item__title {
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+.labs-item__body {
+  max-width: 46ch;
+  color: var(--text-soft);
+  font: 400 16px / 1.5 var(--sans);
+}
+
+.labs-item__action {
+  position: relative;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  font: 500 15px / 1.2 var(--sans);
+}
+
+.labs-item__action::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+.labs-item__link:is(:hover, :focus-visible) .labs-item__screen::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+.labs-item__link:is(:hover, :focus-visible) .labs-item__screen {
+  border-color: var(--ink);
+}
+
+.labs-item__link:is(:hover, :focus-visible) .labs-item__action::after {
+  -webkit-mask: none;
+  mask: none;
+}
+
+.labs-item__link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (max-width: 820px) {
+  .labs-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .labs-item__link:is(:hover, :focus-visible) .labs-item__screen::after {
+    transition: none;
+  }
+}
+
+/* 20 ROWS (round 3) ─ Notes and CV share one row language: Departure title, Departure 11 meta,
+   and on links a marker arriving at the left edge while the row steps right. */
+:root .notes-list__item > a {
+  position: relative;
+}
+
+:root .notes-list__item > a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-width);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+:root .notes-list__item > a > :is(h3, .notes-list__meta) {
+  transition: transform 120ms steps(2);
+}
+
+:root .notes-list__item > a:is(:hover, :focus-visible) {
+  background: transparent;
+}
+
+:root .notes-list__item > a:is(:hover, :focus-visible)::before {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root .notes-list__item > a:is(:hover, :focus-visible) > :is(h3, .notes-list__meta) {
+  transform: translateX(14px);
+}
+
+:root :is(.notes-list__meta, .notes-list__meta time, .notes-list__read-time),
+:root .experience-item > div:first-child > p,
+:root .notes-hero dl dt {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .notes-list__arrow {
+  font: 400 var(--type-px-22) / 1 var(--font-pixel);
+}
+
+:root :is(.notes-search summary, .notes-directory__rss, .notes-search output) {
+  color: var(--text-soft);
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root :is(.notes-search summary, .notes-directory__rss):is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+:root .notes-empty {
+  color: var(--text-soft);
+  font: 400 16px / 1.5 var(--sans);
+  text-transform: none;
+}
+
+:root main .experience-item h2 {
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+:root .notes-hero dl dd {
+  font: 400 var(--type-px-33) / 1.1 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .notes-list__item > a > :is(h3, .notes-list__meta),
+  :root .notes-list__item > a::before {
+    transition: none;
+  }
+}
+
+:root :is(.published-item, .experience-item):is(:hover, :focus-within) {
+  background: transparent;
+}
+
+/* 21 CASE PAGES (round 3) ─ one reading measure, Departure labels, density for status.
+   Status chips: a solid cell means it shipped or is live; a dotted outline means before,
+   concept or rejected. Captions lead with a Departure line, then plain sans. */
+:root .case-study-body :is(h2, h3, h4, h5) {
+  width: min(100%, 640px);
+  max-width: 640px;
+}
+
+:root .case-breadcrumb,
+:root .case-breadcrumb a {
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-breadcrumb a {
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+:root .case-breadcrumb a:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+:root .case-hero-meta {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-hero-meta::first-letter {
+  text-transform: uppercase;
+}
+
+/* Facts under the summary */
+:root body .case-study-body #bluf + p + ul li strong,
+:root body .case-study-body #bluf + p + ul li::before {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Captions */
+:root :is(.case-figure-head, figcaption) > strong:first-child,
+:root .case-compare__label {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root :is(.case-figure-head, figcaption) > em {
+  color: var(--text-soft);
+  font: 400 15px / 1.45 var(--sans);
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-compare {
+  background: transparent;
+}
+
+:root .case-compare__caption {
+  background: transparent;
+}
+
+/* Status chips */
+:root .case-tag {
+  gap: 6px;
+  padding: 3px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-tag::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+}
+
+:root :is(.case-tag--concept, .case-tag--rejected, .case-tag--before) {
+  position: relative;
+  color: var(--text-soft);
+}
+
+:root :is(.case-tag--concept, .case-tag--rejected, .case-tag--before)::before {
+  background: transparent;
+  outline: 1px solid var(--ink);
+  outline-offset: -1px;
+  -webkit-mask: var(--dither-4) 0 0 / 4px 4px;
+  mask: var(--dither-4) 0 0 / 4px 4px;
+}
+
+/* Sibling cases: the next case is a row with the edge marker; "coming soon" is the disabled state. */
+:root .case-sibling-nav {
+  gap: 0;
+  border: 0;
+  border-top: var(--hairline) solid var(--line);
+  background: transparent;
+}
+
+:root .case-sibling-nav a {
+  position: relative;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  background: transparent;
+  text-decoration: none;
+}
+
+:root .case-sibling-nav a::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--marker-width);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+:root .case-sibling-nav a:is(:hover, :focus-visible) {
+  background: transparent;
+}
+
+:root .case-sibling-nav a:is(:hover, :focus-visible)::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root .case-sibling-nav span {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-sibling-nav strong {
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+  letter-spacing: 0;
+}
+
+:root .case-sibling-nav .case-sibling-nav__empty {
+  position: relative;
+  margin: var(--space-3);
+  min-height: 0;
+  padding: var(--space-3);
+  background: transparent;
+  color: var(--muted);
+  font: 500 14px / 1.3 var(--sans);
+}
+
+:root .case-sibling-nav__empty::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--hairline) solid var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-4) 0 0 / var(--dither-size) var(--dither-size);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .case-sibling-nav a::after {
+    transition: none;
+  }
+}
+
+/* 22 FORMS (round 3) ─ underline fields, plain-word labels, the primary press on submit, and
+   statuses as a signal cell plus words. The spam trap and Turnstile keep their own rules. */
+:root :is(.private-access__panel, .contact-form) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root .private-access__panel {
+  padding: 0;
+}
+
+:root .private-access__panel > p:first-child {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root main .private-access__panel h1 {
+  font: 400 var(--type-px-44) / 1.1 var(--font-pixel);
+}
+
+:root :is(.private-access label, .contact-form label > span) {
+  color: var(--text-soft);
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)) {
+  min-height: 48px;
+  padding: var(--space-2) 0;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 17px / 1.4 var(--sans);
+  box-shadow: none;
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)):focus {
+  border-bottom-color: var(--ink);
+  outline: none;
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea)):focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:root :is(.private-access input, .contact-form :is(input, textarea)):user-invalid {
+  border-bottom-color: var(--signal-fail);
+}
+
+:root .private-access button[data-ascii-action] {
+  justify-self: start;
+  margin-top: var(--space-2);
+}
+
+:root .private-access__note {
+  color: var(--muted);
+  font: 400 14px / 1.5 var(--sans);
+}
+
+:root .contact-form__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: 500 15px / 1.4 var(--sans);
+  text-transform: none;
+}
+
+:root .contact-form__status:is([data-state="success"], [data-state="error"])::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: var(--signal-ok);
+}
+
+:root .contact-form__status[data-state="error"]::before {
+  background: var(--signal-fail);
+}
+
+/* 404: a field of cells with a hole where the page should be. */
+.not-found {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  min-height: min(720px, calc(100svh - 64px));
+  align-content: center;
+  padding-block: var(--space-6);
+}
+
+.not-found__field {
+  --cell-size: 12px;
+  --cell-gap: 3px;
+  margin-bottom: var(--space-4);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.not-found__code {
+  margin: 0;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+:root main.not-found h1 {
+  margin: 0;
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+.not-found__lede {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 17px / 1.5 var(--sans);
+}
+
+.not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .not-found__field {
+    --cell-size: 10px;
+  }
+}
+
+/* 23 TOOL KIT (round 3) ─ one set of controls for the Labs tools (Playground, the turntable pages,
+   Banner Studio). Labels are Departure 11; values sit right in ink; sliders are a dithered rail
+   with a solid marker; buttons are plain words; selected is solid ink (density 8). Tool panels may
+   use 36px targets. The SVG studio has its own scoped version of the same rules. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) {
+  --tool-rail: var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) :is(label > span, legend, .playground-settings > span, .control-group > label) {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) output {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+}
+
+/* Slider: a dithered rail, a solid 6px marker for the thumb. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="range"]::-moz-range-track {
+  height: 8px;
+  background: var(--line);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 6px;
+  height: 20px;
+  margin-top: -6px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="range"]::-moz-range-thumb {
+  width: 6px;
+  height: 20px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="range"]:focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* The rail is a checker drawn as a background, not a mask: a mask would also hide the thumb. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  background:
+    repeating-conic-gradient(var(--tool-rail-ink, var(--muted)) 0 25%, transparent 0 50%) 0 0 / 4px 4px;
+}
+
+/* Buttons: plain words on a hairline; selected is solid ink. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button:not([data-ascii-action]),
+:root body :is(.playground-controls, .pave-turntable-controls) .playground-studio-cta {
+  min-height: 36px;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink);
+  font: 500 13px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button:not([data-ascii-action]):is(:hover, :focus-visible),
+:root body :is(.playground-controls, .pave-turntable-controls) .playground-studio-cta:is(:hover, :focus-visible) {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset var(--marker-width) 0 0 var(--ink);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) :is(button[aria-pressed="true"], button[aria-selected="true"], button.is-active, [role="tab"][aria-selected="true"]) {
+  border-color: var(--ink);
+  background: var(--ink);
+  box-shadow: none;
+  color: var(--paper);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) button :is(strong, span) {
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body .ascii-banner-studio__controls button > span {
+  font: 400 var(--type-px-11) / 1.3 var(--font-pixel);
+  opacity: 0.7;
+}
+
+/* The one primary action in a tool. */
+:root body .ascii-banner-studio__controls .ascii-banner-studio__save {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Native select: hairline, reserved end padding and an explicit chevron that never touches the edge. */
+:root body :is(.playground-controls, .pave-turntable-controls) select {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 40px;
+  padding: 0 40px 0 12px;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--ink) 50%) calc(100% - 20px) 50% / 6px 6px no-repeat,
+    linear-gradient(-45deg, transparent 50%, var(--ink) 50%) calc(100% - 14px) 50% / 6px 6px no-repeat,
+    var(--paper);
+  color: var(--ink);
+  font: 500 14px / 1.2 var(--sans);
+  text-transform: none;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls) textarea {
+  border: var(--hairline) solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font: 400 12px / 1.5 var(--mono);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"]:checked {
+  background: var(--ink);
+  box-shadow: inset 0 0 0 3px var(--paper);
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) input[type="checkbox"]:focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: 2px;
+}
+
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) :not(button):not(a) {
+  box-shadow: none;
+}
+
+:root body .ascii-banner-studio__quality > span,
+:root body .pave-turntable-settings > span {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body .ascii-banner-studio__quality-trigger,
+:root body .ascii-banner-studio__quality-listbox [role="option"] {
+  font: 500 13px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body .ascii-banner-studio__status {
+  color: var(--muted);
+  font: 400 14px / 1.5 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__save {
+  min-width: 0;
+  min-height: 40px;
+}
+
+/* "Next tool" at the end of a Labs tool page: the sibling row pattern. */
+:root .labs-tool-related > span {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .labs-tool-related a {
+  position: relative;
+  text-decoration: none;
+}
+
+:root .labs-tool-related a > span {
+  font: 400 var(--type-px-33) / 1.1 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .labs-tool-related a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: var(--marker-height);
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+}
+
+:root .labs-tool-related a:is(:hover, :focus-visible)::after {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+/* Tool panels draw one line per group: no decorative outer outlines. Focus outlines stay. */
+:root body :is(.playground-controls, .pave-turntable-controls, .ascii-banner-studio__controls) :is(div, a, section):not(:focus-visible) {
+  outline: 0;
+}
+
+:root body .playground-flip-tabs {
+  gap: 0;
+}
+
+:root body .playground-flip-tabs > button {
+  border-width: 0;
+  border-right: var(--hairline) solid var(--ink);
+}
+
+:root body .playground-flip-tabs > button:last-child {
+  border-right: 0;
+}
+
+:root body .ascii-banner-studio__controls .ascii-banner-studio__save {
+  padding: 0 20px;
+  font: 500 15px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Presentations in Code uses the same tool-kit words and labels. */
+:root .pc-shell :is(button, .pc-button) {
+  font: 500 13px / 1.2 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .pc-shell :is(.pc-kicker, .pc-label, .pc-number) {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .pc-shell :is(.pc-actions a, .pc-skill-link, .pc-output-heading a) {
+  font: 500 15px / 1.4 var(--sans);
+  letter-spacing: 0;
+}
+
+:root .pc-shell .pc-demo figcaption {
+  font: 400 14px / 1.5 var(--sans);
+}
+
+/* Video: a Departure caption line and one quiet control square over the footage. */
+:root .project-overview__caption-label {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .overview-video__toggle {
+  width: 44px;
+  height: 44px;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+:root .overview-video__toggle:is(:hover, :focus-visible) {
+  background: var(--paper);
+  box-shadow: inset 0 calc(var(--marker-height) * -1) 0 var(--ink);
+}
+
+/* Image-card captions lead with a Departure line, like every other caption. */
+:root .case-image-card figcaption > span:first-child {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* The compact case index (phones and narrow tablets): a paper strip with plain words. */
+:root .case-toc__toggle {
+  background: var(--paper);
+  font-family: var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-toc__toggle .case-toc__toggle-label,
+:root .case-toc [data-case-toc-position],
+:root .case-toc [data-case-toc-mark] {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-toc [data-case-toc-current] {
+  color: var(--ink);
+  font: 500 14px / 1.3 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 900px) {
+  :root .case-reading-tools {
+    background: var(--paper);
+    border-bottom: var(--hairline) solid var(--line);
+  }
+}
+
+:root body[data-page-type="about"] .about-hero--trail .about-title--trail {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+:root .homepage-timeline__date {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Departure is wider than the old sans: the Presentations hero shares its row with a demo. */
+:root main .pc-hero h1 {
+  font-size: var(--type-px-44);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+/* Labs screens drift up to 6px toward the pointer (artwork-pointer.js); the frame hides the edges.
+   No scan sweep here: round 3 keeps light effects out. */
+.labs-item__screen .motion-artwork__inner {
+  inset: -6px;
+  width: auto;
+  height: auto;
+}
+
+.labs-item__screen .motion-artwork__scan {
+  display: none;
+}
+
+/* 24 CASE INDEX (round 3, motion plan §8) ─ one reading cell per section. Unread sections are an
+   empty cell, the current one fills through the eight dither levels as you read it, read sections
+   settle to a light shade. case-index.js sets data-toc-level/state; the inline script keeps
+   aria-current. Numbers are CSS counters, so link text never changes. */
+:root .case-toc[data-case-index="cells"] > p {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 0 0 var(--space-2);
+  border-bottom: var(--hairline) solid var(--line);
+  color: var(--ink);
+  font: 500 13px / 1.3 var(--sans);
+}
+
+:root .case-toc__read {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.3 var(--font-pixel);
+}
+
+:root .case-toc[data-case-index="cells"] ol {
+  counter-reset: case-toc;
+  gap: 0;
+  padding: var(--space-1) 0 var(--space-2);
+  scrollbar-width: none;
+}
+
+:root .case-toc[data-case-index="cells"] li {
+  counter-increment: case-toc;
+}
+
+:root .case-toc[data-case-index="cells"] a {
+  display: grid;
+  grid-template-columns: 6px 2.4ch minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: start;
+  min-height: 0;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 400 13px / 1.35 var(--sans);
+  transition: none;
+}
+
+:root .case-toc[data-case-index="cells"] a::before {
+  content: "";
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+  width: 6px;
+  height: 17px;
+  background: var(--cell-empty);
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+:root .case-toc[data-case-index="cells"] a::after {
+  content: counter(case-toc, decimal-leading-zero);
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 17px var(--font-pixel);
+}
+
+:root .case-toc[data-case-index="cells"] a:not([data-toc-level="0"])[data-toc-level]::before {
+  background: var(--ink);
+}
+
+:root .case-toc[data-case-index="cells"] a[data-toc-level="1"]::before { -webkit-mask: var(--dither-1) 0 0 / 4px 4px; mask: var(--dither-1) 0 0 / 4px 4px; }
+:root .case-toc[data-case-index="cells"] a[data-toc-level="2"]::before { -webkit-mask: var(--dither-2) 0 0 / 4px 4px; mask: var(--dither-2) 0 0 / 4px 4px; }
+:root .case-toc[data-case-index="cells"] a[data-toc-level="3"]::before { -webkit-mask: var(--dither-3) 0 0 / 4px 4px; mask: var(--dither-3) 0 0 / 4px 4px; }
+:root .case-toc[data-case-index="cells"] a[data-toc-level="4"]::before { -webkit-mask: var(--dither-4) 0 0 / 4px 4px; mask: var(--dither-4) 0 0 / 4px 4px; }
+:root .case-toc[data-case-index="cells"] a[data-toc-level="5"]::before { -webkit-mask: var(--dither-5) 0 0 / 4px 4px; mask: var(--dither-5) 0 0 / 4px 4px; }
+:root .case-toc[data-case-index="cells"] a[data-toc-level="6"]::before { -webkit-mask: var(--dither-6) 0 0 / 4px 4px; mask: var(--dither-6) 0 0 / 4px 4px; }
+:root .case-toc[data-case-index="cells"] a[data-toc-level="7"]::before { -webkit-mask: var(--dither-7) 0 0 / 4px 4px; mask: var(--dither-7) 0 0 / 4px 4px; }
+
+:root .case-toc[data-case-index="cells"] a[data-toc-state="read"] {
+  color: var(--text-soft);
+}
+
+:root .case-toc[data-case-index="cells"] a[aria-current="location"],
+:root .case-toc[data-case-index="cells"] a[aria-current="location"]::after {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+:root .case-toc[data-case-index="cells"] a:is(:hover, :focus-visible) {
+  background: transparent;
+  color: var(--ink);
+}
+
+/* Phone and narrow tablet: the strip and the sheet. */
+.case-toc__num,
+.case-toc__word,
+.case-toc__progress {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  :root .case-toc[data-case-index="cells"] > p {
+    display: none;
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle {
+    position: relative;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr);
+    gap: 0 12px;
+    padding: 0 0 5px 16px;
+    border-bottom: var(--hairline) solid var(--line);
+    background: var(--paper);
+  }
+
+  :root .case-toc[data-case-index="cells"] :is(.case-toc__toggle-label, .case-toc__position) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__mark {
+    display: none;
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__num {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    min-width: 2ch;
+    color: var(--ink);
+    font: 400 var(--type-px-22) / 1 var(--font-pixel);
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle strong {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    color: var(--ink);
+    font: 500 14px / 1.25 var(--sans);
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__word {
+    display: flex;
+    grid-column: 3;
+    grid-row: 1;
+    align-items: center;
+    align-self: stretch;
+    padding: 0 16px;
+    border-left: var(--hairline) solid var(--line);
+    color: var(--ink);
+    font: 500 14px / 1 var(--sans);
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__toggle[aria-expanded="true"] .case-toc__word {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__progress {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(30, minmax(0, 1fr));
+    gap: 1px;
+    height: 4px;
+  }
+
+  :root .case-toc[data-case-index="cells"] .case-toc__progress .cell {
+    width: auto;
+    height: 4px;
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] ol {
+    padding: 0;
+    border: 0;
+    border-bottom: var(--hairline) solid var(--ink);
+    background: var(--paper);
+    transform-origin: 50% 0;
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] li + li {
+    border-top: var(--hairline) solid var(--line);
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a {
+    min-height: 48px;
+    align-items: center;
+    padding: 12px 16px;
+    border: 0;
+    background: transparent;
+    font-size: 15px;
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a::before {
+    position: static;
+    width: 6px;
+    height: 22px;
+    transform: none;
+  }
+
+  :root .case-toc[data-case-index="cells"][data-case-toc-enhanced="true"] a[aria-current="location"] {
+    background: transparent;
+  }
+}
+
+/* Home entry rail (component specimen §4): a 6px cell per entry, solid for the current entry. */
+:root .homepage-timeline__toc a {
+  display: grid;
+  grid-template-columns: 6px minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: start;
+  min-height: 0;
+  padding: 7px 0;
+  border: 0;
+  color: var(--muted);
+  font: 400 14px / 1.3 var(--sans);
+}
+
+:root .homepage-timeline__toc a::before {
+  content: "";
+  width: 6px;
+  height: 16px;
+  margin-top: 1px;
+  background: var(--cell-empty);
+}
+
+:root .homepage-timeline__toc a[data-rail-state="read"]::before {
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / 4px 4px;
+  mask: var(--dither-3) 0 0 / 4px 4px;
+}
+
+:root .homepage-timeline__toc a[aria-current="location"]::before {
+  background: var(--ink);
+}
+
+:root .homepage-timeline__toc a:is(:hover, :focus-visible, [aria-current="location"]) {
+  border: 0;
+  color: var(--ink);
+}
+
+:root .homepage-timeline__toc a[aria-current="location"] {
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  :root .homepage-timeline__toc a {
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: 0 var(--space-3);
+    white-space: nowrap;
+  }
+
+  :root .homepage-timeline__toc a::before {
+    margin-top: 0;
+  }
+}
+
+/* The compact strip sits flush under the bar: no gap for content to show through. */
+@media (max-width: 900px) {
+  :root .case-reading-tools {
+    top: 64px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root .case-reading-tools {
+    top: var(--site-nav-phone-height, 97px);
+  }
+}
+
+/* Segmented handoff (segmented.js): the dither fill replaces the wipe and the flat selected ink. */
+:root body [data-segmented-ready="true"][data-segmented-ready] > button {
+  isolation: auto;
+  background: transparent;
+  color: var(--ink);
+}
+
+:root body [data-segmented-ready="true"][data-segmented-ready] > button:is([aria-pressed="false"], [aria-selected="false"]):not(.is-filling):not(.is-filled) {
+  color: var(--text-soft);
+}
+
+:root body [data-segmented-ready="true"][data-segmented-ready] > button.is-filled {
+  background: var(--ink);
+}
+
+:root body [data-segmented-ready="true"][data-segmented-ready] > button::before {
+  display: none;
+}
+
+:root body [data-segmented-ready="true"] > button > .fill-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* 25 NAV CELL RULE (component specimen §1) ─ the current page is a solid rule of small cells under
+   its link. Hovering another link fills a half-dithered rule in reading order (left to right, in
+   cell steps); leaving takes it back. */
+:root .site-nav nav a::after {
+  right: 10px;
+  left: 10px;
+  bottom: 6px;
+  height: 3px;
+  background: var(--ink);
+  -webkit-mask: linear-gradient(90deg, #000 4px, transparent 4px) 0 0 / 5px 100% repeat-x;
+  mask: linear-gradient(90deg, #000 4px, transparent 4px) 0 0 / 5px 100% repeat-x;
+  transform: none;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 140ms steps(7, end);
+}
+
+:root .site-nav nav a:is(:hover, :focus-visible):not([aria-current="page"])::after {
+  -webkit-mask:
+    linear-gradient(90deg, #000 4px, transparent 4px) 0 0 / 5px 100% repeat-x,
+    var(--dither-4) 0 0 / 4px 4px;
+  -webkit-mask-composite: source-in;
+  mask:
+    linear-gradient(90deg, #000 4px, transparent 4px) 0 0 / 5px 100% repeat-x,
+    var(--dither-4) 0 0 / 4px 4px;
+  mask-composite: intersect;
+  clip-path: inset(0);
+  transform: none;
+}
+
+:root .site-nav nav a[aria-current="page"]::after {
+  clip-path: inset(0);
+  transform: none;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .site-nav nav a::after {
+    transition: none;
+  }
+}
+
+html:is([data-motion-state="system"], [data-motion-state="visitor"]) .site-nav nav a::after {
+  transition: none;
+}
+
+/* The theme control's interior dithers through when it flips (ThemeToggle adds .is-flipping). */
+:root .theme-toggle.is-flipping .hn {
+  animation: theme-dither 240ms steps(1) both;
+}
+
+@keyframes theme-dither {
+  0% { -webkit-mask: var(--dither-2) 0 0 / 3px 3px; mask: var(--dither-2) 0 0 / 3px 3px; }
+  33% { -webkit-mask: var(--dither-4) 0 0 / 3px 3px; mask: var(--dither-4) 0 0 / 3px 3px; }
+  66% { -webkit-mask: var(--dither-6) 0 0 / 3px 3px; mask: var(--dither-6) 0 0 / 3px 3px; }
+  100% { -webkit-mask: none; mask: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .theme-toggle.is-flipping .hn {
+    animation: none;
+  }
+}
+
+/* Notes rows (component specimen, Lists): one line per note. Departure title on the left, the date
+   in Departure 11 on the right, one rule beneath. Hover: the edge marker and the step aside. */
+:root .notes-list__item > a {
+  grid-template-areas: "title meta";
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: 14px 0 14px 0;
+}
+
+:root .notes-list__item h3 {
+  grid-area: title;
+  margin: 0;
+  font: 400 var(--type-px-22) / 1.25 var(--font-pixel);
+}
+
+:root .notes-list__meta {
+  grid-area: meta;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+:root :is(.notes-list__read-time, .notes-list__arrow) {
+  display: none;
+}
+
+:root .notes-list__item {
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+/* Labs rows (component specimen, Lists): the real screen on the left, the Departure title and a
+   line of description, "Open →" on the right, one rule beneath. Hover: edge marker, step aside. */
+:root .labs-list {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  border-top: var(--hairline) solid var(--ink);
+}
+
+:root .labs-item {
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .labs-item__link {
+  position: relative;
+  grid-template-columns: 240px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 16px 0;
+}
+
+:root .labs-item__link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -16px;
+  width: var(--marker-width);
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+:root .labs-item__link:is(:hover, :focus-visible)::before {
+  transform: none;
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root .labs-item__link > * {
+  transition: transform 120ms steps(2);
+}
+
+:root .labs-item__link:is(:hover, :focus-visible) > :is(.labs-item__copy, .labs-item__action) {
+  transform: translateX(14px);
+}
+
+:root .labs-item__screen {
+  margin: 0;
+}
+
+:root .labs-item__copy {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+:root .labs-item__body {
+  max-width: 62ch;
+  font-size: 15px;
+}
+
+:root .labs-item__action {
+  padding-right: var(--space-2);
+  min-height: 0;
+}
+
+:root .labs-item__action::after {
+  display: none;
+}
+
+:root .labs-item__link:is(:hover, :focus-visible) .labs-item__screen::after {
+  transform: scaleY(0);
+}
+
+@media (max-width: 700px) {
+  :root .labs-item__link {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "screen screen"
+      "copy action";
+  }
+
+  :root .labs-item__screen { grid-area: screen; }
+  :root .labs-item__copy { grid-area: copy; }
+  :root .labs-item__action { grid-area: action; align-self: end; }
+
+  :root .labs-item__link:is(:hover, :focus-visible) > :is(.labs-item__copy, .labs-item__action) {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .labs-item__link > *,
+  :root .labs-item__link::before {
+    transition: none;
+  }
+}
+
+/* Case opening (component specimen §5): status as a density cell, facts on dither rules. */
+:root .case-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 6px;
+}
+
+:root .case-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font: 500 13px / 1 var(--sans);
+}
+
+:root .case-status::first-letter {
+  text-transform: uppercase;
+}
+
+:root .case-status .cell {
+  --cell-size: 10px;
+}
+
+:root .case-status[data-status-level="1"],
+:root .case-status[data-status-level="3"] {
+  color: var(--text-soft);
+}
+
+:root .case-breadcrumb a {
+  position: relative;
+  padding-bottom: 3px;
+  border: 0;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+:root .case-breadcrumb a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+  mask: var(--dither-3) 0 0 / var(--dither-size) var(--dither-size);
+}
+
+:root .case-breadcrumb a:is(:hover, :focus-visible)::after {
+  -webkit-mask: none;
+  mask: none;
+}
+
+/* Facts sit on dither rules, never boxes. */
+:root body .case-study-body #bluf + p + ul li {
+  border-top: 0;
+}
+
+:root body .case-study-body #bluf + p + ul li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / 4px 4px;
+  mask: var(--dither-4) 0 0 / 4px 4px;
+}
+
+/* Inline links in prose (component specimen §2): a dotted rule that turns solid on hover. */
+:root :is(.case-study-body, .note-body, .about-page, .contact-hero, .published-item__body, .case-figure-head, figcaption, .labs-tool-hero) :is(p, li, em, span, figcaption) a:not([data-ascii-action]):not([class]) {
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+:root :is(.case-study-body, .note-body, .about-page, .contact-hero, .published-item__body, .case-figure-head, figcaption, .labs-tool-hero) :is(p, li, em, span, figcaption) a:not([data-ascii-action]):not([class]):is(:hover, :focus-visible) {
+  text-decoration-style: solid;
+}
+
+/* Case evidence captions (component specimen, Case evidence): one hairline between media and
+   caption, a numbered Departure label in its own column, a bold lead and a soft note. */
+:root .case-study-body {
+  counter-reset: case-fig;
+}
+
+:root .case-study-body figure:has(> figcaption > strong:first-child) {
+  counter-increment: case-fig;
+}
+
+:root .case-study-body figure > figcaption:has(> strong:first-child) {
+  display: grid;
+  grid-template-columns: 7ch minmax(0, 1fr);
+  column-gap: var(--space-2);
+  align-items: baseline;
+  padding-top: var(--space-2);
+  border-top: var(--hairline) solid var(--line);
+}
+
+:root .case-study-body figure > figcaption:has(> strong:first-child)::before {
+  content: "Fig. " counter(case-fig);
+  grid-row: 1 / span 2;
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.6 var(--font-pixel);
+}
+
+:root .case-study-body figure > figcaption > strong:first-child {
+  grid-column: 2;
+  color: var(--ink);
+  font: 500 15px / 1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-study-body figure > figcaption > strong:first-child + em {
+  grid-column: 2;
+}
+
+/* Quotes sit on a dither rule at the left; the source is Departure 11. */
+:root .case-study-body blockquote {
+  position: relative;
+  margin-inline: 0;
+  padding: 0 0 0 var(--space-4);
+  border: 0;
+  background: transparent;
+  font: 400 22px / 1.4 var(--sans);
+}
+
+:root .case-study-body blockquote::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  width: 6px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / 4px 4px;
+  mask: var(--dither-4) 0 0 / 4px 4px;
+}
+
+:root .case-study-body blockquote cite {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  font-style: normal;
+}
+
+/* Moving on (component specimen): previous case on the left, next case on the right, Departure
+   titles with arrows, under an ink rule. The contact prompt leads with a Departure line. */
+:root .case-sibling-nav {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: var(--hairline) solid var(--ink);
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+:root .case-sibling-nav a[data-case-direction="previous"] {
+  grid-column: 1;
+  grid-row: 1;
+  border-right: var(--hairline) solid var(--line);
+}
+
+:root .case-sibling-nav a[data-case-direction="next"] {
+  grid-column: 2;
+  grid-row: 1;
+  justify-items: end;
+  text-align: right;
+}
+
+:root .case-sibling-nav a[data-case-direction="previous"] strong::before {
+  content: "←\00a0";
+}
+
+:root .case-sibling-nav a[data-case-direction="next"] strong::after {
+  content: "\00a0→";
+}
+
+:root .case-sibling-nav a {
+  align-content: end;
+}
+
+:root .case-contact-prompt:not(.case-contact-prompt--compact) .case-contact-prompt__copy p {
+  color: var(--text-soft);
+  font: 400 15px / 1.5 var(--sans);
+}
+
+:root .case-sibling-nav a[data-case-direction="next"]::after {
+  right: 0;
+  left: auto;
+  transform-origin: right center;
+}
+
+:root .case-sibling-nav .case-sibling-nav__empty {
+  grid-row: 1;
+}
+
+:root .case-sibling-nav a[data-case-direction="next"] ~ .case-sibling-nav__empty {
+  grid-column: 1;
+}
+
+:root .case-contact-prompt:not(.case-contact-prompt--compact) {
+  border: 0;
+  border-top: var(--hairline) solid var(--line);
+  background: transparent;
+  padding-inline: 0;
+}
+
+:root main .case-contact-prompt:not(.case-contact-prompt--compact) h2 {
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+/* Cell-track sliders (cell-range.js): 24 cells fill to the value; the real input sits on top. */
+:root .cell-range {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
+  height: 14px;
+  margin-block: 6px;
+}
+
+:root .cell-range .cell {
+  width: auto;
+  height: 14px;
+}
+
+:root body .cell-range input[type="range"] {
+  position: absolute;
+  inset: -12px 0;
+  width: 100%;
+  height: calc(100% + 24px);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+:root .cell-range:focus-within {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: 4px;
+}
+
+:root .cell-range.is-disabled {
+  opacity: 0.45;
+}
+
+:root .cell-range.is-disabled input[type="range"] {
+  cursor: not-allowed;
+}
+
+/* Notes feedback: rows leave with the afterglow; the empty state is a cell icon and plain words. */
+:root .notes-list__item.is-leaving {
+  animation: mark-afterglow var(--afterglow) both;
+}
+
+:root .notes-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  padding: var(--space-5) 0;
+}
+
+:root .notes-empty[hidden] {
+  display: none;
+}
+
+:root .notes-empty__icon {
+  --cell-size: 12px;
+  --cell-gap: 1px;
+}
+
+:root .notes-empty__title {
+  margin: 0;
+  color: var(--ink);
+  font: 400 var(--type-px-22) / 1.2 var(--font-pixel);
+}
+
+:root .notes-empty p:not(.notes-empty__title) {
+  margin: 0;
+  color: var(--text-soft);
+  font: 400 16px / 1.5 var(--sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .notes-list__item.is-leaving {
+    animation: none;
+  }
+}
+
+/* Focus draws the field's line solid in reading order (left to right, in cell steps). */
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea), .notes-search input) {
+  border-bottom: 2px solid var(--line);
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  transition: background-size 180ms steps(9, end);
+}
+
+:root :is(.private-access input:not([type="hidden"]), .contact-form label:not(.contact-form__trap) :is(input, textarea), .notes-search input):focus {
+  border-bottom-color: var(--line);
+  background-size: 100% 2px;
+  outline: none;
+}
+
+:root .notes-search input {
+  min-height: 44px;
+  padding: var(--space-1) 0;
+  border-top: 0;
+  border-inline: 0;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--ink);
+  font: 400 17px / 1.4 var(--sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root :is(.private-access input, .contact-form :is(input, textarea), .notes-search input) {
+    transition: none;
+  }
+}
+
+:root .notes-search,
+:root .notes-search[open],
+:root .notes-search:focus-within {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+:root .notes-search summary:focus-visible {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:root .notes-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+:root .notes-directory__utility {
+  align-items: start;
+}
+
+:root .notes-search output {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.6 var(--font-pixel);
+}
+
+/* Video in cells (video-cells.js). */
+:root .video-cells--strip {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(48, minmax(0, 1fr));
+  gap: 1px;
+  height: 4px;
+  pointer-events: none;
+}
+
+:root .video-cells--strip .cell {
+  width: auto;
+  height: 4px;
+}
+
+:root .cell-player {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+:root .cell-player__play {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: var(--hairline) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+:root .cell-player__play:is(:hover, :focus-visible) {
+  box-shadow: inset var(--marker-width) 0 0 var(--ink);
+}
+
+:root .cell-player__play .cell-icon .cell {
+  --icon-cell: 3px;
+}
+
+:root .cell-player__track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(48, minmax(0, 1fr));
+  gap: 1px;
+  height: 12px;
+}
+
+:root .cell-player__track .cell {
+  width: auto;
+  height: 12px;
+}
+
+:root .cell-player__track input[type="range"] {
+  position: absolute;
+  inset: -16px 0;
+  width: 100%;
+  height: calc(100% + 32px);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+:root .cell-player__track:focus-within {
+  outline: var(--focus-ring-width) solid var(--ink);
+  outline-offset: 4px;
+}
+
+:root .cell-player__time {
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  white-space: nowrap;
+}
+
+:root .case-video-copy > video {
+  cursor: pointer;
+}
+
+/* Working: the button stays solid with a quarter-turn loader; it is busy, not disabled. */
+:root [data-ascii-action][data-press-state="working"]:is(a, button) {
+  color: var(--ink);
+  cursor: progress;
+}
+
+:root [data-ascii-action][data-press-state="working"]:is(a, button)::before {
+  display: none;
+}
+
+:root .press-loader {
+  --cells: 2;
+  --cell-size: 6px;
+  --cell-gap: 1px;
+}
+
+:root .press-loader[hidden],
+:root .press-check[hidden] {
+  display: none;
+}
+
+:root .press-check .cell:not([data-level="0"]) {
+  background: var(--signal-ok);
+}
+
+:root .has-fill .press-loader .cell {
+  background: transparent;
+}
+
+:root .has-fill .press-loader .cell:not([data-level="0"]) {
+  background: var(--difference-ink);
+}
+
+/* R5 point refresh canvas: sits over the media for ~0.5s, never catches the pointer. */
+:root .point-refresh {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+:root .overview-video__frame {
+  position: relative;
+}
+
+/* The phone sheet switches on from the strip in four steps. clip-path, not scale, so its rows
+   keep their real size while it opens. */
+:root .case-toc ol.is-sheet-on {
+  animation: sheet-switch-on var(--switch) steps(4, end) both;
+}
+
+@keyframes sheet-switch-on {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .case-toc ol.is-sheet-on {
+    animation: none;
+  }
+}
+
+/* The case reading line under the bar is dithered, so it reads as a cell rule, not a stripe. */
+:root .site-nav .case-progress span {
+  height: 2px;
+  background: var(--ink);
+  -webkit-mask: var(--dither-4) 0 0 / 4px 4px;
+  mask: var(--dither-4) 0 0 / 4px 4px;
+}
+
+/* Quiet actions: the arrow nudges in three steps on hover (component specimen §2). */
+:root :is([data-ascii-action="text"], .labs-item__action, .labs-tool-related a) span[aria-hidden="true"],
+:root .labs-item__arrow {
+  display: inline-block;
+}
+
+:root [data-ascii-action="text"]:is(:hover, :focus-visible) span[aria-hidden="true"],
+:root .labs-item__link:is(:hover, :focus-visible) .labs-item__arrow,
+:root .labs-tool-related a:is(:hover, :focus-visible) span[aria-hidden="true"] {
+  animation: arrow-nudge 240ms both;
+}
+
+@keyframes arrow-nudge {
+  0% { transform: translateX(0); animation-timing-function: steps(1); }
+  33% { transform: translateX(2px); animation-timing-function: steps(1); }
+  66% { transform: translateX(4px); animation-timing-function: steps(1); }
+  100% { transform: translateX(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root [data-ascii-action="text"] span[aria-hidden="true"],
+  :root .labs-item__arrow,
+  :root .labs-tool-related a span[aria-hidden="true"] {
+    animation: none !important;
+  }
+}
+
+/* Stats (component specimen, Case evidence): pixel numerals that count once, plain label, soft note. */
+:root .case-stat strong[data-count-up] {
+  display: block;
+  color: var(--ink);
+  font: 400 var(--type-px-66) / 1 var(--font-pixel);
+  letter-spacing: 0;
+}
+
+:root .case-stats__label {
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .case-stat {
+  border: 0;
+  background: transparent;
 }

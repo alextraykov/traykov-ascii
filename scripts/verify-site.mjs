@@ -36,6 +36,7 @@ const files = [
   "src/pages/shader-explainer.astro",
   "src/pages/svg-ascii-studio.astro",
   "src/pages/labs/index.astro",
+  "scripts/capture-labs-screens.mjs",
   "src/pages/labs/ascii-banner.astro",
   "src/pages/labs/product-systems-kit.astro",
   "src/pages/labs/rhizome-field.astro",
@@ -495,13 +496,12 @@ const checks = [
       has("src/scripts/turntable-loader.js", 'turntableState = "fallback"')
   ],
   [
-    "Shared navigation has exactly the recruiter-facing primary links",
-    has("src/components/SiteNav.astro", 'export type SiteNavSection = "work" | "notes" | "about" | "contact"') &&
+    "Shared navigation has exactly the primary links, including Labs (round 3)",
+    has("src/components/SiteNav.astro", 'export type SiteNavSection = "work" | "notes" | "labs" | "about" | "contact"') &&
       has("src/components/SiteNav.astro", 'variant?: "default" | "case"') &&
-      ["Work", "Notes", "About", "Contact"].every((label) =>
+      ["Work", "Notes", "Labs", "About", "Contact"].every((label) =>
         has("src/components/SiteNav.astro", `label: "${label}"`)
       ) &&
-      !has("src/components/SiteNav.astro", 'label: "Labs"') &&
       has("src/components/SiteNav.astro", "case-progress") &&
       sharedNavShells.every((route) => has(route, "<SiteNav")) &&
       !sharedNavShells.some((route) => has(route, 'class="site-nav"')) &&
@@ -510,7 +510,7 @@ const checks = [
       has("src/pages/about.astro", '<SiteNav active="about"') &&
       has("src/pages/contact.astro", '<SiteNav active="contact"') &&
       has("src/pages/case-studies/[slug].astro", '<SiteNav active="work" variant="case"') &&
-      has("src/styles/global.css", "grid-template-columns: repeat(4, minmax(0, 1fr))")
+      has("src/styles/global.css", "grid-template-columns: repeat(5, minmax(0, 1fr))")
   ],
   [
     "Accessible names include their visible navigation labels",
@@ -553,22 +553,23 @@ const checks = [
       has("src/styles/global.css", ".case-preview-placeholder")
   ],
   [
-    "Footer is a compact utility strip with fixed public links",
+    "Footer is four quiet columns and a base row with fixed public links (round 3)",
     has("src/components/SiteFooter.astro", "siteLinks") &&
-      ["Notes", "Labs", "About", "Contact", "CV", "RSS"].every((label) =>
+      ["Work", "Notes", "Labs", "About", "RSS", "For machines"].every((label) =>
         has("src/components/SiteFooter.astro", `label: "${label}"`)
       ) &&
+      has("src/components/SiteFooter.astro", 'href="/contact/"') &&
+      has("src/components/SiteFooter.astro", 'href="/cv/"') &&
+      has("src/components/SiteFooter.astro", 'href: "/llms.txt"') &&
       has("src/components/SiteFooter.astro", "omitBookingEmbed = false") &&
       has("src/components/SiteFooter.astro", "!omitBookingEmbed && bookingEmbedUrl") &&
       has("src/components/SiteFooter.astro", "Back to top") &&
-      has("src/components/SiteFooter.astro", 'href="/llms.txt"') &&
-      has("src/components/SiteFooter.astro", 'aria-label="For machines"') &&
       has("src/components/SiteFooter.astro", "data-footer-booking-modal") &&
       has("src/components/SiteFooter.astro", "data-booking-modal-open") &&
-      has("src/styles/global.css", "grid-template-columns: var(--tap-target) minmax(0, 1fr) auto") &&
-      has("src/styles/global.css", "grid-column: 1 / -1") &&
-      has("src/styles/global.css", "column-gap: var(--space-3)") &&
-      !has("src/components/SiteFooter.astro", 'label: "Work"') &&
+      has("src/components/SiteFooter.astro", "<MotionToggle") &&
+      has("src/components/SiteFooter.astro", "data-theme-toggle") &&
+      has("src/styles/global.css", ".site-footer__columns") &&
+      has("src/styles/global.css", "grid-template-columns: repeat(4, minmax(0, 1fr))") &&
       !has("src/components/SiteFooter.astro", 'label: "Banner studio"') &&
       !has("src/components/SiteFooter.astro", 'label: "Turntable editor"')
   ],
@@ -754,10 +755,22 @@ const checks = [
     has("src/styles/global.css", "@media (max-width: 700px)") &&
       has("src/styles/global.css", "prefers-reduced-motion")
   ],
+  [
+    "Labs index lists the four public tools with real screens (round 3)",
+    ["playground", "svg-ascii-studio", "ascii-banner", "presenting-in-code"].every(
+      (id) =>
+        has("src/pages/labs/index.astro", `id: "${id}"`) &&
+        exists(`public/labs/screens/${id}.webp`) &&
+        size(`public/labs/screens/${id}.webp`) <= 40_000
+    ) &&
+      has("scripts/capture-labs-screens.mjs", "MAX_BYTES = 40_000") &&
+      !has("src/pages/labs/index.astro", 'href: "/labs/sketchbook/"') &&
+      !has("src/pages/labs/index.astro", 'href: "/labs/product-systems-kit/"')
+  ],
   ["Shader asset remains available", has("public/ascii-shader.js", 'getContext("webgl"')],
   [
-    "Rhizome field is routable, GPU-only, and within its image budget",
-    has("src/pages/labs/index.astro", 'href: "/labs/rhizome-field/"') &&
+    "Rhizome field stays routable (unlisted since round 3), GPU-only, and within its image budget",
+    exists("src/pages/labs/rhizome-field.astro") &&
       has("src/pages/labs/rhizome-field.astro", "RhizomeField") &&
       has("src/components/RhizomeField.astro", "data-rhizome-canvas") &&
       has("src/scripts/rhizome-field.js", 'const ASCII_RAMP = " .:+*#%@"') &&

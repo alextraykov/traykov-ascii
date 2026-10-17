@@ -31,6 +31,10 @@
       button.setAttribute("aria-label", `Color theme: ${mode}. Activate to switch to ${nextLabel}.`);
       button.setAttribute("title", `Theme: ${mode}`);
 
+      button.querySelectorAll("[data-theme-value]").forEach((value) => {
+        value.textContent = state.preference === "auto" ? "Auto" : state.resolved === "dark" ? "Dark" : "Light";
+      });
+
       if (!status) return;
       if (state.preference === "auto" && state.nextBoundary) {
         const nextTime = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" })
@@ -48,6 +52,10 @@
     const themeController = (window as any).__traykovTheme;
     const state = themeController?.state || { preference: "auto", resolved: "light" };
     themeController?.set(nextPreference(state));
+    button.classList.remove("is-flipping");
+    void button.offsetWidth;
+    button.classList.add("is-flipping");
+    window.setTimeout(() => button.classList.remove("is-flipping"), 260);
   });
 
   window.addEventListener("themechange", syncThemeToggle);

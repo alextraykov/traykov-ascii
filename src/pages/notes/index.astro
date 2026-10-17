@@ -7,7 +7,7 @@ import { getNotes } from "../../lib/substack";
 import "../../styles/global.css";
 
 const notes = await getNotes();
-const dateFormatter = new Intl.DateTimeFormat("en", {
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
   month: "short",
   year: "numeric",
@@ -69,14 +69,18 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
                 </div>
                 <h3>{note.title}</h3>
                 <span class="notes-list__read-time">{note.readTime}</span>
-                <span class="notes-list__arrow" aria-hidden="true">↗</span>
+                <span class="notes-list__arrow" aria-hidden="true">→</span>
               </a>
             </article>
           ))}
         </div>
       </section>
 
-      <p class="notes-empty" hidden data-notes-empty>NO MATCHES.</p>
+      <div class="notes-empty" hidden data-notes-empty>
+        <span class="cells notes-empty__icon" aria-hidden="true" data-notes-empty-icon></span>
+        <p class="notes-empty__title">Nothing here yet</p>
+        <p data-notes-empty-text>No notes match that. Try a shorter word.</p>
+      </div>
     </main>
 
     <SiteFooter />

@@ -34,15 +34,13 @@ const bookingPageUrl = (() => {
   </div>
 
   <div class="case-contact-prompt__actions">
+    {!compact && <a href={emailHref} data-ascii-action="primary">Write to me</a>}
     <a
       href={bookingPageUrl}
       data-booking-modal-open
-      data-ascii-action="primary"
-      data-ascii-stream={compact ? undefined : true}
-      data-ascii-burst={compact ? undefined : true}
+      data-ascii-action={compact ? "primary" : "secondary"}
     >
-      {compact ? "Book 30 minutes" : <span>Book 30 minutes</span>}
+      {compact ? "Book 30 minutes" : "Book a call"}
     </a>
-    {!compact && <a href={emailHref} data-ascii-action="text" data-ascii-burst>Email instead</a>}
   </div>
 </aside>

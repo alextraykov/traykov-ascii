@@ -537,10 +537,10 @@ async function main() {
     }
 
     await page.goto(new URL("/", baseUrl).toString(), { waitUntil: "networkidle" });
-    const projectTitle = page.locator('[data-project-overview="synapse-sys"] [data-project-overview-title] a').first();
+    const projectTitle = page.locator('[data-project-overview="designing-synapse-sys"] [data-project-overview-title] a').first();
     await projectTitle.scrollIntoViewIfNeeded();
     await projectTitle.click();
-    await page.waitForURL(/\/case-studies\/synapse-sys\//);
+    await page.waitForURL(/\/case-studies\/designing-synapse-sys\//);
     const transitionState = await page.evaluate(() => {
       const main = document.querySelector("main");
       return {

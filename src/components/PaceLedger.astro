@@ -1,0 +1,48 @@
+<figure class="pace-ledger" data-pace-ledger>
+  <pre class="pace-ledger__grid" aria-hidden="true" data-pace-ledger-grid></pre>
+  <p class="visually-hidden">
+    We pay with expertise and time. Expertise earns trust, trust powers pace, and we spend time
+    keeping the pace. Pace delivers what we get: craft, quickly.
+  </p>
+</figure>
+
+<script>
+  import { createLedger, LAYOUTS } from "../scripts/pace-ledger.js";
+  import { isMotionActive, onMotionChange } from "../scripts/motion/lifecycle.js";
+  import { onTick } from "../scripts/motion/tick.js";
+
+  const initialize = (root: Element) => {
+    if (!(root instanceof HTMLElement) || root.dataset.ready === "true") return;
+    const pre = root.querySelector<HTMLElement>("[data-pace-ledger-grid]");
+    if (!pre) return;
+    root.dataset.ready = "true";
+
+    const ledger = createLedger(pre);
+
+    const charWidth = () => {
+      const probe = document.createElement("span");
+      probe.textContent = "0".repeat(10);
+      pre.append(probe);
+      const width = probe.getBoundingClientRect().width / 10;
+      probe.remove();
+      return width || 8;
+    };
+
+    const fit = () => {
+      const style = getComputedStyle(root);
+      const room = root.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      ledger.setLayout(room / charWidth() >= LAYOUTS.wide.cols ? LAYOUTS.wide : LAYOUTS.narrow);
+    };
+
+    fit();
+    new ResizeObserver(fit).observe(root);
+    onTick(root, (tick) => {
+      if (isMotionActive()) ledger.frame(tick);
+    });
+    onMotionChange((state) => {
+      if (!state.active) ledger.rest();
+    });
+  };
+
+  document.querySelectorAll("[data-pace-ledger]").forEach(initialize);
+</script>

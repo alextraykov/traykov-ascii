@@ -5,6 +5,7 @@ import localDraft from "../content/notes/prompting-is-not-taste.json";
 import confidenceDraft from "../content/notes/the-confidence-crutch.json";
 import aiProductDesignerOwnershipDraft from "../content/notes/what-an-ai-product-designer-owns-in-an-enterprise-product.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
+import priceOfPaceDraft from "../content/notes/the-price-of-pace.json";
 import legacyManifest from "../content/notes/legacy/index.json";
 
 const legacyBodies = import.meta.glob("../content/notes/legacy/*.html", {
@@ -28,7 +29,7 @@ export type NoteRecord = {
   plainText: string;
   heroImage?: string;
   heroImageAlt?: string;
-  visual?: "web-cemetery" | "ascii-flow-field";
+  visual?: "web-cemetery" | "ascii-flow-field" | "price-of-pace";
   tags: string[];
   readTime: string;
   source: "substack" | "legacy" | "local" | "local-published";
@@ -41,17 +42,19 @@ type LocalNoteDraft = {
   publishedAt: string;
   image?: string;
   imageAlt?: string;
-  visual?: "web-cemetery" | "ascii-flow-field";
+  visual?: "web-cemetery" | "ascii-flow-field" | "price-of-pace";
   status?: "published";
   tags: string[];
   paragraphs?: string[];
   blocks?: Array<
     | { type: "paragraph"; text: string }
     | { type: "list" | "questions"; items: string[] }
+    | { type: "visual"; name: string }
   >;
 };
 
 const localDrafts: LocalNoteDraft[] = [
+  priceOfPaceDraft,
   digitalArtDraft,
   designOutsideDesignDraft,
   internetFeelsDeadDraft,
@@ -131,6 +134,11 @@ function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainT
           return `<p>${localInlineHtml(block.text)}</p>`;
         }
 
+        // A marker the note page swaps for an inline component.
+        if (block.type === "visual") {
+          return `<!--note-visual:${block.name}-->`;
+        }
+
         if (block.type === "list") {
           return `<ul>${block.items.map((item) => `<li>${localInlineHtml(item)}</li>`).join("")}</ul>`;
         }
@@ -141,7 +149,9 @@ function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainT
       })
       .join("\n");
     const plainText = draft.blocks
-      .flatMap((block) => block.type === "paragraph" ? [block.text] : block.items)
+      .flatMap((block) =>
+        block.type === "paragraph" ? [block.text] : block.type === "visual" ? [] : block.items
+      )
       .join(" ")
       .replace(/\*\*/g, "");
 

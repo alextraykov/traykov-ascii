@@ -1,4 +1,5 @@
 ---
+import LatestNoteBanner from "./LatestNoteBanner.astro";
 import MotionToggle from "./MotionToggle.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 
@@ -9,9 +10,11 @@ type Props = {
   variant?: "default" | "case";
   // Full-screen tool pages have no footer, so their motion control sits in the bar.
   motionControl?: "footer" | "nav";
+  // The latest note ticker under the bar. Only the homepage shows it.
+  latestNote?: boolean;
 };
 
-const { active, variant = "default", motionControl = "footer" }: Props = Astro.props;
+const { active, variant = "default", motionControl = "footer", latestNote = false }: Props = Astro.props;
 
 const links: Array<{ section: SiteNavSection; label: string; href: string }> = [
   { section: "work", label: "Work", href: "/#work" },
@@ -41,6 +44,7 @@ const links: Array<{ section: SiteNavSection; label: string; href: string }> = [
   </div>
   {variant === "case" && <div class="case-progress" aria-hidden="true"><span></span></div>}
 </header>
+{latestNote && <LatestNoteBanner />}
 
 <script>
   // Nav hover band (picks, C): it arrives 3 → 6 → 8 in CSS while hovered; leaving plays the short

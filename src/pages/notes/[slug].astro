@@ -7,6 +7,8 @@ import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
 import SiteNav from "../../components/SiteNav.astro";
 import { addLocalImageDimensions } from "../../lib/local-image-dimensions";
+import PaceLedger from "../../components/PaceLedger.astro";
+import PriceOfPaceSketch from "../../components/PriceOfPaceSketch.astro";
 import WebCemeterySketch from "../../components/WebCemeterySketch.astro";
 import { getNotes, type NoteRecord } from "../../lib/substack";
 import "../../styles/global.css";
@@ -27,6 +29,7 @@ const { note } = Astro.props as Props;
 const showBlocktypeWavePreview = note.slug === "on-digital-art";
 const showAsciiFlowField = note.visual === "ascii-flow-field";
 const showWebCemetery = note.visual === "web-cemetery";
+const showPriceOfPace = note.visual === "price-of-pace";
 const published = new Intl.DateTimeFormat("en", {
   day: "2-digit",
   month: "long",
@@ -61,6 +64,15 @@ const structuredData = [
   }
 ];
 const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
+// Local notes can place a component between paragraphs with a visual block.
+const inlineVisuals = { "pace-ledger": PaceLedger } as const;
+const noteParts = noteContentHtml
+  .split(/<!--note-visual:([a-z-]+)-->/)
+  .map((part, index) =>
+    index % 2 === 0
+      ? { html: part }
+      : { Visual: inlineVisuals[part as keyof typeof inlineVisuals] }
+  );
 ---
 
 <!doctype html>
@@ -114,7 +126,15 @@ const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
 
         {showAsciiFlowField && <AsciiFlowFieldSketch />}
 
-        <div class="note-body" set:html={noteContentHtml} />
+        {showPriceOfPace && <PriceOfPaceSketch />}
+
+        <div class="note-body">
+          {noteParts.map((part) =>
+            "html" in part
+              ? <Fragment set:html={part.html} />
+              : part.Visual && <part.Visual />
+          )}
+        </div>
 
         {note.source !== "local" && (
           <footer class="note-source">

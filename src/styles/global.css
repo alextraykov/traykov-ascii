@@ -45,6 +45,7 @@
   --dur-4: 340ms;
   --dur-5: 520ms;
   --dur-6: 720ms;
+  --marquee-duration: 60s;
   --stagger-1: 60ms;
   --stagger-2: 120ms;
   --stagger-3: 180ms;
@@ -602,6 +603,96 @@ a {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Latest note banner: a ticker under the header. It steps a few pixels at a time, like type
+   advancing, and only moves while motion is on. */
+.latest-note-banner {
+  display: flex;
+  align-items: stretch;
+  border-bottom: var(--hairline) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  text-transform: uppercase;
+}
+
+.latest-note-banner[hidden] {
+  display: none;
+}
+
+.latest-note-banner__link {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding-block: var(--space-1);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.latest-note-banner__close {
+  flex: none;
+  border: 0;
+  border-left: var(--hairline) solid var(--ink);
+  padding: 0 var(--space-3);
+  background: var(--paper);
+  color: var(--muted);
+  font: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.latest-note-banner__close:hover {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+
+.latest-note-banner__close:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.latest-note-banner__track {
+  display: flex;
+  width: max-content;
+}
+
+.latest-note-banner__group,
+.latest-note-banner__item {
+  display: flex;
+  gap: var(--space-2);
+  padding-right: var(--space-2);
+}
+
+.latest-note-banner__title {
+  text-decoration: underline;
+  text-decoration-thickness: var(--hairline);
+  text-underline-offset: 3px;
+}
+
+.latest-note-banner__rule {
+  padding-inline: var(--space-2);
+  color: var(--muted);
+}
+
+html[data-motion-state="active"] .latest-note-banner__track {
+  animation: latest-note-ticker var(--marquee-duration) steps(900) infinite;
+}
+
+.latest-note-banner__link:is(:hover, :focus-visible) .latest-note-banner__track {
+  animation-play-state: paused;
+}
+
+.latest-note-banner__link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+@keyframes latest-note-ticker {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .site-nav {
@@ -10774,6 +10865,56 @@ body[data-page-type="cv"] .notes-hero__copy dd {
   .note-wave-preview canvas {
     aspect-ratio: 1;
   }
+}
+
+/* The price of pace: a turning loop whose rows slip as the pace rises. */
+.note-pace {
+  display: grid;
+  width: 100%;
+  margin: 0;
+  border: var(--hairline) solid var(--ink);
+  background: var(--wave-preview-background);
+}
+
+.note-pace canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 7;
+  background: var(--wave-preview-background);
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+
+@media (max-width: 640px) {
+  .note-pace canvas {
+    aspect-ratio: 1;
+  }
+}
+
+/* The price of pace: what we pay and what we get, as a character diagram.
+   It takes the wide figure measure that every note figure uses. */
+.note-body .pace-ledger {
+  display: grid;
+  justify-items: center;
+  border: var(--hairline) solid var(--ink);
+  padding: var(--space-5) var(--space-3);
+  background: var(--paper);
+}
+
+.note-body .pace-ledger__grid {
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ink);
+  font: 400 13px / 1.1 var(--mono);
+  font-variant-ligatures: none;
+  letter-spacing: 0;
+  white-space: pre;
 }
 
 .note-body {

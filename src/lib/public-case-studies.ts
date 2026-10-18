@@ -7,9 +7,10 @@ export const featuredCaseStudyIds = [
   "connection-central"
 ] as const;
 
-export const supportingCaseStudyIds = ["pave-breathing-grids", "pave-loading-animation", "synapse-sys"] as const;
+export const supportingCaseStudyIds = ["pave-new-look", "pave-breathing-grids", "pave-loading-animation", "synapse-sys"] as const;
 
 export const caseStudyParentIds: Readonly<Record<string, string>> = {
+  "pave-new-look": "designing-pave",
   "pave-breathing-grids": "designing-pave",
   "pave-loading-animation": "designing-pave"
 };

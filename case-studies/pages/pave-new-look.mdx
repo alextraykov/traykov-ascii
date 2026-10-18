@@ -1,13 +1,13 @@
 ---
-title: "Pave blueprint"
+title: "Pave's new look"
 category: product case study
 status: launched
 pubDate: 2026-10-17
-tags: [pave, brand, motion, generative-art, design-engineering, launch]
-heroImage: /case-studies/pave-blueprint/img/blueprint-grid.webp
-readTime: 12 min
-summary: "Replacing Pave's gradient home background with a drafting sheet that draws what Pave builds, then carrying it through sign-in, account pages and the marketing site."
-role: "Design engineer: direction, motion system, prototypes, audits, specs and handoff"
+tags: [pave, brand, light-mode, design-systems, motion, design-engineering, launch]
+heroImage: /case-studies/pave-light-mode/live/home-light.webp
+readTime: 7 min
+summary: "A blueprint home and a light mode with real depth, designed in code and shipped to every Pave user in one release, 20 days after the first audit."
+role: "Lead product designer and design engineer"
 year: 2026
 group: "Pave"
 order: -3
@@ -15,301 +15,149 @@ order: -3
 
 ## Summary
 
-In late September, the home page of Pave by Quickbase had a gradient blob behind the prompt box. Our CPO didn't like it. Fair: it looked like every other AI tool, and it said "AI" without saying anything about what Pave actually makes.
+In late September Pave by Quickbase had two problems at its front door. The home page put a gradient behind the prompt that looked like every other AI tool, and light mode was so flat that panels disappeared into the page. Product leadership wanted light mode to become the default before a marketing push.
 
-I replaced it with an animated drafting sheet. Its lines breathe slowly, and its cells open to draw blueprints of the things Pave builds: tables, forms, workflows, connectors and portals. Each drawing builds itself in the order a draftsperson would draw it, then takes itself apart.
+I designed both at once, in code, and handed engineering decisions it could build in days. The blueprint home merged within a day of engineering's first commit; light mode went from handoff to merged in under a week. Both went live for every Pave user in one release on 15 October, and the next morning the marketing site moved onto the same sheet. For the first time since launch, the website and the product looked like one thing.
 
-Seventeen days later the same sheet sat behind the home page, sign-in and the account and access pages for every Pave user. A day after that, the Quickbase web team shipped it on the marketing site. What people see before they sign up now matches what they get after.
-
-- **Role** Design engineer: direction, motion system, prototypes, layout audits, specs and handoff
-- **Team** I designed and specified it. Austin Colcord engineered the product version. The Quickbase web team built the marketing-site version from my package.
-- **Timeline** 28 Sep to 16 Oct 2026
-- **Status** Live for every Pave user since 15 Oct 2026. Live on [quickbase.com/pave](https://www.quickbase.com/pave) since 16 Oct 2026. Several surfaces below are concepts and are labelled that way.
-
-```case-stat title: The initiative in four numbers
-17 days | from a new brief to live for every user | 28 Sep to 15 Oct 2026.
-~79 | directions explored before narrowing to one | Derived from my round notes, so approximate.
-0% → 100% | blueprint cells passing my layout audit | Five checks per sampled cell, desktop and phone.
-29 | sign-in, account and error states designed | Most are still concepts; see the gallery below.
+```case-facts
+Role | Lead product designer and design engineer
+Made | Audits, coded prototypes, a pitch deck, Figma specs, tested patches and verification
+Credit | Designed by Alex Traykov. Implemented by Austin Colcord. Marketing site by the Quickbase web team
+Live | 15 Oct 2026, for every Pave user
 ```
 
-```case-live
-title: The sheet, running
-src: /case-studies/pave-blueprint/live/blueprint-sheet.html?v=4A&present=1&seed=7&t=light
-height: 560
-fallback: /case-studies/pave-blueprint/img/blueprint-grid.webp
-tag: Live
-The same drafting sheet that runs behind Pave's home page and sign-in. Hover empty grid for the ruler; click bare sheet for a leader line.
+```case-stat
+20 | days from the first audit to live for every Pave user
+1 day | or less from engineering's first commit to the blueprint merged
+1 week | or less from the light mode handoff to merged
+0 | new colours: three surface layers from the palette Pave already had
 ```
 
-## The problem
-
-The gradient had no referent. It sat in the same soft-glow territory as the tools we compete with, and nothing in it told you Pave builds business software.
-
-```case-compare
-title: Home, before and after
-note: Switch between the gradient era and the blueprint home that went live on 15 Oct 2026.
-Before | /case-studies/pave-evidence/rebrand-before-after.webp | The gradient lineage, captured in the Blinq era. The late-September Pave home still put a gradient behind the composer. | Before
-After | /case-studies/pave-blueprint/video/home-decided.mp4 | The blueprint home: a focused prompt on the sheet, the onboarding strip, and one drawer for Recent apps and Templates. | Live | /case-studies/pave-blueprint/video/home-decided-poster.jpg
+```case-link
+quickbase.com/pave | https://www.quickbase.com/pave | The marketing site runs on the same sheet. Sign in from there and you land on it inside the product.
 ```
-
-My first counterpoint was the wrong kind of opposite. If the blob was too soft, surely something technical would read as serious. The CPO rejected the technical reference straight away as too technical for our audience, and they were right. Pave's builder is someone who runs operations at a desk, not a developer. A terminal look would have swapped one costume for another.
-
-There was a second problem underneath. Sign-in and error pages didn't look like the product at all. When I audited them I found four unrelated visual styles across 48 surfaces, including framework defaults that showed a bare "Not Found". You could sign out of a polished builder and land somewhere that looked like a different company.
-
-## The brief: construction, not atmosphere
-
-I rewrote the brief around one idea: the background should show what Pave builds, not set a mood.
-
-```case-quote
-attribution: From my design handoff
-The grid is a spreadsheet, the foundation that grows into apps, workflows and their components, so it never moves for its own sake.
-```
-
-Four principles held everything else in place:
-
-1. Every mark must be something a non-technical person can name. If you can't say what a shape is, cut it.
-2. The centre is a desk. Idle motion is slow enough to ignore, and anything you cause answers within about 100ms.
-3. Drawn, not popped. Nothing scales from zero, bounces or spins.
-4. The prompt box is the focus. The grid stays quieter than its edge and never sits under it.
-
-## Exploring widely, then narrowing fast
-
-I started with two research decks: 12 app-builder competitors, glyph and ASCII trends, and six live prototypes. Then three brand-background directions with three variations each, and six deliberate opposites, so the CPO could see the whole space and not one corner.
-
-Confession: the "whole space" part wasn't my instinct. I was already fine-tuning animation curves when a designer on the team told me to show two or three drastically different directions first. Annoyingly correct. It got a decision in one review.
-
-The grid prototype began with 24 variants. Over 23 numbered rounds in two days I cut it to 10, then 6. In the first review the CPO picked the blueprint and asked for less: the grid was over-rotating on busy, so no drift, no pointer parallax, and motion tied to what the user is doing.
-
-```case-timeline title: Seventeen days
-28 Sep | Brief reset | Two research decks, 12 competitors.
-29 Sep | 24 grid variants, then 10, then 6 | The CPO picks the blueprint.
-30 Sep | Layout made deterministic | Final tune, dark mode and phone layout.
-2 Oct | Sign-in, account and error pages | 29 states, plus an audit of 48 surfaces.
-7 Oct | Handoff | Engineering handoff and marketing package delivered.
-15 Oct | Live for every Pave user | Home, sign-in and the account and access pages.
-16 Oct | Live on the marketing site | quickbase.com/pave hero.
-```
-
-```case-live
-title: The grid prototype
-src: /case-studies/pave-blueprint/live/grid-prototype.html?v=4A&t=light
-height: 560
-fallback: /case-studies/pave-blueprint/img/blueprint-grid.webp
-tag: Concept
-The prototype I explored in. Press C for controls.
-```
-
-## How the sheet works
-
-Vertical lines never move. Free horizontal lines breathe up to 52px about every 12 seconds. Up to four cells are open at a time, with a new one about every eight seconds.
-
-Each cell draws a blueprint in the order a draftsperson works: lattice, centrelines, outline, rules, lettering, hatching, anchors, dimensions and the title block. It takes about 7.7 seconds to draw and 3.7 to take apart.
-
-Hover over empty grid and a ruler measures the cell. Click bare sheet and a leader line is drawn. Focus the prompt box and the nearest lines slide onto its edges to frame it.
-
-```case-live
-title: One drawing, slowed down
-src: /case-studies/pave-blueprint/live/blueprint-film.html?v=4A&present=1&t=light
-height: 560
-fallback: /case-studies/pave-blueprint/img/film-library.webp
-Each layer of the drawing runs on its own timing curve.
-```
-
-```case-video-copy
-title: The structure and timing of one blueprint
-file: public/case-studies/pave-blueprint/video/blueprint-breakdown-film.mp4
-
-A 49-second breakdown of one drawing, from lattice to title block and back.
-```
-
-```case-image-grid
-title: Anatomy of a drawing
-columns: 2
-/case-studies/pave-blueprint/img/film-structure.webp | The parts | One blueprint drawing broken into lattice, outline, rules and dimensions.
-/case-studies/pave-blueprint/img/film-library.webp | The timeline | Nine motion curves, one per layer, each with its own start time on a shared timeline.
-```
-
-## Making a generative animation reliable
-
-A generative background has one job it must never fail: don't clip a drawing, squash a column or open a cell under the prompt box. For a while it did all three, and "it looks a bit off sometimes" was the most precise thing I could say about it.
-
-So I built an audit that samples every open cell and scores five checks: clipped, title overlap, centred, filled and stable. Then I wrote layout rules until every cell passed. At the start, none passed and 60% of samples had a squashed column. Eight rules later, every cell passed, on desktop and on phones.
-
-- **Before** 1,677 cells sampled, 0% pass all five checks, 60% squashed columns
-- **Rules 1–3** 1,593 sampled, 74% pass, 0% squashed
-- **Rules 4–6** 1,378 sampled, 89% pass, 0% squashed
-- **Rule 7, three seeds** 3,466 sampled, 97.2% pass, 0% squashed
-- **Tighter column gap** 1,290 sampled, 99.2% pass, 0% squashed
-- **Final tune, rule 8** 1,083 sampled, 100% pass, 0% squashed
-- **Phones** 56 sampled, 100% pass, 0% squashed
-
-Performance stayed inside budget too. At four times CPU slowdown, p95 frame time stayed between 9 and 13ms against a 16ms budget. That's a local test, not field data.
-
-## Light, dark and reduced motion
-
-Dark mode gets the same proportional quieting as light, not the same contrast. I tried equal contrast first. It turned the green muddy and made the grey grid louder than the drawing, which is exactly backwards.
-
-With reduced motion on, the sheet shows one still frame of finished drawings and nothing moves. The canvas is decorative and hidden from screen readers.
-
-```case-compare
-title: Light and dark
-Light | /case-studies/pave-blueprint/video/blocks-film-light.mp4 | The explainer loop in light mode. | Live | /case-studies/pave-blueprint/video/blocks-film-light-poster.jpg
-Dark | /case-studies/pave-blueprint/video/blocks-film-dark.mp4 | Same loop, proportional quieting in dark mode. | Live | /case-studies/pave-blueprint/video/blocks-film-dark-poster.jpg
-```
-
-## The home page
-
-The home page asks first and lets you browse second. A focused prompt sits on the sheet. One drawer holds Recent apps and Templates and peeks from the bottom of the screen. People with no apps yet see only Templates.
-
-The sheet, the drawer and the restyled sidebar are live. I also designed typed suggestions, category chips that turn into example prompts, and a "Start" button. Those are still concepts in the product.
-
-```case-compare
-title: Returning user versus first visit
-Returning | /case-studies/pave-blueprint/img/home-returning-drawer.webp | Returning user, drawer open. | Live
-First visit | /case-studies/pave-blueprint/img/home-first-build.webp | First visit: prompt, chips and a Templates drawer. | Concept
-```
-
-```case-compare
-title: Phone layout, before and after
-note: The before strip shows the home squeezed onto a phone next to competitor references. The after strip is the phone layout I designed.
-fit: contain
-Before | /case-studies/pave-blueprint/img/phone-before.webp | Recents on a phone: the sidebar eats the screen and the headline breaks mid-word. | Before
-After | /case-studies/pave-blueprint/img/phone-after.webp | Nine phone states: home, menu, chips, drawer and the builder. | Concept
-```
-
-## From prompt to builder
-
-I went through about seven versions of the moment you press send. The colour flood looked dramatic in a recording, which is why I kept iterating on it long after it should have died. It read as tacky, then aggressive, then choppy, and the frame strips agreed: at four times CPU slowdown it took 2.3 seconds and dropped 10 frames, and its edge read as a stepped staircase even at a perfect frame rate.
-
-The chosen version, "disperse", takes 0.6 seconds with no dropped frames. The page leaves least important first, the grid breaks into dashes, and the finished builder appears in one step. I recorded at 40ms intervals to find what was wrong with each version. This transition is still a concept; it is not in the product.
-
-```case-image-grid
-title: The flood I had to let go
-note: Concept. Both boards show rejected flood versions.
-columns: 2
-fit: contain
-/case-studies/pave-blueprint/img/send-flood-variants.webp | Rejected | Four flood versions over 2.3 seconds, frame by frame.
-/case-studies/pave-blueprint/img/send-strip-light.webp | Diagnosis | A 40ms frame strip of one flood run. The staircase edge is visible from 281ms.
-```
-
-## Sign-in, account and error pages
-
-I carried the sheet to every page outside the app, so no one lands on a page that looks like a different product. Each page is one card on a quieter sheet, with no navigation, built from the design system's components. Fonts are self-hosted, so words appear at first paint, about 50ms instead of up to 2.4 seconds.
-
-Every page has its own blueprint illustration drawn as a real drafting symbol. A missing page is a dashed sheet at the end of a leader that reached nothing. Access denied is a door symbol with a swing it does not make. A suspended account is a striped site barrier.
-
-Sign-in has one choreography for every outcome. On success the card lifts and one drawing opens. On failure an inline message draws in. Never a shake, never red on the sheet: a wrong password is not a broken thing.
-
-```case-compare
-title: Sign-in, as it shipped
-Step one | /case-studies/pave-blueprint/img/pave-signin-welcome-1440.jpg | The live Pave sign-in: a "Welcome to Pave" card on the blueprint sheet. | Live
-Step two | /case-studies/pave-blueprint/img/pave-signin-email-1440.jpg | Email and password fields on the same sheet. | Live
-```
-
-```case-gallery
-title: All the states
-note: Desktop renders of every designed state, light and dark. The sheet behind sign-in, account suspended, app unavailable and no access is live in the product; every other state here is a concept.
-dir: /case-studies/pave-blueprint/pages/
-tag: Concept
-columns: 3
-notfound-desk | Not found
-crash-desk | Something went wrong
-app-unavailable-desk | App unavailable
-not-shared-desk | Page not shared
-suspended-desk | Account suspended
-workflow-desk | Workflow missing
-project-missing-desk | Project missing
-chat-crash-desk | Chat crashed
-access-denied-desk | Published app: access denied
-deploy-never-desk | Never published
-deploy-missing-version-desk | Missing version
-deploy-deploying-desk | Deploying
-deploy-failed-desk | Deploy failed
-login-method-desk | Sign in: method
-login-credentials-desk | Sign in: credentials
-login-realm-desk | Sign in: realm
-login-twostep-desk | Sign in: two-step
-login-toast-verified-desk | Notice: verified
-login-toast-expired-desk | Notice: expired
-login-toast-account-desk | Notice: account
-login-toast-realm-desk | Notice: realm
-login-toast-verify-required-desk | Notice: verify required
-passreset-form-desk | Reset password
-passreset-done-desk | Reset sent
-register-desk | Register
-verify-verifying-desk | Verifying
-verify-success-desk | Verified
-verify-error-desk | Verify failed
-landing-desk | Landing
-```
-
-## One look from the website to the product
-
-I packaged the sheet for the marketing team, with a walkthrough video, the exact motion values and 11 checks for the build. The web team rebuilt the quickbase.com/pave hero from it, including the sheet and the typed suggestions in the prompt box. The "Sign in" link now takes you to the same sheet inside the product.
-
-```case-compare
-title: Website to product
-note: The marketing hero and the product sign-in now share one sheet.
-Website | /case-studies/pave-blueprint/img/marketing-pave-hero-1440.jpg | Live: the quickbase.com/pave hero, built by the web team from my package. | Live
-Product | /case-studies/pave-blueprint/img/pave-signin-welcome-1440.jpg | Live: where "Sign in" lands. | Live
-```
-
-It also shipped my mistake. The chips under the website's prompt box came from placeholders in my package, and some of them name things Pave doesn't build as standalone apps. Nobody else's fault: when another team builds from your files, anything unfinished needs a label they can't miss, and mine didn't have one. As of 16 Oct the fix was still being decided.
-
-## Handoff
-
-Engineering got one source of truth: a spec set covering every value, running prototypes, an audit harness, target screenshots, films and a one-file fix. Engineering applied the handoff as delivered and ported the prototype engine line for line.
-
-It wasn't frictionless. Engineering raised six scope questions in three days, and they were good ones: was this the whole homepage or just the animation, and why did the sidebar appear when we'd discussed dropping it the day before? My handoff hadn't said clearly enough what was in scope. I answered all six together and pointed to one page instead of a long thread. Engineering kept every sidebar link and dropped the glass sidebar, which looked cool and wasn't used anywhere else.
 
 ## How it landed
 
-Product, sales, support and marketing all responded strongly inside the company. The website launch post drew 58 reactions. A partner shown the design on a call was excited about "the new interactive design".
-
-```case-quote
-attribution: Marketing team
-Very differentiated and creates significant distance between us and the "create anything" vendors. This looks like its meant for business.
+```case-quotes title: What people said
+Marketing team | Very differentiated and creates significant distance between us and the "create anything" vendors. This looks like its meant for business.
+Sales leadership | your design work have been beautiful, fast and impactful!!
+Product | reviewed the blueprint and light mode - just kudos to the team for this. I love it.
+Marketing team | LOVE, LOVE, LOVE this. Aligned with a business look and feel, love the "technical" design elements... makes it feel like a serious business tool
+Product release note | A fresh new look / light surface. The builder has a lighter, more streamlined design with refreshed surfaces and colors, so it's easier to stay focused on what you're building.
+Sales | Alex the new design/background is money. Great work
 ```
 
-```case-quote
-attribution: Marketing team
-LOVE, LOVE, LOVE this. Aligned with a business look and feel, love the "technical" design elements... makes it feel like a serious business tool
+That's reception, not a measured result. Nobody has run a before-and-after on sign-up or building yet, so I'm not claiming one.
+
+## Twenty days
+
+```case-timeline title: From the first audit to live
+25 Sep | Light mode audit | The signed-in pages captured and scored, in light and dark.
+26 Sep | Light mode pitched | A deck running on the real interface, shown to product leadership.
+28 Sep | Home brief reset | Thirty coded directions follow, each one tunable live in light and dark.
+29 Sep | Blueprint picked | Product leadership chooses one direction.
+2 Oct | Light mode handed off | Figma frames, a token map, acceptance criteria and a tested patch. Engineering starts the same day.
+6 Oct | Blueprint merged | From my coded prototype and patches, within a day.
+8 Oct | Light mode merged | Every screen, light and dark.
+9 Oct | Build audited | Every main page measured against the spec.
+15 Oct | Live for everyone | Both, in one release.
+16 Oct | Website follows | quickbase.com/pave moves onto the same sheet.
 ```
 
-```case-quote
-attribution: Sales
-Alex the new design/background is money. Great work
+## The blueprint
+
+The gradient said "AI" without saying what Pave makes. So the brief became: the background shows what Pave builds (tables, forms, workflows, connectors, portals) drawn the way a draftsperson draws them, and always quieter than the prompt box. I explored thirty coded directions before product leadership picked one.
+
+```case-tree
+title: Thirty coded directions, one blueprint
+dir: /case-studies/pave-new-look/tree/
+start: /case-studies/pave-new-look/tree/home-before.webp | Before: the gradient
+end: /case-studies/pave-new-look/tree/home-final.webp | 15 Oct: the blueprint, live
+Drafting and lines | bg-drafting-sheet-1, bg-drafting-sheet-2, bg-drafting-sheet-3, grid-1A, grid-4A, grid-4C
+Tiles and blocks | bg-laying-tiles-1, bg-laying-tiles-2, bg-laying-tiles-3, grid-3B, grid-3C, grid-5A
+Paths and quiet | bg-the-path-1, bg-the-path-2, bg-the-path-3, bg-counter-nothing-1, bg-counter-nothing-2, bg-counter-nothing-3
+Loud colour | bg-counter-green-field-1, bg-counter-green-field-2, bg-counter-green-field-3, bg-counter-three-squares-1, bg-counter-three-squares-2, bg-counter-three-squares-3
+Daylight and poster | bg-counter-daylight-1, bg-counter-daylight-2, bg-counter-daylight-3, bg-counter-poster-2, bg-counter-poster-3, bg-counter-people-3
 ```
 
-```case-quote
-attribution: Customer experience
-I legitimately have been playing on rocks for like 20 min with this new UI
+A generative background has one job it must never fail: don't clip a drawing or open a cell under the prompt box. Early on, no sampled cell passed. I built an audit that scores every open cell on five checks and wrote layout rules until every cell passed, on desktop and phone, inside the frame budget at four times CPU slowdown.
+
+```case-live
+title: The grid prototype
+src: /case-studies/pave-blueprint/live/grid-prototype.html?v=4A&present=1&t=light
+width: 1440
+height: 900
+fallback: /case-studies/pave-blueprint/img/blueprint-grid.webp
+tag: Concept
+The prototype I explored in. Hover the grid for the ruler, click bare sheet for a leader line, type in the box.
 ```
 
-```case-quote
-attribution: Brand and web design
-Visually more aligned with the rebrand.
+There was no Figma file for the handoff. Engineering got the running prototype and my patches, ported the engine line for line and merged it within a day. The same sheet went behind sign-in and the account and error pages, so nobody signs out of a polished builder onto a page that looks like another company.
+
+```case-compare
+title: Sign-in, as it shipped
+Step one | /case-studies/pave-blueprint/img/pave-signin-welcome-1440.jpg | The live sign-in: a "Welcome to Pave" card on the blueprint sheet. | Live
+Step two | /case-studies/pave-blueprint/img/pave-signin-email-1440.jpg | Email and password on the same sheet. | Live
 ```
 
-```case-quote
-attribution: Product
-reviewed the blueprint and light mode - just kudos to the team for this. I love it.
+## Light mode
+
+The finding was small and a little embarrassing: every surface was the same tone, so nothing looked higher than anything else, and the green sidebar was the loudest thing on screen. It didn't need new colours. It needed an order.
+
+```case-swatches title: Three layers, from colours Pave already shipped
+Background | #f1f3f5 | #111715 | The frame, sidebar and chat
+Raised | #ffffff | #161d1b | Preview pane, page tiles, tables, the composer
+Floating | #fcfcfd | #272a29 | Menus, popovers and dialogs
 ```
 
-That is reception, not impact. No analytics event was added for the redesign, and nobody has run a before-and-after on home, sign-in or project creation yet. Trial sign-ups rose in the same weeks, but most of that rise predates the rollout, so I'm not claiming it.
+Three rules carry it: the composer is the only white object in the chat, there's one green button per page, and in dark mode a higher layer is lighter.
 
-## What I learned
+```case-slider
+title: Before and after, screen by screen
+options: build=Build, home=Home, projects=Projects, tables=Tables
+Before | /case-studies/pave-new-look/compare/{option}-before.webp
+After | /case-studies/pave-new-look/compare/{option}-after.webp | Live
+```
 
-1. Show broad directions before polishing one. A designer on the team pushed me to do this early, and it got a decision in one review.
-2. The next step has to stand out more than the animation behind it. That became a rule: the grid is always quieter than the prompt box.
-3. Mark placeholders loudly. Placeholder chips from my marketing package went live on the website. When another team builds from your files, anything unfinished needs a label they can't miss.
-4. Audits beat opinions. Scoring every cell turned "it looks a bit off sometimes" into rules engineering could build to.
+```case-lens
+title: The build screen, x-rayed
+caption: Move the square to see each plane outlined and labelled by layer.
+Layer system | /case-studies/pave-light-mode/img/proto-build-layers-light.webp
+X-ray | /case-studies/pave-light-mode/img/proto-build-xray.webp
+```
 
-What's still open: register, verify, reset, the wider error family and the published-app pages are designed and still in my queue. The send transition, typed suggestions in the product and the phone layout are concepts. And until someone runs the numbers, the honest summary is that people inside Quickbase liked it a lot, and I don't yet know what it changed for the people who use Pave.
+I pitched it as a deck that runs on the real interface rather than on screenshots: every before-and-after lands on today and changes only when you press it, and one slide pulls a lamp cord into dark mode.
+
+```case-video-copy
+title: The pitch, recorded
+file: public/case-studies/pave-new-look/video/light-mode-pitch.mp4
+
+Today, three levels, every screen, dark mode and one release, in 35 seconds.
+```
+
+My first handoff still carried recommendations next to open questions, and engineering rightly asked for decisions instead. I made every remaining call the same week, and the package became Figma frames, a token map, acceptance criteria written as visual checks and a patch I'd tested locally. Engineering merged it within a week.
+
+## One release
+
+Running two redesigns at once had one real cost: the blueprint file and the light mode file drew the sidebar differently, and engineering had to ask which was right. I dropped the frosted variant and folded the blueprint's card into the raised layer, so one system now covers the front door and the builder.
+
+The day after the merge I measured the build against the spec on every main page, not only the ones with a design to compare against. It scored 8.0 out of 10, and the gaps were mostly pages I hadn't drawn. Product took over that list.
+
+```case-compare
+title: Website to product
+Website | /case-studies/pave-blueprint/img/marketing-pave-hero-1440.jpg | The quickbase.com/pave hero, built by the web team from my package. | Live
+Product | /case-studies/pave-blueprint/img/pave-signin-welcome-1440.jpg | Where "Sign in" lands. | Live
+```
+
+## What I'd keep
+
+1. Design in code and hand over decisions. That's why each merge took days, not weeks.
+2. Structure before palette. Solving light mode with existing colours made it cheap to approve and easy to carry into dark mode.
+3. Audit every page, not only the ones with a design to compare against.
+
+Still open: the wider error family and the phone layout are designed and waiting, and until someone measures it, I can say people liked it, not what it changed for the people who use Pave.
 
 ## Related work
 
 [Designing Pave](/case-studies/designing-pave/) covers the builder, Plan Mode, Direct Edit and navigation that this home page now sits in front of.
-
-[Breathing grids for Pave](/case-studies/pave-breathing-grids/) shows Blocks and Pixel dither, two grid directions that lost to the blueprint.

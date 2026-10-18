@@ -24,6 +24,16 @@
   ],
   "redirects": [
     {
+      "source": "/case-studies/pave-blueprint/",
+      "destination": "/case-studies/pave-new-look/",
+      "permanent": true
+    },
+    {
+      "source": "/case-studies/pave-blueprint",
+      "destination": "/case-studies/pave-new-look/",
+      "permanent": true
+    },
+    {
       "source": "/notes/the-cemetery-loop/",
       "destination": "/notes/",
       "permanent": false

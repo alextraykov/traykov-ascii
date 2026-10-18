@@ -21290,7 +21290,7 @@ html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.notes-
   transition: none !important;
 }
 
-/* 24b CASE EVIDENCE, ROUND 5 ─ the facts strip, colour swatches and the directions tree.
+/* 24b CASE EVIDENCE, ROUND 5 ─ the facts strip.
    First used by Pave's new look. */
 
 /* Facts: one ruled strip, a Departure 11 label over each plain value. */
@@ -21322,253 +21322,7 @@ html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.notes-
   font: 500 0.98rem / 1.4 var(--sans);
 }
 
-/* Swatches: the studio's square chips on a hairline, a hex under each, and two nested stacks. */
-:root .case-study-body .case-swatches {
-  grid-column: 1 / -1;
-  display: grid;
-  gap: var(--space-3);
-  margin: var(--space-6) 0;
-}
 
-:root .case-study-body .case-swatches__body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-5);
-  align-items: start;
-}
-
-:root .case-study-body .case-swatches ul {
-  display: grid;
-  gap: 0;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: var(--hairline) solid var(--ink);
-}
-
-:root .case-study-body .case-swatches li {
-  display: grid;
-  grid-template-columns: 9ch auto auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-1) var(--space-3);
-  margin: 0;
-  padding: var(--space-2) 0;
-  border-bottom: var(--hairline) solid var(--line);
-}
-
-:root .case-study-body .case-swatches li::before,
-:root .case-study-body .case-swatches li::marker {
-  content: none;
-}
-
-:root .case-study-body .case-swatches li strong {
-  color: var(--ink);
-  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
-}
-
-:root .case-study-body .case-swatches__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-:root .case-study-body .case-swatches__chip i {
-  display: block;
-  width: 33px;
-  height: 33px;
-  border: var(--hairline) solid var(--edge-strong);
-  background: var(--swatch);
-}
-
-:root .case-study-body .case-swatches__chip code {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font: 400 0.78rem / 1 var(--mono);
-}
-
-:root .case-study-body .case-swatches__use {
-  color: var(--text-caption);
-  font: 400 0.9rem / 1.4 var(--sans);
-}
-
-/* Each stack nests Background › Raised › Floating, so the height reads at a glance. */
-:root .case-study-body .case-swatches__stacks {
-  display: flex;
-  gap: var(--space-3);
-}
-
-:root .case-study-body .case-swatches__stack {
-  position: relative;
-  display: grid;
-  width: 132px;
-  aspect-ratio: 1;
-}
-
-:root .case-study-body .case-swatches__stack i {
-  grid-area: 1 / 1;
-  border: var(--hairline) solid var(--edge-strong);
-  background: var(--swatch);
-  margin: calc(var(--layer) * 18px) calc(var(--layer) * 18px) calc((2 - var(--layer)) * 6px + var(--space-4)) calc(var(--layer) * 18px);
-}
-
-:root .case-study-body .case-swatches__stack span {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  color: var(--muted);
-  font: 400 var(--type-px-11) / 1 var(--font-pixel);
-}
-
-@media (max-width: 700px) {
-  :root .case-study-body .case-swatches__body {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  :root .case-study-body .case-swatches li {
-    grid-template-columns: 9ch auto auto;
-  }
-
-  :root .case-study-body .case-swatches__use {
-    grid-column: 1 / -1;
-  }
-}
-
-/* Directions tree: a 1728 × 560 drawing scaled to the column; phones scroll it sideways. */
-:root .case-study-body .case-tree {
-  grid-column: 1 / -1;
-  display: grid;
-  gap: var(--space-3);
-  margin: var(--space-6) 0;
-}
-
-:root .case-study-body .case-tree__viewport {
-  position: relative;
-  overflow: hidden;
-  overflow-x: auto;
-  height: 560px;
-  scrollbar-width: thin;
-}
-
-:root .case-study-body .case-tree__stage {
-  position: relative;
-  width: 1728px;
-  height: 560px;
-  transform: scale(var(--tree-scale, 1));
-  transform-origin: 0 0;
-}
-
-:root .case-study-body .case-tree__lines {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-}
-
-:root .case-study-body .case-tree__lines path {
-  fill: none;
-  stroke: var(--edge-strong);
-  stroke-width: 1.5;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-
-:root .case-study-body .case-tree__lines .case-tree__trunk {
-  stroke: var(--ink);
-  stroke-width: 2.5;
-}
-
-:root .case-study-body .case-tree__node,
-:root .case-study-body .case-tree__thumb,
-:root .case-study-body .case-tree__family {
-  position: absolute;
-}
-
-:root .case-study-body .case-tree__node {
-  overflow: hidden;
-  border: var(--hairline) solid var(--edge-strong);
-  background: var(--paper);
-  box-shadow: var(--shadow-control);
-}
-
-:root .case-study-body .case-tree__node img {
-  display: block;
-  width: 100%;
-  object-fit: cover;
-  object-position: top left;
-}
-
-:root .case-study-body .case-tree__node span {
-  display: block;
-  padding: var(--space-1) var(--space-2);
-  color: var(--ink);
-  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
-}
-
-:root .case-study-body .case-tree__node--start {
-  left: 0;
-  width: 230px;
-}
-
-:root .case-study-body .case-tree__node--start img {
-  height: 128px;
-}
-
-:root .case-study-body .case-tree__node--end {
-  right: 0;
-  width: 344px;
-  border: 2px solid var(--ink);
-}
-
-:root .case-study-body .case-tree__node--end img {
-  height: 196px;
-}
-
-:root .case-study-body .case-tree__thumb {
-  width: 134px;
-  height: 84px;
-  margin: 0;
-  object-fit: cover;
-  object-position: top left;
-  border: var(--hairline) solid var(--edge-soft);
-  background: var(--paper);
-}
-
-:root .case-study-body .case-tree__family {
-  color: var(--muted);
-  font: 400 var(--type-px-11) / 1 var(--font-pixel);
-  white-space: nowrap;
-}
-
-/* Before it runs, the lines wait undrawn; then they draw in steps, branch by branch. */
-:root .case-study-body .case-tree[data-case-tree-ready]:not([data-run]) .case-tree__lines path {
-  stroke-dashoffset: 1;
-}
-
-:root .case-study-body .case-tree[data-case-tree-ready] .case-tree__lines .case-tree__trunk {
-  transition: stroke-dashoffset var(--dur-2) steps(4, end);
-}
-
-:root .case-study-body .case-tree[data-case-tree-ready] .case-tree__lines .case-tree__branch {
-  transition: stroke-dashoffset calc(var(--dur-6) * 1.4) steps(14, end);
-  transition-delay: calc(var(--dur-2) + var(--row) * var(--stagger-1));
-}
-
-@media (max-width: 700px) {
-  :root .case-study-body .case-tree__viewport {
-    margin-inline: calc(var(--space-3) * -1);
-    padding-inline: var(--space-3);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root .case-study-body .case-tree[data-case-tree-ready] .case-tree__lines path {
-    transition: none;
-  }
-}
 
 /* 30 PICKS · CASE NAVIGATION, FEEDBACK AND TOOLS ─ batch 3 of site-picks-implementation.md. Sibling
    nav and next tool are C (printed dither: Departure titles, level-stepped markers and bands); the
@@ -21814,16 +21568,8 @@ html:is([data-motion-state="system"], [data-motion-state="visitor"]) :is(.notes-
   color: var(--ink);
 }
 
-/* Narrow desktop: cells only; the title is the A tooltip (case-index.js), the name stays the text. */
-@media (min-width: 901px) and (max-width: 1180px) {
-  :root .case-toc[data-case-index="cells"] a {
-    grid-template-columns: 4px;
-    width: max-content;
-    min-width: 44px;
-    font-size: 0;
-    line-height: 0;
-  }
-}
+/* Narrow desktop keeps the section names: the rail is wide enough, and cells alone read as broken
+   (Alexander, 18 Oct 2026). */
 
 /* ── 3.4 case index, phone strip and sheet (hybrid C + A) ── */
 @media (max-width: 900px) {
@@ -22463,4 +22209,631 @@ html body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has
 
 html body[data-case-id="pave-new-look"] .case-study-body figure > figcaption:has(> strong:first-child) > :is(strong, em, span) {
   grid-column: 1;
+}
+
+/* Homepage headings are links to their study: an underline arrives on hover or focus, the same
+   destination as the entry's own "Read" button. Overview titles get the same treatment. */
+:root .homepage-timeline__entry-header h2 > .homepage-timeline__title-link,
+:root .project-overview__copy h3 > a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  transition: text-decoration-color var(--dur-1) steps(2);
+}
+
+:root .homepage-timeline__entry-header h2 > .homepage-timeline__title-link:is(:hover, :focus-visible),
+:root .project-overview__copy h3 > a:is(:hover, :focus-visible) {
+  text-decoration-color: currentColor;
+}
+
+:root .homepage-timeline__entry-header h2 > .homepage-timeline__title-link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Evidence images stay still under the pointer: no lift, no offset shadow. */
+:root :is(.case-image, .case-image-card, .case-cover),
+:root :is(.case-image, .case-image-card, .case-cover):hover {
+  transform: none;
+}
+
+:root :is(.case-image, .case-image-card, .case-cover)::after,
+:root :is(.case-image, .case-image-card, .case-cover):hover::after {
+  content: none;
+  opacity: 0;
+}
+
+/* The homepage blueprint embed: a 1440 × 900 page scaled to the stage, over its still. */
+:root .blueprint-home__stage iframe {
+  inset: 0 auto auto 0;
+  width: 1440px;
+  height: 900px;
+  transform: scale(var(--blueprint-scale, 1));
+  transform-origin: 0 0;
+}
+
+:root .blueprint-home__stage img {
+  object-fit: cover;
+  object-position: top center;
+}
+
+:root .blueprint-home:not([data-loaded]) .blueprint-home__stage iframe {
+  visibility: hidden;
+}
+
+/* Images and videos never react to the pointer (Alexander, 18 Oct 2026): no zoom, lift, filter,
+   frame change or shadow on hover. Links and buttons around them keep their own markers. */
+:root .project-card:is(:hover, :focus-within) :is(.project-evidence-mark img, .project-video-turntable__media),
+:root .project-card--synapsis:is(:hover, :focus-within) .project-video-turntable,
+:root .product-kit__item:is(:hover, :focus-visible) img {
+  filter: none;
+  transform: none;
+}
+
+:root .labs-item__link:is(:hover, :focus-visible) .labs-item__screen {
+  border-color: var(--line);
+}
+
+/* The quote carousel sits right under its heading, with no rule between them. */
+:root .case-study-body .case-quotes {
+  margin-top: var(--space-3);
+  padding-top: 0;
+  border-top: 0;
+}
+
+:root .case-study-body h2 + .case-quotes {
+  margin-top: 0;
+}
+
+/* Narrow desktop: names stay, on one line each, so the whole list fits beside the reading column. */
+@media (min-width: 901px) and (max-width: 1180px) {
+  :root .case-toc[data-case-index="cells"] a {
+    min-height: 0;
+    padding: 6px 0;
+    font-size: 13px;
+    line-height: 17px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Alignment: blocks that are read rather than looked at (facts, key numbers, quotes, the timeline)
+   share the 640 px reading column with the prose; media figures keep the full 860 px width. */
+:root .case-study-body > :is(.case-facts, .case-stats, .case-quotes, .case-timeline, .case-link) {
+  grid-column: auto;
+  justify-self: center;
+  width: min(100%, 640px);
+  max-width: 640px;
+}
+
+/* Four numbers across the reading column: Departure 33, so "1 week" still sits on one line. */
+:root .case-study-body .case-stats__grid:has(> :nth-child(4):last-child) {
+  gap: 0 var(--space-3);
+}
+
+:root .case-study-body .case-stats__grid:has(> :nth-child(4):last-child) .case-stat strong {
+  font-size: var(--type-px-33);
+}
+
+:root .case-study-body .case-stats__grid:has(> :nth-child(4):last-child) .case-stat span {
+  font-size: 0.86rem;
+}
+
+/* Lists read like the paragraphs around them. */
+:root .case-study-body > :is(ol, ul):not([class]) > li {
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.62;
+}
+
+/* Facts sit two by two on the reading column, so four never break 3 + 1. */
+:root .case-study-body .case-facts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* One rhythm for the blocks under the summary: the same space above each, none doubled. */
+:root .case-study-body > :is(.case-facts, .case-stats, .case-link) {
+  margin-top: var(--space-4);
+  margin-bottom: 0;
+}
+
+:root .case-study-body > .case-quotes {
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* Audit fixes, 18 Oct 2026 ─ Pave's new look. */
+
+/* The timeline starts as close under its heading as any paragraph does. */
+:root .case-study-body h2 + .case-timeline {
+  margin-top: 0;
+}
+
+/* Numbered lists keep their numbers on the reading column, never outside it. */
+:root .case-study-body > ol:not([class]) {
+  padding-left: 2.1em;
+}
+
+/* Every figure's caption rule spans the full figure, the video included. */
+:root .case-study-body .case-video-copy > figcaption {
+  width: 100%;
+  max-width: none;
+}
+
+/* Narrow screens: the slider and lens headers stack (title, note, then the switch) instead of
+   squeezing the title into a one-word column. */
+@media (max-width: 700px) {
+  :root .case-study-body :is(.case-slider, .case-lens) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :root .case-study-body :is(.case-slider, .case-lens) > :is(.case-figure-head, .case-figure-tools) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  :root .case-study-body figure:is(.case-slider, .case-lens) > figcaption:has(> strong:first-child) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-1);
+  }
+
+  :root .case-study-body figure:is(.case-slider, .case-lens) > figcaption:has(> strong:first-child) > :is(strong, em) {
+    grid-column: 1;
+  }
+
+  :root .case-study-body :is(.case-slider, .case-lens) > .case-figure-tools {
+    justify-content: flex-start;
+    padding: 0;
+    border-top: 0;
+  }
+}
+
+/* Scroll-driven embed: a tall section; its frame stays put while the page scroll plays it. */
+:root .case-study-body .case-scroll {
+  grid-column: 1 / -1;
+  position: relative;
+  height: var(--scroll-length, 220vh);
+  margin: var(--space-5) 0;
+}
+
+:root .case-study-body .case-scroll__sticky {
+  position: sticky;
+  top: calc(var(--tap-target) * 2 + var(--space-3));
+  display: grid;
+  gap: var(--space-3);
+}
+
+:root .case-study-body .case-scroll__meter {
+  height: 2px;
+  background: var(--line);
+}
+
+:root .case-study-body .case-scroll__meter span {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .case-study-body .case-scroll {
+    height: auto;
+  }
+
+  :root .case-study-body .case-scroll__sticky {
+    position: static;
+  }
+
+  :root .case-study-body .case-scroll__meter {
+    display: none;
+  }
+}
+
+/* The notice on an interactive embed: says what you can do, then steps away once you've tried it. */
+:root .case-live__frame .case-live__hint {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: var(--z-inline-effect);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: var(--hairline) solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font: 400 var(--type-px-11) / 1.2 var(--font-pixel);
+  pointer-events: none;
+  transition: opacity var(--dur-2) steps(3);
+}
+
+:root .case-live__frame .case-live__hint i {
+  width: 7px;
+  height: 7px;
+  background: var(--paper);
+  animation: case-hint-blink calc(var(--tick) * 24) steps(1, end) infinite;
+}
+
+@keyframes case-hint-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+:root .case-live__frame .case-live__hint[data-used] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .case-live__frame .case-live__hint i {
+    animation: none;
+  }
+}
+
+/* The notice sits bottom-left, clear of titles and labels at the top of an embed. */
+:root .case-live__frame .case-live__hint {
+  top: auto;
+  bottom: var(--space-2);
+}
+
+/* The scroll section itself is invisible: no panel, border or padding over its tall travel. */
+:root body .case-study-body figure.case-scroll {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root .case-study-body .case-scroll__caption {
+  display: grid;
+  gap: var(--space-1);
+}
+
+:root .case-study-body .case-scroll__caption strong {
+  color: var(--ink);
+  font: 500 15px / 1.4 var(--sans);
+}
+
+:root .case-study-body .case-scroll__caption em {
+  color: var(--text-caption);
+  font: 400 0.94rem / 1.45 var(--sans);
+  font-style: normal;
+}
+
+/* Phones: stick below the "Summary / Contents" bar, not under it. */
+@media (max-width: 900px) {
+  :root .case-study-body .case-scroll__sticky {
+    top: calc(var(--tap-target) * 4);
+  }
+}
+
+/* Desktop: while it plays, the frame sits in the middle of the screen rather than under the nav. */
+@media (min-width: 901px) {
+  :root .case-study-body .case-scroll__sticky {
+    top: max(calc(var(--tap-target) * 2 + var(--space-3)), calc(50vh - 260px));
+  }
+}
+
+/* Quote carousel controls: one quiet row above the quote (meters, then ‹ Pause ›), so the quote
+   reads straight on from its progress and nothing hangs below the longest one. */
+:root .case-study-body .case-quotes__controls {
+  order: -1;
+  gap: var(--space-2);
+  min-height: 24px;
+}
+
+:root .case-study-body .case-quotes__meter {
+  height: 24px;
+}
+
+:root .case-study-body .case-quotes__meter::before,
+:root .case-study-body .case-quotes__meter span {
+  height: 2px;
+  margin-top: -1px;
+}
+
+:root .case-study-body .case-quotes__step {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+}
+
+:root .case-study-body .case-quotes__step:hover {
+  background: transparent;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:root .case-study-body .case-quotes__meters {
+  margin-right: var(--space-1);
+}
+
+:root .case-study-body .case-quotes__controls {
+  flex-wrap: nowrap;
+}
+
+:root .case-study-body .case-quotes__meters {
+  min-width: 0;
+}
+
+/* Case pages end on one line and one button, then the footer: no rule or extra space between. */
+:root .case-contact-prompt:not(.case-contact-prompt--compact) {
+  align-items: center;
+  margin-top: var(--space-6);
+  padding-block: var(--space-4) 0;
+}
+
+body[data-page-type="case"] main > article.case-detail {
+  padding-bottom: var(--space-5);
+  border-bottom: 0;
+}
+
+body[data-page-type="case"] .site-footer {
+  margin-top: 0;
+}
+
+/* The closing line spans the whole case width: the hero title's edge on the left, the page edge
+   on the right; one line of Departure 33 beside a single button. */
+body[data-page-type="case"] main > article.case-detail > .case-contact-prompt:not(.case-contact-prompt--compact) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+body[data-page-type="case"] main > article.case-detail > .case-contact-prompt:not(.case-contact-prompt--compact) .case-contact-prompt__copy {
+  flex: 1 1 520px;
+  max-width: none;
+}
+
+body[data-page-type="case"] main > article.case-detail > .case-contact-prompt:not(.case-contact-prompt--compact) h2 {
+  max-width: none;
+}
+
+body[data-page-type="case"] main.case-page {
+  padding-bottom: 0;
+}
+
+/* LIGHTER STRUCTURE (Alexander, 18 Oct 2026) ─ one hairline system and quiet controls for case studies.
+   Rules: a single hairline in --line where a block starts, never ink, never a rule per item, never
+   two rules meeting. Switches: plain words; the chosen one is ink with a 2 px underline. */
+
+/* Facts and key numbers: one hairline on top, items separated by space alone. */
+:root:root body .case-study-body .case-facts,
+:root:root body .case-study-body .case-stats__grid {
+  border-top: var(--hairline) solid var(--line);
+}
+
+:root:root body .case-study-body .case-facts > div,
+:root:root body .case-study-body .case-stat {
+  border-bottom: 0;
+  padding-bottom: var(--space-2);
+}
+
+/* Figures: the media keeps its hairline frame; captions and switches carry no rules of their own. */
+:root:root body .case-study-body :is(.case-figure-head, .case-figure-tools),
+:root:root body .case-study-body figure > figcaption,
+:root:root body .case-study-body figure > figcaption:has(> strong:first-child) {
+  border-top: 0;
+}
+
+/* Switches become text tabs: no box, no fill. */
+:root:root body .case-study-body .case-switch {
+  gap: var(--space-4);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root:root body .case-study-body .case-switch button {
+  position: relative;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 500 14px / 1 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
+}
+
+:root:root body .case-study-body .case-switch button::before,
+:root:root body .case-study-body .case-switch button .fill-layer {
+  display: none;
+}
+
+:root:root body .case-study-body .case-switch button::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root:root body .case-study-body .case-switch button:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+:root:root body .case-study-body .case-switch button[aria-pressed="true"] {
+  background: transparent;
+  color: var(--ink);
+}
+
+:root:root body .case-study-body .case-switch button[aria-pressed="true"]::after {
+  transform: none;
+}
+
+:root:root body .case-study-body .case-switch button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* Buttons over media: paper chips with a hairline instead of ink boxes. */
+:root:root body .case-live__frame .case-live__open {
+  width: 32px;
+  height: 32px;
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root:root body .case-live__frame .case-live__open:is(:hover, :focus-visible) {
+  border-color: var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root:root body .case-live__frame .case-live__hint {
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root:root body .case-live__frame .case-live__hint i {
+  background: var(--ink);
+}
+
+:root:root body .case-study-body .case-slider__grip {
+  border-color: var(--line);
+}
+
+/* The closing line keeps one hairline above it. */
+:root:root body .case-contact-prompt:not(.case-contact-prompt--compact) {
+  border-top: var(--hairline) solid var(--line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:root body .case-study-body .case-switch button::after {
+    transition: none;
+  }
+}
+
+/* An odd last fact takes the whole row instead of leaving a gap beside it. */
+:root:root body .case-study-body .case-facts > div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* iPhone safe areas (viewport-fit=cover is set in SiteHead). The insets are 0 everywhere else.
+   Landscape: content and the nav stay clear of the notch side; the page paper fills behind it. */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* The footer ends above the home indicator. */
+:root .site-footer {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* The floating contents button on phones and tablets clears the home indicator. */
+@media (max-width: 900px) {
+  .case-reading-tools {
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+    max-height: calc(100svh - (var(--space-4) * 2) - env(safe-area-inset-bottom) - env(safe-area-inset-top));
+  }
+}
+
+/* Sideways scroll cues (motion/hscroll.js). Faded edges where content is hidden; galleries also get
+   a quiet bar: ← meter count →. Nothing shows when a strip fits. */
+:root [data-hscroll-state="start"] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
+}
+
+:root [data-hscroll-state="middle"] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 56px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 56px), transparent);
+}
+
+:root [data-hscroll-state="end"] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px);
+  mask-image: linear-gradient(to right, transparent, #000 40px);
+}
+
+:root .hscroll-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+:root .hscroll-bar[hidden] {
+  display: none;
+}
+
+:root .hscroll-bar__track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+:root .hscroll-bar__thumb {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink);
+  transition: transform var(--dur-1) steps(3);
+}
+
+:root .hscroll-bar__count {
+  min-width: 5ch;
+  color: var(--muted);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  text-align: center;
+}
+
+:root .hscroll-bar__step {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1 var(--font-pixel);
+  cursor: pointer;
+}
+
+:root .hscroll-bar__step:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:root .hscroll-bar__step:disabled {
+  color: var(--line);
+  cursor: default;
+}
+
+:root .hscroll-bar__step:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .hscroll-bar__thumb {
+    transition: none;
+  }
 }

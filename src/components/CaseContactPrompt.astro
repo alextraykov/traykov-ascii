@@ -7,7 +7,6 @@ interface Props {
 }
 
 const { caseTitle, title, body, compact = false } = Astro.props;
-const emailHref = `mailto:hi@traykov.cc?subject=${encodeURIComponent(`Product question after reading ${caseTitle}`)}`;
 const defaultBookingUrl = "https://cal.com/alexander-cqn5aq/30min";
 const configuredBookingUrl =
   import.meta.env.PUBLIC_CAL_BOOKING_URL ??
@@ -34,11 +33,10 @@ const bookingPageUrl = (() => {
   </div>
 
   <div class="case-contact-prompt__actions">
-    {!compact && <a href={emailHref} data-ascii-action="primary">Write to me</a>}
     <a
       href={bookingPageUrl}
       data-booking-modal-open
-      data-ascii-action={compact ? "primary" : "secondary"}
+      data-ascii-action="primary"
     >
       {compact ? "Book 30 minutes" : "Book a call"}
     </a>

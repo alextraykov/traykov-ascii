@@ -165,6 +165,9 @@ function initTimeline(section) {
 
   let timers = [];
   let frame = 0;
+  // The reading line, in page coordinates. It sweeps down the timeline on its own once the
+  // timeline is in view, so every event resolves without the reader having to scroll to it.
+  let lineY = -Infinity;
   const update = () => {
     frame = 0;
     if (!isMotionActive()) {
@@ -174,7 +177,7 @@ function initTimeline(section) {
       return;
     }
     section.dataset.caseTimelineReady = "true";
-    const line = window.innerHeight * 0.66;
+    const line = lineY - window.scrollY;
     let current = -1;
     let queue = 0;
     rows.forEach(({ item, mark, time, days }, index) => {
@@ -197,7 +200,7 @@ function initTimeline(section) {
           timers.push(
             setTimeout(() => {
               delete cell.dataset.pending;
-              if (cell.getBoundingClientRect().top < window.innerHeight * 0.66) setLevel(cell, 3);
+              if (cell.getBoundingClientRect().top < lineY - window.scrollY) setLevel(cell, 3);
             }, 30 * queue)
           );
         } else if (!passed && (lit || cell.dataset.pending === "true")) {
@@ -219,14 +222,29 @@ function initTimeline(section) {
   const onScroll = () => {
     if (!frame) frame = requestAnimationFrame(update);
   };
-  new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      window.addEventListener("scroll", onScroll, { passive: true });
-      onScroll();
-    } else {
-      window.removeEventListener("scroll", onScroll);
-    }
-  }).observe(section);
+  const sweep = () => {
+    const start = section.getBoundingClientRect().top + window.scrollY;
+    const length = section.offsetHeight;
+    const duration = Math.min(1800, 160 * rows.length);
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / duration);
+      lineY = start + length * (1 - Math.pow(1 - p, 3)) + (p === 1 ? Infinity : 0);
+      update();
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const io = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      sweep();
+    },
+    { threshold: 0.15 }
+  );
+  io.observe(section);
+  window.addEventListener("scroll", onScroll, { passive: true });
   onMotionChange(() => onScroll(), { immediate: false });
 }
 
@@ -513,70 +531,66 @@ function initDeck(figure) {
   bar.hidden = false;
 }
 
-// Directions tree: a fixed 1728 × 560 drawing scaled to the column (never below 0.46, so phones
-// scroll it sideways). In view, the lines draw in steps and each direction resolves through dither.
-function initTree(figure) {
-  const viewport = figure.querySelector(".case-tree__viewport");
-  const stage = figure.querySelector(".case-tree__stage");
-  if (!viewport || !stage) return;
-  const width = 1728;
-  const height = 560;
-  const fit = () => {
-    const scale = Math.max(0.46, Math.min(1, viewport.clientWidth / width));
-    stage.style.setProperty("--tree-scale", String(scale));
-    // A transform keeps the full layout box, so pull it in to the scaled size.
-    stage.style.marginRight = `${-Math.round(width * (1 - scale))}px`;
-    stage.style.marginBottom = `${-Math.round(height * (1 - scale))}px`;
-    viewport.style.height = `${Math.round(height * scale)}px`;
+// Scroll-driven embeds: progress through the tall section scrubs the embedded page.
+function initScroll(figure) {
+  const frame = figure.querySelector("iframe[data-case-live-src]");
+  const meter = figure.querySelector(".case-scroll__meter span");
+  if (!frame) return;
+  let ticking = false;
+  const progress = () => {
+    const rect = figure.getBoundingClientRect();
+    const sticky = figure.querySelector(".case-scroll__sticky");
+    const travel = Math.max(1, rect.height - (sticky?.offsetHeight ?? 0));
+    return Math.min(1, Math.max(0, -rect.top / travel + 0.04));
   };
-  new ResizeObserver(fit).observe(viewport);
-  fit();
+  const push = () => {
+    ticking = false;
+    const p = progress();
+    if (meter) meter.style.transform = `scaleX(${p})`;
+    try {
+      frame.contentWindow?.__treeProgress?.(isMotionActive() ? p : 1);
+    } catch {
+      // A cross-origin page cannot be scrubbed; it keeps its own motion.
+    }
+  };
+  frame.addEventListener("load", () => {
+    try {
+      frame.contentWindow?.__treeDriven?.();
+    } catch {
+      // Same as above.
+    }
+    push();
+  });
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(push);
+    }
+  }, { passive: true });
+  figure.dataset.caseScrollReady = "true";
+}
 
-  const thumbs = [...figure.querySelectorAll(".case-tree__thumb")];
-  const end = figure.querySelector(".case-tree__node--end");
-  const families = [...figure.querySelectorAll(".case-tree__family")];
-  if (!isMotionActive()) {
-    figure.dataset.run = "true";
-    return;
-  }
-  figure.dataset.caseTreeReady = "true";
-  thumbs.forEach((thumb) => setLevel(thumb, 0));
-  if (end) setLevel(end, 0);
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry.isIntersecting) return;
-      observer.disconnect();
-      figure.dataset.run = "true";
-      families.forEach((label, row) => setTimeout(() => scrambleElement(label, { duration: 280 }), 260 + row * 70));
-      runField({
-        values: thumbs.map((thumb) => Number(thumb.style.getPropertyValue("--k")) / 6 + Number(thumb.style.getPropertyValue("--row")) * 0.05),
-        total: 1100,
-        curve: curves.out,
-        steps: 8,
-        stepMs: 28,
-        render: (stepAt) => thumbs.forEach((thumb, index) => setLevel(thumb, Math.max(0, stepAt(index) + 1))),
-        done: () => {
-          thumbs.forEach((thumb) => thumb.removeAttribute("data-level"));
-          if (!end) return;
-          runField({
-            values: [0],
-            total: 0,
-            steps: 8,
-            stepMs: 40,
-            render: (stepAt) => setLevel(end, Math.max(0, stepAt(0) + 1)),
-            done: () => end.removeAttribute("data-level")
-          });
-        }
-      });
-    },
-    { threshold: 0.35 }
-  );
-  observer.observe(figure);
+// The notice on interactive embeds steps away once the reader has used it.
+function initHints(root) {
+  root.querySelectorAll("[data-case-live-hint]").forEach((hint) => {
+    const frame = hint.closest(".case-live__frame");
+    const iframe = frame?.querySelector("iframe");
+    const used = () => hint.setAttribute("data-used", "");
+    frame?.addEventListener("pointerenter", used, { once: true });
+    // Pointer events inside an embedded page never reach this page, so listen in the frame too.
+    iframe?.addEventListener("load", () => {
+      try {
+        ["pointerdown", "pointermove"].forEach((type) => iframe.contentWindow?.addEventListener(type, used, { once: true }));
+      } catch {
+        // A cross-origin page keeps the notice until the reader leaves.
+      }
+    });
+  });
 }
 
 export function initCaseMedia(root = document) {
-  root.querySelectorAll("[data-case-tree]").forEach(initTree);
+  root.querySelectorAll("[data-case-scroll]").forEach(initScroll);
+  initHints(root);
   root.querySelectorAll(".case-live:has([data-case-deck])").forEach(initDeck);
   root.querySelectorAll("[data-case-live-scaled]").forEach(initScaledFrame);
   root.querySelectorAll("[data-case-timeline]").forEach(initTimeline);

@@ -77,12 +77,14 @@ function initCaseIndex(toc) {
     }).observe(current, { childList: true, characterData: true, subtree: true });
   }
 
-  // Narrow desktop (901–1180): cells only; the title moves into the A tooltip. Elsewhere the
-  // tooltip is emptied, so it never shows over a visible title.
-  const narrow = window.matchMedia("(min-width: 901px) and (max-width: 1180px)");
+  // Section names stay visible at every desktop width (Alexander, 18 Oct 2026), so the tooltip
+  // that used to carry them at 901–1180 never switches on; it stays emptied over a visible title.
+  const narrow = { matches: false, addEventListener: () => {} };
   const syncTips = () => {
     links.forEach((link) => {
       const text = link.textContent?.trim() || "";
+      // A name cut short by the narrow rail keeps its full text as the native title.
+      link.setAttribute("title", link.scrollWidth > link.clientWidth ? text : "");
       if (narrow.matches) {
         link.dataset.tooltip = text;
         link.setAttribute("title", text);
@@ -95,6 +97,7 @@ function initCaseIndex(toc) {
   };
   syncTips();
   narrow.addEventListener?.("change", syncTips);
+  window.addEventListener("resize", syncTips, { passive: true });
 
   // Contents / Close, and the sheet: it resolves from a 2 px line through the dither (240 ms) over a
   // scrim; a pointer close leaves with the afterglow (180 ms), Escape and keyboard close at once.

@@ -5,7 +5,7 @@ status: launched
 pubDate: 2026-07-20
 tags: [ai, product-design, design-engineering, enterprise-software, launch]
 heroImage: /case-studies/pave-nav/manage-mode-builder-view.webp
-readTime: 15 min
+readTime: 13 min
 summary: "Designing Pave's enterprise AI app builder, planning flows, direct editing, and navigation"
 role: "Design Manager + hands-on IC"
 year: 2026
@@ -13,18 +13,29 @@ group: "Pave"
 order: -2
 ---
 
-## BLUF
+## Summary
 
-I joined an early AI app builder made by engineers. I helped turn it into Pave, a public product with a clear builder experience, version control, planning mode, direct editing and a new navigation system.
+I joined an early AI app builder made by engineers. Within seven months it became Pave, a public product with a clear builder, version control, Plan Mode, Direct Edit and a navigation system built around Build and Manage. I was the first designer on it: research, product structure, coded prototypes, interaction models, design QA and engineering handoff, then interim Design Manager while staying a full-time IC.
 
-- **Role** Founding product designer for Pave's first seven months; Interim Design Manager and full-time IC
-- **Timeline** December 2025 - today
-- **Scope** Research, product structure, coded prototypes, interaction models, design QA and engineering handoff
-- **Result** [Pave launched publicly](https://www.quickbase.com/news/press-releases/quickbase-announces-pave). [Plan Mode](https://www.quickbase.com/blog/pave/planning-mode-in-pave), [Direct Edit](https://www.quickbase.com/blog/pave/introducing-direct-edit-in-pave) and [email notifications](https://www.quickbase.com/pave/how-it-works) are publicly documented. Navigation Phase 1 shipped to production on July 16, 2026; Share clicks later held around 10–12% from July 27 through September 11, an action measure rather than causal proof. The broader administration concepts below did not ship.
+Plan Mode, Direct Edit and email notifications are publicly documented. Navigation Phase 1 shipped to production on July 16, 2026. The broader administration concepts below did not ship, and each chapter says which is which.
+
+Engineering brain: [Matthew Schweers](https://www.linkedin.com/in/schweers/) (shoutout). Product direction: Ryan Murray. Visual and brand direction: [Johnny Lee](https://www.johnny-lee.com/).
+
+```case-stat
+7 mo | from an engineer-built alpha to a public launch
+5 | roles turned into task flows and click storyboards in three days
+10–12% | weekly Share-click rate after the navigation release, up from 0.1–0.2%; an action measure, not proof of cause
+84 | end-to-end checks in the notification editor prototype
+```
+
+```case-link
+Pave's public launch | https://www.quickbase.com/news/press-releases/quickbase-announces-pave | Quickbase's announcement, with Plan Mode, Direct Edit and notifications documented on the Pave site.
+```
 
 ```case-video-copy
 title: Pave in 26 seconds
 file: public/case-studies/media/pave-portfolio-loop.mp4
+poster: /case-studies/media/pave-portfolio-loop-poster.jpg
 
 A quick look at the builder, Plan Mode, versioning and Direct Edit, plus an early workflow idea. The chapters below show what shipped and what stayed as a prototype.
 ```
@@ -39,11 +50,19 @@ columns: 4
 /case-studies/pave-evidence/direct-edit-sequence.webp | 04 / Pave new navigation | The Build/Manage header and app-level context reorganized the same builder around the product Pave had become.
 ```
 
+## Seven months
+
+```case-timeline title: From alpha to the product people use
+Dec 2025 | Joined the alpha | A chat beside an iframe, and not much else decided.
+16 Jul | Navigation Phase 1 in production | The unified header and Build/Manage control.
+23 Jul | Measurement plan written | Orientation, findability, Share, publishing and live-app use.
+27 Jul | Share clicks settle | Around 10–12% of weekly active users, through September 11.
+15 Oct | A new front door | The blueprint home and light mode, live for everyone.
+```
+
 ## From working alpha to a public product
 
 I joined an engineer-built alpha that could turn a prompt into software using Quickbase's backend. The main loop worked: chat sent a request, the LLM generated the code and an iframe showed the result. The rest of the product was still unclear. Back then, Vibe UI had screens, but no clear entry point, navigation, role model, build states or recovery behavior.
-
-[Matthew Schweers](https://www.linkedin.com/in/schweers/) was the engineering brain behind all of this (shoutout). Ryan Murray led the product direction. I was the first designer on the product, later joined by [Johnny Lee](https://www.johnny-lee.com/), who led the visual and brand direction.
 
 ## One workspace for chat, building and preview
 
@@ -52,6 +71,7 @@ As the product became Blinq, the sidebar, chat and app preview still did not fee
 ```case-video-copy
 title: Blinq builder clickthrough
 file: public/case-studies/media/pave/blinq-builder-clickthrough.mp4
+poster: /case-studies/media/pave/blinq-builder-clickthrough-poster.jpg
 
 This coded clickthrough shows the first complete Blinq surface: entry, builder, themes, projects, notifications and the chat-and-preview relationship. The app names and data are prototype content.
 ```
@@ -75,6 +95,7 @@ A spinner could show that Pave was busy. It could not show what was happening, w
 ```case-video-copy
 title: Build status and component-state preview
 file: public/case-studies/media/pave/blinq-build-status-preview.mp4
+poster: /case-studies/media/pave/blinq-build-status-preview-poster.jpg
 
 I built the component preview so engineering had one place to check each new Blinq component: its states, visual design and intended motion. This was my first attempt to close the gap between a polished prototype and something engineers could inspect and rebuild in the product repository. The content is mocked because this is a handoff artifact.
 ```
@@ -99,6 +120,7 @@ I explored two ways to go back. The first stayed inside chat and tied recovery t
 ```case-video-copy
 title: Blinq version-history exploration
 file: public/case-studies/media/pave/blinq-version-history.mp4
+poster: /case-studies/media/pave/blinq-version-history-poster.jpg
 
 This prototype explores restore entry points in chat and a version timeline inside the builder. People could preview an older app before reverting to it.
 ```
@@ -118,6 +140,7 @@ Email notifications needed more than a subject line and textarea. In one day, I 
 ```case-video-copy
 title: Variables inside the notification editor
 file: public/case-studies/media/pave/pave-notification-variables.mp4
+poster: /case-studies/media/pave/pave-notification-variables-poster.jpg
 
 The prototype treated variables as part of the document instead of loose merge tags. This recording shows part of that variable flow. The full authoring model did not reach production.
 ```
@@ -125,6 +148,7 @@ The prototype treated variables as part of the document instead of loose merge t
 ```case-video-copy
 title: Building an email notification
 file: public/case-studies/media/pave/pave-notifications-builder.mp4
+poster: /case-studies/media/pave/pave-notifications-builder-poster.jpg
 
 The prototype moves through the editor, variables, commands, AI-assisted writing and the related settings. Most of the richer editor and automation model did not reach the product.
 ```
@@ -161,6 +185,7 @@ I designed Plan Mode around four steps: clarify the request, show the planned wo
 ```case-video-copy
 title: Plan Mode: clarify, review, approve, build
 file: public/case-studies/media/pave/pave-plan-mode.mp4
+poster: /case-studies/media/pave/pave-plan-mode-poster.jpg
 
 The coded interaction shows clarification, a streaming implementation plan, review and the transition into execution. The dashboard, tasks and timings are mock content used to exercise the state model.
 ```
@@ -176,6 +201,7 @@ Once Pave could plan and generate, the next problem was clear. Prompting worked 
 ```case-video-copy
 title: Direct Edit and its interaction catalogue
 file: public/case-studies/media/pave/pave-direct-edit.mp4
+poster: /case-studies/media/pave/pave-direct-edit-poster.jpg
 
 The recording moves from selecting and editing generated UI into the component-aware toolbar, state notes and motion catalogue used for implementation. The product data in the prototype is fabricated.
 ```
@@ -201,6 +227,7 @@ While launch and Direct Edit were moving, we explored what might happen if Pave 
 ```case-video-copy
 title: Early workflow concept: from intent to inspectable sequence
 file: public/case-studies/media/pave/pave-workflow-builder.mp4
+poster: /case-studies/media/pave/pave-workflow-builder-poster.jpg
 
 The WIP prototype moves from a workflow request through questions into a visible sequence and connected systems. It is an early product exploration that stayed outside the public launch.
 ```
@@ -299,13 +326,11 @@ Home | /case-studies/pave-blueprint/img/home-returning-drawer.webp | The home pa
 
 [Read Pave's new look](/case-studies/pave-new-look/) for the blueprint and the light mode redesign that shipped with it: the exploration, the audits, the surface layers and the handoff.
 
-## What changed
+## In short
 
-The original chat-and-iframe demo became Pave and launched publicly within seven months. The work covered planning, recovery, local editing, onboarding, an app gallery and a navigation model built around Build and Manage. Each chapter marks whether the work became public, shipped to production, or stayed as a prototype.
+An engineer-built chat-and-iframe demo became Pave and launched publicly in seven months. What carried it was the same habit every time: design the state model in running code, show the effect before asking anyone to commit, and hand engineering something they could build from instead of a deck to interpret. The navigation numbers are a narrow before-and-after read. The product is the better evidence.
 
-[Quickbase's launch announcement](https://www.quickbase.com/news/press-releases/quickbase-announces-pave) confirms Pave's public release. Its public materials document [version rollback and email notifications](https://www.quickbase.com/pave/how-it-works), plus [Plan Mode](https://www.quickbase.com/blog/pave/planning-mode-in-pave) and [Direct Edit](https://www.quickbase.com/blog/pave/introducing-direct-edit-in-pave). Navigation Phase 1 shipped to production on July 16, 2026; the Command Center, role-based Manage rail and wider administration concepts did not.
-
-The published Share and Publish rates are narrow action measures. I do not use them to claim retention, task success, revenue or an outcome caused by navigation alone.
+[Pave's new look](/case-studies/pave-new-look/) is the October chapter: the blueprint home and light mode, shipped in 20 days.
 
 ## Related work
 

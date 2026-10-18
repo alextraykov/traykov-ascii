@@ -129,8 +129,8 @@ const contactPromptByStudy: Record<string, { title: string; body: string }> = {
   }
 };
 const contactPrompt = contactPromptByStudy[study.id] ?? {
-  title: "Working through a similarly messy product problem?",
-  body: "Bring me the context and the awkward part. We can unpack it together in 30 focused minutes."
+  title: "Need design that ships in weeks, not quarters?",
+  body: ""
 };
 const useCompactContactPrompt = usePaveArtifactProcess;
 const caseContactTitle = useCompactContactPrompt
@@ -333,6 +333,7 @@ const caseCoverDimensions = study.image ? await getLocalImageDimensions(study.im
           </dialog>
         )}
 
+        {/* The closing line runs the full width of the case, edge to edge with the hero title. */}
         <CaseContactPrompt
           caseTitle={privateTemplate ? "private work" : study.title}
           title={caseContactTitle}

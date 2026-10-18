@@ -1369,6 +1369,7 @@ async function assertHomepageTimeline(result, page, mode, route) {
   const timeline = page.locator("[data-homepage-timeline]");
   const expectedTargets = [
     "latest-work",
+    "breathing-grids-work",
     "pave-loading-work",
     "designing-pave-overview",
     "designing-synapse-sys-overview",

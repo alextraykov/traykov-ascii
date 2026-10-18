@@ -349,16 +349,12 @@ function renderCodeBlock(lang: string, code: string): string {
     return renderCaseLive(code);
   }
 
+  if (normalized === "case-scroll") {
+    return renderCaseScroll(code);
+  }
+
   if (normalized === "case-facts") {
     return renderCaseFacts(code);
-  }
-
-  if (normalized === "case-swatches") {
-    return renderCaseSwatches(code);
-  }
-
-  if (normalized === "case-tree") {
-    return renderCaseTree(code);
   }
 
   if (normalized === "case-link") {
@@ -420,7 +416,9 @@ function renderCaseVideo(source: string): string {
 
   return `<figure class="case-video-copy">${
     file
-      ? `<video src="${esc(file)}" controls muted loop playsinline preload="none" data-case-video-autoplay></video>`
+      ? `<video src="${esc(file)}"${
+          attrs.poster ? ` poster="${esc(normalizeAssetPath(attrs.poster))}"` : ""
+        } controls muted loop playsinline preload="none" data-case-video-autoplay></video>`
       : ""
   }<figcaption><strong>${inlineMarkdown(title)}</strong>${
     caption ? `<em>${inlineMarkdown(caption)}</em>` : ""
@@ -490,90 +488,6 @@ function renderCaseFacts(source: string): string {
     .map(([label = "", value = ""]) => `<div><dt>${esc(label)}</dt><dd>${inlineMarkdown(value)}</dd></div>`)
     .join("");
   return `<dl class="case-facts">${items}</dl>`;
-}
-
-// Colour layers as swatches. Rows: name | light hex | dark hex | what sits on it.
-// The stacks beside them nest the layers in their real colours, light and dark.
-function renderCaseSwatches(source: string): string {
-  const { attrs, body } = parseInlineMetadata(source);
-  const rows = splitRows(body).filter((row) => row.length >= 3);
-  const hex = (value: string) => (/^#[0-9a-f]{3,8}$/i.test(value) ? value : "transparent");
-  const chip = (value: string, theme: string) =>
-    `<span class="case-swatches__chip" style="--swatch: ${esc(hex(value))}"><i aria-hidden="true"></i><code>${esc(
-      value
-    )}</code><span class="visually-hidden"> in ${theme}</span></span>`;
-  const list = rows
-    .map(
-      ([name = "", light = "", dark = "", use = ""], index) =>
-        `<li style="--layer: ${index}"><strong>${esc(name)}</strong>${chip(light, "light")}${chip(dark, "dark")}${
-          use ? `<span class="case-swatches__use">${inlineMarkdown(use)}</span>` : ""
-        }</li>`
-    )
-    .join("");
-  const stack = (label: string, dark: boolean) =>
-    `<div class="case-swatches__stack" aria-hidden="true">${rows
-      .map(([, light = "", darkHex = ""], index) => `<i style="--swatch: ${esc(hex(dark ? darkHex : light))}; --layer: ${index}"></i>`)
-      .join("")}<span>${label}</span></div>`;
-  return `<figure class="case-swatches" data-reveal="rise">${
-    attrs.title ? `<figcaption class="case-figure-head"><strong>${inlineMarkdown(attrs.title)}</strong></figcaption>` : ""
-  }<div class="case-swatches__body"><ul>${list}</ul><div class="case-swatches__stacks">${stack("Light", false)}${stack(
-    "Dark",
-    true
-  )}</div></div></figure>`;
-}
-
-// One line splitting into every explored direction and converging on the chosen one.
-// Header: start: src | label, end: src | label, dir: thumbnail folder. Rows: family | stem, stem, ...
-function renderCaseTree(source: string): string {
-  const { attrs, body } = parseInlineMetadata(source);
-  const families = splitRows(body).map(
-    ([label = "", list = ""]) => [label, list.split(",").map((stem) => stem.trim()).filter(Boolean)] as const
-  );
-  const dir = normalizeAssetPath(attrs.dir ?? "");
-  const [startSrc = "", startLabel = ""] = (attrs.start ?? "").split("|").map((part) => part.trim());
-  const [endSrc = "", endLabel = ""] = (attrs.end ?? "").split("|").map((part) => part.trim());
-  const W = 1728;
-  const H = 560;
-  const cy = H / 2;
-  const x0 = 236;
-  const xf = 1384;
-  const t0 = 352;
-  const step = 150;
-  const ys = families.map((_, row) => 64 + row * ((H - 128) / Math.max(1, families.length - 1)));
-  const paths = ys
-    .map(
-      (y, row) =>
-        `<path class="case-tree__branch" style="--row: ${row}" pathLength="1" d="M${x0},${cy} H${x0 + 40} C${x0 + 96},${cy} ${x0 + 70},${y} ${
-          t0 - 20
-        },${y} H${xf - 120} C${xf - 60},${y} ${xf - 84},${cy} ${xf},${cy}"/>`
-    )
-    .join("");
-  const thumbs = families
-    .map(
-      ([label, list], row) =>
-        `<span class="case-tree__family" style="left: ${t0 - 6}px; top: ${ys[row] - 60}px; --row: ${row}">${esc(label)}</span>` +
-        list
-          .map(
-            (stem, k) =>
-              `<img class="case-tree__thumb" src="${esc(`${dir}${stem}.webp`)}" alt="" loading="lazy" decoding="async" style="left: ${
-                t0 + k * step
-              }px; top: ${ys[row] - 42}px; --row: ${row}; --k: ${k}">`
-          )
-          .join("")
-    )
-    .join("");
-  const total = families.reduce((sum, [, list]) => sum + list.length, 0);
-  return `<figure class="case-tree" data-case-tree style="--case-live-width: ${W}; --case-live-vh: ${H}">${
-    attrs.title ? `<figcaption class="case-figure-head"><strong>${inlineMarkdown(attrs.title)}</strong></figcaption>` : ""
-  }<div class="case-tree__viewport" role="img" aria-label="${esc(
-    `${startLabel}, then ${total} coded directions in ${families.length} families, converging on ${endLabel}`
-  )}"><div class="case-tree__stage"><svg class="case-tree__lines" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><path class="case-tree__trunk" pathLength="1" d="M${
-    x0 - 6
-  },${cy} H${x0 + 40}"/>${paths}</svg><div class="case-tree__node case-tree__node--start" style="top: ${cy - 78}px"><img src="${esc(
-    normalizeAssetPath(startSrc)
-  )}" alt="" loading="lazy"><span>${esc(startLabel)}</span></div>${thumbs}<div class="case-tree__node case-tree__node--end" style="top: ${
-    cy - 112
-  }px"><img src="${esc(normalizeAssetPath(endSrc))}" alt="" loading="lazy"><span>${esc(endLabel)}</span></div></div></div></figure>`;
 }
 
 // A big outbound link, for the one place a reader should go next.
@@ -822,7 +736,7 @@ function renderCaseCompare(source: string): string {
 const EXPAND_ICON = `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path d="M2 2h5v2H4v3H2zM9 2h5v5h-2V4H9zM2 9h2v3h3v2H2zM12 9h2v5H9v-2h3z" fill="currentColor"/></svg>`;
 
 // width: renders the demo at a desktop viewport and scales it to fit, so it is never cropped.
-function renderCaseLiveFrame(src: string, title: string, height: string, fallback: string, width = ""): string {
+function renderCaseLiveFrame(src: string, title: string, height: string, fallback: string, width = "", hint = ""): string {
   const frameHeight = /^\d+$/.test(height) ? height : "560";
   const virtualWidth = /^\d+$/.test(width) ? width : "";
   const sizing = virtualWidth
@@ -834,9 +748,30 @@ function renderCaseLiveFrame(src: string, title: string, height: string, fallbac
     fallback
       ? `<img class="case-live__fallback" src="${esc(normalizeAssetPath(fallback))}" alt="" loading="lazy" />`
       : ""
-  }<iframe title="${esc(title)}" data-case-live-src="${esc(normalizeAssetPath(src))}" loading="lazy" tabindex="-1"></iframe><a class="case-live__open" href="${esc(
+  }<iframe title="${esc(title)}" data-case-live-src="${esc(normalizeAssetPath(src))}" loading="lazy" tabindex="-1"></iframe>${
+    hint ? `<span class="case-live__hint" data-case-live-hint><i aria-hidden="true"></i>${esc(hint)}</span>` : ""
+  }<a class="case-live__open" href="${esc(
     normalizeAssetPath(src)
   )}" target="_blank" rel="noopener" data-case-live-open aria-label="${esc(`Open ${plainMarkdownText(title)} full screen`)}" title="Open full screen">${EXPAND_ICON}</a></div>`;
+}
+
+// A scroll-driven embed: a tall section whose sticky frame hands the page's scroll position to the
+// embedded page (window.__treeProgress) so reading down plays it forward and scrolling up rewinds.
+function renderCaseScroll(source: string): string {
+  const { attrs, body } = parseInlineMetadata(source);
+  const title = attrs.title ?? "Scroll through it";
+  const length = /^\d+$/.test(attrs.length ?? "") ? attrs.length : "220";
+  const caption = body || attrs.note || "";
+  return `<figure class="case-scroll" data-case-scroll style="--scroll-length: ${esc(length)}vh"><div class="case-scroll__sticky">${renderCaseLiveFrame(
+    attrs.src ?? "",
+    title,
+    attrs.height ?? "",
+    attrs.fallback ?? "",
+    attrs.width ?? "",
+    attrs.hint ?? ""
+  )}<div class="case-scroll__meter" aria-hidden="true"><span></span></div><div class="case-scroll__caption"><strong>${inlineMarkdown(title)}</strong>${
+    caption ? `<em>${inlineMarkdown(caption)}</em>` : ""
+  }</div></div></figure>`;
 }
 
 // Lazy prototype embed. The iframe only loads near the viewport and unloads far from it.
@@ -851,7 +786,8 @@ function renderCaseLive(source: string): string {
     title,
     attrs.height ?? "",
     attrs.fallback ?? "",
-    attrs.width ?? ""
+    attrs.width ?? "",
+    attrs.hint ?? ""
   )}${
     attrs.slides
       ? `<div class="case-live__deck" data-case-deck="${esc(attrs.slides)}" hidden><button type="button" data-case-deck-step="-1">← Previous</button><output data-case-deck-count>Slide 1 of ${esc(

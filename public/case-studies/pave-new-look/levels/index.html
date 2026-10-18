@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Three levels, one palette</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:,">
+    <style>
+      @font-face{font-family:"Geist";font-weight:300;font-display:swap;src:url("./assets/geist-sans-latin-300-normal.woff2") format("woff2");}
+      @font-face{font-family:"Geist";font-weight:400;font-display:swap;src:url("./assets/geist-sans-latin-400-normal.woff2") format("woff2");}
+      @font-face{font-family:"Geist";font-weight:500;font-display:swap;src:url("./assets/geist-sans-latin-500-normal.woff2") format("woff2");}
+      @font-face{font-family:"Geist";font-weight:600;font-display:swap;src:url("./assets/geist-sans-latin-600-normal.woff2") format("woff2");}
+      @font-face{font-family:"Geist";font-weight:700;font-display:swap;src:url("./assets/geist-sans-latin-700-normal.woff2") format("woff2");}
+      @font-face{font-family:"Geist Mono";font-weight:400;font-display:swap;src:url("./assets/geist-mono-latin-400-normal.woff2") format("woff2");}
+      @font-face{font-family:"Geist Mono";font-weight:500;font-display:swap;src:url("./assets/geist-mono-latin-500-normal.woff2") format("woff2");}
+    </style>
+    <style>.lld-counter { display: none !important; }</style>
+    <script>
+      // This copy shows one slide only: "Three levels, one palette". Keys that would change slide are
+      // swallowed, and any route away from slide 3 is put back.
+      const home = "#light-layers-deck?slide=3";
+      if (location.hash !== home) history.replaceState(null, "", home);
+      const stay = () => { if (location.hash !== home) history.replaceState(null, "", home), dispatchEvent(new HashChangeEvent("hashchange")); };
+      addEventListener("hashchange", stay, true);
+      addEventListener("keydown", (event) => {
+        const typing = event.target.closest?.("button, [role=button], input, textarea");
+        if (["ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"].includes(event.key) || (event.key === " " && !typing)) {
+          event.stopImmediatePropagation();
+        }
+      }, true);
+    </script>
+    <script type="module" crossorigin src="./assets/public-B3wmq1Gi.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/public-CvBzqW2N.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

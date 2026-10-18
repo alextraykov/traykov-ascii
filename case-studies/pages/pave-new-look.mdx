@@ -15,16 +15,11 @@ order: -3
 
 ## Summary
 
-In late September Pave by Quickbase had two problems at its front door. The home page put a gradient behind the prompt that looked like every other AI tool, and light mode was so flat that panels disappeared into the page. Product leadership wanted light mode to become the default before a marketing push.
+In late September Pave by Quickbase had two problems at its front door. The home page put a gradient blob behind the prompt, and it looked like every other AI tool's home. Light mode was so flat that panels disappeared into the page. Product leadership wanted light mode to become the default before a marketing push.
 
-I designed both at once, in code, and handed engineering decisions it could build in days. The blueprint home merged within a day of engineering's first commit; light mode went from handoff to merged in under a week. Both went live for every Pave user in one release on 15 October, and the next morning the marketing site moved onto the same sheet. For the first time since launch, the website and the product looked like one thing.
+I designed both at once, in code, and handed engineering decisions it could build in days. The blueprint home merged within a day of engineering's first commit. Light mode went from handoff to merged in under a week. Both went live for every Pave user in one release on 15 October, and the marketing site moved onto the same sheet the next morning. For the first time since launch, the website and the product looked like one thing.
 
-```case-facts
-Role | Lead product designer and design engineer
-Made | Audits, coded prototypes, a pitch deck, Figma specs, tested patches and verification
-Credit | Designed by Alex Traykov. Implemented by Austin Colcord. Marketing site by the Quickbase web team
-Live | 15 Oct 2026, for every Pave user
-```
+Designed by Alex Traykov. Implemented by Austin Colcord (shoutout). Thanks also to Borislav Vasilev (marketing engineer) and Ericson de Agosto.
 
 ```case-stat
 20 | days from the first audit to live for every Pave user
@@ -37,6 +32,17 @@ Live | 15 Oct 2026, for every Pave user
 quickbase.com/pave | https://www.quickbase.com/pave | The marketing site runs on the same sheet. Sign in from there and you land on it inside the product.
 ```
 
+```case-scroll
+title: Thirty coded directions, one blueprint
+src: /case-studies/pave-new-look/live/home-tree.html
+width: 1728
+height: 576
+length: 230
+fallback: /case-studies/pave-new-look/tree/home-final.webp
+hint: Scroll to play it · hover any direction
+From the gradient, through every direction I coded, to the blueprint that shipped.
+```
+
 ## How it landed
 
 ```case-quotes title: What people said
@@ -47,8 +53,6 @@ Marketing team | LOVE, LOVE, LOVE this. Aligned with a business look and feel, l
 Product release note | A fresh new look / light surface. The builder has a lighter, more streamlined design with refreshed surfaces and colors, so it's easier to stay focused on what you're building.
 Sales | Alex the new design/background is money. Great work
 ```
-
-That's reception, not a measured result. Nobody has run a before-and-after on sign-up or building yet, so I'm not claiming one.
 
 ## Twenty days
 
@@ -65,27 +69,18 @@ That's reception, not a measured result. Nobody has run a before-and-after on si
 16 Oct | Website follows | quickbase.com/pave moves onto the same sheet.
 ```
 
-## The blueprint
+## Turn the home into a living spreadsheet
 
-The gradient said "AI" without saying what Pave makes. So the brief became: the background shows what Pave builds (tables, forms, workflows, connectors, portals) drawn the way a draftsperson draws them, and always quieter than the prompt box. I explored thirty coded directions before product leadership picked one.
+Most people who build on Quickbase already run their work in spreadsheets. So the home became a living spreadsheet: a grid that breathes, and cells that open to draw what Pave can make from it: a table, a form, a workflow, a connection to your data, a whole app.
 
-```case-tree
-title: Thirty coded directions, one blueprint
-dir: /case-studies/pave-new-look/tree/
-start: /case-studies/pave-new-look/tree/home-before.webp | Before: the gradient
-end: /case-studies/pave-new-look/tree/home-final.webp | 15 Oct: the blueprint, live
-Drafting and lines | bg-drafting-sheet-1, bg-drafting-sheet-2, bg-drafting-sheet-3, grid-1A, grid-4A, grid-4C
-Tiles and blocks | bg-laying-tiles-1, bg-laying-tiles-2, bg-laying-tiles-3, grid-3B, grid-3C, grid-5A
-Paths and quiet | bg-the-path-1, bg-the-path-2, bg-the-path-3, bg-counter-nothing-1, bg-counter-nothing-2, bg-counter-nothing-3
-Loud colour | bg-counter-green-field-1, bg-counter-green-field-2, bg-counter-green-field-3, bg-counter-three-squares-1, bg-counter-three-squares-2, bg-counter-three-squares-3
-Daylight and poster | bg-counter-daylight-1, bg-counter-daylight-2, bg-counter-daylight-3, bg-counter-poster-2, bg-counter-poster-3, bg-counter-people-3
-```
+Every drawing on the sheet is something you can ask the prompt box for.
 
-A generative background has one job it must never fail: don't clip a drawing or open a cell under the prompt box. Early on, no sampled cell passed. I built an audit that scores every open cell on five checks and wrote layout rules until every cell passed, on desktop and phone, inside the frame budget at four times CPU slowdown.
+A generative background has one job it must never fail: don't clip a wireframe, squash a column or open a cell under the prompt box. For a while it did all three, and "it looks a bit off sometimes" was the most precise thing I could say about it. So I built an audit that scores every open cell on five checks and wrote layout rules until every cell passed, on desktop and phone, inside the frame budget at four times CPU slowdown.
 
 ```case-live
 title: The grid prototype
 src: /case-studies/pave-blueprint/live/grid-prototype.html?v=4A&present=1&t=light
+hint: Interactive · hover the grid, click the sheet
 width: 1440
 height: 900
 fallback: /case-studies/pave-blueprint/img/blueprint-grid.webp
@@ -93,22 +88,26 @@ tag: Concept
 The prototype I explored in. Hover the grid for the ruler, click bare sheet for a leader line, type in the box.
 ```
 
-There was no Figma file for the handoff. Engineering got the running prototype and my patches, ported the engine line for line and merged it within a day. The same sheet went behind sign-in and the account and error pages, so nobody signs out of a polished builder onto a page that looks like another company.
+I built the whole concept in code, from the grid and its drawings to the motion and the layout rules. There was nothing to translate and no Figma file to hand over. Engineering got the running prototype and my patches, ported the engine line for line and merged it within a day. The Quickbase web team built the website hero from the same package, which is why the site could follow the product the next morning. And because the sheet is code rather than a mockup, it's slowly becoming the visual language for Pave's ad explorations too.
 
-```case-compare
-title: Sign-in, as it shipped
-Step one | /case-studies/pave-blueprint/img/pave-signin-welcome-1440.jpg | The live sign-in: a "Welcome to Pave" card on the blueprint sheet. | Live
-Step two | /case-studies/pave-blueprint/img/pave-signin-email-1440.jpg | Email and password on the same sheet. | Live
-```
+The same sheet went behind sign-in and the account and error pages. Before that, signing out of a polished builder dropped you onto a page that looked like another company.
 
-## Light mode
+## Give light mode an order
 
-The finding was small and a little embarrassing: every surface was the same tone, so nothing looked higher than anything else, and the green sidebar was the loudest thing on screen. It didn't need new colours. It needed an order.
+The finding was small and a little embarrassing. Every surface was the same tone, so nothing looked higher than anything else, and the green sidebar was the loudest thing on screen.
 
-```case-swatches title: Three layers, from colours Pave already shipped
-Background | #f1f3f5 | #111715 | The frame, sidebar and chat
-Raised | #ffffff | #161d1b | Preview pane, page tiles, tables, the composer
-Floating | #fcfcfd | #272a29 | Menus, popovers and dialogs
+My first recommendation was a warm paper palette. Its own risk note said Pave would become paper. I had recommended a rebrand by accident, inside a light mode fix. So I kept the structure and dropped the palette: three layers, built from colours Pave already shipped. Nobody has to approve a colour that doesn't exist.
+
+I pitched it as a deck that runs on the real interface, so product leadership could point at the levels themselves.
+
+```case-live
+title: Three levels, one palette
+src: /case-studies/pave-new-look/levels/index.html
+hint: Interactive · point at a level
+width: 1440
+height: 810
+fallback: /case-studies/pave-light-mode/img/deck-slide-03.webp
+The slide from that pitch, running. Point at a level to lift it, or at anything on screen to see which level it sits on; switch Light and Dark, or Screens and Blueprint.
 ```
 
 Three rules carry it: the composer is the only white object in the chat, there's one green button per page, and in dark mode a higher layer is lighter.
@@ -127,22 +126,15 @@ Layer system | /case-studies/pave-light-mode/img/proto-build-layers-light.webp
 X-ray | /case-studies/pave-light-mode/img/proto-build-xray.webp
 ```
 
-I pitched it as a deck that runs on the real interface rather than on screenshots: every before-and-after lands on today and changes only when you press it, and one slide pulls a lamp cord into dark mode.
+My first handoff still carried recommendations next to open questions. Engineering asked for decisions instead. Fair. "Take the recommendation unless someone objects" isn't something you can build to. I made every remaining call the same week, and the package became Figma frames, a token map, acceptance criteria written as visual checks and a patch I'd tested locally. Engineering merged it within a week.
 
-```case-video-copy
-title: The pitch, recorded
-file: public/case-studies/pave-new-look/video/light-mode-pitch.mp4
+Recommendations aren't a spec.
 
-Today, three levels, every screen, dark mode and one release, in 35 seconds.
-```
+## Ship both in one release
 
-My first handoff still carried recommendations next to open questions, and engineering rightly asked for decisions instead. I made every remaining call the same week, and the package became Figma frames, a token map, acceptance criteria written as visual checks and a patch I'd tested locally. Engineering merged it within a week.
+Running two redesigns at once had one real cost. The blueprint file and the light mode file drew the sidebar differently, and engineering had to ask which one was right. That was my mess: I'd designed the same navigation twice, a few days apart. I dropped the frosted variant (it looked cool and wasn't used anywhere else) and folded the blueprint's card into the raised layer. One system now covers the front door and the builder.
 
-## One release
-
-Running two redesigns at once had one real cost: the blueprint file and the light mode file drew the sidebar differently, and engineering had to ask which was right. I dropped the frosted variant and folded the blueprint's card into the raised layer, so one system now covers the front door and the builder.
-
-The day after the merge I measured the build against the spec on every main page, not only the ones with a design to compare against. It scored 8.0 out of 10, and the gaps were mostly pages I hadn't drawn. Product took over that list.
+The day after the merge I measured the build against the spec on every main page, not only the ones with a design to compare against. It scored 8.0 out of 10, and the gaps were mostly pages I never drew. Product took over that list.
 
 ```case-compare
 title: Website to product
@@ -150,13 +142,9 @@ Website | /case-studies/pave-blueprint/img/marketing-pave-hero-1440.jpg | The qu
 Product | /case-studies/pave-blueprint/img/pave-signin-welcome-1440.jpg | Where "Sign in" lands. | Live
 ```
 
-## What I'd keep
+## In short
 
-1. Design in code and hand over decisions. That's why each merge took days, not weeks.
-2. Structure before palette. Solving light mode with existing colours made it cheap to approve and easy to carry into dark mode.
-3. Audit every page, not only the ones with a design to compare against.
-
-Still open: the wider error family and the phone layout are designed and waiting, and until someone measures it, I can say people liked it, not what it changed for the people who use Pave.
+Pave's new look is the clearest example I have of design engineering as the foundation for software's newest and most valuable currency: pace. Every deliverable was something engineering could build straight from, so we pitched, pivoted, prioritised, built and shipped it in 20 days. That pace is rare anywhere. In an enterprise company like Quickbase, it's rarer still.
 
 ## Related work
 

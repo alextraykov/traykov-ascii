@@ -1,0 +1,59 @@
+---
+// The Pave home on the blueprint sheet, running: the coded prototype at a desktop viewport, scaled
+// to the column. Controls sit outside the canvas, styled like the breathing grid's.
+interface Props { id: string; }
+const { id } = Astro.props;
+const src = "/case-studies/pave-blueprint/live/grid-prototype.html?v=4A&present=1&seed=7";
+---
+<div class="breathing-grid blueprint-home" data-blueprint-home id={id}>
+  <div class="breathing-grid__controls" data-blueprint-controls hidden>
+    <div class="breathing-grid__variants" role="group" aria-label="Theme">
+      <button type="button" data-blueprint-theme="light" aria-pressed="true">Light</button>
+      <button type="button" data-blueprint-theme="dark" aria-pressed="false">Dark</button>
+    </div>
+    <div class="breathing-grid__actions">
+      <button type="button" data-blueprint-act="open">Open a cell</button>
+      <button type="button" data-blueprint-act="reseed" aria-label="Generate another sheet layout">New layout</button>
+    </div>
+  </div>
+  <div class="breathing-grid__stage blueprint-home__stage">
+    <img src="/case-studies/pave-light-mode/live/home-light.webp" alt="The Pave home: a prompt on the blueprint sheet, with drawings opening in the grid around it." width="1600" height="1000" loading="lazy" data-blueprint-poster />
+    <iframe title="The Pave home on the blueprint sheet, running" data-blueprint-src={src} tabindex="-1"></iframe>
+  </div>
+  <p class="breathing-grid__hint">Hover the grid for the ruler, click bare sheet for a leader line, or type in the box.</p>
+</div>
+<script>
+  // One controller per embed: load near the viewport, unload far away, scale the 1440 × 900 page.
+  type Grid = { open: () => void; reseed: () => void; setTheme: (theme: string) => void };
+  document.querySelectorAll<HTMLElement>("[data-blueprint-home]").forEach((root) => {
+    const frame = root.querySelector<HTMLIFrameElement>("iframe[data-blueprint-src]");
+    const stage = root.querySelector<HTMLElement>(".blueprint-home__stage");
+    const controls = root.querySelector<HTMLElement>("[data-blueprint-controls]");
+    if (!frame || !stage || !controls) return;
+    let theme = "light";
+    const grid = () => (frame.contentWindow as (Window & { __grid?: Grid }) | null)?.__grid;
+    const fit = () => stage.style.setProperty("--blueprint-scale", String(stage.clientWidth / 1440));
+    new ResizeObserver(fit).observe(stage);
+    fit();
+    new IntersectionObserver(
+      ([entry]) => {
+        const next = entry.isIntersecting ? `${frame.dataset.blueprintSrc}&t=${theme}` : "about:blank";
+        if (frame.getAttribute("src") !== next && (entry.isIntersecting || frame.getAttribute("src"))) frame.setAttribute("src", next);
+        root.toggleAttribute("data-loaded", entry.isIntersecting);
+      },
+      { rootMargin: "400px 0px" }
+    ).observe(stage);
+    controls.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest("button");
+      if (!button) return;
+      if (button.dataset.blueprintTheme) {
+        theme = button.dataset.blueprintTheme;
+        controls.querySelectorAll("[data-blueprint-theme]").forEach((other) => other.setAttribute("aria-pressed", String(other === button)));
+        grid()?.setTheme(theme);
+      }
+      if (button.dataset.blueprintAct === "open") grid()?.open();
+      if (button.dataset.blueprintAct === "reseed") grid()?.reseed();
+    });
+    controls.hidden = false;
+  });
+</script>

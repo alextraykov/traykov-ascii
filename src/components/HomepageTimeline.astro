@@ -1,9 +1,11 @@
 ---
 import OverviewVideo from "./OverviewVideo.astro";
 import BreathingGrid from "./BreathingGrid.astro";
+import BlueprintHome from "./BlueprintHome.astro";
 
 const timelineEntries = [
-  { id: "latest-work", label: "Latest · Breathing grids" },
+  { id: "latest-work", label: "Latest · Pave's new look" },
+  { id: "breathing-grids-work", label: "Breathing grids" },
   { id: "pave-loading-work", label: "Pave loading" },
   { id: "designing-pave-overview", label: "Pave" },
   { id: "designing-synapse-sys-overview", label: "SynapseSys" },
@@ -54,11 +56,36 @@ const paveLoadingVideo = {
       >
         <header class="homepage-timeline__entry-header" data-reveal="rise" data-reveal-duration="340">
           <p class="homepage-timeline__date">
+            <time datetime="2026-10-15">15 Oct 2026</time>
+            <span aria-hidden="true"> / </span>
+            <span>Pave</span>
+          </p>
+          <h2 id="latest-work-title"><a class="homepage-timeline__title-link" href="/case-studies/pave-new-look/">Pave's new look</a></h2>
+        </header>
+
+        <BlueprintHome id="blueprint-home" />
+
+        <div class="homepage-timeline__entry-copy">
+          <div class="homepage-timeline__actions">
+            <a class="homepage-timeline__link" data-ascii-action="secondary" href="/case-studies/pave-new-look/">Read the case study <span aria-hidden="true">→</span></a>
+            <a class="homepage-timeline__related" data-ascii-action="text" href="https://www.quickbase.com/pave" target="_blank" rel="noopener">Live on quickbase.com/pave <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="breathing-grids-work"
+        class="homepage-timeline__entry"
+        data-homepage-timeline-entry
+        aria-labelledby="breathing-grids-work-title"
+      >
+        <header class="homepage-timeline__entry-header" data-reveal="rise" data-reveal-duration="340">
+          <p class="homepage-timeline__date">
             <time datetime="2026-10-02">02 Oct 2026</time>
             <span aria-hidden="true"> / </span>
             <span>Pave</span>
           </p>
-          <h2 id="latest-work-title">Breathing grids for Pave</h2>
+          <h2 id="breathing-grids-work-title"><a class="homepage-timeline__title-link" href="/case-studies/pave-breathing-grids/">Breathing grids for Pave</a></h2>
           <p>A background built from a grid, then taken apart.</p>
         </header>
 
@@ -84,7 +111,7 @@ const paveLoadingVideo = {
             <span aria-hidden="true"> / </span>
             <span>Pave</span>
           </p>
-          <h2 id="pave-loading-work-title">Designing a dot-patterns loading language for Pave</h2>
+          <h2 id="pave-loading-work-title"><a class="homepage-timeline__title-link" href="/case-studies/pave-loading-animation/">Designing a dot-patterns loading language for Pave</a></h2>
         </header>
 
         <OverviewVideo

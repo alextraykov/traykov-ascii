@@ -5,91 +5,96 @@ status: shipped
 pubDate: 2026-07-04
 tags: [automation, integrations, ai, enterprise-software, quickbase]
 heroImage: /case-studies/quickbase/pipelines-ai-step-creation-flow.webp
-readTime: 8 min
-summary: "Three years of Pipelines work across OAuth, editable AI proposals, high-volume automation, troubleshooting, and a code mode for advanced builders."
+readTime: 6 min
+summary: "Three years as Lead Product Designer on Quickbase Pipelines: OAuth connections, editable AI proposals, high-volume automation, troubleshooting, and a code mode for advanced builders."
 role: "Lead Product Designer"
 year: 2026
 group: "Quickbase"
 order: -5
 ---
 
-## The dangerous bit looked like a dropdown
+## Summary
 
-A Quickbase builder can authorise Slack, Shopify, QuickBooks, Gmail, Snowflake, or an internal data source, then let Pipelines run against it without being a developer. The risky parts are rarely dressed like risky parts. Sometimes they are a sandbox-or-production selector tucked into a connection form.
+Quickbase Pipelines lets a builder authorise Slack, Shopify, QuickBooks, Gmail, Snowflake or an internal data source, then run automations against it without being a developer. The risky parts are rarely dressed like risky parts. Sometimes they are a sandbox-or-production selector tucked into a connection form.
 
-I worked on Pipelines for three years: reusable OAuth anatomy, AI-generated steps, Bulk Trigger, troubleshooting, and Jinja code mode. At first I treated trust mostly as an explanation problem: make the flow clear enough and people will understand it. The work kept correcting that. Trust also came from where the product stopped, what it refused to commit, and whether a builder could inspect a consequence before it touched real data.
+I was Lead Product Designer on Pipelines for three years: a reusable OAuth anatomy, AI-generated steps, Bulk Trigger, troubleshooting and a Jinja code mode. I started out treating trust as an explanation problem. The work kept correcting me. Trust also came from where the product stopped, what it refused to commit, and whether a builder could inspect a consequence before it touched real data. The rule underneath all of it: AI could propose and populate work, but people could inspect and change it before a run.
 
-### My part in it
-
-- Role: Lead Product Designer across three years of Pipelines work.
-- Scope: reusable connection patterns, AI-assisted creation, high-volume automation, troubleshooting, and expert configuration.
-- Product rule: AI could propose and populate work, but people could inspect and change it before a run.
-- Strongest measured reach: from September 11, 2025 through September 11, 2026, 2,826 customer accounts used the all-Pipelines-AI feature set; 1,061 used Generate Steps with AI.
-- Evidence boundary: the figures below are product-analytics counts and action sequences. They show reach or follow-through, not completed automations, revenue, or causal credit for my design.
-
-## Connecting an account without hiding the dangerous choice
-
-Every provider asks for its own peculiar thing: OAuth scopes, store URLs, sandbox or production choice, service accounts, or a permissions ladder long enough to make anyone click through on instinct.
-
-Designing a bespoke screen for each connector would have made every new integration a fresh argument. I built one connection anatomy and gave provider-specific complexity a defined place inside it. Permissions were written in plain language instead of raw scope strings, because the person authorising a business workflow is often not an OAuth engineer. Sandbox versus production became a first-class choice, because discovering an environment model after writing to the real books is a terrible onboarding sequence.
-
-![Pipelines OAuth connection design specification, showing a reusable anatomy for provider-specific authorisation and environment choices.](/case-studies/quickbase/pipelines-oauth-connect-anatomy.webp)
-
-The point was not to make every connector look identical. It was to make the decisions that could damage data behave consistently: what account is being connected, what access is being granted, what environment is selected, and what the builder can do next.
-
-## Letting AI suggest work, then making it wait
-
-The AI creation work began with a practical problem. A person could know the business action they wanted but not the sequence of pipeline steps, field mappings, or syntax needed to build it. The model could help with that scaffolding. It should not get to silently decide that the scaffolding was correct.
-
-The interaction let a builder describe a step, review a proposed sequence, and inspect populated fields. A proposal remained editable. The underlying state model had to account for loading, no answer, usage limits, timeouts, permissions, and recovery, which are usually absent from a pleasant demo until they are suddenly all the product has.
+```case-stat
+2,826 | customer accounts used the Pipelines AI feature set from September 11, 2025 to September 11, 2026.
+1,061 | accounts used Generate Steps with AI in the same window, one part of that wider set.
+42% | of measured visitors went from opening Smart Builder to opening the generated pipeline, June 13 to September 11, 2026.
+969 | accounts reached Troubleshooting in the same year. All four are product-analytics counts of reach and follow-through, not completed automations, revenue, or causal credit for my design.
+```
 
 ![A populated Pipelines AI step design specification. This image shows one proposed-and-populated state, not an end-to-end creation sequence.](/case-studies/quickbase/pipelines-ai-step-creation-flow.webp)
 
-Pendo counts from September 11, 2025 through September 11, 2026 show 2,826 customer accounts using the all-Pipelines-AI umbrella feature and 1,061 using Generate Steps with AI. Those figures are not additive: Generate Steps is one part of the broader AI surface.
+## Two years of the AI surface
+
+```case-timeline title: Monthly reach across Pipelines AI
+Aug 2024 | 57 accounts | Where the monthly series of customer accounts using any Pipelines AI feature starts.
+Apr 2025 | Generate Steps at 173 | The headline creation action reaches 173 accounts in a month.
+Jun 2026 | Peak at 942 | Monthly reach across the AI feature set peaks.
+17 Aug 2026 | Smart Builder hidden | The project record says Smart Builder was hidden when the Pipelines agent orchestrator was on.
+Aug 2026 | 862 and 114 | Umbrella reach ends at 862 accounts; Generate Steps ends at 114.
+```
+
+## Connect an account without hiding the dangerous choice
+
+Every provider asks for its own peculiar thing: OAuth scopes, store URLs, sandbox or production, service accounts, or a permissions ladder long enough to make anyone click through on instinct.
+
+A bespoke screen per connector would have made every new integration a fresh argument. I built one connection anatomy and gave provider-specific complexity a defined place inside it. Permissions were written in plain language instead of raw scope strings, because the person authorising a business workflow is often not an OAuth engineer. Sandbox versus production became a first-class choice, because discovering an environment model after writing to the real books is a terrible onboarding sequence.
+
+![Pipelines OAuth connection design specification, showing a reusable anatomy for provider-specific authorisation and environment choices.](/case-studies/quickbase/pipelines-oauth-connect-anatomy.webp)
+
+Connectors did not have to look identical. The decisions that could damage data had to behave the same way every time: which account is being connected, what access is being granted, which environment is selected, and what the builder can do next.
+
+## Let AI suggest work, then make it wait
+
+A person could know the business action they wanted but not the sequence of steps, field mappings or syntax needed to build it. The model could help with that scaffolding. It should not get to silently decide the scaffolding was correct.
+
+So a builder describes a step, reviews a proposed sequence and inspects the populated fields, and the proposal stays editable. The state model behind it had to cover loading, no answer, usage limits, timeouts, permissions and recovery. Those are usually absent from a pleasant demo until they are suddenly all the product has.
 
 ![Monthly customer accounts using any Pipelines AI feature from August 2024 through August 2026. The series starts at 57 accounts and ends at 862, with a June 2026 peak of 942.](/case-studies/quickbase/pipelines-ai-monthly-accounts.svg)
 
-Monthly umbrella reach moved from 57 accounts in August 2024 to 862 in August 2026. That is observed reach across an evolving feature set, not a claim that one design caused the growth. The headline creation action moved in the other direction: Generate Steps reached 173 accounts in April 2025 and 114 in August 2026. The product had more AI surfaces by then; the data does not show whether builders migrated, succeeded, or preferred one path.
+Monthly reach across the AI features moved from 57 accounts in August 2024 to 862 in August 2026, across a feature set that kept changing. The headline creation action went the other way: Generate Steps reached 173 accounts in April 2025 and 114 in August 2026. The product had more AI surfaces by then. The data does not show whether builders migrated, succeeded, or preferred one path.
 
-## A useful funnel still is not an automation outcome
+## Count what the Smart Builder funnel actually records
 
-Smart Builder gave people a way to begin from a request and open the generated pipeline. In the measured visitor sequence from June 13 through September 11, 2026, 42% went from opening Smart Builder through building and populating steps to opening the generated pipeline.
+Smart Builder let people begin from a request and open the generated pipeline. From June 13 through September 11, 2026, 42% of measured visitors went from opening Smart Builder, through building and populating steps, to opening the generated pipeline.
 
-That final action does not prove that the automation worked. It only shows that someone followed the measured sequence to inspect the pipeline. I left the distinction in because it is exactly the kind of conversion number that can become a portfolio victory lap if nobody asks what it actually records.
+That last action does not prove the automation worked. It shows that someone followed the sequence far enough to look. I left the distinction in because this is exactly the kind of conversion number that becomes a portfolio victory lap if nobody asks what it records.
 
-There is another limit on the story. On August 17, 2026, the dated project record says Smart Builder was hidden when the Pipelines agent orchestrator was on. That establishes that the older flow was being superseded in that configuration. It does not establish a future roadmap, a migration story, or whether the replacement is better for a particular builder.
+On August 17, 2026, the project record says Smart Builder was hidden when the Pipelines agent orchestrator was on. The older flow was being superseded in that configuration. That says nothing yet about a roadmap, a migration, or whether the replacement is better for a particular builder.
 
-## Designing for thousands of records
+## Design for thousands of records
 
 Pipelines originally fired one row at a time. That model gets silly when somebody needs to move thousands of records.
 
-I worked on the Bulk Trigger UX and its feedback loop, including naming cleanup. “Bulk” and “Batch” had been used loosely enough that people could discuss the same feature and mean different behaviour. The terminology work was boring, slightly annoying, and load-bearing.
+I worked on the Bulk Trigger UX and its feedback loop, including naming cleanup. "Bulk" and "Batch" had been used loosely enough that people could discuss the same feature and mean different behaviour. The terminology work was boring, slightly annoying, and load-bearing.
 
 ![Bulk Trigger design specification for a multi-record automation flow.](/case-studies/quickbase/pipelines-bulk-trigger-flow.webp)
 
-In the July 20, 2025 through July 19, 2026 Pendo window, the archive records 60 accounts using the On New Bulk Event Trigger and no detectable adoption lift after the redesign. That is not the success story I would have preferred. It is the useful one: a niche, high-consequence capability needs a denominator and a definition of a good run before its product effect can be judged. Engineering owned the performance improvements, so I do not attribute those results to my design work.
+From July 20, 2025 through July 19, 2026, 60 accounts used the On New Bulk Event Trigger, with no detectable adoption lift after the redesign. That is not the success story I would have preferred. It is the useful one: a niche, high-consequence capability needs a denominator and a definition of a good run before anyone can judge it. Engineering owned the performance improvements, so I do not claim those results.
 
-## Making room for advanced builders
+## Make room for advanced builders
 
 The visual editor made Pipelines approachable. It also became a ceiling for people who knew exactly what they wanted to write.
 
-For power users, I designed a Jinja code-mode editor and the lock and disable rules needed so code mode and visual mode would not corrupt each other. When code mode owns an expression, visual controls have to make that ownership visible rather than quietly rewrite it.
+For them I designed a Jinja code-mode editor, plus the lock and disable rules that stop code mode and visual mode from corrupting each other. When code mode owns an expression, the visual controls have to show that ownership instead of quietly rewriting it.
 
 ![Pipelines code-mode design specification, including the guardrails that prevent the visual and code representations from overwriting each other.](/case-studies/quickbase/pipelines-code-mode.webp)
 
-Supporting both paths created ugly rules. It doubled a class of edge cases. Removing code mode would have made the product tidier by frustrating the builders most likely to hit its limits. I chose the uglier state model because the alternative hid a real capability boundary.
+Supporting both paths created ugly rules and doubled a class of edge cases. Removing code mode would have made the product tidier by frustrating the builders most likely to hit its limits. I chose the uglier state model because the alternative hid a real capability boundary.
 
 ## Troubleshooting made the evidence less flattering
 
-Troubleshooting reached 969 accounts from September 11, 2025 through September 11, 2026. Of 164 feedback events, 35.4% were positive. That is a limited feedback sample compared with the feature’s overall use, so I treat it as a directional sentiment signal, not customer satisfaction.
+Troubleshooting reached 969 accounts from September 11, 2025 through September 11, 2026. Of 164 feedback events, 35.4% were positive. That is a small sample against the feature's overall use, so I read it as a directional signal, not customer satisfaction.
 
-The negative signal belongs in the case study because it changes how I read the rest of the work. A reusable OAuth pattern, editable AI proposals, and specialist escape hatches can make a complex system legible. They do not guarantee that a builder understands why an automation failed or can repair it. I can show product reach and a measured path to opening a generated pipeline. I cannot show a clean success rate, unprompted confidence, or a causal result from the redesigns.
+It belongs here because it changes how I read the rest. A reusable OAuth pattern, editable AI proposals and specialist escape hatches can make a complex system legible. They do not guarantee that a builder understands why an automation failed, or can repair it.
 
-## What three years on one domain taught me
+## In short
 
-The OAuth-anatomy bet is the one I would make again. A parameterised pattern felt slow when the first connector could have shipped as a one-off screen, but it gave later integrations a stable place for the decisions that mattered.
-
-The broader lesson is less elegant. AI may propose work; the interface still has to show what will run, what has changed, which representation owns the value, and where a human can intervene. I learned most of that after the happy path already looked finished. The remaining gap is measurement: the product needs a way to distinguish a pipeline being opened from an automation being useful.
+The OAuth anatomy is the bet I would make again: it felt slow when the first connector could have shipped as a one-off screen, but it gave every later integration a stable place for the decisions that mattered. The rest was less elegant. AI may propose the work, but the interface still has to show what will run, what changed, which representation owns the value and where a person can step in, and I learned most of that after the happy path already looked finished. What is still missing is measurement: the product cannot yet tell a pipeline being opened from an automation being useful.
 
 ## Related work
 

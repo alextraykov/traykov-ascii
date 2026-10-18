@@ -10,6 +10,7 @@ import "./press.js";
 import "./segmented.js";
 import "./cell-range.js";
 import "./video-cells.js";
+import { initHScroll } from "./hscroll.js";
 import "./point-refresh.js";
 import "./edge-marker.js";
 import "./tooltip.js";
@@ -274,14 +275,7 @@ function initCaseVideos() {
   document.querySelectorAll("[data-case-video-autoplay]").forEach((media) => {
     if (caseVideos.has(media)) return;
     caseVideos.add(media);
-    media.addEventListener("pointerenter", () => {
-      media.dataset.caseVideoHovered = "true";
-      syncCaseVideo(media);
-    });
-    media.addEventListener("pointerleave", () => {
-      media.dataset.caseVideoHovered = "false";
-      syncCaseVideo(media);
-    });
+    // Videos play by visibility only; hovering one changes nothing.
     caseVideoObserver.observe(media);
   });
 }
@@ -325,6 +319,7 @@ function initStatusSnap() {
 function initializeMotion() {
   initStatusSnap();
   initScramble();
+  initHScroll();
   initMotionMedia();
   initCaseVideos();
   syncMotionState();

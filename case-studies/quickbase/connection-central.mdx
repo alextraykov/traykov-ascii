@@ -5,74 +5,93 @@ status: shipped
 pubDate: 2026-07-04
 tags: [research, ia, integrations, platform, quickbase]
 heroImage: /case-studies/quickbase/cc-v2-ia-flow.webp
-readTime: 7 min
-summary: "A resources-first redesign of Quickbase Connection Central, shaped by research, narrowed for a December 2024 launch, and shipped without a beta with later adoption evidence."
+readTime: 5 min
+summary: "A resources-first redesign of Quickbase Connection Central, shaped by a study with 13 Solution Architects, cut down for a December 2024 GA, shipped without a beta and later read back for reach."
 role: "Lead Product Designer"
 year: 2024
 group: "Quickbase"
 order: -4
 ---
 
-## On July 22, I started deleting my own design
+## Summary
 
-Connection Central is where Quickbase admins work out which systems, connections, tables, and pipelines are touching company data. The first version, designed by Johnny Lee, already exposed a lot of information. My v2 work in 2024 was supposed to make the relationships easier to reason about.
+Connection Central is where Quickbase admins work out which systems, connections, tables and pipelines are touching company data. Johnny Lee's first version already exposed a lot of information, but answering "what does this touch?" still took too much reconstruction.
 
-Research gave me a better information architecture and, naturally, enough good ideas to miss the release date. On July 22, I removed the richer accordion and popover detail from the MVP because I had designed more than engineering could responsibly build before GA. The later July 20, 2025 through July 19, 2026 read-back records 3,110 accounts using the page: real reach, but not proof that the redesign made a difficult investigation easier.
+In 2024 I led v2: research, information architecture, interaction design, the MVP cut and the post-launch measurement plan. A study with 13 Solution Architects pointed the page at resources first. Then, on 22 July, I started deleting my own design, because I had drawn more than engineering could responsibly build before GA. We skipped the beta, and Connection Central v2 reached GA on 17 December 2024.
 
-### My role
+Designed by Alex Traykov, with co-research by Lisa Sawyer. PM Stasha Markovska; engineering lead Dimitar Arnaudov. Built on Johnny Lee's v1.
 
-- Role: Lead Product Designer.
-- Scope: research, information architecture, interaction design, MVP definition, and post-launch measurement strategy.
-- Team: PM Stasha Markovska, engineering lead Dimitar Arnaudov, and co-research with Lisa Sawyer.
-- Shipped scope: Connection Central v2 reached GA on December 17, 2024.
+```case-stat
+13 | Solution Architects in the study that set the top-level split
+3,110 | accounts used the page between 20 July 2025 and 19 July 2026
+2,297 | paying accounts in the measured entry-point population, a separate count
+51.9% | about that share of the measured paying-account base
+```
 
-## v1 had information, but not a map
+![Connection Central resources side panel, from the v2 design specification: a resource hierarchy with its relationships nested underneath.](/case-studies/quickbase/cc-v2-ia-flow.webp)
 
-Johnny’s v1 was not a failed product. It was a surface that had accumulated enough views that builders could see individual objects without reliably following their relationships. A connection, the resources it exposed, and the pipelines that depended on it could all be present while the answer to “what does this touch?” still required too much reconstruction.
+## From the cut to the read-back
 
-That distinction mattered. I could have redrawn the existing tabs and called it cleanup. Instead, I treated the information architecture as the actual product decision: what should a person start from when they are trying to understand a complex, live integration estate?
+```case-timeline title: Key dates
+22 Jul | Richer detail cut | Accordion and popover detail out of the MVP, so engineering could build it before GA.
+6 Nov | Straight to GA | The PM and I decide to skip the beta to meet the H2 date.
+17 Dec | v2 live | Connection Central v2 reaches GA.
+Jul 2025 – Jul 2026 | The read-back | 3,110 accounts use the page.
+```
 
-## Thirteen architects rearranged the problem
+## Give v1's information a map
 
-Before proposing a new structure, I ran a Structured Association study with 13 Solution Architects. They were close proxies for experienced builders who spent time in Pipelines and customer playback, not external customer participants. That limitation belongs next to the finding.
+Johnny's v1 was not a failed product. It had accumulated enough views that builders could see individual objects without reliably following their relationships. A connection, the resources it exposed and the pipelines that depended on it could all be on screen, and "what does this touch?" still needed rebuilding by hand.
 
-The pattern was consistent enough to change the top-level split. People described a resource — the connected system and what it exposed — before they described the internal object model around it. They wanted to understand what a connection affected, what depended on it, and where to inspect the consequences. The research did not validate every detail of the later UI. It gave me a credible reason to lead with resources.
+I could have redrawn the existing tabs and called it cleanup. Instead I treated the information architecture as the product decision: what should a person start from when they are trying to understand a complex, live integration estate?
 
-![Connection Central resources-side-panel design specification, showing a resource hierarchy and nested relationships. It is a broader v2 design specification, not a sequence or a complete GA screen.](/case-studies/quickbase/cc-v2-ia-flow.webp)
+## Lead with the resource
 
-This is a design specification of the resources side panel, not a claim that every illustrated screen shipped. The structure was the decision I protected: a builder should begin with the resource and keep its relationships visible while they inspect it.
+Before proposing a structure, I ran a Structured Association study with 13 Solution Architects. They were close proxies for experienced builders who spent time in Pipelines and customer playback, not external customers. That limit belongs next to the finding.
+
+The pattern was consistent enough to change the top-level split. People described a resource, the connected system and what it exposed, before they described the internal object model around it. They wanted to know what a connection affected, what depended on it and where to inspect the consequences. The research did not validate every detail of the later UI. It gave me a credible reason to lead with resources.
+
+The illustrations in this study come from the v2 design specification, not from screenshots of the GA release. The structure was the decision I protected.
+
+A builder should begin with the resource and keep its relationships visible while they inspect it.
 
 ## Keep the map while inspecting one thing
 
-The core interaction was a two-pane model. Navigation stayed on one side; detail appeared on the other. A builder could drill into a connection without losing the surrounding resource map. That was the part of the control-room metaphor that held up under real constraints: one view had to preserve context while the other did the detailed work.
+The core interaction was two panes. Navigation stayed on one side; detail appeared on the other. A builder could drill into a connection without losing the surrounding resource map. That was the part of the control-room metaphor that held up under real constraints: one view keeps the context while the other does the detailed work.
 
-![Two-pane Connection Central design specification. It documents the context-preserving interaction model with expanded filters and field rows; the shown detail controls were deferred from the GA release.](/case-studies/quickbase/cc-resources-detail-two-pane.webp)
+![Two-pane Connection Central design specification, with expanded filters and field rows. The detail controls shown were deferred from GA.](/case-studies/quickbase/cc-resources-detail-two-pane.webp)
 
-The companion Pipelines view gave the domain a first-class list for answering a different question: what is running here? It belongs to the broader v2 design specification, with sample data plus Export CSV and 24-hour activity concepts deferred from the December GA release, rather than a labelled screenshot of shipped UI.
+The companion Pipelines view gave the domain a first-class list for a different question: what is running here? Its Export CSV and 24-hour activity concepts were deferred from the December release.
 
-![Connection Central Pipelines-list design specification with sample data. It includes Export CSV and 24-hour activity concepts deferred from GA, so it is not evidence that every shown detail shipped.](/case-studies/quickbase/cc-pipelines-list.webp)
+![Connection Central Pipelines list from the design specification, with sample data, Export CSV and 24-hour activity concepts.](/case-studies/quickbase/cc-pipelines-list.webp)
 
-## What survived the cut
+## Cut what the first release did not need
 
-Engineering had a fixed December GA date and limited UI capacity late in the work. The useful question was no longer which version I preferred. It was which decision would be expensive to reverse after launch.
+Research gave me a better information architecture and, naturally, enough good ideas to miss the release date. Engineering had a fixed December GA date and limited UI capacity late in the work. The useful question was no longer which version I preferred.
 
-I kept the resources-first IA and the two-pane shape. The accordion and popover detail did not survive. Neither did field-level detail, 24-hour activity emphasis, and CSV export. They were deferred, not quietly recast as shipped work.
+I kept the resources-first IA and the two-pane shape. The accordion and popover detail did not survive. Neither did field-level detail, the 24-hour activity emphasis or CSV export. They were deferred, not quietly recast as shipped work.
 
-That was a design decision as much as a delivery decision. A rich inline detail treatment demoed well, but it was not load-bearing for the first release. The two-pane model fit the available scope and preserved the context the research had actually made important.
+The rich inline detail demoed well. It was not load-bearing for the first release. The two-pane model fit the scope and kept the context the research had actually made important.
 
-## Then we launched without a beta
+The cut followed one question: which decision would be expensive to reverse after launch?
 
-On November 6, the PM and I decided to go straight to GA to meet the H2 date. There was no beta. This is the sort of sentence that looks decisive in a portfolio and feels considerably less elegant while making the call.
+## Launch without a beta
 
-I wrote the v2 Pendo strategy so the team could read the surface after launch: a new-feature guide, onboarding walkthrough, feedback poll, and help update. Measurement was a follow-up mechanism, not a substitute for testing. The retained structure, the deferred details, and the no-beta decision are separate judgments. Blurring them together would make the launch sound more certain than it was.
+On 6 November, the PM and I decided to go straight to GA to meet the H2 date. There was no beta. This is the sort of sentence that looks decisive in a portfolio and feels considerably less elegant while making the call.
 
-## The read-back measured reach, not relief
+I wrote the v2 Pendo strategy so the team could read the surface after launch: a new-feature guide, an onboarding walkthrough, a feedback poll and a help update. Measurement was a follow-up, not a substitute for testing.
 
-From July 20, 2025 through July 19, 2026, the reporting record shows 3,110 accounts using the Connection Central page. Separately, the measured entry-point population included 2,297 paying accounts, about 51.9% of the measured paying-account base. These are different populations. They describe reach through the measurement setup; they do not show revenue contribution, a redesign lift, or the quality of a builder’s decision.
+## Read back the first numbers
 
-I leave raw event volume out because automation contaminated that stream. I also leave the longer-window navigation funnel out of the headline because it does not establish a same-session usability result.
+From 20 July 2025 through 19 July 2026, the reporting record shows 3,110 accounts using the Connection Central page. Separately, the measured entry-point population included 2,297 paying accounts, about 51.9% of the measured paying-account base. These are different populations. They describe reach, not revenue, a redesign lift or the quality of anyone's decision.
 
-The unresolved question is the one that mattered when the project began: did the resources-first model stop people from making a mistake or help them recover when they were unsure? The data available here cannot answer that. I would still protect the launch date, but I would fight harder for a small moderated pass with the same Solution Architects before GA. The survey helped choose a model. It did not show where someone would hesitate, misread a status, or lose confidence in the middle of a real investigation.
+I leave raw event volume out because automation contaminated that stream. I also leave the longer-window navigation funnel out, because it does not establish a same-session usability result.
+
+The question that mattered when the project began is still open: did the resources-first model stop people from making a mistake, or help them recover when they were unsure? This data cannot answer it.
+
+## In short
+
+Connection Central v2 is the project where I deleted a good part of my own design to keep the one decision that would be expensive to reverse: start from the resource, and keep its map in view while you inspect one thing. Thirteen Solution Architects picked the model, the cut made the December date, and 3,110 accounts used the page in the year the read-back covers. None of that shows where someone hesitates, misreads a status or loses confidence in the middle of a real investigation. I would still protect the launch date, but I would fight harder for a small moderated pass with the same Solution Architects before GA.
 
 ## Related work
 

@@ -5,76 +5,65 @@ status: prototype
 pubDate: 2026-07-03
 tags: [visual-design, interaction-design, design-systems, ai, motion]
 heroImage: /case-studies/media/synapse-sys-design-midnight.png
-readTime: 13 min
-summary: "How I shaped SynapseSys from loud terminal experiment into a distinctive clinical AI interface: retro, modern, terminal, blocktype, motion, restraint."
+readTime: 9 min
+summary: "How I took SynapseSys from a loud terminal experiment to a calmer clinical AI interface: five themes, a motion system tied to product state, and edges you can act on."
 group: "Synapse-Sys"
 order: -0.5
 ---
 
 ## Summary
 
-SynapseSys began with a product thesis:
+SynapseSys started from one thesis: relationships between ideas should be executable. The first visual answer was deliberately loud. Black canvas, phosphor green, pixel shadows, dashed right-angled edges and a blocktype mark. It proved the product had a point of view. It also glared, put everything at the same volume and risked looking like a toy console instead of a clinical tool.
 
-> relationships between ideas should be executable.
+I was the only designer and design engineer, from the visual language and the interaction system to the components and the code. Between 7 March and 1 July 2026 the work moved from expressive to trustworthy: Midnight became the readable default, Terminal and Pip-Boy stayed as expressive modes, and Daylight proved the system could survive a white background. It is still a prototype.
 
-The first visual answer was deliberately loud: black canvas, phosphor green, pixel shadows, dashed orthogonal edges, command-line forms, and a blocktype mark that made the product feel like a machine you could operate.
+```case-stat
+5 | themes in the system, with font switching and a picker
+3 | motion timing tiers: 100, 200 and 350 milliseconds
+4 | loading signatures, one for each AI operation
+```
 
-That was useful. It proved the product had a point of view. It also was not enough.
+```case-video-copy
+title: Edge operations visual language
+file: public/case-studies/media/edge-operations.mp4
 
-The harder design problem was not making another AI interface look futuristic. It was:
+The edge is where the user says what they want. Dashed routes, labels, hover priority and operation states make that relationship feel executable.
 
-> How do you keep strong terminal identity while making the product feel clinical, trustworthy, readable, and usable during long thinking sessions?
+The route looks like a system diagram, the controls behave like product UI, and AI output stays on the map.
+```
 
-## Project Frame
+## March to July
 
-- Role: solo product designer and design engineer for visual language, interaction system, component behavior, and implementation.
-- Scope: canvas aesthetic, theme system, typography, blocktype logo, node and edge grammar, loading states, onboarding, landing direction, motion system, design QA.
-- Evidence: commit history from March 7 to July 1, 2026, `ANIMATION_SYSTEM.md`, `docs/MICROINTERACTION_SPEC.md`, `docs/edge-visual-spec.md`, audits, captures, and playground stories.
+```case-timeline title: From tokens to waitlist
+7 Mar | The foundation | Tokens, keyframes, terminal UI primitives, auth forms, canvas grid, nodes, handles, right-angled edges, dash animation, side panel, editor and search palette.
+14 Mar | Node Interactions v2 | Through 22 Mar: AI actions, the edge system, the app shell, tests, specs, the five-theme system, font switching and the picker.
+28 Mar | Hardening | Through 29 Mar: schema data, observability, loading states, settings, playground stories and canvas refactors.
+4 Apr | OperationShimmer | Through 8 Apr: the landing redesign, generation feedback anchored to its source, retry on failed edges and generating badges.
+10 Apr | Onboarding rework | Through 11 Apr: edge routing, audit fixes, content-first nodes, trackpad pan and zoom, and a security lock-down.
+13 Apr | Calibration | Through 16 Apr: billing provider changes, theme, name and tone calibration, an Editorial theme experiment and the landing sphere.
+22 Apr | Midnight baseline | Through 24 Apr: canvas polish, streaming, the mobile and touch foundation, multilingual AI, budgets and deployment guardrails.
+8 May | Edge-operation hardening | Through 1 Jul: analytics, operation picker race fixes, AI connection fixes, waitlist gating and demo overlay updates.
+```
 
-## Reviewer Takeaway
+## Avoid AI slop without becoming a terminal skin
 
-- Taste was not treated as decoration. It became a product constraint: make AI feel powerful without letting it take authorship away from the user.
-- The final direction is distinctive because it combines clinical map-reading, terminal command language, retro blocktype, and modern SaaS legibility in one system.
-- The strongest design decision was restraint: keep the terminal DNA, reduce glare, soften default contrast, and push attention back to nodes, edges, and user intent.
+AI product visuals have become easy to fake: soft gradients, floating cards, glowing chat boxes, fake dashboards. They look expensive for one screenshot and interchangeable by the second.
 
-## Product Notes
+I wanted SynapseSys to feel authored. It is not a chatbot with a canvas attached. It is a thinking surface where relationships become operations.
 
-- Initial aesthetic problem: avoid generic AI slop without becoming a novelty terminal skin.
-- Final direction: Midnight as readable default, Terminal and Pip-Boy as expressive legacy modes, Daylight as proof the system could survive professional use.
-- Motion rule: every animation had to explain system state, spatial causality, or interaction momentum.
-- Unfinished edge: identity is strong, but the next pass should keep reducing onboarding noise, component density, and mobile canvas friction.
+So the test was never "does it look cool?" It was whether a user could still read the map after the first impression faded, whether AI output felt like material on the canvas, whether motion showed what changed, and whether the look held across auth, pricing, settings, sharing, errors, onboarding and mobile.
 
-## Taste In The Age Of AI Slop
+The last check was light mode. A terminal-only product can hide weak hierarchy behind glow. A real visual language keeps working when the background turns white.
 
-AI product visuals have become too easy to fake: soft gradients, floating cards, glowing chat boxes, fake dashboards, empty agent metaphors. They look expensive for one screenshot and interchangeable by the second.
+## Admit the first direction was too loud
 
-For SynapseSys I wanted the opposite. The interface had to feel authored. It needed to say: this is not a chatbot with a canvas attached. This is a thinking surface where relationships become operations.
+The first coherent direction was pure terminal. The 7 March commits laid it down in one go, from tokens and keyframes to the Konva dot grid, node cards, right-angled edges, the edge menu and the command palette. SynapseSys had an identity on day one.
 
-The taste test was not "does it look cool?" It was:
+It also had three problems. Green on black was memorable and hot to read for long. When every element speaks in the signal colour, nothing is more important than anything else. And a clinical AI product can't look like a toy hacker console while it asks people to organise important thinking.
 
-- Can a user still read the map after the first impression fades?
-- Does AI output feel like material on canvas, not external commentary?
-- Does motion show what changed and why?
-- Can the product keep visual identity across auth, pricing, settings, sharing, errors, onboarding, and mobile states?
-- Can the aesthetic survive light theme without collapsing?
+A 23 March UX architecture audit said it plainly: a strong, coherent terminal look, with demo guidance, broken theme rendering and raw error states flagged as trust gaps.
 
-That last question mattered. A terminal-only product can hide weak hierarchy behind glow. A real visual language keeps working when the background turns white.
-
-## Initial Aesthetic Problem
-
-The first coherent direction was pure terminal: black background, bright green signal, pixelated type, right-angled lines, grid dots, and hard block shadows. Early March 7 commits established the foundation in a compressed sequence: design tokens, keyframes, Navbar, ModeToolbar, SidePanel, UI primitives, terminal auth forms, Konva dot grid, node cards, handles, orthogonal edges, dash animation, edge menu, editor, and command palette.
-
-That gave SynapseSys recognizable identity immediately.
-
-It also created three problems:
-
-- **Glare:** original green-on-black terminal mode was memorable, but long reading sessions became visually hot.
-- **Hierarchy:** when every element speaks in the same signal color, product identity is strong but prioritization is weak.
-- **Trust:** a clinical AI product cannot look like a toy hacker console when it asks users to organize important thinking.
-
-A March 23 UX architecture audit said the quiet part directly: SynapseSys had a strong coherent terminal aesthetic, but the same audit flagged demo guidance, broken theme rendering, and raw error states as trust gaps.
-
-The design lesson: identity had landed. Product trust had not.
+Identity had landed. Trust had not.
 
 ```case-image-grid
 title: Visual problem, visual answer
@@ -85,166 +74,106 @@ public/case-studies/media/synapse-sys-design-midnight.png | Midnight | Current d
 public/case-studies/media/synapse-sys-design-daylight.png | Daylight | A professional stress test: if edge grammar, node density, and typography survive light mode, this is a system, not a skin.
 ```
 
-## Reference Logic
+## Take references from what was built
 
-There was no moodboard file in the repo, so the honest reference set lived in implemented behavior:
+There was no moodboard in the repo, so the honest reference set is the behaviour that shipped into the prototype:
 
-- **Terminal CLI:** command language, cursor rhythm, boot sequence, monospace labels, square controls, operation badges, text-first affordances.
-- **CRT phosphor:** scan rhythm, glow decay, boot draw, decrypt text, staccato shimmer, idea active state as signal turning on.
-- **PCB systems diagrams:** orthogonal edge routing, bridge arcs, port selection, dashed lines, refusal to make every connection a smooth curve.
-- **Clinical software:** restrained default color, dense information surfaces, clear status, auth and billing trust wrappers, reduced decorative motion.
-- **Blocktype identity:** logo, UI shadows, node cards, badges, and panels share hard rectangular grammar. Nothing rounds itself into generic SaaS softness.
+- **Terminal CLI:** command language, cursor rhythm, boot sequence, mono labels, square controls, operation badges.
+- **CRT phosphor:** scan rhythm, glow decay, decrypt text, an active idea as a signal turning on.
+- **PCB diagrams:** right-angled routing, bridge arcs, port selection, dashed lines, no smooth curves by default.
+- **Clinical software:** restrained colour, dense surfaces, clear status, trustworthy auth and billing, less decorative motion.
+- **Blocktype:** the logo, shadows, node cards, badges and panels share one hard rectangular grammar.
 
-The references mattered because SynapseSys sits between worlds. It is a clinical AI product, but the core interaction is spatial, generative, and weird. It needed enough retro-machine character to feel ownable and enough modern product discipline to stay credible.
+SynapseSys sits between worlds. It is a clinical AI product, but the core interaction is spatial, generative and weird. It needed enough machine character to be ownable and enough product discipline to stay credible.
 
-## Typography, Color, Density, Spacing
+## Tune type, colour and density for long sessions
 
-Typography expressed the tension clearly. Early direction leaned into terminal fonts. Later theme work made the type system more practical: terminal-styled modes stayed in family, but product surfaces could use JetBrains Mono where readability mattered.
+Early type leaned on terminal fonts. Later theme work kept the terminal modes in family but let product surfaces use JetBrains Mono where reading mattered.
 
-Color evolved the same way. Terminal green remained the brand signal, but Midnight became the mature default: dark readable background, softer green, lower-contrast borders, enough muted text for secondary information. Daylight used blue as accent, proving the graph vocabulary could translate into professional work mode.
+Colour went the same way. Terminal green stayed the brand signal, but Midnight became the default: a dark, readable background, softer green, quieter borders and enough muted text for secondary information. Daylight used blue as the accent, which proved the graph vocabulary could translate.
 
-Density became part of the brand. SynapseSys should not feel like a landing page. It is a canvas tool:
+Density is part of the brand. This is a canvas tool, not a landing page: thin top chrome, small uppercase labels, compact toolbars at the canvas edges, grid dots for orientation, node cards sized for scanning, and side panels that keep their structure without swallowing the canvas.
 
-- thin top chrome instead of a large app header
-- small uppercase labels and badges
-- compact toolbars at canvas edges
-- grid dots as orientation, not decoration
-- node cards sized for scanning
-- operation labels attached to generated material
-- side panels and settings surfaces that keep terminal structure without swallowing the canvas
-
-Spacing is intentionally mechanical. Controls sit in rows. Edge paths turn at right angles. Shadows are offset blocks. The product avoids soft rounded card stacks because the underlying metaphor is not a lounge or assistant. It is a machine arranging and transforming ideas.
+Spacing is mechanical on purpose. Controls sit in rows, edges turn at right angles, shadows are offset blocks. The metaphor is a machine arranging ideas, not a lounge.
 
 ```synapse-taste
 ```
 
-## Playground As Evidence
+## Let the playground catch failures early
 
-The source repo's `/playground` page became a component lab for the visual system. It was added and expanded across commits like `012475b` (`themes, settings overhaul, playground stories`), `cbb16bc` (`restore animations showcase`), `3309c55` (`OperationShimmer`), `680fe2c` (`sphere presets + live-tuning playground`), and `0357c62` (`expand design system playground coverage`).
+The `/playground` page became the lab for the visual system. It grew across commits like `012475b` (themes, settings, playground stories), `cbb16bc` (the animations showcase), `3309c55` (`OperationShimmer`), `680fe2c` (sphere presets and live tuning) and `0357c62` (wider design system coverage).
 
-That matters because the design system was not only judged from a hero screenshot. The playground let me inspect components as product states:
+It covered UI primitives, every node state, canvas chrome like `EdgeMenu` and `EdgeOperationPill`, layout and overlays, onboarding and loading, and the landing motion experiments.
 
-- **UI primitives:** Button, Input, Toast, ConfirmDialog, pixel icons.
-- **Node components:** preview, collapsed, skeleton, ghost node, operation badge, concept span, highlight chips, provenance tooltip, edit mode, prompt input.
-- **Canvas chrome:** EdgeMenu, EdgeOperationPill, selection actions, node context menu, tab context menu.
-- **Layout and overlays:** Navbar, ModeToolbar, SidePanel, TabBar, SearchPalette, ShortcutOverlay, share dialog, canvas detail panel.
-- **Onboarding and loading:** CanvasHintBar, terminal spinner, progress bar, page loading frame, BootSequence, node skeleton loading.
-- **Motion and landing experiments:** animation showcase, hero sphere presets, feature demos, live tuning.
+Volume wasn't the point. The playground let taste fail in small places before it failed in the product: wrapping bugs, contrast misses, over-animated loading, menus that felt like decoration, ghost nodes that felt too permanent, and themes that worked in CSS but not in the Konva canvas tokens.
 
-The useful part of a playground is not volume by itself. It lets taste fail in small places before it fails in the product: wrapping bugs, contrast misses, over-animated loading, action menus that feel like decoration, ghost nodes that feel too permanent, themes that work in CSS but not in Konva canvas tokens.
+## Make motion explain product state
 
-## Motion As Product State
+The motion docs set three timing tiers:
 
-The animation system is one of the strongest parts of the identity because it is specific. It does not use generic fade-and-slide polish everywhere.
+- `quick`: 100ms for handles, tooltips and button states
+- `standard`: 200ms for mode swaps, chip entry and dropdowns
+- `emphasis`: 350ms for node creation, panel entrance and viewport motion
 
-The motion docs define three timing tiers:
+Fast, snappy, slightly mechanical. The default curve doesn't ease. It snaps.
 
-- `quick`: 100ms handles, tooltips, button states
-- `standard`: 200ms mode swaps, chip entry, dropdowns
-- `emphasis`: 350ms node creation, panel entrance, viewport motion
+I treated animation as a contract per component, not a sitewide effect:
 
-That created a design language: fast, snappy, slightly mechanical. The default curve is not soft. It snaps.
+- **BootSequence:** the blocktype logo drawn in reverse, the offset shadow, the fill, decrypt text and CLI progress, then the canvas.
+- **Canvas and grid:** the dot grid, ripple, pan and zoom, and a remembered viewport make the canvas feel like stable ground.
+- **NodeCard:** drag lift, pixel shadow, focus ring, edit and view swaps, resize handles and content-aware height keep cards physical.
+- **ConnectionPreview:** handle proximity, snap targets, a right-angled preview line and a snap radius that holds at any zoom.
+- **EdgeShape:** dashed operation paths, hover dimming, selected priority, bridge arcs and the result tethered to its source.
+- **OperationShimmer:** each AI operation gets its own wait: expand bursts outward, synthesize crystallises, summarize backspaces, compare splits.
+- **GhostNode:** suggestions stay provisional and only animate into real nodes when accepted.
+- **ThemePicker:** hover previews update CSS variables and canvas tokens together, because Konva edges can't rely on CSS alone.
+- **The shell:** Navbar, ModeToolbar, SidePanel, SearchPalette, toasts and auth forms reuse the grammar but stay quieter than the canvas.
 
-Actual components carry that logic:
+When AI generates something, the interface shouldn't just say "loading". It should show where the result came from, which operation is running and when provisional material becomes real.
 
-- **BootSequence:** reverse stroke draw of the blocktype logo, offset shadow expansion, fill, decrypt text, CLI progress, then fade into canvas.
-- **Grid canvas:** dot grid, reveal/ripple behavior, pan/zoom, viewport persistence make canvas feel like a stable coordinate system.
-- **NodeCard:** drag lift, pixel shadow, focus ring, edit/view transitions, resize handles, overflow microcopy, content-aware max height, and ghost displacement keep cards physical without turning them skeuomorphic.
-- **ConnectionPreview:** handle proximity, snap target, orthogonal preview line, magnetic endpoint, and zoom-compensated snap radius make connection creation feel precise.
-- **EdgeShape:** dashed operation paths, hover dimming, selected priority, bridge arcs, zoom-compensated stroke width, animated dash offset, and tether-first result emission.
-- **OperationShimmer:** each AI operation gets its own loading signature: expand radial burst, synthesize crystallization, summarize backspace/delete, compare split oscillation.
-- **GhostNode:** suggestions appear as visible but uncommitted material, then animate into real nodes only if the user accepts them.
-- **ThemePicker:** hover previews update both CSS variables and JS canvas tokens because Konva edges cannot rely on CSS alone.
-- **Navbar, ModeToolbar, SidePanel, SearchPalette, Toasts, Auth forms:** square controls, mono labels, hard borders, stateful color, restrained entrance motion.
+Some components got better with less motion, not more.
 
-The point of the motion system is causal clarity. When AI generates something, the interface should not simply say "loading." It should show where the result came from, which operation is running, and when provisional material becomes real.
+## Treat edges as the product
 
-```case-video-copy
-title: Edge operations visual language
-file: public/case-studies/media/edge-operations.mp4
+A connection in SynapseSys is a readable relationship, a command target, a pending operation, a result path and the source of the next piece of work. A straight line wasn't going to carry that.
 
-The edge is not decoration. It is where the user expresses intent. Motion, labels, dashed routes, hover priority, and operation states make that relationship feel executable.
+So edges got right-angled paths, selected priority with hover dimming, bridge arcs at crossings, operation labels at meaningful midpoints, dashes that imply active work, and strokes and hit areas that hold at any zoom.
 
-This is where retro, terminal, and modern tool qualities meet: the route looks like a system diagram, the affordance behaves like product UI, and AI output stays spatial.
-```
-
-## Component Motion Inventory
-
-I treated animation as a component-level contract, not a sitewide effect. The audit broke it down into systems:
-
-- **CanvasStage and GridLayer:** keep world position stable, render dotted grid, avoid recalculating too much during active gestures, preserve spatial trust while panning, zooming, and dragging.
-- **BootSequence and ProgressBar:** establish the product as a machine booting up through reverse logo draw, hard offset shadow, decrypt text, and CLI progress.
-- **NodeCard states:** new-node arrival, drag lift, pixel shadow, handle magnetism, focus states, edit/view swaps, resize feedback, overflow microcopy.
-- **SkeletonCard, ShimmerLines, OperationShimmer:** make AI waiting states operation-specific instead of generic.
-- **ConnectionPreview and handles:** make connection creation feel magnetic through proximity, snap radius, target pulse, orthogonal preview lines, and zoom-compensated hit behavior.
-- **EdgeShape and edge menus:** turn relationships into product controls through dash animation, z-order, dimmed context, bridge arcs, operation labels, action pills, and race-condition hardening around picker state.
-- **GhostNode layout:** keep AI suggestions provisional through lower-opacity cards, accept/dismiss controls, materialization delay, and temporary displacement of nearby nodes.
-- **ThemePicker and CanvasThemeHydrator:** sync DOM CSS variables with JavaScript canvas tokens. The animation is modest because continuity across canvas chrome matters more than flair.
-- **Shell components:** Navbar, ModeToolbar, SidePanel, TabBar, SearchPalette, Toast, ConfirmDialog, and auth forms reuse terminal grammar but stay quieter than the canvas.
-- **Landing playground components:** test higher-expression brand motion, including sphere reveal, parallax, hover interactivity, feature demos, and live tuning. These could sell the product while the canvas stayed work-focused.
-
-The conclusion was not "make everything move more." Some components became better when motion was reduced, made more staccato, or tied to a precise state change.
-
-## Edge Grammar Became Visual Language
-
-The edge system is where the visual design and product model meet. A connection is not a decorative line. It is a readable relationship, a command target, a pending operation, a generated result path, and a future source of more work.
-
-So the visual language needed more than straight lines:
-
-- orthogonal paths instead of arbitrary diagonals
-- selected-edge priority and hover dimming
-- bridge arcs at crossings
-- operation labels and pills at meaningful midpoints
-- dash patterns that imply active work
-- zoom-compensated strokes and hit areas
-- route choices that preserve scanability over cleverness
-
-One routing direction looked technically impressive: PCB-style staircase fan-out through shared ports. It made dense maps look engineered, but it collapsed meaning into a thick bundle. The chosen route spends more space so individual relationships remain selectable, labelable, and understandable.
+One routing direction looked brilliant: PCB-style staircase fan-out through shared ports. Dense maps looked engineered. They also collapsed into one thick bundle where no relationship could be picked out. The chosen route spends more space so each edge stays selectable, labelled and readable.
 
 ```synapse-edge-routing
 ```
 
-## Ghosts Protected Authorship
+## Keep AI suggestions as ghosts
 
-AI suggestions are useful until they become clutter. If every related concept becomes a permanent node, the graph stops feeling authored by the user. It becomes AI debris.
+AI suggestions are useful until they become clutter. If every related concept turns into a permanent node, the graph stops being the user's. It becomes AI debris.
 
-So suggestions became ghost nodes. A ghost node is visible but not committed. It appears near a selected idea, connected by a faint suggestion line. The user can accept it, dismiss it, or ignore it. If accepted, the ghost materializes into a real node and the graph updates. If ignored, it disappears without polluting the canvas.
+So suggestions became ghost nodes: visible, near the selected idea, joined by a faint line, and not committed. Accept one and it materialises. Ignore it and it disappears without a trace.
 
-That design decision created real state complexity:
+That one decision brought real state work: caching suggestions per source node, tracking ghost anchors, placing ghosts around the selection, nudging nearby nodes without moving them for good, materialising accepted ones optimistically and panning just enough to reveal the new branch.
 
-- cache suggestions by source node
-- track ghost anchors
-- place ghosts around selected nodes
-- displace nearby nodes without permanently moving them
-- materialize accepted suggestions optimistically
-- pan the viewport enough to reveal the new branch
-
-The principle was simple:
-
-> AI should widen the user's peripheral vision, not take over the map.
+AI should widen the user's peripheral vision, not take over the map.
 
 ```synapse-ghosts
 ```
 
-## Retro, Modern, Terminal, Blocktype
+## Give each influence a job
 
-The final aesthetic works because each influence has a job.
+Retro gives the product memory. The blocktype mark, green signal, square borders and CLI motion make SynapseSys recognisable before anyone reads the pitch.
 
-Retro gives the product memory. The blocktype mark, green signal, square borders, and CLI motion make SynapseSys recognizable before anyone reads the pitch.
+Modern gives it discipline. Auth, settings, pricing, billing, sharing, export, usage limits and errors can't be art direction. They need hierarchy and boring product trust.
 
-Modern gives it discipline. The app still needs auth, settings, pricing, billing, sharing, export, usage limits, analytics, and error states. Those surfaces cannot be pure art direction. They need clarity, hierarchy, and boring product trust.
+Terminal gives it agency. Operations have names, loading looks like work, and the user is driving a system rather than asking a mascot for help.
 
-Terminal gives it agency. The product feels commandable. Operations have names. Loading states look like work. The interface suggests the user is driving a system, not asking a mascot for help.
+Blocktype gives it structure. Logo, shadows, nodes, badges and panels share one rectangular weight, so the canvas reads as a map of discrete objects you can act on.
 
-Blocktype gives it structure. Logo, shadows, nodes, badges, and panels all share rectangular weight. That shape language makes the canvas feel like a map of discrete executable objects.
+Cyberpunk for its own sake would have been easier. So would minimal SaaS with a green accent.
 
-The combination is what makes SynapseSys distinct. It is not cyberpunk for its own sake. It is not minimal SaaS with a green accent. It is a clinical command surface for thinking.
+## Read the old line honestly
 
-## Old SynapseSys Chronology
+The old `alextraykov/synapse-sys` repo shows a simpler arc: terminal whiteboard theatre that slowly grew graph-product controls without losing the green-on-black identity.
 
-The old `alextraykov/synapse-sys` repo shows a simpler but useful design arc: the product started as terminal whiteboard theater, then slowly exposed graph-product controls without losing the green-on-black identity.
-
-I replayed seven checkpoints from `main`. The first one, `ee22f361` from January 17, 2025, did not produce a screenshot because the CRA app was missing `public/index.html`. The source still matters: it establishes the first design answer as terminal-style nodes on a whiteboard canvas, before the product had enough app chrome to behave like a graph tool.
+I replayed seven checkpoints from `main`. The first, `ee22f361` from 17 January 2025, wouldn't even render: the CRA app was missing `public/index.html`. The source still shows the first answer, terminal-style nodes on a whiteboard, before there was enough chrome to behave like a graph tool.
 
 ```case-image-grid
 title: Old main, first visible design moves
@@ -264,22 +193,15 @@ public/case-studies/media/synapse-sys-old-2025-10-performance-ripple.png | Oct 2
 public/case-studies/media/synapse-sys-old-2025-10-final-main.png | Oct 30, `0734c853` | old main stabilized as green terminal graph surface: expressive, recognizable, high-contrast, but not yet clinical enough for long-session trust.
 ```
 
-The design read from this old line: SynapseSys already had identity before the v2 pass. What it lacked was restraint. The terminal metaphor was coherent, but every surface spoke at the same volume. The later design work did not need invent a brand from zero. It needed preserve authorship, reduce glare, and turn a loud prototype into a product surface a person could think inside.
+SynapseSys already had an identity before the v2 pass. What it lacked was restraint. The later work didn't need to invent a brand. It needed to lower the glare, protect authorship and turn a loud prototype into something a person could think inside.
 
-## What Changed Over History
+## Make the look fit the product
 
-The commit history shows the design becoming more mature through pressure:
+The grid implies space. Node cards imply objects you can move. Edges imply relationships you can run. Badges record what happened. The theme system says this is a product, not a one-off demo.
 
-- March 7: tokens, keyframes, terminal UI primitives, auth forms, canvas grid, nodes, handles, orthogonal edges, dash animation, side panel, editor, search palette.
-- March 14 to March 22: Node Interactions v2, AI actions, edge system expansion, app shell, tests, specs, five-theme system, font switching, picker UI.
-- March 28 to March 29: schema data hardening, observability, loading states, settings, playground stories, canvas refactors.
-- April 4 to April 8: OperationShimmer, landing redesign, causal-anchor generation feedback, retry error handling for edge creation, generating badges, hydration fixes, demo card title wrapping fixes.
-- April 10 to April 11: onboarding rework, edge routing improvements, audit fixes, content-first nodes, trackpad pan/zoom, SidePanel polish, security lock-down.
-- April 13 to April 16: billing provider changes, theme/name/tone calibration, Editorial theme experiment, node resize polish, landing sphere, themed nav, landing animation performance.
-- April 22 to April 24: canvas polish, streaming, resize, menus, card layout, mobile/touch foundation, gesture freeze, profile, multilingual AI, Midnight baseline, theme token duplication, budgets, auth rate limits, deployment guardrails.
-- May 8 to July 1: analytics expansion, AI edge-operation hardening, operation picker race fixes, AI connection flow fixes, waitlist gating, demo overlay updates.
+Most of all, the design protects authorship. Ghosts aren't permanent until accepted, pending states aren't treated as truth, AI loading stays tied to its source, and edges stay readable when the map gets dense.
 
-The shape of history matters. The aesthetic did not move in a straight line from rough to pretty. It moved from expressive to trustworthy.
+My own landing page was the cautionary tale. The hero had the right tone, and its first words disappeared into the dark on load.
 
 ```case-image-grid
 title: Before/after: style became trust
@@ -289,36 +211,10 @@ public/case-studies/media/synapse-sys-design-landing-too-dark.png | Over-styled 
 public/case-studies/media/synapse-sys-design-midnight.png | Product-ready direction | Midnight keeps identity but makes nodes, routes, toolbar, and status easier to read on a working canvas.
 ```
 
-## Why Final Look Fits Product
+## What is still rough
 
-SynapseSys is about turning relationships into operations. The final aesthetic makes that visible.
+The identity is strong. Onboarding, component density and the mobile canvas are not there yet. The demo can still open as an empty, unexplained machine, mobile needs to be rebuilt around gesture confidence rather than a shrunken desktop canvas, and raw failure states (expired links, auth recovery, budget limits, provider and AI errors) still need designed replacements. Midnight could be calmer, too. The next version should have fewer effects and clearer hierarchy, with the same unmistakable machine.
 
-The grid implies space. Node cards imply manipulable objects. Edges imply executable relationships. Badges imply operation history. Boot shimmer states imply system work. The theme system implies this is a product, not a one-off demo. The blocktype mark implies an engineered machine.
+## In short
 
-Most importantly, the design protects authorship. Ghost nodes are not permanent until accepted. Pending states are not treated as durable truth. AI loading is connected to source material. Edges remain readable when the map gets dense.
-
-That is why the visual language fits: it makes the product's moral stance visible.
-
-AI can help generate. The user still owns the map.
-
-## What I Would Refine Next
-
-I would keep reducing visual noise before adding more expression.
-
-- Make Midnight even calmer by lowering secondary glow and giving long text more breathing room.
-- Export a full screenshot and video set for every important playground state, not only audit captures.
-- Tighten onboarding so the demo never opens as an empty, unexplained machine.
-- Keep legacy Terminal and Pip-Boy as expressive modes, but default new users into readable Midnight or Daylight.
-- Rework mobile density around gesture confidence instead of shrinking the desktop canvas.
-- Add a small component-motion gallery for BootSequence, OperationShimmer, GhostNode, edge operations, theme switching, and onboarding.
-- Continue replacing raw failure states with designed product states: expired links, auth recovery, budget limits, provider errors, AI failures.
-
-The next version should not be more visually intense. It should feel more inevitable: fewer effects, clearer hierarchy, same unmistakable machine.
-
-## What This Shows
-
-This design case is about taste under implementation pressure.
-
-I did not just choose a palette. I shaped a visual system across themes, graph geometry, loading states, component behavior, landing experiments, audits, and hardening work. The current SynapseSys aesthetic is unique because it combines retro blocktype confidence with modern product restraint.
-
-The part I want a reviewer to remember: taste is not a screenshot. Taste is a sequence of choices that keeps the screenshot useful after the product becomes real.
+SynapseSys is about taste under implementation pressure. I didn't just pick a palette: I shaped themes, graph geometry, loading states, component behaviour and landing experiments, then kept turning the volume down until the product could be trusted. The terminal got it noticed. Restraint made it usable. AI can help generate, but the user still owns the map, and taste is the sequence of choices that keeps the screenshot useful once the product becomes real.

@@ -1,7 +1,7 @@
 {
   "slug": "four-characters",
   "title": "Four characters",
-  "summary": "Where ░▒▓█ have ended up in my work since January 2025, why text diagrams suit Markdown and MDX documents, what broke, and where the characters come from.",
+  "summary": "DOS screens and teletext I grew up with, where ░▒▓█ have ended up in my work since, why text diagrams suit Markdown and MDX documents, and where the characters come from.",
   "publishedAt": "2026-10-18T20:00:00+03:00",
   "status": "published",
   "tags": [
@@ -13,6 +13,75 @@
   ],
   "blocks": [
     {
+      "type": "paragraph",
+      "text": "Remember these interfaces? Maybe not as well as I do. I have vivid memories from my earliest childhood of looking at DOS interfaces on our first family computer, and of watching my uncle, a programmer, at work. I remember how interested I was in how simple characters like a slash, a backslash and a dash could animate a loading state with such ease. Or three dots. Our computer took so long that I'd stick my face into the CRT monitor while I waited, watching the different loading states."
+    },
+    {
+      "type": "gallery",
+      "fit": "contain",
+      "columns": 3,
+      "label": "DOS-era interfaces",
+      "items": [
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/turbo-pascal-6.png",
+          "alt": "Turbo Pascal 6 with the File menu open over a blue editor. The menu casts a black shadow and the bottom scroll bar is a medium-shade track.",
+          "caption": "Turbo Pascal 6. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Turbopascal_6.png)."
+        },
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/turbo-cpp.jpg",
+          "alt": "Turbo C++ with an empty editor in a double-line frame, medium-shade scroll bars and a function-key bar.",
+          "caption": "Turbo C++. SAMNAD.S, [CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Turbo_CPP_Compiler.jpg)."
+        },
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/freedos-edit.png",
+          "alt": "FreeDOS Edit's Open File dialog: a grey panel with a drop shadow, a file list with a medium-shade scroll track and shadowed buttons.",
+          "caption": "FreeDOS Edit, a free work-alike of the MS-DOS Editor. [GPL](https://commons.wikimedia.org/wiki/File:Fdedit.png)."
+        },
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/dbase-iii-plus-assist.png",
+          "alt": "dBASE III Plus ASSIST: a menu bar, a Create menu in a double-line box and a drive list from A to Q in another.",
+          "caption": "dBASE III Plus. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Screenshot_of_ASSIST_in_DBase_III_Plus.png)."
+        },
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/ms-dos-setup-dialog.gif",
+          "alt": "A MS-DOS setup message in a framed cyan box: Remove disks from all floppy disk drives, and then press ENTER.",
+          "caption": "MS-DOS setup. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:MS-DOS_install_-_all_disks.gif)."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "I also remember watching teletext, waiting for the pages to show their graphics, and the patterns they drew with the same simple block glyphs this note is about."
+    },
+    {
+      "type": "gallery",
+      "fit": "contain",
+      "label": "Teletext",
+      "items": [
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/teletext-parrot.png",
+          "alt": "A red macaw converted to level 1 teletext, every cell a 2 by 3 mosaic in one of eight colours.",
+          "caption": "A photo converted to teletext mosaics. ZXGuesser and Adrian Pingstone, [CC0](https://commons.wikimedia.org/wiki/File:Level_1_teletext_test.png)."
+        },
+        {
+          "type": "image",
+          "src": "/notes/four-characters/history/ceefax-football-index.jpg",
+          "alt": "A BBC Ceefax football index page from October 2009, with BBC and FOOTBALL drawn in block mosaics above a list of headlines.",
+          "caption": "Ceefax, October 2009. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ceefax_football_index.jpg)."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Shortly said, I've been observing user interfaces since I was the same age my kids are now. And as with everything in human nature, especially fashion, it's circular. We've reached the pinnacle of UI, and anyone can generate whatever they want. There's almost no limit to how interfaces can look and feel. But for some reason we're looping back to where interfaces began. Text."
+    },
+    {
       "type": "glyphs",
       "text": " ░ ▒ ▓ █",
       "label": "The four block characters: light shade, medium shade, dark shade and full block.",
@@ -21,11 +90,24 @@
     },
     {
       "type": "paragraph",
-      "text": "In January 2025 I started working on the visual language of Synapse and ended up with these four characters. They've been in almost everything I've made since: the product, slides at work, audits, sketches, a personal project about saints."
+      "text": "I've been dabbling with ASCII aesthetics for close to a year and a half now, and I discovered that outside of the legibility and the whole amazing vibe of it, there is an actual deep use case for why glyph-based deliverables are of extreme use in the age of AI."
     },
     {
       "type": "paragraph",
-      "text": "This note collects where they've been used, what they're good for in documents, what they cost, and where they come from. The characters are old. I'm late."
+      "text": "In January 2025 I started on the visual language of synapsys.ai, and in April I [scrapped my portfolio redesign and did it for myself](https://x.com/alextraykov/status/1909624774789042305). These four characters have been in almost everything I've made since: the product, slides at work, audits, sketches, a personal project about saints."
+    },
+    {
+      "type": "heading",
+      "text": "Why text",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "Most of my documents are now Markdown or MDX. They're reviewed as diffs and read by coding agents, and sometimes by people. When one has to reach a non-technical audience, I quickly convert it and wrap it in another format, like a PDF or an HTML page."
+    },
+    {
+      "type": "paragraph",
+      "text": "A text diagram survives all of that. It shows up in a diff as a shorter bar, pastes into a ticket or a PR comment, is generated from data at build time, and a model reads the number next to the bar exactly instead of estimating it from a picture. Wrapped in a PDF or a page, it's still the same drawing."
     },
     {
       "type": "heading",
@@ -34,14 +116,19 @@
     },
     {
       "type": "paragraph",
-      "text": "Synapse is black, one phosphor accent and `░▒▓` as the only fills. The loaders are where the blocks do the most work. Each kind of operation steps through the same ramp differently: expand reveals from the centre, synthesize resolves noise into heavier blocks, summarize steps back toward empty, compare alternates density between two halves."
+      "text": "For v1 of synapsys.ai I used black, one phosphor accent and `░▒▓` as the only fills. The idea behind it was a very animated, living, responsive look, terminal-esque, that combines glyphs and terminal-style interactions and motion with modern tooling."
+    },
+    {
+      "type": "paragraph",
+      "text": "One of the places it turned out best was the skeleton animation variants. Each kind of operation steps through the same ramp differently: expand reveals from the centre, synthesize resolves noise into heavier blocks, summarize steps back toward empty, compare alternates density between two halves. That's what sent me further down the rabbit hole of ASCII-fying the world."
     },
     {
       "type": "video",
       "src": "/notes/four-characters/synapse-operation-loaders.mp4",
       "poster": "/notes/four-characters/synapse-operation-loaders.webp",
-      "label": "Screen recording of the Synapse component preview showing the expand, synthesize, summarize and compare loaders made of shade blocks.",
-      "caption": "Synapse operation loaders: expand, synthesize, summarize, compare."
+      "autoplay": true,
+      "label": "Screen recording of the synapsys.ai v1 component preview showing the expand, synthesize, summarize and compare skeleton animations made of shade blocks.",
+      "caption": "Skeleton animation variants in synapsys.ai v1: expand, synthesize, summarize, compare."
     },
     {
       "type": "heading",
@@ -69,10 +156,6 @@
     },
     {
       "type": "paragraph",
-      "text": "The glyph code had two bugs that made it into the published audit. 25 of the 47 findings showed `--demo-speed` instead of the easing name, because the parser took the first CSS variable it found. And a value of 57 out of 100 drew one cell short, because a rounding remainder of 8/8 had no glyph and disappeared. I'd tested the bars and not the labels or the edges."
-    },
-    {
-      "type": "paragraph",
       "text": "A handoff to our marketing team, who had built a hero animation from the product's grid. Theirs moved all the time; the product's mostly holds still. I recorded both for 60 seconds, logged every line position per frame, and sent this:"
     },
     {
@@ -86,22 +169,22 @@
     },
     {
       "type": "paragraph",
-      "text": "And diagrams for arguments rather than numbers. This ledger from [The price of pace](/notes/the-price-of-pace/) is also in my slides at work: expertise earns trust, trust powers pace, time keeps it going, pace delivers craft."
+      "text": "And diagrams for arguments rather than numbers. This ledger from [The price of pace](/notes/the-price-of-pace/) is also in my slides at work: expertise earns trust, trust powers pace, time keeps it going, pace delivers craft. Next to it are five other versions of the same argument, drawn and animated in characters before I settled on the ledger."
     },
     {
-      "type": "visual",
-      "name": "pace-ledger"
-    },
-    {
-      "type": "paragraph",
-      "text": "Five other versions of the same argument, drawn and animated in characters before I settled on the ledger:"
-    },
-    {
-      "type": "embed",
-      "src": "/notes/four-characters/pace-diagrams.html",
-      "title": "Five animated character diagrams for The price of pace: gates, two lanes, drift, small losses and a flattening org chart.",
-      "height": 1700,
-      "caption": "Gates, two lanes on one clock, drift, small losses, a flattening org chart."
+      "type": "gallery",
+      "label": "Six character diagrams of The price of pace",
+      "items": [
+        {
+          "type": "visual",
+          "name": "pace-ledger",
+          "caption": "The ledger. Expertise earns trust, trust powers pace, pace delivers craft."
+        },
+        {
+          "type": "visual",
+          "name": "pace-diagrams"
+        }
+      ]
     },
     {
       "type": "heading",
@@ -113,53 +196,39 @@
       "text": "In the creative coding studies the blocks are the image. Up close you read the marks; from a distance, the shape."
     },
     {
-      "type": "image",
-      "src": "/notes/four-characters/rings-study.webp",
-      "alt": "Concentric rings rendered in black and off-white dither cells, dense near the centre and breaking apart toward the edges.",
-      "caption": "Rings. Two colours on a fixed grid, 1520 × 1360 pixels, 6 KB as a lossless file."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/phosphor-profile.webp",
-      "alt": "A face in profile built from vertical stripes of green dither patterns on black, with a block of checkerboard cells over the face.",
-      "caption": "A profile in striped dither patterns, 25 KB."
-    },
-    {
       "type": "paragraph",
-      "text": "The wave is blank space and `░▒▓` only, without `█`. Six trochoidal waves give height, reflection and foam, and each cell is quantised to one of the four states. The shader measures how much of its cell each glyph actually covers at the current size and dithers only between neighbouring states, so a gradient never skips from `░` to `▓`."
+      "text": "The waves are blank space and `░▒▓` only, without `█`. Six trochoidal waves give height, reflection and foam, and the shader dithers each cell only between neighbouring states, so a gradient never skips from `░` to `▓`. Our Saints is a personal editorial project about Bulgarian Orthodox saints: each icon sits under a layer of gold blocks, and moving across it uncovers the image beneath."
     },
     {
-      "type": "visual",
-      "name": "blocktype-wave"
-    },
-    {
-      "type": "paragraph",
-      "text": "Our Saints is a personal editorial project about Bulgarian Orthodox saints. Each icon sits under a layer of gold blocks, and moving across it uncovers the image beneath."
-    },
-    {
-      "type": "video",
-      "src": "/notes/four-characters/our-saints.mp4",
-      "poster": "/notes/four-characters/our-saints.webp",
-      "label": "Screen recording of the Our Saints home page: the title resolves out of block glyphs, then a cross drawn in gold blocks responds to the pointer.",
-      "caption": "The Our Saints home page, still a draft."
-    },
-    {
-      "type": "heading",
-      "text": "Why text",
-      "level": 2
-    },
-    {
-      "type": "paragraph",
-      "text": "Most of my documents are now Markdown or MDX, reviewed as diffs and read by coding agents as well as people. A text diagram survives all of that: it shows up in a diff as a shorter bar, pastes into a ticket or a PR comment, is generated from data at build time, and a model reads the number next to the bar exactly instead of estimating it from a picture."
-    },
-    {
-      "type": "heading",
-      "text": "What broke while publishing this",
-      "level": 2
-    },
-    {
-      "type": "paragraph",
-      "text": "The first version of this page had every chart out of alignment. The site's code font is Geist Mono, loaded as a Latin subset that has no block or box characters, so the browser borrowed them from another font. Measured against the width of a `0`, `█` came out at 1.8 cells, `░` at 1.56 and `·` at 0.5. The charts here now use Departure Mono, which draws every one of them at exactly one cell."
+      "type": "gallery",
+      "label": "Dither sketches",
+      "items": [
+        {
+          "type": "image",
+          "src": "/notes/four-characters/rings-study.webp",
+          "alt": "Concentric rings rendered in black and off-white dither cells, dense near the centre and breaking apart toward the edges.",
+          "caption": "Rings. Two colours on a fixed grid, 6 KB."
+        },
+        {
+          "type": "image",
+          "src": "/notes/four-characters/phosphor-profile.webp",
+          "alt": "A face in profile built from vertical stripes of green dither patterns on black, with a block of checkerboard cells over the face.",
+          "caption": "A profile in striped dither patterns, 25 KB."
+        },
+        {
+          "type": "visual",
+          "name": "blocktype-wave",
+          "caption": "Waves in blank, `░`, `▒` and `▓`."
+        },
+        {
+          "type": "video",
+          "src": "/notes/four-characters/our-saints.mp4",
+          "poster": "/notes/four-characters/our-saints.webp",
+          "autoplay": true,
+          "label": "Screen recording of the Our Saints home page: the title resolves out of block glyphs, then a cross drawn in gold blocks responds to the pointer.",
+          "caption": "The Our Saints home page, still a draft."
+        }
+      ]
     },
     {
       "type": "heading",
@@ -168,7 +237,7 @@
     },
     {
       "type": "paragraph",
-      "text": "IBM's PC character set, [code page 437](https://en.wikipedia.org/wiki/Code_page_437), put `░▒▓` at bytes 0xB0–0xB2 and `█` at 0xDB in 1981, next to single and double box-drawing lines. In the 8 × 16 VGA font the shades are ordered dither patterns: 2 of every 8 pixels, a checkerboard, 6 of every 8."
+      "text": "The characters are old. I'm late. IBM's PC character set, [code page 437](https://en.wikipedia.org/wiki/Code_page_437), put `░▒▓` at bytes 0xB0–0xB2 and `█` at 0xDB in 1981, next to single and double box-drawing lines. In the 8 × 16 VGA font the shades are ordered dither patterns: 2 of every 8 pixels, a checkerboard, 6 of every 8."
     },
     {
       "type": "glyphs",
@@ -179,66 +248,47 @@
     },
     {
       "type": "paragraph",
-      "text": "Text-mode software built whole interfaces from them. In Borland's [Turbo Vision](https://en.wikipedia.org/wiki/Turbo_Vision) (1990), the framework behind the Turbo Pascal and Turbo C++ IDEs, the desktop is `░`, scroll bar tracks are `▒` with a `■` thumb, and button shadows are half blocks."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/turbo-pascal-6.png",
-      "alt": "Turbo Pascal 6 with the File menu open over a blue editor. The menu casts a black shadow and the bottom scroll bar is a medium-shade track.",
-      "caption": "Turbo Pascal 6. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Turbopascal_6.png)."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/turbo-cpp.jpg",
-      "alt": "Turbo C++ with an empty editor in a double-line frame, medium-shade scroll bars and a function-key bar.",
-      "caption": "Turbo C++. SAMNAD.S, [CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Turbo_CPP_Compiler.jpg)."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/freedos-edit.png",
-      "alt": "FreeDOS Edit's Open File dialog: a grey panel with a drop shadow, a file list with a medium-shade scroll track and shadowed buttons.",
-      "caption": "FreeDOS Edit, a free work-alike of the MS-DOS Editor. [GPL](https://commons.wikimedia.org/wiki/File:Fdedit.png)."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/dbase-iii-plus-assist.png",
-      "alt": "dBASE III Plus ASSIST: a menu bar, a Create menu in a double-line box and a drive list from A to Q in another.",
-      "caption": "dBASE III Plus. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Screenshot_of_ASSIST_in_DBase_III_Plus.png)."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/ms-dos-setup-dialog.gif",
-      "alt": "A MS-DOS setup message in a framed cyan box: Remove disks from all floppy disk drives, and then press ENTER.",
-      "caption": "MS-DOS setup. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:MS-DOS_install_-_all_disks.gif)."
+      "text": "Before the PC, teletext did pictures the same way. BBC Ceefax started in 1974, and every cell on screen held either a character or a 2 × 3 block mosaic, like the pages at the top of this note."
     },
     {
       "type": "paragraph",
-      "text": "Before the PC, teletext did pictures the same way. BBC Ceefax started in 1974, and every cell on screen held either a character or a 2 × 3 block mosaic."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/teletext-parrot.png",
-      "alt": "A red macaw converted to level 1 teletext, every cell a 2 by 3 mosaic in one of eight colours.",
-      "caption": "A photo converted to teletext mosaics. ZXGuesser and Adrian Pingstone, [CC0](https://commons.wikimedia.org/wiki/File:Level_1_teletext_test.png)."
-    },
-    {
-      "type": "image",
-      "src": "/notes/four-characters/history/ceefax-football-index.jpg",
-      "alt": "A BBC Ceefax football index page from October 2009, with BBC and FOOTBALL drawn in block mosaics above a list of headlines.",
-      "caption": "Ceefax, October 2009. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ceefax_football_index.jpg)."
-    },
-    {
-      "type": "paragraph",
-      "text": "The Commodore PET (1977) had half blocks, quarter blocks and a checkerboard in [PETSCII](https://en.wikipedia.org/wiki/PETSCII). BBS artists in the 80s and 90s shaded [ANSI art](https://en.wikipedia.org/wiki/ANSI_art) with the same code page 437 blocks. Unicode took the box and block characters in at version 1.0 in 1991, and in 2020 added [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing) so teletext and PETSCII graphics can be written as text. [tqdm](https://github.com/tqdm/tqdm) progress bars and [spark](https://github.com/holman/spark) sparklines still use them."
+      "text": "The Commodore PET (1977) had half blocks, quarter blocks and a checkerboard in [PETSCII](https://en.wikipedia.org/wiki/PETSCII). BBS artists in the 80s and 90s shaded [ANSI art](https://en.wikipedia.org/wiki/ANSI_art) with the same code page 437 blocks. Unicode took the box and block characters in at version 1.0 in 1991, and in 2020 added [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing) so teletext and PETSCII graphics can be written as text."
     },
     {
       "type": "heading",
-      "text": "The kit",
+      "text": "Text-mode software",
       "level": 2
     },
     {
       "type": "paragraph",
-      "text": "The diagrams above kept recurring, so I turned them into [Glyph kit](/labs/glyph-kit/): research, metrics, flows, planning, wireframes, design-system docs, handoff and motion as plain text from one small spec. The same spec becomes an HTML prototype, a deck, or code built with a real design system. It's a skill for Claude Code and Codex."
+      "text": "In text mode a PC screen is a grid of 80 by 25 cells. Each cell holds one character from the code page, plus a foreground and a background colour, and that's all a program has to draw with. So whole interfaces were built from the character set:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "Windows, panels and dialogs framed in the single and double box-drawing lines.",
+        "Desktops filled with `░` or `▒`, so windows read as sitting on top.",
+        "Scroll bar tracks in `▒`, with a `■` for the thumb.",
+        "Shadows under buttons from the half blocks `▄` and `▀`.",
+        "Progress bars and meters filling cell by cell with `█`."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Borland's [Turbo Vision](https://en.wikipedia.org/wiki/Turbo_Vision) (1990), the framework behind the Turbo Pascal and Turbo C++ IDEs, did all of it: the desktop is `░`, scroll bar tracks are `▒` with a `■` thumb, and button shadows are half blocks. Every DOS screen at the top of this note is text, not a picture."
+    },
+    {
+      "type": "paragraph",
+      "text": "Terminal apps still draw this way, and [tqdm](https://github.com/tqdm/tqdm) progress bars and [spark](https://github.com/holman/spark) sparklines still use the blocks. It's the same reason I use them now: a picture made of characters is text, so a model can read it, write it and diff it."
+    },
+    {
+      "type": "promo",
+      "glyphs": "░▒▓█",
+      "eyebrow": "Free skill",
+      "title": "Glyph kit",
+      "text": "The diagrams above kept recurring, so I turned them into a skill for Claude Code and Codex: research, metrics, flows, planning, wireframes, design-system docs, handoff and motion, drawn as plain text.",
+      "href": "https://glyph-kit.traykov.cc/",
+      "action": "Open Glyph kit"
     }
   ]
 }

@@ -1,80 +1,5 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pace diagrams</title>
-<style>
-  @font-face {
-    font-family: "Geist Mono";
-    src: url("/notes/four-characters/geist-mono-latin-400-normal.woff2") format("woff2");
-  }
-  @font-face {
-    font-family: "Departure Mono";
-    src: url("/fonts/DepartureMono-Regular.woff2") format("woff2");
-  }
-  :root {
-    --ink: #080808;
-    --paper: #fbfbf8;
-    --muted: #9a9a92;
-    --ok: #04764e;
-    --fail: #b8421f;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    padding: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Geist Mono", ui-monospace, monospace;
-  }
-  main { max-width: 1080px; margin: 0 auto; display: grid; gap: 28px; }
-  h1 { font: 400 22px/1.1 "Departure Mono", monospace; margin: 0 0 4px; }
-  section { border: 1px solid var(--ink); }
-  header {
-    display: flex; justify-content: space-between; gap: 16px;
-    padding: 10px 14px; border-bottom: 1px solid var(--ink);
-    font: 400 11px/1.4 "Departure Mono", monospace; text-transform: uppercase;
-  }
-  header span:last-child { color: var(--muted); text-transform: none; font-family: "Geist Mono", monospace; font-size: 12px; }
-  .stage { display: grid; place-items: center; padding: 36px 14px; overflow: hidden; }
-  pre {
-    margin: 0;
-    font: 400 clamp(8px, 1.3vw, 12px)/1.15 "Geist Mono", monospace;
-    font-variant-ligatures: none;
-    letter-spacing: 0;
-    white-space: pre;
-  }
-  .ok { color: var(--ok); }
-  .fail { color: var(--fail); }
-  .mute { color: var(--muted); }
-</style>
-</head>
-<body>
-<main>
-  <section>
-    <header><span>1 / Gates</span><span>Trust, built from expertise, opens the checkpoints</span></header>
-    <div class="stage"><pre id="gates"></pre></div>
-  </section>
-  <section>
-    <header><span>2 / Two lanes, same clock</span><span>One careful attempt against many quick ones</span></header>
-    <div class="stage"><pre id="lanes"></pre></div>
-  </section>
-  <section>
-    <header><span>3 / Out of line, but moving</span><span>More pace, more slip between teams, more shipped</span></header>
-    <div class="stage"><pre id="drift"></pre></div>
-  </section>
-  <section>
-    <header><span>4 / Small losses, not one big one</span><span>Many dips that climb, against one cliff</span></header>
-    <div class="stage"><pre id="losses"></pre></div>
-  </section>
-  <section>
-    <header><span>5 / The org chart flattens</span><span>From sign-off up a tree to everyone around the work</span></header>
-    <div class="stage"><pre id="flatten"></pre></div>
-  </section>
-</main>
-
-<script>
+// The five other drawings of The price of pace argument, first made as a separate page for the
+// Four characters note. Each one is a function of (step, fraction of a step) that returns a Grid.
 /* Motion ---------------------------------------------------------------------------------------
    Two layers. The structure (boxes, lines, labels, meters) sits on the character grid and
    changes in steps. Everything that travels (packets, cursors, moving nodes) glides on a layer
@@ -85,7 +10,7 @@
    - scramble: changed text resolves left to right through " .:+*#%@"
    - draw-in / dissolve: lines appear cell by cell and break up ▓ → ▒ → ░ → ·
 ------------------------------------------------------------------------------------------------ */
-const STEP_MS = 120;
+export const STEP_MS = 120;
 const TRAIL = ["▓", "▒", "░"];
 const FADE = ["▓", "▒", "░", "·"];
 const RAMP = " .:+*#%@";
@@ -535,7 +460,8 @@ const drift = (() => {
 
 /* 4. Small losses --------------------------------------------------------------------------- */
 const losses = (() => {
-  const W = 86;
+  // Wide enough for the WAITING ROOM label at the end of its line.
+  const W = 88;
   const H = 13;
   const X0 = 9;
   const N = 64;
@@ -710,55 +636,5 @@ const flatten = (() => {
   };
 })();
 
-/* Render loop: structure in steps, gliders every frame ---------------------------------------- */
-const panels = [
-  ["gates", gates], ["lanes", lanes], ["drift", drift], ["losses", losses], ["flatten", flatten]
-].map(([id, fn]) => {
-  const pre = document.getElementById(id);
-  return { pre, over: pre.nextElementSibling, fn, lastBase: "" };
-});
 
-let cw = 7;
-let lh = 14;
-const measure = () => {
-  const probe = document.createElement("span");
-  probe.textContent = "0".repeat(20);
-  panels[0].pre.append(probe);
-  const rect = probe.getBoundingClientRect();
-  cw = rect.width / 20;
-  lh = parseFloat(getComputedStyle(panels[0].pre).lineHeight) || rect.height;
-  probe.remove();
-};
-
-const render = (stepFloat) => {
-  const step = Math.floor(stepFloat);
-  const frac = stepFloat - step;
-  panels.forEach((panel) => {
-    const g = panel.fn(step, frac);
-    const base = g.html();
-    if (base !== panel.lastBase) { panel.pre.innerHTML = base; panel.lastBase = base; }
-  });
-};
-
-// Start straight away; measure again once the fonts are in.
-measure();
-document.fonts?.ready?.then(measure);
-window.addEventListener("resize", measure);
-const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const t0 = performance.now();
-if (reduce) {
-  render(200);
-} else {
-  const frame = (now) => {
-    render((now - t0) / STEP_MS);
-    requestAnimationFrame(frame);
-  };
-  requestAnimationFrame(frame);
-}
-</script>
-<script>
-  const reportHeight = () => parent.postMessage({ noteEmbedHeight: document.documentElement.scrollHeight }, location.origin);
-  new ResizeObserver(reportHeight).observe(document.body);
-</script>
-</body>
-</html>
+export const PACE_DIAGRAMS = { gates, lanes, drift, losses, flatten };

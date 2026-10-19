@@ -1,0 +1,89 @@
+---
+// The five other drawings of The price of pace argument, each framed like the ledger.
+// They render as gallery items, so the note places them in a gallery next to the ledger.
+const diagrams = [
+  { id: "gates", title: "Gates", text: "Trust, built from expertise, opens the checkpoints." },
+  { id: "lanes", title: "Two lanes, same clock", text: "One careful attempt against many quick ones." },
+  { id: "drift", title: "Out of line, but moving", text: "More pace, more slip between teams, more shipped." },
+  { id: "losses", title: "Small losses, not one big one", text: "Many dips that climb, against one cliff." },
+  { id: "flatten", title: "The org chart flattens", text: "From sign-off up a tree to everyone around the work." }
+];
+---
+
+{diagrams.map((diagram) => (
+  <figure class="note-gallery__item" data-pace-diagram={diagram.id}>
+    <div class="pace-ledger pace-diagram">
+      <pre class="pace-ledger__grid" aria-hidden="true" data-pace-diagram-grid></pre>
+    </div>
+    <figcaption>{diagram.title}. {diagram.text}</figcaption>
+  </figure>
+))}
+
+<script>
+  import { PACE_DIAGRAMS, STEP_MS } from "../scripts/pace-diagrams.js";
+  import { createMotionEligibility, isMotionActive } from "../scripts/motion/lifecycle.js";
+
+  type Draw = (step: number, frac: number) => { cols: number; html: () => string };
+
+  // At rest every drawing shows the step where its argument reads best.
+  const REST_STEP = 200;
+  const MAX_FONT = 13;
+  const MIN_FONT = 6;
+
+  const initialize = (root: Element) => {
+    if (!(root instanceof HTMLElement) || root.dataset.ready === "true") return;
+    const pre = root.querySelector<HTMLElement>("[data-pace-diagram-grid]");
+    const frame = pre?.parentElement;
+    const draw = (PACE_DIAGRAMS as Record<string, Draw>)[root.dataset.paceDiagram ?? ""];
+    if (!pre || !frame || !draw) return;
+    root.dataset.ready = "true";
+
+    let last = "";
+    const render = (stepFloat: number) => {
+      const step = Math.floor(stepFloat);
+      const html = draw(step, stepFloat - step).html();
+      if (html !== last) {
+        pre.innerHTML = html;
+        last = html;
+      }
+    };
+
+    // Scale the characters so the whole drawing fits its frame; below the smallest size it scrolls.
+    const cols = draw(REST_STEP, 0).cols;
+    const fit = () => {
+      const style = getComputedStyle(frame);
+      const room = frame.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      pre.style.fontSize = "10px";
+      const probe = document.createElement("span");
+      probe.textContent = "0".repeat(20);
+      pre.append(probe);
+      const advance = probe.getBoundingClientRect().width / 20 / 10 || 0.6;
+      probe.remove();
+      const size = Math.min(MAX_FONT, Math.max(MIN_FONT, Math.floor((room / (cols * advance)) * 4) / 4));
+      pre.style.fontSize = `${size}px`;
+    };
+
+    render(REST_STEP);
+    fit();
+    document.fonts?.ready?.then(fit);
+    new ResizeObserver(fit).observe(frame);
+
+    let handle = 0;
+    let start = 0;
+    const frameLoop = (now: number) => {
+      render(REST_STEP + (now - start) / STEP_MS);
+      handle = requestAnimationFrame(frameLoop);
+    };
+    createMotionEligibility(root, (active) => {
+      cancelAnimationFrame(handle);
+      if (active && isMotionActive()) {
+        start = performance.now();
+        handle = requestAnimationFrame(frameLoop);
+      } else {
+        render(REST_STEP);
+      }
+    });
+  };
+
+  document.querySelectorAll("[data-pace-diagram]").forEach(initialize);
+</script>

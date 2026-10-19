@@ -55,10 +55,23 @@ type LocalNoteDraft = {
     // Character art kept as text: label is what assistive technology reads instead of the glyphs.
     | { type: "glyphs"; text: string; label: string; caption?: string; large?: boolean; pixels?: boolean }
     | { type: "image"; src: string; alt: string; caption?: string }
-    | { type: "video"; src: string; poster: string; label: string; caption?: string }
+    | NoteVideo
     | { type: "embed"; src: string; title: string; height: number; caption?: string }
+    // Figures side by side. "cover" crops every tile to one shape; "contain" keeps screenshots whole.
+    | { type: "gallery"; fit?: "cover" | "contain"; columns?: 2 | 3; label?: string; items: NoteGalleryItem[] }
+    // A small card for one of my own things, with one link out.
+    | { type: "promo"; glyphs: string; eyebrow: string; title: string; text: string; href: string; action: string }
   >;
 };
+
+// Autoplaying clips are muted, loop and play only while in view and motion is on; the poster stays otherwise.
+type NoteVideo = { type: "video"; src: string; poster: string; label: string; caption?: string; autoplay?: boolean };
+
+type NoteGalleryItem =
+  | { type: "image"; src: string; alt: string; caption?: string }
+  | NoteVideo
+  // Without a caption the component brings its own gallery items.
+  | { type: "visual"; name: string; caption?: string };
 
 const localDrafts: LocalNoteDraft[] = [
   ditherBlocksDraft as LocalNoteDraft,
@@ -149,6 +162,15 @@ function localCaption(caption?: string): string {
   return caption ? `<figcaption>${localInlineHtml(caption)}</figcaption>` : "";
 }
 
+function localVideo(video: NoteVideo): string {
+  const src = escapeHtml(video.src);
+  const poster = escapeHtml(video.poster);
+  const label = escapeHtml(video.label);
+  return video.autoplay
+    ? `<video src="${src}" poster="${poster}" muted loop playsinline preload="metadata" aria-label="${label}" data-case-video-autoplay></video>`
+    : `<video src="${src}" poster="${poster}" controls muted playsinline preload="none" aria-label="${label}"></video>`;
+}
+
 function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainText: string } {
   if (draft.blocks) {
     const contentHtml = draft.blocks
@@ -179,11 +201,35 @@ function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainT
         }
 
         if (block.type === "video") {
-          return `<figure><video src="${escapeHtml(block.src)}" poster="${escapeHtml(
-            block.poster
-          )}" controls muted playsinline preload="none" aria-label="${escapeHtml(block.label)}"></video>${localCaption(
-            block.caption
-          )}</figure>`;
+          return `<figure>${localVideo(block)}${localCaption(block.caption)}</figure>`;
+        }
+
+        if (block.type === "gallery") {
+          const items = block.items
+            .map((item) => {
+              if (item.type === "visual" && !item.caption) return `<!--note-visual:${item.name}-->`;
+              const media =
+                item.type === "image"
+                  ? `<img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.alt)}" loading="lazy" decoding="async" />`
+                  : item.type === "video"
+                    ? localVideo(item)
+                    : `<!--note-visual:${item.name}-->`;
+              return `<figure class="note-gallery__item">${media}${localCaption(item.caption)}</figure>`;
+            })
+            .join("");
+          return `<div class="note-gallery note-gallery--${block.fit ?? "cover"}${block.columns === 3 ? " note-gallery--three" : ""}"${
+            block.label ? ` role="group" aria-label="${escapeHtml(block.label)}"` : ""
+          }>${items}</div>`;
+        }
+
+        if (block.type === "promo") {
+          return `<aside class="note-promo" aria-label="${escapeHtml(block.title)}"><p class="note-promo__glyphs" aria-hidden="true">${escapeHtml(
+            block.glyphs
+          )}</p><div class="note-promo__copy"><p class="note-promo__eyebrow">${escapeHtml(block.eyebrow)}</p><p class="note-promo__title">${escapeHtml(
+            block.title
+          )}</p><p class="note-promo__text">${localInlineHtml(block.text)}</p></div><a class="note-promo__action" href="${escapeHtml(
+            block.href
+          )}" data-ascii-action="primary">${escapeHtml(block.action)} <span aria-hidden="true">↗</span></a></aside>`;
         }
 
         // A same-site page that reports its own height to the note (see the note page).
@@ -210,10 +256,12 @@ function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainT
     const plainText = localPlainText(
       draft.blocks
         .flatMap((block) => {
-          if ("items" in block) return block.items;
+          if (block.type === "list" || block.type === "questions") return block.items;
           if (block.type === "paragraph" || block.type === "quote" || block.type === "heading") return [block.text];
           if (block.type === "glyphs") return [block.label, block.caption ?? ""];
           if (block.type === "image" || block.type === "video" || block.type === "embed") return [block.caption ?? ""];
+          if (block.type === "gallery") return block.items.map((item) => item.caption ?? "");
+          if (block.type === "promo") return [block.title, block.text];
           return [];
         })
         .join(" ")

@@ -20,6 +20,14 @@
     {
       "source": "/private/:privatePath*",
       "destination": "/api/private-work?action=route&privatePath=:privatePath*"
+    },
+    {
+      "source": "/glyph-kit",
+      "destination": "https://glyph-kit-zeta.vercel.app/glyph-kit/"
+    },
+    {
+      "source": "/glyph-kit/:path*",
+      "destination": "https://glyph-kit-zeta.vercel.app/glyph-kit/:path*"
     }
   ],
   "redirects": [

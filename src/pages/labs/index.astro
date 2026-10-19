@@ -5,7 +5,7 @@ import SiteHead from "../../components/SiteHead.astro";
 import SiteNav from "../../components/SiteNav.astro";
 import "../../styles/global.css";
 
-// Round 3: four public tools, each shown by a real screen (scripts/capture-labs-screens.mjs).
+// Public tools, each shown by a real screen (scripts/capture-labs-screens.mjs).
 // Sketchbook, Rhizome Field and Product Systems Kit stay routable but are not listed.
 const labs = [
   {
@@ -41,6 +41,14 @@ const labs = [
     href: "/labs/presenting-in-code/",
     action: "Open the tutorial",
     tags: ["Camera", "Layers", "10 skills"]
+  },
+  {
+    id: "glyph-kit",
+    title: "Glyph kit",
+    description: "Research, flows, wireframes, motion and more as plain text, then as a prototype, a deck or code. A skill for Claude Code and Codex.",
+    href: "/labs/glyph-kit/",
+    action: "Open the kit",
+    tags: ["Text-mode design", "45 kinds", "Skill"]
   }
 ];
 ---
@@ -50,7 +58,7 @@ const labs = [
   <head>
     <SiteHead
       title="Labs — Alexander Traykov"
-      description="Public creative-coding tools: an ASCII turntable playground, an SVG to 3D ASCII studio, a banner maker and a tutorial on presenting in code."
+      description="Public creative-coding tools: an ASCII turntable playground, an SVG to 3D ASCII studio, a banner maker, a tutorial on presenting in code and a text diagram generator."
       path="/labs/"
     />
     <script src="/page-transitions.js" defer></script>

@@ -1,0 +1,82 @@
+<figure class="pace-gates" data-pace-gates>
+  <pre class="pace-gates__grid" aria-hidden="true" data-pace-gates-grid></pre>
+  <p class="visually-hidden">
+    The same team, working two ways. Gated: trust is low, so every piece of work queues behind nine
+    checkpoints, one at a time, and maybe ships at the end. Trusted: one quick check stays open, and
+    work ships, the team learns together, and goes again, many times over.
+  </p>
+</figure>
+
+<script>
+  import { createPaceGates, LAYOUTS, STEP_MS } from "../scripts/pace-gates.js";
+  import { isMotionActive, onMotionChange } from "../scripts/motion/lifecycle.js";
+
+  const initialize = (root: Element) => {
+    if (!(root instanceof HTMLElement) || root.dataset.ready === "true") return;
+    const pre = root.querySelector<HTMLElement>("[data-pace-gates-grid]");
+    if (!pre) return;
+    root.dataset.ready = "true";
+
+    const diagram = createPaceGates(pre);
+    let visible = false;
+    let frameHandle = 0;
+    let started = 0;
+    let offset = 0;
+
+    const charWidth = () => {
+      const probe = document.createElement("span");
+      probe.textContent = "0".repeat(10);
+      pre.append(probe);
+      const width = probe.getBoundingClientRect().width / 10;
+      probe.remove();
+      return width || 8;
+    };
+
+    const fit = () => {
+      const style = getComputedStyle(root);
+      const room = root.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const changed = diagram.setLayout(room / charWidth() >= LAYOUTS.wide.cols ? LAYOUTS.wide : LAYOUTS.narrow);
+      if (changed) {
+        offset = 0;
+        started = performance.now();
+        if (!isMotionActive()) diagram.still();
+      }
+    };
+
+    const frame = (now: number) => {
+      frameHandle = 0;
+      if (!visible || !isMotionActive()) return;
+      diagram.render(offset + (now - started) / STEP_MS);
+      frameHandle = requestAnimationFrame(frame);
+    };
+
+    const start = () => {
+      if (frameHandle || !visible || !isMotionActive()) return;
+      started = performance.now();
+      frameHandle = requestAnimationFrame(frame);
+    };
+
+    const stop = () => {
+      if (frameHandle) cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
+    };
+
+    fit();
+    diagram.still();
+    new ResizeObserver(fit).observe(root);
+    new IntersectionObserver(([entry]) => {
+      visible = Boolean(entry?.isIntersecting);
+      if (visible) start();
+      else stop();
+    }).observe(root);
+    onMotionChange((state) => {
+      if (state.active) start();
+      else {
+        stop();
+        diagram.still();
+      }
+    });
+  };
+
+  document.querySelectorAll("[data-pace-gates]").forEach(initialize);
+</script>

@@ -6,6 +6,9 @@
   "functions": {
     "api/private-work.js": {
       "includeFiles": ".private-work/**"
+    },
+    "api/glyph-kit-draw.js": {
+      "includeFiles": "skills/glyph-kit/{SKILL.md,reference/**,scripts/**}"
     }
   },
   "rewrites": [

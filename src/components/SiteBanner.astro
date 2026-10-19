@@ -1,0 +1,57 @@
+---
+// The ticker under the header: one announcement, repeated, scrolling while motion is on.
+type Props = {
+  id?: string;
+  // The words that read as the link, underlined, then the rest of the line.
+  name?: string;
+  text?: string;
+  href?: string;
+};
+
+const {
+  id = "glyph-kit-live",
+  name = "Glyph kit",
+  text = "is live and free to use",
+  href = "https://glyph-kit.traykov.cc/"
+}: Props = Astro.props;
+// Enough copies that one group is always wider than the widest screen.
+const copies = Array.from({ length: 6 });
+---
+
+<div class="site-banner" data-site-banner={id}>
+  <a class="site-banner__link" href={href} aria-label={`${name} ${text}`}>
+    <span class="site-banner__track" aria-hidden="true">
+      {[0, 1].map(() => (
+        <span class="site-banner__group">
+          {copies.map(() => (
+            <span class="site-banner__item">
+              <span><span class="site-banner__name">{name}</span> {text}</span>
+              <span class="site-banner__rule">░▒▓</span>
+            </span>
+          ))}
+        </span>
+      ))}
+    </span>
+  </a>
+  <button type="button" class="site-banner__close" data-site-banner-close>
+    Close
+  </button>
+</div>
+
+<script is:inline>
+  // Closing hides the banner until a new announcement replaces it. Runs before paint so it never flashes.
+  (() => {
+    const banner = document.querySelector("[data-site-banner]");
+    if (!banner) return;
+    const key = "site-banner-closed";
+    try {
+      if (window.localStorage.getItem(key) === banner.dataset.siteBanner) banner.hidden = true;
+    } catch {}
+    banner.querySelector("[data-site-banner-close]")?.addEventListener("click", () => {
+      banner.hidden = true;
+      try {
+        window.localStorage.setItem(key, banner.dataset.siteBanner);
+      } catch {}
+    });
+  })();
+</script>

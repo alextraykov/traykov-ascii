@@ -1,0 +1,244 @@
+{
+  "slug": "four-characters",
+  "title": "Four characters",
+  "summary": "Where ░▒▓█ have ended up in my work since January 2025, why text diagrams suit Markdown and MDX documents, what broke, and where the characters come from.",
+  "publishedAt": "2026-10-18T20:00:00+03:00",
+  "status": "published",
+  "tags": [
+    "Unicode",
+    "Dither",
+    "Documentation",
+    "Design engineering",
+    "AI"
+  ],
+  "blocks": [
+    {
+      "type": "glyphs",
+      "text": " ░ ▒ ▓ █",
+      "label": "The four block characters: light shade, medium shade, dark shade and full block.",
+      "large": true,
+      "caption": "Light, medium, heavy, full. Plus the empty cell."
+    },
+    {
+      "type": "paragraph",
+      "text": "In January 2025 I started working on the visual language of Synapse and ended up with these four characters. They've been in almost everything I've made since: the product, slides at work, audits, sketches, a personal project about saints."
+    },
+    {
+      "type": "paragraph",
+      "text": "This note collects where they've been used, what they're good for in documents, what they cost, and where they come from. The characters are old. I'm late."
+    },
+    {
+      "type": "heading",
+      "text": "In the product",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "Synapse is black, one phosphor accent and `░▒▓` as the only fills. The loaders are where the blocks do the most work. Each kind of operation steps through the same ramp differently: expand reveals from the centre, synthesize resolves noise into heavier blocks, summarize steps back toward empty, compare alternates density between two halves."
+    },
+    {
+      "type": "video",
+      "src": "/notes/four-characters/synapse-operation-loaders.mp4",
+      "poster": "/notes/four-characters/synapse-operation-loaders.webp",
+      "label": "Screen recording of the Synapse component preview showing the expand, synthesize, summarize and compare loaders made of shade blocks.",
+      "caption": "Synapse operation loaders: expand, synthesize, summarize, compare."
+    },
+    {
+      "type": "heading",
+      "text": "In decks, audits and handoffs",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "A budget case for my AI usage, written as a terminal session. Measured months are `█`, the rest of the current month is `░` at the current pace. The whole deck is one 15 KB HTML file."
+    },
+    {
+      "type": "glyphs",
+      "text": "Jul ███████                               1.0×\nAug █████████████████                     2.3×\nSep ██████████████████████████████        4.1×\nOct ██████████████████░░░░░░░░░░░░░░░░░░  on pace for ~5×\n░ = projected at the current pace",
+      "label": "Monthly usage as an index of July: 1.0, 2.3 and 4.1 times, and October on pace for about 5 times, part measured and part projected.",
+      "caption": "Usage as an index of July. The real figures stay private."
+    },
+    {
+      "type": "paragraph",
+      "text": "A motion audit of Pave's front end: about 750 transitions and animations in about 350 stylesheets, 47 proposed fixes. Each finding got a duration ruler (20 cells, 25 ms each) and an eight-character speed glyph. The speed glyph shows that the browser's default `ease` speeds up before it slows down."
+    },
+    {
+      "type": "glyphs",
+      "text": "today    ▕████████············▏ 200ms  ease         ▅█▇▅▄▃▂▁\nproposed ▕██████··············▏ 150ms  reveal-ease  █▆▅▄▃▂▁▁\n         0·········250········500ms",
+      "label": "Today: 200 milliseconds with ease. Proposed: 150 milliseconds with the reveal easing."
+    },
+    {
+      "type": "paragraph",
+      "text": "The glyph code had two bugs that made it into the published audit. 25 of the 47 findings showed `--demo-speed` instead of the easing name, because the parser took the first CSS variable it found. And a value of 57 out of 100 drew one cell short, because a rounding remainder of 8/8 had no glyph and disappeared. I'd tested the bars and not the labels or the edges."
+    },
+    {
+      "type": "paragraph",
+      "text": "A handoff to our marketing team, who had built a hero animation from the product's grid. Theirs moved all the time; the product's mostly holds still. I recorded both for 60 seconds, logged every line position per frame, and sent this:"
+    },
+    {
+      "type": "glyphs",
+      "text": "MEASURE                CURRENT HERO      PRODUCT\nvertical lines moving  ██████████ 100%   ██░░░░░░░░ 23%, in 17 pushes\nrow lines moving       ░░░░░░░░░░ 0%     █░░░░░░░░░ 11%\na drawing's build      ███░░░░░░░ 2.7 s  ████████░░ 7.7 s\na drawing's exit       █░░░░░░░░░ 0.8 s  █████░░░░░ 4.6 s",
+      "label": "The hero cut moves its vertical lines 100 percent of the time; the product 23 percent, in 17 pushes. Rows: 0 against 11 percent. Builds take 2.7 against 7.7 seconds, exits 0.8 against 4.6."
+    },
+    {
+      "type": "paragraph",
+      "text": "The `░` keeps the empty part of the scale visible, so 0% reads as an empty bar and not a missing row."
+    },
+    {
+      "type": "paragraph",
+      "text": "And diagrams for arguments rather than numbers. This ledger from [The price of pace](/notes/the-price-of-pace/) is also in my slides at work: expertise earns trust, trust powers pace, time keeps it going, pace delivers craft."
+    },
+    {
+      "type": "visual",
+      "name": "pace-ledger"
+    },
+    {
+      "type": "paragraph",
+      "text": "Five other versions of the same argument, drawn and animated in characters before I settled on the ledger:"
+    },
+    {
+      "type": "embed",
+      "src": "/notes/four-characters/pace-diagrams.html",
+      "title": "Five animated character diagrams for The price of pace: gates, two lanes, drift, small losses and a flattening org chart.",
+      "height": 1700,
+      "caption": "Gates, two lanes on one clock, drift, small losses, a flattening org chart."
+    },
+    {
+      "type": "heading",
+      "text": "In sketches",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "In the creative coding studies the blocks are the image. Up close you read the marks; from a distance, the shape."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/rings-study.webp",
+      "alt": "Concentric rings rendered in black and off-white dither cells, dense near the centre and breaking apart toward the edges.",
+      "caption": "Rings. Two colours on a fixed grid, 1520 × 1360 pixels, 6 KB as a lossless file."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/phosphor-profile.webp",
+      "alt": "A face in profile built from vertical stripes of green dither patterns on black, with a block of checkerboard cells over the face.",
+      "caption": "A profile in striped dither patterns, 25 KB."
+    },
+    {
+      "type": "paragraph",
+      "text": "The wave is blank space and `░▒▓` only, without `█`. Six trochoidal waves give height, reflection and foam, and each cell is quantised to one of the four states. The shader measures how much of its cell each glyph actually covers at the current size and dithers only between neighbouring states, so a gradient never skips from `░` to `▓`."
+    },
+    {
+      "type": "visual",
+      "name": "blocktype-wave"
+    },
+    {
+      "type": "paragraph",
+      "text": "Our Saints is a personal editorial project about Bulgarian Orthodox saints. Each icon sits under a layer of gold blocks, and moving across it uncovers the image beneath."
+    },
+    {
+      "type": "video",
+      "src": "/notes/four-characters/our-saints.mp4",
+      "poster": "/notes/four-characters/our-saints.webp",
+      "label": "Screen recording of the Our Saints home page: the title resolves out of block glyphs, then a cross drawn in gold blocks responds to the pointer.",
+      "caption": "The Our Saints home page, still a draft."
+    },
+    {
+      "type": "heading",
+      "text": "Why text",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "Most of my documents are now Markdown or MDX, reviewed as diffs and read by coding agents as well as people. A text diagram survives all of that: it shows up in a diff as a shorter bar, pastes into a ticket or a PR comment, is generated from data at build time, and a model reads the number next to the bar exactly instead of estimating it from a picture."
+    },
+    {
+      "type": "heading",
+      "text": "What broke while publishing this",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "The first version of this page had every chart out of alignment. The site's code font is Geist Mono, loaded as a Latin subset that has no block or box characters, so the browser borrowed them from another font. Measured against the width of a `0`, `█` came out at 1.8 cells, `░` at 1.56 and `·` at 0.5. The charts here now use Departure Mono, which draws every one of them at exactly one cell."
+    },
+    {
+      "type": "heading",
+      "text": "Where they come from",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "IBM's PC character set, [code page 437](https://en.wikipedia.org/wiki/Code_page_437), put `░▒▓` at bytes 0xB0–0xB2 and `█` at 0xDB in 1981, next to single and double box-drawing lines. In the 8 × 16 VGA font the shades are ordered dither patterns: 2 of every 8 pixels, a checkerboard, 6 of every 8."
+    },
+    {
+      "type": "glyphs",
+      "text": "░ 25%        ▒ 50%        ▓ 75%\n···█···█     ·█·█·█·█     ██·███·█\n·█···█··     █·█·█·█·     ·███·███\n···█···█     ·█·█·█·█     ██·███·█\n·█···█··     █·█·█·█·     ·███·███",
+      "label": "The pixel patterns of the three shade characters in the VGA font: 2 of 8 pixels lit, a checkerboard, 6 of 8 lit.",
+      "pixels": true,
+      "caption": "From the VGA font in the Linux kernel source, one character per pixel."
+    },
+    {
+      "type": "paragraph",
+      "text": "Text-mode software built whole interfaces from them. In Borland's [Turbo Vision](https://en.wikipedia.org/wiki/Turbo_Vision) (1990), the framework behind the Turbo Pascal and Turbo C++ IDEs, the desktop is `░`, scroll bar tracks are `▒` with a `■` thumb, and button shadows are half blocks."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/turbo-pascal-6.png",
+      "alt": "Turbo Pascal 6 with the File menu open over a blue editor. The menu casts a black shadow and the bottom scroll bar is a medium-shade track.",
+      "caption": "Turbo Pascal 6. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Turbopascal_6.png)."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/turbo-cpp.jpg",
+      "alt": "Turbo C++ with an empty editor in a double-line frame, medium-shade scroll bars and a function-key bar.",
+      "caption": "Turbo C++. SAMNAD.S, [CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Turbo_CPP_Compiler.jpg)."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/freedos-edit.png",
+      "alt": "FreeDOS Edit's Open File dialog: a grey panel with a drop shadow, a file list with a medium-shade scroll track and shadowed buttons.",
+      "caption": "FreeDOS Edit, a free work-alike of the MS-DOS Editor. [GPL](https://commons.wikimedia.org/wiki/File:Fdedit.png)."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/dbase-iii-plus-assist.png",
+      "alt": "dBASE III Plus ASSIST: a menu bar, a Create menu in a double-line box and a drive list from A to Q in another.",
+      "caption": "dBASE III Plus. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Screenshot_of_ASSIST_in_DBase_III_Plus.png)."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/ms-dos-setup-dialog.gif",
+      "alt": "A MS-DOS setup message in a framed cyan box: Remove disks from all floppy disk drives, and then press ENTER.",
+      "caption": "MS-DOS setup. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:MS-DOS_install_-_all_disks.gif)."
+    },
+    {
+      "type": "paragraph",
+      "text": "Before the PC, teletext did pictures the same way. BBC Ceefax started in 1974, and every cell on screen held either a character or a 2 × 3 block mosaic."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/teletext-parrot.png",
+      "alt": "A red macaw converted to level 1 teletext, every cell a 2 by 3 mosaic in one of eight colours.",
+      "caption": "A photo converted to teletext mosaics. ZXGuesser and Adrian Pingstone, [CC0](https://commons.wikimedia.org/wiki/File:Level_1_teletext_test.png)."
+    },
+    {
+      "type": "image",
+      "src": "/notes/four-characters/history/ceefax-football-index.jpg",
+      "alt": "A BBC Ceefax football index page from October 2009, with BBC and FOOTBALL drawn in block mosaics above a list of headlines.",
+      "caption": "Ceefax, October 2009. Public domain, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ceefax_football_index.jpg)."
+    },
+    {
+      "type": "paragraph",
+      "text": "The Commodore PET (1977) had half blocks, quarter blocks and a checkerboard in [PETSCII](https://en.wikipedia.org/wiki/PETSCII). BBS artists in the 80s and 90s shaded [ANSI art](https://en.wikipedia.org/wiki/ANSI_art) with the same code page 437 blocks. Unicode took the box and block characters in at version 1.0 in 1991, and in 2020 added [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing) so teletext and PETSCII graphics can be written as text. [tqdm](https://github.com/tqdm/tqdm) progress bars and [spark](https://github.com/holman/spark) sparklines still use them."
+    },
+    {
+      "type": "heading",
+      "text": "The kit",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "text": "The diagrams above kept recurring, so I turned them into [Glyph kit](/labs/glyph-kit/): research, metrics, flows, planning, wireframes, design-system docs, handoff and motion as plain text from one small spec. The same spec becomes an HTML prototype, a deck, or code built with a real design system. It's a skill for Claude Code and Codex."
+    }
+  ]
+}

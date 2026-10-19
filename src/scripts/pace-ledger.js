@@ -75,31 +75,36 @@ class Grid {
   }
 }
 
-// Wide: one row of nodes, time feeding pace from below.
+// Every label sits centred over its line, one row above it. The two headings get a clear row
+// before the nodes so they read as columns, not as more labels.
+const label = (grid, row, from, to, text) =>
+  grid.text(row, Math.round((from + to + 1 - text.length) / 2), text);
+
+// Wide: one row of nodes joined by equal 12-cell lines, time feeding pace from below.
 const WIDE = {
   name: "wide",
   rows: 10,
-  cols: 78,
+  cols: 84,
   draw(grid) {
     grid.text(0, 0, "WE PAY");
-    grid.text(0, 60, "WE GET");
+    grid.text(0, 66, "WE GET");
     grid.box(2, 0, "EXPERTISE", 13);
-    grid.box(2, 23, "TRUST", 9);
-    grid.box(2, 42, "PACE", 9);
-    grid.box(2, 60, "CRAFT, QUICKLY", 18);
+    grid.box(2, 25, "TRUST", 9);
+    grid.box(2, 46, "PACE", 8);
+    grid.box(2, 66, "CRAFT, QUICKLY", 18);
     grid.box(7, 0, "TIME", 13);
-    grid.text(1, 15, "earns");
-    grid.text(1, 34, "powers");
-    grid.text(1, 52, "delivers");
-    grid.text(9, 25, "we spend");
+    label(grid, 2, 13, 24, "earns");
+    label(grid, 2, 34, 45, "powers");
+    label(grid, 2, 54, 65, "delivers");
+    label(grid, 7, 13, 48, "we spend");
     return {
       paths: [
-        grid.line([[3, 13], [3, 22]], 0),
-        grid.line([[3, 32], [3, 41]], 2),
-        grid.line([[3, 51], [3, 59]], 4),
-        grid.line([[8, 13], [8, 46], [5, 46]], 1)
+        grid.line([[3, 13], [3, 24]], 0),
+        grid.line([[3, 34], [3, 45]], 2),
+        grid.line([[3, 54], [3, 65]], 4),
+        grid.line([[8, 13], [8, 49], [5, 49]], 1)
       ],
-      meter: { row: 5, col: 60, width: 18 }
+      meter: { row: 5, col: 66, width: 18 }
     };
   }
 };
@@ -107,28 +112,28 @@ const WIDE = {
 // Narrow: the chain stacks on one centre line; time comes in from the side.
 const NARROW = {
   name: "narrow",
-  rows: 23,
+  rows: 24,
   cols: 34,
   draw(grid) {
     grid.text(0, 3, "WE PAY");
-    grid.box(1, 3, "EXPERTISE", 13);
-    grid.box(1, 21, "TIME", 13);
-    grid.box(7, 5, "TRUST", 9);
-    grid.box(13, 5, "PACE", 9);
-    grid.box(19, 0, "CRAFT, QUICKLY", 19);
-    grid.text(5, 11, "earns");
-    grid.text(11, 11, "powers");
-    grid.text(17, 11, "delivers");
-    grid.text(8, 18, "we spend");
-    grid.text(20, 21, "WE GET");
+    grid.box(2, 3, "EXPERTISE", 13);
+    grid.box(2, 21, "TIME", 13);
+    grid.box(8, 5, "TRUST", 9);
+    grid.box(14, 5, "PACE", 9);
+    grid.box(20, 0, "CRAFT, QUICKLY", 19);
+    grid.text(6, 11, "earns");
+    grid.text(12, 11, "powers");
+    grid.text(18, 11, "delivers");
+    grid.text(9, 18, "we spend");
+    grid.text(21, 21, "WE GET");
     return {
       paths: [
-        grid.line([[4, 9], [6, 9]], 0),
-        grid.line([[10, 9], [12, 9]], 2),
-        grid.line([[16, 9], [18, 9]], 4),
-        grid.line([[4, 27], [14, 27], [14, 14]], 1)
+        grid.line([[5, 9], [7, 9]], 0),
+        grid.line([[11, 9], [13, 9]], 2),
+        grid.line([[17, 9], [19, 9]], 4),
+        grid.line([[5, 27], [15, 27], [15, 14]], 1)
       ],
-      meter: { row: 22, col: 0, width: 19 }
+      meter: { row: 23, col: 0, width: 19 }
     };
   }
 };

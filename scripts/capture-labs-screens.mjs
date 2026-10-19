@@ -75,7 +75,8 @@ const SHOTS = [
       await page.locator('[data-pc-stage="3"]').click({ timeout: 5000 }).catch(() => {});
       await page.waitForTimeout(1800);
     }
-  }
+  },
+  { id: "glyph-kit", route: "/labs/glyph-kit/" }
 ];
 
 async function encode(page, png) {

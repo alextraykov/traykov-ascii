@@ -605,91 +605,91 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Latest note banner: a ticker under the header. It steps a few pixels at a time, like type
-   advancing, and only moves while motion is on. */
-.latest-note-banner {
+/* Site banner: an announcement ticker under the header. It steps a few pixels at a time, like
+   type advancing, and only moves while motion is on. */
+.site-banner {
   display: flex;
   align-items: stretch;
   border-bottom: var(--hairline) solid var(--ink);
   background: var(--paper);
   color: var(--ink);
-  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
+  font: 400 var(--type-px-22) / 1.25 var(--font-pixel);
   text-transform: uppercase;
 }
 
-.latest-note-banner[hidden] {
+.site-banner[hidden] {
   display: none;
 }
 
-.latest-note-banner__link {
+.site-banner__link {
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  padding-block: var(--space-1);
+  padding-block: var(--space-3);
   color: inherit;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.latest-note-banner__close {
+.site-banner__close {
   flex: none;
   border: 0;
   border-left: var(--hairline) solid var(--ink);
   padding: 0 var(--space-3);
   background: var(--paper);
   color: var(--muted);
-  font: inherit;
+  font: 400 var(--type-px-11) / 1.4 var(--font-pixel);
   text-transform: inherit;
   cursor: pointer;
 }
 
-.latest-note-banner__close:hover {
+.site-banner__close:hover {
   color: var(--ink);
   box-shadow: inset 0 -2px 0 var(--ink);
 }
 
-.latest-note-banner__close:focus-visible {
+.site-banner__close:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: -2px;
 }
 
-.latest-note-banner__track {
+.site-banner__track {
   display: flex;
   width: max-content;
 }
 
-.latest-note-banner__group,
-.latest-note-banner__item {
+.site-banner__group,
+.site-banner__item {
   display: flex;
-  gap: var(--space-2);
-  padding-right: var(--space-2);
+  gap: var(--space-3);
+  padding-right: var(--space-3);
 }
 
-.latest-note-banner__title {
+.site-banner__name {
   text-decoration: underline;
-  text-decoration-thickness: var(--hairline);
-  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
-.latest-note-banner__rule {
-  padding-inline: var(--space-2);
+.site-banner__rule {
+  padding-inline: var(--space-3);
   color: var(--muted);
 }
 
-html[data-motion-state="active"] .latest-note-banner__track {
-  animation: latest-note-ticker var(--marquee-duration) steps(900) infinite;
+html[data-motion-state="active"] .site-banner__track {
+  animation: site-banner-ticker var(--marquee-duration) steps(900) infinite;
 }
 
-.latest-note-banner__link:is(:hover, :focus-visible) .latest-note-banner__track {
+.site-banner__link:is(:hover, :focus-visible) .site-banner__track {
   animation-play-state: paused;
 }
 
-.latest-note-banner__link:focus-visible {
+.site-banner__link:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: -2px;
 }
 
-@keyframes latest-note-ticker {
+@keyframes site-banner-ticker {
   to {
     transform: translateX(-50%);
   }
@@ -7512,6 +7512,183 @@ main:not(.about-page) > .about-hero .about-turntable {
 .pc-reference > div { display: grid; gap: var(--space-3); }
 .pc-reference h2 { font-size: clamp(1.5rem, 2.5vw, 2.1rem); }
 .pc-reference p:not(.pc-label) { max-width: 50ch; color: var(--text-soft); font-size: .9rem; line-height: 1.6; }
+/* Glyph kit (Labs): the Presentations in Code structure. Character grids use Departure Mono, which
+   draws every block and box character at exactly one cell (the Geist Mono subset has none). */
+.gk-glyphs {
+  margin: 0;
+  padding: var(--space-5);
+  overflow-x: auto;
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.25 var(--font-pixel); /* vertical lines join; air comes from padding and blank rows */
+  font-variant-ligatures: none;
+  letter-spacing: 0;
+  white-space: pre;
+}
+.gk-glyphs .gk-e, .gk-sl .gk-e { opacity: .45; }
+.gk-glyphs .gk-f { color: var(--text-caption); }
+.gk-glyphs .gk-x { color: var(--signal-fail); }
+.gk-glyphs .gk-ok { color: var(--signal-ok); }
+.gk-frame { display: block; width: 100%; min-height: calc(var(--space-6) * 10); border: 0; background: var(--paper); }
+
+/* Moving diagrams: the still frame is in the page; the shared clock moves it. */
+.gk-live { display: grid; grid-template-rows: auto 1fr auto; margin: 0; }
+.gk-live__grid {
+  display: block;
+  margin: 0;
+  padding: var(--space-6) var(--space-5);
+  overflow-x: auto;
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 var(--type-px-11) / 1.25 var(--font-pixel);
+  font-variant-ligatures: none;
+  letter-spacing: 0;
+  white-space: pre;
+}
+.gk-live__grid .gl-ok { color: var(--signal-ok); }
+.gk-live__grid .gl-fail { color: var(--signal-fail); }
+.gk-live__grid .gl-mute { color: var(--text-caption); }
+.gk-gallery { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.gk-gallery__note { max-width: var(--presentation-lesson-copy-measure); }
+
+/* The ask next to the figure it made: what someone typed on the left, the drawing on the right. */
+.gk-pair__panes { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+.gk-pair__ask { display: grid; align-content: start; gap: var(--space-3); padding: var(--space-5); background: var(--panel); border-right: var(--hairline) solid var(--line); }
+.gk-pair__ask > p:not(.pc-label) { margin: 0; max-width: 44ch; color: var(--ink); font: 400 1rem/1.6 var(--sans); }
+.gk-pair__spec pre, .gk-try__out pre[data-gk-try-spec] { max-height: calc(var(--space-6) * 7); margin: 0; padding: var(--space-3) 0; overflow: auto; color: var(--text-soft); font: 400 .78rem/1.6 var(--mono); white-space: pre-wrap; }
+.gk-area__ask { margin: 0; color: var(--text-soft); font: 400 .9rem/1.55 var(--sans); }
+.gk-area__ask .pc-label { display: block; margin-bottom: var(--space-1); }
+
+/* 03 Try it: an ask in, a figure out. The field follows the site's text field (3.8): a hairline, an
+   ink line on focus, two red flashes when the ask can't be drawn. */
+.gk-try__form { display: grid; gap: var(--space-4); max-width: var(--presentation-lesson-copy-measure); }
+.gk-try__presets { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.gk-try__field { display: grid; gap: var(--space-2); }
+.gk-try__field > span { color: var(--muted); font: 500 13px / 1.3 var(--sans); }
+:root .gk-try__field textarea {
+  min-height: 96px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: var(--hairline) solid var(--line);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-origin: border-box;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  color: var(--ink);
+  font: 400 17px / 1.4 var(--sans);
+  resize: vertical;
+  transition: background-size 160ms steps(4, end);
+}
+:root .gk-try__field textarea:focus { background-size: 100% 2px; }
+:root .gk-try__field textarea:focus-visible { outline: var(--focus-ring-width) solid var(--ink); outline-offset: 2px; }
+:root .gk-try__field textarea[data-invalid] {
+  background-image: linear-gradient(var(--signal-fail), var(--signal-fail));
+  background-size: 100% 2px;
+  animation: field-flash-a 480ms steps(1, end) both;
+}
+.gk-try__status { color: var(--text-soft); font: 400 .9rem/1.5 var(--sans); }
+.gk-try__status[data-state="error"] { color: var(--signal-fail); }
+.gk-try__out { margin: 0; }
+.gk-try__out[hidden] { display: none; }
+.gk-try__out .gk-e { opacity: .45; }
+.gk-try__out .gk-f { color: var(--text-caption); }
+.gk-try__out .gk-x { color: var(--signal-fail); }
+.gk-try__out .gk-ok { color: var(--signal-ok); }
+.gk-gallery__note { display: grid; align-content: center; justify-items: start; gap: var(--space-4); padding: var(--space-5); }
+.gk-gallery__note h3 { margin: 0; font: 400 var(--type-px-33)/1.1 var(--font-pixel); }
+.gk-gallery__note > p:not(.pc-label) { margin: 0; max-width: 44ch; color: var(--text-soft); font-size: 1rem; line-height: 1.6; }
+.gk-argument { display: grid; gap: var(--space-5); }
+
+/* 01 Cheap: four measured readings. */
+.gk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: var(--hairline) solid var(--ink); }
+.gk-stat { display: grid; align-content: start; gap: var(--space-3); padding: var(--space-5) var(--space-5) var(--space-5) 0; }
+.gk-stat + .gk-stat { padding-left: var(--space-5); border-left: var(--hairline) solid var(--line); }
+.gk-stat strong { color: var(--ink); font: 400 var(--type-px-33)/1.1 var(--font-pixel); }
+.gk-stat > p:last-child { margin: 0; color: var(--text-soft); font-size: .9rem; line-height: 1.55; }
+.gk-stat--open strong { color: var(--text-caption); }
+
+/* 03 Areas: every area at once, no tabs. */
+.gk-areas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: var(--space-6) var(--space-5); }
+.gk-area { display: grid; align-content: start; gap: var(--space-3); padding-top: var(--space-4); border-top: var(--hairline) solid var(--ink); }
+.gk-area h3 { margin: 0; font: 400 var(--type-px-22)/1.2 var(--font-pixel); }
+.gk-area > p:not(.gk-area__ask) { margin: 0; color: var(--text-soft); font-size: .85rem; line-height: 1.6; }
+
+/* 04 Present: the deck player. The slide area keeps a 16:10 stage in the deck's palette (--sl-*). */
+.gk-player__deck { display: grid; background: var(--sl-bg); color: var(--sl-ink); }
+.gk-player[data-ready="true"] .gk-sl { aspect-ratio: 16 / 10; overflow: hidden; }
+.gk-sl { display: grid; align-content: center; gap: var(--space-3); padding: var(--space-6) calc(var(--space-6) + var(--space-2)); border-bottom: var(--hairline) solid color-mix(in srgb, var(--sl-ink) 14%, transparent); }
+.gk-sl[hidden] { display: none; }
+.gk-sl--section { align-content: end; }
+.gk-sl__kicker { margin: 0; color: var(--sl-muted); font: 400 var(--type-px-11)/1.4 var(--font-pixel); text-transform: uppercase; }
+.gk-sl__title { margin: 0; font: 400 var(--type-px-22)/1.2 var(--font-pixel); }
+.gk-sl__cover { margin: 0; font: 400 var(--type-px-44)/1.05 var(--font-pixel); }
+.gk-sl__lead { margin: 0; max-width: 56ch; color: var(--sl-muted); font-size: .95rem; line-height: 1.5; }
+.gk-sl__statement { margin: 0; max-width: 22ch; font: 400 var(--type-px-33)/1.15 var(--font-pixel); }
+.gk-sl__ramp { margin: 0 0 var(--space-2); color: var(--sl-data); font: 400 var(--type-px-44)/1 var(--font-pixel); letter-spacing: .2em; }
+.gk-sl__figure { margin: var(--space-2) 0 0; overflow: hidden; color: var(--sl-ink); font: 400 var(--type-px-11)/1.25 var(--font-pixel); font-variant-ligatures: none; letter-spacing: 0; white-space: pre; }
+.gk-sl__figure.is-large { font-size: var(--type-px-22); }
+.gk-sl-line { display: block; width: max-content; transition: opacity 160ms steps(2, end); }
+.gk-sl__figure.is-focused .gk-sl-line:not(.is-focus) { opacity: .22; }
+.gk-sl .gk-d, .gk-sl .gk-e { color: var(--sl-data); }
+.gk-sl .gk-f { color: var(--sl-frame); }
+.gk-sl .gk-x { color: var(--sl-flag); }
+.gk-sl .gk-ok { color: var(--sl-ok); }
+.gk-player figcaption { min-height: calc(var(--tap-target) + var(--space-3)); }
+.gk-player__say { color: var(--ink); font: 400 .9rem/1.5 var(--sans); }
+.gk-player__source { color: var(--text-caption); }
+
+/* 05 Hand over: the text next to its prototype, then what else the same file becomes. */
+.gk-fidelity__panes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.gk-fidelity__pane { display: grid; grid-template-rows: auto 1fr; gap: var(--space-3); padding: var(--space-4); background: var(--panel); }
+.gk-fidelity__pane + .gk-fidelity__pane { border-left: var(--hairline) solid var(--line); }
+.gk-fidelity__pane .gk-glyphs { padding: var(--space-4) 0; background: transparent; }
+.gk-fidelity__pane .gk-frame { min-height: calc(var(--space-6) * 9); border: var(--hairline) solid var(--line); }
+.gk-outputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+.gk-output { display: grid; align-content: start; gap: var(--space-3); color: inherit; text-decoration: none; }
+.gk-output img { display: block; width: 100%; height: auto; border: var(--hairline) solid var(--line); }
+.gk-output span, .gk-output--text span { color: var(--text-soft); font-size: .9rem; line-height: 1.55; }
+.gk-output strong { display: block; margin-bottom: var(--space-1); color: var(--ink); font-weight: 500; }
+.gk-output--text { gap: var(--space-5); padding-top: var(--space-4); border-top: var(--hairline) solid var(--ink); }
+.gk-output:focus-visible { outline: var(--focus-ring-width) solid var(--ink); outline-offset: var(--focus-ring-offset); }
+
+/* The note behind it. */
+.gk-note { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-6); align-items: center; padding-top: var(--space-5); border-top: var(--hairline) solid var(--ink); }
+.gk-note img { display: block; width: 100%; height: auto; border: var(--hairline) solid var(--line); }
+.gk-note__copy { display: grid; justify-items: start; gap: var(--space-4); }
+.gk-note__copy h2 { margin: 0; font: 400 var(--type-px-44)/1.05 var(--font-pixel); }
+.gk-note__copy > p:not(.pc-label) { margin: 0; max-width: 46ch; color: var(--text-soft); font-size: 1rem; line-height: 1.6; }
+
+@media (max-width: 1180px) {
+  .gk-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gk-stat:nth-child(3) { padding-left: 0; border-left: 0; }
+  .gk-stat:nth-child(n + 3) { border-top: var(--hairline) solid var(--line); }
+}
+@media (max-width: 900px) {
+  .gk-fidelity__panes, .gk-note, .gk-pair__panes { grid-template-columns: minmax(0, 1fr); }
+  .gk-pair__ask { border-right: 0; border-bottom: var(--hairline) solid var(--line); }
+  .gk-fidelity__pane + .gk-fidelity__pane { border-left: 0; border-top: var(--hairline) solid var(--line); }
+  .gk-outputs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gk-output--text { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .gk-stats, .gk-outputs { grid-template-columns: minmax(0, 1fr); }
+  .gk-stat, .gk-stat + .gk-stat { padding: var(--space-4) 0; border-left: 0; }
+  .gk-stat + .gk-stat { border-top: var(--hairline) solid var(--line); }
+  .gk-live__grid { padding: var(--space-5) var(--space-4); }
+  .gk-sl { padding: var(--space-4); }
+  .gk-player[data-ready="true"] .gk-sl { aspect-ratio: auto; min-height: calc(var(--space-6) * 7); }
+  .gk-sl__cover, .gk-note__copy h2 { font-size: var(--type-px-33); }
+  .gk-sl__statement { font-size: var(--type-px-22); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gk-sl-line { transition: none; }
+  :root .gk-try__field textarea { transition: none; }
+  :root .gk-try__field textarea[data-invalid] { animation: none; }
+}
+
 @media (max-width: 900px) {
   .pc-hero { grid-template-columns: minmax(0, 1fr); }
   .pc-hero__intro { grid-template-columns: 1fr 1fr; align-items: center; }
@@ -10894,6 +11071,43 @@ body[data-page-type="cv"] .notes-hero__copy dd {
 
 /* The price of pace: what we pay and what we get, as a character diagram.
    It takes the wide figure measure that every note figure uses. */
+/* The price of pace: the same team, gated against trusted. Wide figure measure like every
+   note figure; the signal colours carry what ships, what waits and what breaks. */
+.note-body .pace-gates {
+  display: grid;
+  justify-items: center;
+  border: var(--hairline) solid var(--ink);
+  padding: var(--space-5) var(--space-3);
+  background: var(--paper);
+}
+
+.note-body .pace-gates__grid {
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ink);
+  font: 400 12px / 1.05 var(--mono);
+  font-variant-ligatures: none;
+  letter-spacing: 0;
+  white-space: pre;
+}
+
+.pace-gates__grid .ok {
+  color: var(--signal-ok);
+}
+
+.pace-gates__grid .fail {
+  color: var(--signal-fail);
+}
+
+.pace-gates__grid .mute {
+  color: var(--muted);
+}
+
 .note-body .pace-ledger {
   display: grid;
   justify-items: center;
@@ -11014,6 +11228,48 @@ body[data-page-type="cv"] .notes-hero__copy dd {
   background: var(--panel);
   padding: var(--space-4);
   font: 400 0.78rem/1.55 var(--mono);
+}
+
+/* Character art in notes: the glyphs are the figure, so rows sit tight and never wrap. */
+.note-body .note-glyphs {
+  margin-block: var(--space-5);
+}
+
+/* Departure Mono, not Geist Mono: the Geist subset has no block or box glyphs, so the browser
+   borrows wider ones and the grid stops lining up. Departure draws all of them at one cell. */
+.note-body .note-glyphs pre {
+  margin: 0;
+  font: 400 var(--type-px-11) / 1.3 var(--font-pixel);
+  font-variant-ligatures: none;
+  letter-spacing: 0;
+  white-space: pre;
+}
+
+.note-body .note-glyphs--large pre {
+  font-size: var(--type-px-44);
+  line-height: 1;
+}
+
+.note-body .note-glyphs--pixels pre {
+  font-size: var(--type-px-22);
+  line-height: 1;
+}
+
+.note-body .note-glyphs__caption {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font: 400 0.66rem/1.45 var(--mono);
+}
+
+.note-body .note-embed iframe {
+  display: block;
+  width: 100%;
+  border: var(--hairline) solid var(--line);
+  background: var(--paper);
+}
+
+.note-body :not(pre) > code {
+  font: 400 0.88em var(--mono);
 }
 
 .note-body hr {

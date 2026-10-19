@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pace diagrams</title>
+<style>
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("/notes/four-characters/geist-mono-latin-400-normal.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Departure Mono";
+    src: url("/fonts/DepartureMono-Regular.woff2") format("woff2");
+  }
+  :root {
+    --ink: #080808;
+    --paper: #fbfbf8;
+    --muted: #9a9a92;
+    --ok: #04764e;
+    --fail: #b8421f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Geist Mono", ui-monospace, monospace;
+  }
+  main { max-width: 1080px; margin: 0 auto; display: grid; gap: 28px; }
+  h1 { font: 400 22px/1.1 "Departure Mono", monospace; margin: 0 0 4px; }
+  section { border: 1px solid var(--ink); }
+  header {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 10px 14px; border-bottom: 1px solid var(--ink);
+    font: 400 11px/1.4 "Departure Mono", monospace; text-transform: uppercase;
+  }
+  header span:last-child { color: var(--muted); text-transform: none; font-family: "Geist Mono", monospace; font-size: 12px; }
+  .stage { display: grid; place-items: center; padding: 36px 14px; overflow: hidden; }
+  pre {
+    margin: 0;
+    font: 400 clamp(8px, 1.3vw, 12px)/1.15 "Geist Mono", monospace;
+    font-variant-ligatures: none;
+    letter-spacing: 0;
+    white-space: pre;
+  }
+  .ok { color: var(--ok); }
+  .fail { color: var(--fail); }
+  .mute { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <header><span>1 / Gates</span><span>Trust, built from expertise, opens the checkpoints</span></header>
+    <div class="stage"><pre id="gates"></pre></div>
+  </section>
+  <section>
+    <header><span>2 / Two lanes, same clock</span><span>One careful attempt against many quick ones</span></header>
+    <div class="stage"><pre id="lanes"></pre></div>
+  </section>
+  <section>
+    <header><span>3 / Out of line, but moving</span><span>More pace, more slip between teams, more shipped</span></header>
+    <div class="stage"><pre id="drift"></pre></div>
+  </section>
+  <section>
+    <header><span>4 / Small losses, not one big one</span><span>Many dips that climb, against one cliff</span></header>
+    <div class="stage"><pre id="losses"></pre></div>
+  </section>
+  <section>
+    <header><span>5 / The org chart flattens</span><span>From sign-off up a tree to everyone around the work</span></header>
+    <div class="stage"><pre id="flatten"></pre></div>
+  </section>
+</main>
+
+<script>
+/* Motion ---------------------------------------------------------------------------------------
+   Two layers. The structure (boxes, lines, labels, meters) sits on the character grid and
+   changes in steps. Everything that travels (packets, cursors, moving nodes) glides on a layer
+   above it at full frame rate, positioned in fractions of a cell, so dither blocks move smoothly.
+   - packets:  ▓▒░ heads glide along every live line, round corners included
+   - flash:    a box that receives work lights its border ▓ → ▒ → ░ → line
+   - chase:    a waiting box has a ▓▒░ snake running round its border
+   - scramble: changed text resolves left to right through " .:+*#%@"
+   - draw-in / dissolve: lines appear cell by cell and break up ▓ → ▒ → ░ → ·
+------------------------------------------------------------------------------------------------ */
+const STEP_MS = 120;
+const TRAIL = ["▓", "▒", "░"];
+const FADE = ["▓", "▒", "░", "·"];
+const RAMP = " .:+*#%@";
+const HEADS = { right: "▸", left: "◂", down: "▾", up: "▴" };
+const esc = (c) => (c === "<" ? "&lt;" : c === ">" ? "&gt;" : c === "&" ? "&amp;" : c);
+const rand = (seed) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const hash = (a, b) => {
+  const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+};
+const quant = (v, n) => Math.round(v * n) / n;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const mod = (v, n) => ((v % n) + n) % n;
+const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+class Grid {
+  constructor(rows, cols) {
+    this.rows = rows;
+    this.cols = cols;
+    this.ch = Array.from({ length: rows }, () => Array(cols).fill(" "));
+    this.cl = Array.from({ length: rows }, () => Array(cols).fill(""));
+    this.lum = new Map();
+  }
+  get(r, c) { return this.ch[r]?.[c]; }
+  put(r, c, ch, cls = "") {
+    if (this.ch[r]?.[c] === undefined) return;
+    this.ch[r][c] = ch;
+    this.cl[r][c] = cls;
+  }
+  // Light a cell with a dither intensity (0–1). The strongest light on a cell wins, and is
+  // turned into · ░ ▒ ▓ when the grid is written out. Fractional positions are what make
+  // movement smooth while every mark stays a character on the grid.
+  deposit(r, c, v, cls = "") {
+    if (this.ch[r]?.[c] === undefined || v <= 0) return;
+    const key = r * this.cols + c;
+    const prev = this.lum.get(key);
+    if (!prev || v > prev.v) this.lum.set(key, { v, cls });
+  }
+  glide(r, c, ch, cls = "") {
+    const level = { "▓": 1, "▒": 0.7, "░": 0.45, "·": 0.2 }[ch];
+    if (level) this.deposit(Math.round(r), Math.round(c), level, cls);
+    else this.put(Math.round(r), Math.round(c), ch, cls);
+  }
+  text(r, c, s, cls = "") { [...s].forEach((ch, i) => this.put(r, c + i, ch, cls)); }
+
+  scramble(r, c, s, age, step, cls = "") {
+    const frame = Math.floor(step);
+    [...s].forEach((ch, i) => {
+      const settled = age >= i * 0.25 + 2;
+      const glyph = settled || ch === " " ? ch : RAMP[1 + Math.floor(hash(frame, i + r * 7) * (RAMP.length - 1))];
+      this.put(r, c + i, glyph, cls);
+    });
+  }
+
+  boxLines(w, label, style = "solid") {
+    const inner = w - 2;
+    const left = Math.floor((inner - label.length) / 2);
+    const h = style === "dotted" ? "┄" : "─";
+    const v = style === "dotted" ? "┆" : "│";
+    const mid = `${v}${" ".repeat(left)}${label}${" ".repeat(inner - left - label.length)}${v}`;
+    return [`┌${h.repeat(inner)}┐`, mid, `└${h.repeat(inner)}┘`];
+  }
+  box(r, c, w, label, cls = "", style = "solid") {
+    this.boxLines(w, label, style).forEach((line, i) => this.text(r + i, c, line, cls));
+  }
+  glideBox(r, c, w, label, cls = "") { this.box(Math.round(r), Math.round(c), w, label, cls); }
+  perimeter(r, c, w, h = 3) {
+    const cells = [];
+    for (let x = c; x < c + w; x++) cells.push([r, x]);
+    for (let y = r + 1; y < r + h; y++) cells.push([y, c + w - 1]);
+    for (let x = c + w - 2; x >= c; x--) cells.push([r + h - 1, x]);
+    for (let y = r + h - 2; y > r; y--) cells.push([y, c]);
+    return cells;
+  }
+  flash(r, c, w, level, cls = "") {
+    const lv = Math.ceil(level);
+    if (lv <= 0) return;
+    const ch = TRAIL[3 - Math.min(3, lv)];
+    this.perimeter(r, c, w).forEach(([y, x]) => this.put(y, x, ch, cls));
+  }
+  // A comet of light: a soft leading edge, a full head and a tail that fades over `tail` cells.
+  comet(cells, f, cls = "", tail = 3.2, wrap = false) {
+    const n = cells.length;
+    for (let x = Math.floor(f - tail) - 1; x <= Math.ceil(f); x++) {
+      const d = f - x;
+      const v = d < 0 ? 1 + d : clamp(1 - d / tail);
+      const cell = wrap ? cells[mod(x, n)] : cells[x];
+      if (cell) this.deposit(cell[0], cell[1], v, cls);
+    }
+  }
+  chase(r, c, w, pos, cls = "") { this.comet(this.perimeter(r, c, w), pos, cls, 4, true); }
+  drawIn(r, c, w, label, progress, cls = "") {
+    const cells = this.perimeter(r, c, w);
+    const lines = this.boxLines(w, label);
+    const n = Math.floor(progress * cells.length);
+    cells.forEach(([y, x], i) => {
+      if (i < n) this.put(y, x, lines[y - r][x - c], cls);
+      else if (i < n + 3) this.put(y, x, TRAIL[i - n], cls);
+    });
+  }
+  meter(r, c, w, value, step, cls = "") {
+    const full = value * w;
+    const lead = Math.floor(full);
+    for (let i = 0; i < w; i++) {
+      const v = full - i;
+      let ch = v >= 1 ? "▓" : v >= 0.66 ? "▒" : v >= 0.33 ? "░" : "·";
+      if (i === lead && value > 0 && value < 1) ch = Math.floor(step * 2) % 2 ? "▒" : "░";
+      this.put(r, c + i, ch, v > 0.33 || (i === lead && value > 0) ? cls : "mute");
+    }
+  }
+
+  route(points) {
+    const cells = [points[0]];
+    for (let i = 1; i < points.length; i++) {
+      const [r1, c1] = points[i];
+      let [r, c] = cells[cells.length - 1];
+      while (r !== r1 || c !== c1) {
+        r += Math.sign(r1 - r);
+        c += Math.sign(c1 - c);
+        cells.push([r, c]);
+      }
+    }
+    return cells;
+  }
+  glyphs(cells, head = true) {
+    const side = (a, b) => (b[0] < a[0] ? "up" : b[0] > a[0] ? "down" : b[1] < a[1] ? "left" : "right");
+    return cells.map((cell, i) => {
+      const prev = cells[i - 1];
+      const next = cells[i + 1];
+      if (!next) return head ? HEADS[side(prev, cell)] : cell[1] === prev[1] ? "│" : "─";
+      if (!prev || side(prev, cell) === side(cell, next)) return cell[1] === next[1] ? "│" : "─";
+      const ends = new Set([side(cell, prev), side(cell, next)]);
+      return ends.has("up") ? (ends.has("right") ? "└" : "┘") : ends.has("right") ? "┌" : "┐";
+    });
+  }
+  line(points, cls = "", { head = true, progress = 1 } = {}) {
+    const cells = this.route(points);
+    const glyphs = this.glyphs(cells, head);
+    const n = Math.round(progress * cells.length);
+    cells.forEach(([r, c], i) => {
+      if (i < n) this.put(r, c, glyphs[i], cls);
+      else if (i < n + 2 && progress < 1) this.put(r, c, TRAIL[i - n + 1], cls);
+    });
+    return head ? cells.slice(0, -1) : cells;
+  }
+  dissolveLine(points, age, cls = "") {
+    const cells = this.route(points);
+    const glyphs = this.glyphs(cells);
+    cells.forEach(([r, c], i) => {
+      const k = Math.floor(age - hash(r, c) * 3);
+      if (k < 0) this.put(r, c, glyphs[i], cls);
+      else if (k < FADE.length) this.put(r, c, FADE[k], cls);
+    });
+  }
+
+  // A fractional position along a route, interpolated between cells (and round corners).
+  at(route, f) {
+    const i = Math.floor(f);
+    const a = route[i];
+    const b = route[i + 1] || a;
+    const t = f - i;
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  }
+  packet(route, f, cls = "") {
+    if (f < -1 || f > route.length + 3) return;
+    this.comet(route, f, cls);
+  }
+  // Packets every `spacing` cells, moved on by `shift`. Returns how long ago (in steps) one
+  // last reached the end of the route.
+  stream(route, shift, spacing, cls = "") {
+    for (let head = mod(shift, spacing); head < route.length + 3; head += spacing) this.packet(route, head, cls);
+    return mod(shift - (route.length - 1), spacing);
+  }
+
+  html() {
+    this.lum.forEach(({ v, cls }, key) => {
+      const ch = v >= 0.82 ? "▓" : v >= 0.58 ? "▒" : v >= 0.33 ? "░" : v >= 0.12 ? "·" : null;
+      if (ch) this.put(Math.floor(key / this.cols), key % this.cols, ch, cls);
+    });
+    return this.ch.map((row, r) => {
+      let out = "";
+      let open = "";
+      row.forEach((ch, c) => {
+        const cls = this.cl[r][c];
+        if (cls !== open) {
+          if (open) out += "</span>";
+          if (cls) out += `<span class="${cls}">`;
+          open = cls;
+        }
+        out += esc(ch);
+      });
+      if (open) out += "</span>";
+      return out.replace(/\s+$/, "");
+    }).join("\n");
+  }
+}
+
+const changes = () => {
+  const seen = new Map();
+  return (key, value, step) => {
+    const prev = seen.get(key);
+    if (!prev || prev.value !== value) seen.set(key, { value, at: prev ? step : -99 });
+    return step - seen.get(key).at;
+  };
+};
+
+/* 1. Gates ---------------------------------------------------------------------------------- */
+const gates = (() => {
+  const W = 86;
+  const T = 7;
+  const START = 9;
+  const END = 70;
+  const GATES = [
+    { at: 22, label: "ALIGN", need: 0.25 },
+    { at: 34, label: "SIGN-OFF", need: 0.45 },
+    { at: 46, label: "REVIEW", need: 0.65 },
+    { at: 58, label: "LEADERSHIP", need: 0.85 }
+  ];
+  const CYCLE = 440;
+  const since = changes();
+  let lastStep = -1;
+  let packets = [];
+  let shipped = 0;
+  let openedAt = [];
+  let lastShip = -99;
+
+  const advance = (s) => {
+    if (s === 0) { packets = []; shipped = 0; openedAt = GATES.map(() => -1); }
+    const st = state(s);
+    GATES.forEach((g, i) => { if (!st.closing && openedAt[i] < 0 && st.trust >= g.need) openedAt[i] = s; });
+    packets.sort((a, b) => b.p - a.p);
+    packets.forEach((pk, i) => {
+      pk.prev = pk.p;
+      const next = pk.p + 1;
+      const ahead = i > 0 ? packets[i - 1].p : Infinity;
+      if (!blocked(next, s) && ahead - next >= 4) pk.p = next;
+    });
+    packets = packets.filter((pk) => (pk.p > END ? (shipped++, (lastShip = s), false) : true));
+    if (!st.closing && s % 5 === 0 && !packets.some((pk) => pk.p < START + 4)) packets.push({ p: START, prev: START - 1 });
+  };
+  const state = (s) => {
+    const closing = s >= CYCLE - 24;
+    const expertise = closing ? quant(1 - (s - (CYCLE - 24)) / 24, 24) : quant(clamp(s / (CYCLE * 0.62)), 24);
+    const trust = closing ? expertise : quant(clamp((s - 34) / (CYCLE * 0.62)), 24);
+    return { closing, expertise, trust };
+  };
+  const gateState = (i, s) => {
+    if (s >= CYCLE - 24) return clamp(3 - (Math.floor((s - (CYCLE - 24)) / 2) - (3 - i) * 2), 0, 3);
+    return openedAt[i] < 0 ? 0 : Math.min(3, Math.floor((s - openedAt[i]) / 2));
+  };
+  const blocked = (col, s) => GATES.some((g, i) => g.at === col && gateState(i, s) < 3);
+
+  return (step, frac) => {
+    const s = step % CYCLE;
+    if (lastStep < 0) { openedAt = GATES.map(() => -1); }
+    while (lastStep < step) { lastStep++; advance(lastStep % CYCLE); }
+    const st = state(s);
+
+    const g = new Grid(12, W);
+    g.text(0, 0, "EXPERTISE");
+    g.meter(0, 12, 26, st.expertise, step + frac);
+    g.text(1, 0, "TRUST");
+    g.meter(1, 12, 26, st.trust, step + frac, "ok");
+    g.text(1, 40, "follows expertise, a step behind", "mute");
+
+    g.box(T - 1, 0, 9, "WORK");
+    const route = g.line([[T, START], [T, END + 1]], "mute");
+    g.box(T - 1, END + 2, 14, "", shipped ? "ok" : "");
+    g.scramble(T, END + 4, `SHIPPED ${String(shipped).padStart(2, "0")}`, since("shipped", shipped, step), step, shipped ? "ok" : "");
+    g.flash(T - 1, END + 2, 14, 3 - (s - lastShip) - frac, "ok");
+
+    GATES.forEach((gate, i) => {
+      const gs = gateState(i, s);
+      const open = gs === 3;
+      const age = since(`gate${i}`, open, step);
+      g.scramble(T - 3, Math.round(gate.at + 0.5 - gate.label.length / 2), gate.label, age, step, open ? "ok" : "");
+      for (let r = T - 1; r <= T + 1; r++) {
+        if (open) g.put(r, gate.at, r === T ? "─" : "╎", r === T ? "mute" : "ok");
+        else if (gs === 0) g.put(r, gate.at, (r + Math.floor((step + frac) * 2)) % 4 === 0 ? "▒" : "▓");
+        else g.put(r, gate.at, FADE[Math.min(3, gs + (r === T ? 0 : 1))], "ok");
+      }
+      if (open && age < 8) {
+        // A ripple glides out along the line as the gate gives way.
+        const d = (age + frac) * 1.4;
+        [gate.at - d, gate.at + d].forEach((c) => g.glide(T, c, "░", "ok", true));
+      }
+      const queued = packets.some((pk) => pk.p === gate.at - 1);
+      const status = open ? "open" : queued ? "waiting" : "closed";
+      g.scramble(T + 3, Math.round(gate.at + 0.5 - status.length / 2), status, since(`status${i}`, status, step), step, open ? "ok" : "mute");
+    });
+    packets.forEach((pk) => {
+      const f = pk.prev + (pk.p - pk.prev) * frac;
+      g.packet(route, f - START);
+    });
+    return g;
+  };
+})();
+
+/* 2. Two lanes ------------------------------------------------------------------------------ */
+const lanes = (() => {
+  const W = 86;
+  const A = 3;
+  const B = 10;
+  const START = 9;
+  const END = 66;
+  const STATIONS = [21, 35, 49];
+  const WAIT = 48;
+  const CYCLE = 320;
+  const r = rand(5);
+  const PLAN = Array.from({ length: 46 }, (_, i) => ({
+    born: i * 7,
+    breaksAt: r() < 0.2 ? 10 + Math.floor(r() * 44) : null
+  }));
+  const since = changes();
+  return (step, frac) => {
+    const s = (step % CYCLE) + frac;
+    const g = new Grid(16, W);
+
+    g.text(A - 2, 0, "WAITING ROOM");
+    g.box(A - 1, 0, 9, "IDEA");
+    const routeA = g.line([[A, START], [A, END + 1]], "mute");
+    let pos = 0;
+    let left = s;
+    let waitingAt = -1;
+    let waited = 0;
+    let arrivedA = -1;
+    const visited = new Set();
+    for (const st of [...STATIONS, END + 1]) {
+      const dist = st - START - pos;
+      if (left < dist) { pos += left; left = -1; break; }
+      left -= dist;
+      pos = st - START;
+      if (st === END + 1) { arrivedA = left; break; }
+      visited.add(st);
+      if (left < WAIT) { waitingAt = st; waited = left; left = -1; break; }
+      left -= WAIT;
+    }
+    STATIONS.forEach((st) => {
+      const here = waitingAt === st;
+      const c = st - 4;
+      g.box(A - 1, c, 9, "WAIT", here ? "" : "mute", visited.has(st) ? "solid" : "dotted");
+      if (here) {
+        if (waited < 3) g.flash(A - 1, c, 9, 3 - waited);
+        else g.chase(A - 1, c, 9, waited * 2.4);
+        g.meter(A + 2, c, 9, waited / WAIT, s);
+      }
+    });
+    if (waitingAt < 0 && arrivedA < 0) g.packet(routeA, pos);
+    const shippedA = arrivedA >= 0 ? 1 : 0;
+    g.box(A - 1, END + 2, 16, "", shippedA ? "ok" : "mute");
+    g.scramble(A, END + 4, `SHIPPED ${shippedA}`, since("a", shippedA, step), step, shippedA ? "ok" : "mute");
+    if (arrivedA >= 0) g.flash(A - 1, END + 2, 16, 3 - arrivedA, "ok");
+
+    g.text(B - 2, 0, "PACE");
+    g.box(B - 1, 0, 9, "IDEAS");
+    const routeB = g.line([[B, START], [B, END + 1]], "mute");
+    let shippedB = 0;
+    let broke = 0;
+    let lastArrive = 99;
+    PLAN.forEach(({ born, breaksAt }) => {
+      const p = s - born;
+      if (p < 0) return;
+      if (breaksAt !== null && p >= breaksAt) {
+        broke++;
+        const age = Math.floor(p - breaksAt);
+        const [y, x] = routeB[breaksAt];
+        if (age < 2) {
+          g.put(y, x, "✕", "fail");
+          // Sparks glide outward from the break.
+          const d = 0.6 + (p - breaksAt) * 0.7;
+          [[y - d, x], [y + d, x], [y, x - d], [y, x + d]].forEach(([yy, xx]) => g.glide(yy, xx, age ? "·" : "░", "fail", true));
+        } else if (age < 6) g.put(y, x, FADE[age - 2], "fail");
+        return;
+      }
+      if (p >= routeB.length) { shippedB++; lastArrive = Math.min(lastArrive, p - routeB.length); return; }
+      g.packet(routeB, p);
+    });
+    g.box(B - 1, END + 2, 16, "", "ok");
+    g.text(B, END + 4, `SHIPPED ${String(shippedB).padStart(2, " ")}`, "ok");
+    g.flash(B - 1, END + 2, 16, 2 - lastArrive, "ok");
+    g.scramble(B + 2, END + 4, `BROKE ${broke}`, since("x", broke, step), step, broke ? "fail" : "mute");
+
+    g.text(14, 0, "CLOCK");
+    g.meter(14, START, END - START + 2, s / CYCLE, s);
+    return g;
+  };
+})();
+
+/* 3. Out of line, but moving ---------------------------------------------------------------- */
+const drift = (() => {
+  const W = 86;
+  const TEAMS = [
+    { name: "DESIGN", slip: 0 },
+    { name: "ENGINEERING", slip: 1.7 },
+    { name: "PRODUCT", slip: 0.8 },
+    { name: "PARTNER TEAM", slip: 3.5, note: "hears later" },
+    { name: "LEADERSHIP", slip: 4.8, note: "sees the work" }
+  ];
+  const START = 15;
+  const END = 63;
+  const SPACING = 7;
+  const LOOP = 380;
+  const since = changes();
+  const paceAt = (t) => 0.5 - 0.5 * Math.cos(((t % LOOP) / LOOP) * Math.PI * 2);
+  let phase = 0;
+  let prevPhase = 0;
+  let shipped = 0;
+  let lastStep = -1;
+  let lastShip = -99;
+  return (step, frac) => {
+    while (lastStep < step) {
+      lastStep++;
+      if (lastStep % LOOP === 0) shipped = 0;
+      prevPhase = phase;
+      const before = Math.floor(phase / SPACING);
+      phase += 0.1 + paceAt(lastStep) * 0.95;
+      const gained = Math.floor(phase / SPACING) - before;
+      if (gained > 0) { shipped += gained * TEAMS.length; lastShip = lastStep; }
+    }
+    const t = step + frac;
+    const pace = paceAt(t);
+    const shown = quant(pace, 22);
+    const ph = prevPhase + (phase - prevPhase) * frac;
+
+    const g = new Grid(15, W);
+    g.text(0, 0, "PACE");
+    g.meter(0, START, 22, shown, t);
+    const caption = pace < 0.2 ? "slow: every row in line" : pace > 0.8 ? "fast: rows slip, more ships" : "";
+    g.scramble(0, START + 24, caption, since("cap", caption, step), step, "mute");
+
+    TEAMS.forEach((team, i) => {
+      const row = 3 + i * 2;
+      const quiet = i >= 3;
+      g.text(row, 0, team.name, quiet ? "mute" : "");
+      const showNote = Boolean(team.note) && pace > 0.55;
+      if (showNote) g.scramble(row + 1, 0, team.note, since(`n${i}`, showNote, step), step, "mute");
+      const route = g.line([[row, START], [row, END + 1]], "mute");
+      g.stream(route, ph + team.slip * pace * 1.6, SPACING, quiet ? "mute" : "");
+    });
+    g.box(6, END + 4, 17, "", "ok");
+    g.text(7, END + 6, `SHIPPED ${String(shipped).padStart(3, "0")}`, "ok");
+    g.flash(6, END + 4, 17, 1 - (step - lastShip) - frac, "ok");
+    g.text(14, START, "same work through every team", "mute");
+    return g;
+  };
+})();
+
+/* 4. Small losses --------------------------------------------------------------------------- */
+const losses = (() => {
+  const W = 86;
+  const H = 13;
+  const X0 = 9;
+  const N = 64;
+  const r = rand(29);
+  const pace = [];
+  let v = 1.2;
+  for (let i = 0; i < N; i++) {
+    const dip = i > 3 && r() < 0.22;
+    v = Math.max(1, v + (dip ? -(0.6 + r() * 0.4) : 0.3 + r() * 0.2));
+    pace.push({ v, dip });
+  }
+  const top = Math.max(...pace.map((p) => p.v));
+  const CLIFF = 50;
+  const wait = Array.from({ length: N }, (_, i) => (i <= CLIFF ? 1 + (i / CLIFF) * (top - 1) * 0.45 : 1));
+  const rowOf = (val) => H - 1 - Math.round(((val - 1) / (top - 1)) * (H - 1));
+  const yOf = (val) => H - 1 - ((val - 1) / (top - 1)) * (H - 1);
+  const CYCLE = 280;
+  return (step, frac) => {
+    const s = (step % CYCLE) + frac;
+    const x = Math.min(N, s / 2.5);
+    const shown = Math.floor(x);
+    const g = new Grid(H + 3, W);
+    g.line([[H, X0 - 1], [0, X0 - 1]], "mute");
+    g.line([[H, X0 - 1], [H, X0 + N + 1]], "mute");
+    g.put(H, X0 - 1, "└", "mute");
+    g.text(0, 0, "VALUE", "mute");
+    g.text(H + 1, X0 + N - 3, "TIME", "mute");
+
+    for (let i = 0; i < shown; i++) {
+      const c = X0 + i;
+      const age = shown - 1 - i;
+      const p = pace[i];
+      const pr = rowOf(p.v);
+      for (let rr = pr + 1; rr < H; rr++) {
+        const k = mod(rr + i - Math.floor(s / 2), 4);
+        g.put(rr, c, k === 0 ? "░" : k === 2 ? "·" : " ", "ok");
+      }
+      if (p.dip && age < 3) for (let rr = pr; rr < H; rr++) g.put(rr, c, TRAIL[age], "fail");
+      g.put(pr, c, p.dip ? "▒" : "▓", p.dip ? "fail" : "ok");
+      if (i === CLIFF + 1) {
+        const from = rowOf(wait[CLIFF]);
+        const fall = Math.min(from + age, H - 1);
+        for (let rr = from; rr <= fall; rr++) g.put(rr, c, rr === fall ? "▓" : "│", "fail");
+      } else {
+        g.put(rowOf(wait[i]), c, "▒", i > CLIFF ? "fail" : "");
+      }
+    }
+    // The pen: a gliding head on both lines, and a cursor that sweeps smoothly.
+    if (shown > 0 && shown < N) {
+      const i = Math.min(N - 1, shown);
+      const a = pace[i - 1];
+      const b = pace[i] || a;
+      const t = x - shown;
+      const py = yOf(a.v) + (yOf(b.v) - yOf(a.v)) * t;
+      g.glide(py, X0 + x - 1, "▓", "ok");
+      g.glide(py, X0 + x - 1.9, "▒", "ok");
+      const wy = yOf(wait[i - 1]) + (yOf(wait[i] ?? wait[i - 1]) - yOf(wait[i - 1])) * t;
+      g.glide(wy, X0 + x - 1, "▓", i > CLIFF ? "fail" : "");
+      for (let rr = 0; rr < H; rr++) if (rr % 2 === 0) g.glide(rr, X0 + x + 0.4, "┊", "mute", true);
+      g.glide(py, X0 + x + 1.2, "PACE"[0], "ok", true);
+      ["A", "C", "E"].forEach((ch, k) => g.glide(py, X0 + x + 2.2 + k, ch, "ok", true));
+      [..."WAITING ROOM"].forEach((ch, k) => g.glide(wy, X0 + x + 1.2 + k, ch, i > CLIFF ? "fail" : "", true));
+    } else if (shown >= N) {
+      g.text(rowOf(pace[N - 1].v), X0 + N + 2, "PACE", "ok");
+      g.text(rowOf(wait[N - 1]), X0 + N + 2, "WAITING ROOM", "fail");
+    }
+    g.text(H + 2, X0, "▓ small dips, climbing", "ok");
+    g.text(H + 2, X0 + 26, "▒ flat, then one cliff");
+    if (s > CYCLE - 24) {
+      const k = (s - (CYCLE - 24)) / 6;
+      for (let rr = 0; rr < H; rr++) for (let c = X0; c < W; c++) {
+        const f = Math.floor(k * 4 - hash(rr, c) * 3);
+        if (g.get(rr, c) !== " " && f >= 0) g.put(rr, c, f < 4 ? FADE[f] : " ", g.cl[rr][c]);
+      }
+    }
+    return g;
+  };
+})();
+
+/* 5. The org chart flattens --------------------------------------------------------------------- */
+const flatten = (() => {
+  const W = 86;
+  const H = 18;
+  const NODES = [
+    { label: "VP", w: 6, tree: [0, 38], flat: [0, 23] },
+    { label: "DIR", w: 7, tree: [5, 18], flat: [0, 53] },
+    { label: "DIR", w: 7, tree: [5, 58], flat: [12, 38] },
+    { label: "DESIGN", w: 10, tree: [10, 6], flat: [6, 6] },
+    { label: "ENG", w: 7, tree: [10, 28], flat: [12, 18] },
+    { label: "PM", w: 6, tree: [10, 48], flat: [12, 58] },
+    { label: "DATA", w: 8, tree: [10, 67], flat: [6, 67] }
+  ];
+  const TREE = [
+    [[3, 41], [3, 21], [4, 21]],
+    [[3, 41], [3, 61], [4, 61]],
+    [[8, 21], [8, 11], [9, 11]],
+    [[8, 21], [8, 31], [9, 31]],
+    [[8, 61], [8, 51], [9, 51]],
+    [[8, 61], [8, 71], [9, 71]]
+  ];
+  const SPOKES = [
+    [[3, 26], [4, 26], [4, 38], [5, 38]],
+    [[3, 56], [4, 56], [4, 43], [5, 43]],
+    [[7, 16], [7, 35]],
+    [[7, 66], [7, 46]],
+    [[11, 21], [10, 21], [10, 38], [9, 38]],
+    [[11, 61], [10, 61], [10, 43], [9, 43]],
+    [[11, 41], [9, 41]]
+  ];
+  const since = changes();
+  const CYCLE = 380;
+  // 0–150 tree · 150–162 tree lines break up · 162–186 nodes glide · 186–200 spokes draw in
+  // 200–340 flat · 340–352 spokes retract · 352–376 nodes glide back
+  return (step, frac) => {
+    const s = (step % CYCLE) + frac;
+    const g = new Grid(H, W);
+    const k = s < 162 ? 0 : s < 186 ? easeInOut((s - 162) / 24) : s < 352 ? 1 : s < 376 ? 1 - easeInOut((s - 352) / 24) : 0;
+    const moving = k > 0 && k < 1;
+    const at = (n, kk) => [
+      n.tree[0] + (n.flat[0] - n.tree[0]) * kk,
+      n.tree[1] + (n.flat[1] - n.tree[1]) * kk
+    ];
+
+    const treeShown = s < 150 || s >= 376;
+    if (treeShown) {
+      TREE.forEach((pts, i) => {
+        g.line(pts, "mute");
+        const up = g.route(pts).slice(0, -1).reverse();
+        g.stream(up, s * 0.35 + i * 3, 9, "");
+      });
+    }
+    if (s >= 150 && s < 162) TREE.forEach((pts) => g.dissolveLine(pts, (s - 150) / 2, "mute"));
+
+    const spokeProgress = s < 186 ? 0 : s < 200 ? (s - 186) / 14 : s < 340 ? 1 : s < 352 ? 1 - (s - 340) / 12 : 0;
+    if (spokeProgress > 0) {
+      let arrivals = 99;
+      SPOKES.forEach((pts, i) => {
+        const route = g.line(pts, "ok", { progress: spokeProgress });
+        if (spokeProgress === 1) arrivals = Math.min(arrivals, g.stream(route, (s - 200) * 0.9 + i * 2, 5, "ok"));
+      });
+      if (spokeProgress === 1) {
+        g.box(6, 36, 10, "WORK", "ok");
+        g.flash(6, 36, 10, 2 - arrivals, "ok");
+      } else {
+        g.drawIn(6, 36, 10, "WORK", spokeProgress, "ok");
+      }
+    }
+
+    NODES.forEach((n) => {
+      if (moving) {
+        // Two dither ghosts trail each gliding node.
+        [[0.1, "░"], [0.05, "▒"]].forEach(([lag, ch]) => {
+          const [gr, gc] = at(n, clamp(k - lag * Math.sign(s < 300 ? 1 : -1)));
+          for (let x = 0; x < n.w; x++) g.glide(gr + 1, gc + x, ch, "mute", true);
+        });
+        const [r, c] = at(n, k);
+        g.glideBox(r, c, n.w, n.label);
+      } else {
+        const [r, c] = at(n, k);
+        g.box(Math.round(r), Math.round(c), n.w, n.label);
+      }
+    });
+    if (treeShown) {
+      g.chase(0, 38, 6, s * 2.2);
+      g.scramble(1, 46, "deciding", since("vp", treeShown, step), step, "mute");
+    }
+
+    const caption = treeShown ? "every call goes up the chain, then back down"
+      : s >= 200 && s < 340 ? "everyone feeds the work directly" : "";
+    g.scramble(H - 1, 0, caption, since("cap", caption, step), step, caption.startsWith("everyone") ? "ok" : "mute");
+    return g;
+  };
+})();
+
+/* Render loop: structure in steps, gliders every frame ---------------------------------------- */
+const panels = [
+  ["gates", gates], ["lanes", lanes], ["drift", drift], ["losses", losses], ["flatten", flatten]
+].map(([id, fn]) => {
+  const pre = document.getElementById(id);
+  return { pre, over: pre.nextElementSibling, fn, lastBase: "" };
+});
+
+let cw = 7;
+let lh = 14;
+const measure = () => {
+  const probe = document.createElement("span");
+  probe.textContent = "0".repeat(20);
+  panels[0].pre.append(probe);
+  const rect = probe.getBoundingClientRect();
+  cw = rect.width / 20;
+  lh = parseFloat(getComputedStyle(panels[0].pre).lineHeight) || rect.height;
+  probe.remove();
+};
+
+const render = (stepFloat) => {
+  const step = Math.floor(stepFloat);
+  const frac = stepFloat - step;
+  panels.forEach((panel) => {
+    const g = panel.fn(step, frac);
+    const base = g.html();
+    if (base !== panel.lastBase) { panel.pre.innerHTML = base; panel.lastBase = base; }
+  });
+};
+
+// Start straight away; measure again once the fonts are in.
+measure();
+document.fonts?.ready?.then(measure);
+window.addEventListener("resize", measure);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const t0 = performance.now();
+if (reduce) {
+  render(200);
+} else {
+  const frame = (now) => {
+    render((now - t0) / STEP_MS);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+</script>
+<script>
+  const reportHeight = () => parent.postMessage({ noteEmbedHeight: document.documentElement.scrollHeight }, location.origin);
+  new ResizeObserver(reportHeight).observe(document.body);
+</script>
+</body>
+</html>

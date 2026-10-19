@@ -6,6 +6,7 @@ import confidenceDraft from "../content/notes/the-confidence-crutch.json";
 import aiProductDesignerOwnershipDraft from "../content/notes/what-an-ai-product-designer-owns-in-an-enterprise-product.json";
 import titlesDraft from "../content/notes/whats-the-actual-point-of-titles.json";
 import priceOfPaceDraft from "../content/notes/the-price-of-pace.json";
+import ditherBlocksDraft from "../content/notes/four-characters.json";
 import legacyManifest from "../content/notes/legacy/index.json";
 
 const legacyBodies = import.meta.glob("../content/notes/legacy/*.html", {
@@ -47,13 +48,20 @@ type LocalNoteDraft = {
   tags: string[];
   paragraphs?: string[];
   blocks?: Array<
-    | { type: "paragraph"; text: string }
+    | { type: "paragraph" | "quote"; text: string }
+    | { type: "heading"; text: string; level?: 2 | 3 }
     | { type: "list" | "questions"; items: string[] }
     | { type: "visual"; name: string }
+    // Character art kept as text: label is what assistive technology reads instead of the glyphs.
+    | { type: "glyphs"; text: string; label: string; caption?: string; large?: boolean; pixels?: boolean }
+    | { type: "image"; src: string; alt: string; caption?: string }
+    | { type: "video"; src: string; poster: string; label: string; caption?: string }
+    | { type: "embed"; src: string; title: string; height: number; caption?: string }
   >;
 };
 
 const localDrafts: LocalNoteDraft[] = [
+  ditherBlocksDraft as LocalNoteDraft,
   priceOfPaceDraft,
   digitalArtDraft,
   designOutsideDesignDraft,
@@ -123,7 +131,22 @@ function escapeHtml(value: string): string {
 }
 
 function localInlineHtml(value: string): string {
-  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  return escapeHtml(value)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]*)\)/g, (_match, label: string, href: string) =>
+      href.startsWith("/")
+        ? `<a href="${href}">${label}</a>`
+        : `<a href="${href}" target="_blank" rel="noreferrer">${label}</a>`
+    );
+}
+
+function localPlainText(value: string): string {
+  return value.replace(/\*\*/g, "").replace(/`/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+}
+
+function localCaption(caption?: string): string {
+  return caption ? `<figcaption>${localInlineHtml(caption)}</figcaption>` : "";
 }
 
 function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainText: string } {
@@ -132,6 +155,42 @@ function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainT
       .map((block) => {
         if (block.type === "paragraph") {
           return `<p>${localInlineHtml(block.text)}</p>`;
+        }
+
+        if (block.type === "quote") {
+          return `<blockquote><p>${localInlineHtml(block.text)}</p></blockquote>`;
+        }
+
+        if (block.type === "heading") {
+          const level = block.level ?? 2;
+          return `<h${level}>${localInlineHtml(block.text)}</h${level}>`;
+        }
+
+        if (block.type === "glyphs") {
+          return `<div class="note-glyphs${block.large ? " note-glyphs--large" : ""}${block.pixels ? " note-glyphs--pixels" : ""}"><pre role="img" aria-label="${escapeHtml(block.label)}">${escapeHtml(
+            block.text
+          )}</pre>${block.caption ? `<p class="note-glyphs__caption">${localInlineHtml(block.caption)}</p>` : ""}</div>`;
+        }
+
+        if (block.type === "image") {
+          return `<figure><img src="${escapeHtml(block.src)}" alt="${escapeHtml(block.alt)}" loading="lazy" decoding="async" />${localCaption(
+            block.caption
+          )}</figure>`;
+        }
+
+        if (block.type === "video") {
+          return `<figure><video src="${escapeHtml(block.src)}" poster="${escapeHtml(
+            block.poster
+          )}" controls muted playsinline preload="none" aria-label="${escapeHtml(block.label)}"></video>${localCaption(
+            block.caption
+          )}</figure>`;
+        }
+
+        // A same-site page that reports its own height to the note (see the note page).
+        if (block.type === "embed") {
+          return `<figure class="note-embed"><iframe src="${escapeHtml(block.src)}" title="${escapeHtml(
+            block.title
+          )}" height="${block.height}" loading="lazy" data-note-embed></iframe>${localCaption(block.caption)}</figure>`;
         }
 
         // A marker the note page swaps for an inline component.
@@ -148,12 +207,17 @@ function localDraftContent(draft: LocalNoteDraft): { contentHtml: string; plainT
           .join("")}</div>`;
       })
       .join("\n");
-    const plainText = draft.blocks
-      .flatMap((block) =>
-        block.type === "paragraph" ? [block.text] : block.type === "visual" ? [] : block.items
-      )
-      .join(" ")
-      .replace(/\*\*/g, "");
+    const plainText = localPlainText(
+      draft.blocks
+        .flatMap((block) => {
+          if ("items" in block) return block.items;
+          if (block.type === "paragraph" || block.type === "quote" || block.type === "heading") return [block.text];
+          if (block.type === "glyphs") return [block.label, block.caption ?? ""];
+          if (block.type === "image" || block.type === "video" || block.type === "embed") return [block.caption ?? ""];
+          return [];
+        })
+        .join(" ")
+    );
 
     return { contentHtml, plainText };
   }

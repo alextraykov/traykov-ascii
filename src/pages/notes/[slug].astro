@@ -7,6 +7,7 @@ import SiteFooter from "../../components/SiteFooter.astro";
 import SiteHead from "../../components/SiteHead.astro";
 import SiteNav from "../../components/SiteNav.astro";
 import { addLocalImageDimensions } from "../../lib/local-image-dimensions";
+import PaceGates from "../../components/PaceGates.astro";
 import PaceLedger from "../../components/PaceLedger.astro";
 import PriceOfPaceSketch from "../../components/PriceOfPaceSketch.astro";
 import WebCemeterySketch from "../../components/WebCemeterySketch.astro";
@@ -65,7 +66,7 @@ const structuredData = [
 ];
 const noteContentHtml = await addLocalImageDimensions(note.contentHtml);
 // Local notes can place a component between paragraphs with a visual block.
-const inlineVisuals = { "pace-ledger": PaceLedger } as const;
+const inlineVisuals = { "pace-gates": PaceGates, "pace-ledger": PaceLedger, "blocktype-wave": BlocktypeWavePreview } as const;
 const noteParts = noteContentHtml
   .split(/<!--note-visual:([a-z-]+)-->/)
   .map((part, index) =>
@@ -164,5 +165,16 @@ const noteParts = noteContentHtml
 
     <SiteFooter />
     <SiteAnalytics />
+    <script>
+      // Embedded note pages post their height so the frame fits them without an inner scrollbar.
+      window.addEventListener("message", (event) => {
+        if (event.origin !== location.origin) return;
+        const height = Number(event.data?.noteEmbedHeight);
+        if (!Number.isFinite(height) || height <= 0) return;
+        document.querySelectorAll<HTMLIFrameElement>("iframe[data-note-embed]").forEach((frame) => {
+          if (frame.contentWindow === event.source) frame.height = String(Math.ceil(height));
+        });
+      });
+    </script>
   </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "slug": "the-price-of-pace",
   "title": "The price of pace",
-  "summary": "Pace costs alignment, titles and the comfort of sign-off. What I pay for it, what I get back, and why I'd pay it again.",
+  "summary": "What working at pace costs me and the people around me, and why I keep choosing it anyway.",
   "publishedAt": "2026-10-18T00:00:00+03:00",
   "status": "published",
   "visual": "price-of-pace",
@@ -14,92 +14,63 @@
   "blocks": [
     {
       "type": "paragraph",
-      "text": "Things will slip out of line. Someone will be working off an old copy of the plan. A partner team will hear about a decision after it's already been made."
+      "text": "Things slip out of line. Someone ends up working off an old copy of the plan. A partner team hears about a decision after it's already been made. Most weeks, some of that is on me."
     },
     {
       "type": "paragraph",
-      "text": "No, I'm not pulling senior leadership in to make every design decision. They'll see the work. They just won't sign off on every pixel of it."
+      "text": "I've stopped pulling senior leadership into every design decision. They still see the work. They just don't sign off on every pixel of it."
     },
     {
       "type": "paragraph",
-      "text": "That's the price of pace."
+      "text": "That's the price of pace. I'm the one choosing to pay it, but I'm not the only one paying. That's the part I think about most."
     },
     {
       "type": "paragraph",
-      "text": "Roles are blurring. That's not new. Before, the title talked first."
+      "text": "Roles are blurring, and honestly, I like it. I've never been good at deferring to a title for its own sake. What I trust is expertise: the person closest to the problem usually knows the most about it, whatever their title says."
     },
     {
       "type": "paragraph",
-      "text": "I care very little about structure and titles, or about opinions that carry weight only because of the title behind them."
+      "text": "I also know I'm lucky. A lot of teams at frontier companies now get to make calls in their own domain without waiting for sign-off further up the chain. Plenty of people don't have that."
     },
     {
       "type": "paragraph",
-      "text": "The weight of a role matters very little when you're chasing the win. The work talks."
+      "text": "So we try to use it well. We lean on today's tools to keep every partner team in the loop, so we work as one unit on what actually matters. I deliver outside my own domain and take on more than my role strictly covers, because that's what the team needs, not because it's mine to own. Sometimes that means stepping on toes to get the design across, and I'm still working out where that line is."
     },
     {
       "type": "paragraph",
-      "text": "And the beautiful part is that we have the empowerment. Most frontier companies let their teams win in their own domain without sign-off from further up the chain."
-    },
-    {
-      "type": "paragraph",
-      "text": "So here's what I do with it."
-    },
-    {
-      "type": "paragraph",
-      "text": "I'm using today's technology to help every partner team collaborate better, so we work as one cohesive unit on what actually matters."
-    },
-    {
-      "type": "list",
-      "items": [
-        "Yes, I'm delivering outside my domain of expertise.",
-        "Yes, I'm taking on more work.",
-        "Yes, I'm ready to break the status quo and step out of my area of expertise into my area of influence.",
-        "Yes, sometimes that will feel like stepping on toes to get the design across."
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "If that's what lets us win, so be it."
-    },
-    {
-      "type": "paragraph",
-      "text": "Pace runs on trust, and trust runs on expertise. So that's how we pay: with expertise, and with time. What we get back is craft, delivered quickly."
+      "text": "Pace runs on trust, and trust runs on expertise. That's what we pay with as a team: expertise, and time. What comes back is craft, delivered sooner, and wins we share."
     },
     {
       "type": "visual",
-      "name": "pace-ledger"
+      "name": "pace-gates"
     },
     {
       "type": "paragraph",
-      "text": "The waiting room runs on fear. Waiting for sign-off, waiting for the right title to nod. Fear of launching. Fear of breaking things. Fear of being brave. Perfectionism is what quietly kills good work."
+      "text": "In my experience, what slows work down most isn't the process. It's fear: of launching, of breaking something, of being the one who got it wrong in public. Perfectionism quietly kills good work."
     },
     {
       "type": "paragraph",
-      "text": "No, I'm not afraid to fail in public. I'm bold about failing fast. I live to switch context, to pivot, and to break things so they get rebuilt."
+      "text": "So I try to fail early and in the open. Switch context, pivot, break things so they can be rebuilt. It isn't comfortable. It's just cheaper than the alternative."
     },
     {
       "type": "paragraph",
-      "text": "In 2026, pace is the foundation businesses stand on."
+      "text": "In 2026, pace feels like the ground everything else stands on. Big companies have started moving like small ones: they shift, pivot, test, break, scrap and rebuild. Working next to AI that moves this fast has made time under pressure worth more than it used to be."
     },
     {
       "type": "paragraph",
-      "text": "It barely matters anymore whether you're an enterprise or a startup. Huge conglomerates have started working like startups. They shift, they pivot, they test, they break, they scrap, they rebuild. Time was always precious; time under pressure is worth even more. Like it or not, that's what working next to superintelligence costs."
+      "text": "For us, pace beats polish. Experimenting at pace is how we find out what will work: test sooner, pivot sooner, take the small wins together and keep the losses small."
     },
     {
       "type": "paragraph",
-      "text": "So pace is the baseline. It beats polish. It beats quality. It beats cost. Experimenting at pace is how you find out whether something will win: you test sooner, you pivot sooner, you collect small wins and keep your losses small. In design, in product, in tech. In everything."
+      "text": "I don't think this way of working suits everyone, and it doesn't have to. It suits people who'd rather bend than break, and who feel a kind of anxious excitement about not knowing what's next. I'm one of them."
     },
     {
       "type": "paragraph",
-      "text": "So, for everyone still in the waiting room: I think this is simply the future of work. And for those who feel an anxious excitement about what the unclear future holds, for those who can shift, who can pivot, who stay flexible, who would rather bend than break: now it's our time."
+      "text": "Everything comes with a price. I'm willing to pay this one, as long as it keeps getting us somewhere."
     },
     {
       "type": "paragraph",
-      "text": "Everything comes with a price. I, for one, am willing to pay the price of pace, as long as I know it's the price of winning."
-    },
-    {
-      "type": "paragraph",
-      "text": "Because for me, pace is meaning. Pace is joy. Pace is challenge. Pace is development. Pace is growth."
+      "text": "Because for me, pace is meaning. It's joy, challenge, development and growth."
     }
   ]
 }

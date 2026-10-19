@@ -34,6 +34,7 @@ This is Alexander Traykov's Astro portfolio: ASCII terminal language, printed-pa
 - Three button roles only, set with `data-ascii-action`: `primary` (one per view, the dither press), `secondary`, and `text` (quiet: a word with a dither rule). Do not add per-component button styles; `global.css` section 18 owns them.
 - Segmented controls (`.case-switch`, the Breathing grid groups) share one style: an ink-ruled group whose selected option fills with a stepped wipe. Tool panels (section 23) share labels, sliders, buttons and the select; 36px targets are allowed only there.
 - Labs index cards use real screens from `scripts/capture-labs-screens.mjs` (`npm run build` first). Re-run it after changing a tool's look; each WebP stays at or under 40 KB.
+- `skills/glyph-kit/` is a copy of the Glyph kit, and `public/labs/glyph-kit/` holds the three example pages the Labs page links to. Refresh both with `npm run sync:glyph-kit` from a sibling glyph-kit checkout; don't edit them by hand.
 - Type: Departure Mono (`--font-pixel`) for headings, numbers and short labels, only at `--type-px-*` sizes (multiples of 11px) and weight 400; Geist Sans for reading; Geist Mono for character grids such as diagrams and loaders.
 - Visible copy uses plain words a designer would write; no machine language (commands, paths, error codes) in UI labels.
 - Reduced motion is a hard contract: readable at rest, no parallax, no forced motion.

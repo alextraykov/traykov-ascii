@@ -8,7 +8,7 @@
       "includeFiles": ".private-work/**"
     },
     "api/glyph-kit-draw.js": {
-      "includeFiles": "skills/glyph-kit/{SKILL.md,reference/**,scripts/**}"
+      "includeFiles": "skills/glyph-kit/{SKILL.md,reference/*.md,reference/areas/*.md,scripts/**}"
     }
   },
   "rewrites": [

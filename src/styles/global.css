@@ -7603,12 +7603,11 @@ main:not(.about-page) > .about-hero .about-turntable {
 .gk-argument { display: grid; gap: var(--space-5); }
 
 /* 01 Cheap: four measured readings. */
-.gk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: var(--hairline) solid var(--ink); }
+.gk-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: var(--hairline) solid var(--ink); }
 .gk-stat { display: grid; align-content: start; gap: var(--space-3); padding: var(--space-5) var(--space-5) var(--space-5) 0; }
 .gk-stat + .gk-stat { padding-left: var(--space-5); border-left: var(--hairline) solid var(--line); }
 .gk-stat strong { color: var(--ink); font: 400 var(--type-px-33)/1.1 var(--font-pixel); }
 .gk-stat > p:last-child { margin: 0; color: var(--text-soft); font-size: .9rem; line-height: 1.55; }
-.gk-stat--open strong { color: var(--text-caption); }
 
 /* 03 Areas: every area at once, no tabs. */
 .gk-areas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: var(--space-6) var(--space-5); }
@@ -7661,11 +7660,6 @@ main:not(.about-page) > .about-hero .about-turntable {
 .gk-note__copy h2 { margin: 0; font: 400 var(--type-px-44)/1.05 var(--font-pixel); }
 .gk-note__copy > p:not(.pc-label) { margin: 0; max-width: 46ch; color: var(--text-soft); font-size: 1rem; line-height: 1.6; }
 
-@media (max-width: 1180px) {
-  .gk-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gk-stat:nth-child(3) { padding-left: 0; border-left: 0; }
-  .gk-stat:nth-child(n + 3) { border-top: var(--hairline) solid var(--line); }
-}
 @media (max-width: 900px) {
   .gk-fidelity__panes, .gk-note, .gk-pair__panes { grid-template-columns: minmax(0, 1fr); }
   .gk-pair__ask { border-right: 0; border-bottom: var(--hairline) solid var(--line); }
@@ -16819,6 +16813,9 @@ html[data-theme="dark"] .labs-item__screen img:not([data-screen-invert="false"])
   line-height: 1.1;
   letter-spacing: 0;
 }
+
+/* Glyph kit's name stays on one line: 6.4 cells of Departure at 44 px fits every hero column. */
+:root .glyph-kit-page .pc-hero h1 { white-space: nowrap; }
 
 /* Labs screens drift up to 6px toward the pointer (artwork-pointer.js); the frame hides the edges.
    No scan sweep here: round 3 keeps light effects out. */

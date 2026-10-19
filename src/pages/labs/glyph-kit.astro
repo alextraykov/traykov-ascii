@@ -128,10 +128,9 @@ const presets = [
       <header class="pc-hero">
         <div class="pc-kicker"><a href="/labs/" data-scramble><span class="back-link__arrow" aria-hidden="true">←</span> <span data-scramble-visual>All labs</span></a><span>Free · Skill for Claude Code and Codex</span></div>
         <div class="pc-hero__intro">
-          <h1>Glyph<br />kit.</h1>
+          <h1>Glyph kit.</h1>
           <div>
-            <p class="pc-lead">Get the point across clearly, cheaply, in an aesthetic that doesn't date.</p>
-            <p>Research, flows, wireframes, plans and motion, drawn in four shades and a few lines. Your agent makes them in microseconds, they paste anywhere, and they turn into a prototype, a deck or a report when the work needs one.</p>
+            <p class="pc-lead">A skill for Claude Code and Codex. Lightweight docs and diagrams that people and AI can both read.</p>
             <div class="pc-actions"><a class="pc-button" data-ascii-action="primary" href="/glyph-kit/">Get the kit <span aria-hidden="true">→</span></a><a data-ascii-action="text" href="/notes/four-characters/">Read Four characters <span aria-hidden="true">→</span></a></div>
           </div>
         </div>
@@ -142,21 +141,37 @@ const presets = [
         </figure>
       </header>
 
-      <nav class="pc-chapters" aria-label="Sections"><a href="#cheap"><span>01</span> Cheap</a><a href="#moving"><span>02</span> Moving</a><a href="#try"><span>03</span> Try it</a><a href="#areas"><span>04</span> Areas</a><a href="#present"><span>05</span> Present</a><a href="#hand-over"><span>06</span> Hand over</a><a href="#get"><span>07</span> Get it</a></nav>
+      <nav class="pc-chapters" aria-label="Sections"><a href="#try"><span>01</span> Builder</a><a href="#cheap"><span>02</span> Cost</a><a href="#moving"><span>03</span> Motion</a><a href="#areas"><span>04</span> Coverage</a><a href="#present"><span>05</span> Decks</a><a href="#hand-over"><span>06</span> Handoff</a><a href="#get"><span>07</span> Install</a></nav>
+
+      <section id="try" class="pc-section gk-try" aria-labelledby="try-title">
+        <header class="pc-section__heading"><p class="pc-kicker">01 Builder</p><h2 id="try-title">Ask in words, get a figure.</h2><p>Numbers you don't give are stamped as sample data.</p></header>
+        <form class="gk-try__form" data-gk-try method="post" action="/api/glyph-kit-draw">
+          <div class="pc-controls gk-try__presets" role="group" aria-label="Example asks">
+            {presets.map((p) => <button type="button" data-gk-preset={p.ask}>{p.short}</button>)}
+          </div>
+          <label class="gk-try__field"><span>Your ask</span><textarea name="ask" minlength="8" maxlength="600" rows="3" required placeholder="Draw signup to paid as people: 12,400 visited, 610 paid."></textarea></label>
+          {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-action="glyph-kit" data-appearance="interaction-only" data-theme="auto"></div>}
+          <div class="pc-actions"><button type="submit" data-ascii-action="secondary" data-gk-try-submit>Draw it</button><output class="gk-try__status" data-gk-try-status aria-live="polite">{"Needs scripts on."}</output></div>
+        </form>
+        <figure class="pc-demo gk-try__out" data-gk-try-out hidden>
+          <div class="pc-demo__bar"><span class="pc-label" data-gk-try-title></span><span class="pc-label" data-gk-try-stamp></span></div>
+          <pre class="gk-live__grid" role="img" data-gk-try-figure></pre>
+          <figcaption><details class="pc-disclosure"><summary>What the agent wrote</summary><pre tabindex="0" data-gk-try-spec></pre></details></figcaption>
+        </figure>
+      </section>
 
       <section id="cheap" class="pc-section" aria-labelledby="cheap-title">
-        <header class="pc-section__heading"><p class="pc-kicker">01 / Cheap</p><h2 id="cheap-title">Less to make,<br />less to send.</h2><p>Every figure and slide burns tokens and time. A text figure costs microseconds to draw and a fraction of the bytes of a screenshot, and it reads the same in a pull request, a ticket, a doc or a terminal. Measured on {stats.count} examples from the kit.</p></header>
+        <header class="pc-section__heading"><p class="pc-kicker">02 Cost</p><h2 id="cheap-title">Less to make. Less to send.</h2></header>
         <div class="gk-stats" data-reveal-group>
-          <article class="gk-stat"><p class="pc-label">To draw a figure</p><strong><span data-count-up={stats.us}>{stats.us}</span> μs</strong><p>Median. The slowest took {stats.slowest} μs.</p></article>
-          <article class="gk-stat"><p class="pc-label">Size as text</p><strong><span data-count-up={String(stats.text)}>{stats.text}</span> bytes</strong><p>{stats.ratio}× smaller than the same figure as an image ({stats.png} KB).</p></article>
-          <article class="gk-stat"><p class="pc-label">Image tokens for that picture</p><strong><span data-count-up={String(stats.tokens)}>{stats.tokens}</span></strong><p>Median, from {stats.tokensLow} to {stats.tokensHigh}, for a model to look at it.</p></article>
-          <article class="gk-stat gk-stat--open"><p class="pc-label">Tokens for the text</p><strong>Not yet</strong><p>Block characters are three bytes each, so small figures may cost about the same as an image. It gets measured before it gets claimed.</p></article>
+          <article class="gk-stat"><p class="pc-label">To draw a figure</p><strong><span data-count-up={stats.us}>{stats.us}</span> μs</strong><p>Median, no browser.</p></article>
+          <article class="gk-stat"><p class="pc-label">As text</p><strong><span data-count-up={String(stats.text)}>{stats.text}</span> bytes</strong><p>{stats.ratio}× smaller than an image.</p></article>
+          <article class="gk-stat"><p class="pc-label">As an image, for a model</p><strong><span data-count-up={String(stats.tokens)}>{stats.tokens}</span> tokens</strong><p>Median.</p></article>
         </div>
         <a class="pc-skill-link" data-ascii-action="text" href="https://github.com/alextraykov/glyph-kit/blob/main/skills/glyph-kit/reference/benefits.md">Every measurement, and the limits <span aria-hidden="true">↗</span></a>
       </section>
 
       <section id="moving" class="pc-section" aria-labelledby="moving-title">
-        <header class="pc-section__heading"><p class="pc-kicker">02 / Moving</p><h2 id="moving-title">Diagrams<br />that move.</h2><p>Work flowing, people leaving, a queue backing up. Each of these is a few lines of data; the kit draws it moving for a page or a deck, and still for a doc.</p></header>
+        <header class="pc-section__heading"><p class="pc-kicker">03 Motion</p><h2 id="moving-title">Six kinds that move.</h2></header>
         <div class="gk-gallery">
           {gallery.map((m) => (
             <figure class="pc-demo gk-live gk-pair">
@@ -190,25 +205,8 @@ const presets = [
         </div>
       </section>
 
-      <section id="try" class="pc-section gk-try" aria-labelledby="try-title">
-        <header class="pc-section__heading"><p class="pc-kicker">03 / Try it</p><h2 id="try-title">Ask for<br />one.</h2><p>Write what you want drawn, the way you'd ask a colleague. The agent picks the figure and the page draws it. Numbers you don't give are made up and marked as sample data.</p></header>
-        <form class="gk-try__form" data-gk-try method="post" action="/api/glyph-kit-draw">
-          <div class="pc-controls gk-try__presets" role="group" aria-label="Example asks">
-            {presets.map((p) => <button type="button" data-gk-preset={p.ask}>{p.short}</button>)}
-          </div>
-          <label class="gk-try__field"><span>Your ask</span><textarea name="ask" minlength="8" maxlength="600" rows="3" required placeholder="Draw signup to paid as people: 12,400 visited, 610 paid."></textarea></label>
-          {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-action="glyph-kit" data-appearance="interaction-only" data-theme="auto"></div>}
-          <div class="pc-actions"><button type="submit" data-ascii-action="secondary" data-gk-try-submit>Draw it</button><output class="gk-try__status" data-gk-try-status aria-live="polite">{"Needs scripts on."}</output></div>
-        </form>
-        <figure class="pc-demo gk-try__out" data-gk-try-out hidden>
-          <div class="pc-demo__bar"><span class="pc-label" data-gk-try-title></span><span class="pc-label" data-gk-try-stamp></span></div>
-          <pre class="gk-live__grid" role="img" data-gk-try-figure></pre>
-          <figcaption><details class="pc-disclosure"><summary>What the agent wrote</summary><pre tabindex="0" data-gk-try-spec></pre></details></figcaption>
-        </figure>
-      </section>
-
       <section id="areas" class="pc-section" aria-labelledby="areas-title">
-        <header class="pc-section__heading"><p class="pc-kicker">04 / Areas</p><h2 id="areas-title">Eight parts<br />of the job.</h2><p>{kindCount} kinds of figure. Each area has its own guide, so the agent reads only the one the task needs.</p></header>
+        <header class="pc-section__heading"><p class="pc-kicker">04 Coverage</p><h2 id="areas-title">{kindCount} kinds. Eight areas.</h2></header>
         <div class="gk-areas" data-reveal-group>
           {areas.map((area) => (
             <article class="gk-area">
@@ -223,11 +221,10 @@ const presets = [
 
       <section id="present" class="pc-section pc-technique" aria-labelledby="present-title">
         <header class="pc-technique__copy">
-          <p class="pc-kicker">05 / Present</p>
-          <h2 id="present-title">A review you can<br />actually present.</h2>
-          <p>A deck is one file. Steps light the lines you're talking about, and the full presentation adds typing, a camera that moves between figures and presenter notes.</p>
+          <p class="pc-kicker">05 Decks</p>
+          <h2 id="present-title">A review you can present.</h2>
           <p class="pc-caption">{deck.label}: real work, with the figures already published.</p>
-          <a class="pc-skill-link" data-ascii-action="text" href={`${base}/skill/examples/decks/${deck.file}.html`} target="_blank" rel="noopener">Open as a presentation <span aria-hidden="true">↗</span></a>
+          <a class="pc-skill-link" data-ascii-action="text" href={`${base}/motion-audit-deck.html`} target="_blank" rel="noopener">Open as a presentation <span aria-hidden="true">↗</span></a>
         </header>
         <figure class="pc-demo gk-player" data-gk-player>
           <div class="pc-demo__bar">
@@ -258,20 +255,20 @@ const presets = [
       </section>
 
       <section id="hand-over" class="pc-section" aria-labelledby="hand-over-title">
-        <header class="pc-section__heading"><p class="pc-kicker">06 / Hand over</p><h2 id="hand-over-title">The text is<br />the baseline.</h2><p>Agree the structure in text, where it's cheap to change. Then the same file becomes the prototype someone clicks, a report someone prints, or a screen built with your design system's real components.</p></header>
+        <header class="pc-section__heading"><p class="pc-kicker">06 Handoff</p><h2 id="hand-over-title">Text first. Then the prototype.</h2></header>
         <figure class="pc-demo gk-fidelity">
           <div class="gk-fidelity__panes">
             <div class="gk-fidelity__pane"><p class="pc-label">What you review</p><pre class="gk-glyphs" role="img" aria-label="The notification settings screen as a text wireframe, with two notes.">{settingsText.split("\n\nSource:")[0].split("\n").slice(2).join("\n")}</pre></div>
-            <div class="gk-fidelity__pane"><p class="pc-label">What people click</p><iframe class="gk-frame" src={`${base}/skill/examples/product/settings.html`} title="The same settings screen as a working prototype" loading="lazy"></iframe></div>
+            <div class="gk-fidelity__pane"><p class="pc-label">What people click</p><iframe class="gk-frame" src={`${base}/settings.html`} title="The same settings screen as a working prototype" loading="lazy"></iframe></div>
           </div>
           <figcaption><span>Note 2, "Save is disabled until something changes", becomes behaviour in the prototype.</span></figcaption>
         </figure>
         <div class="gk-outputs" data-reveal-group>
-          <a class="gk-output" href={`${base}/skill/examples/reports/out/motion-audit.pdf`}>
+          <a class="gk-output" href={`${base}/motion-audit.pdf`}>
             <img src="/labs/glyph-kit-previews/report-page-1.webp" alt="" width="909" height="1286" loading="lazy" decoding="async" />
             <span><strong>A report</strong> Cover, summary, numbered findings, figures. Six pages as a PDF.</span>
           </a>
-          <a class="gk-output" href={`${base}/skill/examples/reports/out/motion-audit.pdf`}>
+          <a class="gk-output" href={`${base}/motion-audit.pdf`}>
             <img src="/labs/glyph-kit-previews/report-page-3.webp" alt="" width="909" height="1286" loading="lazy" decoding="async" />
             <span><strong>The same findings, inside</strong> Each section leads with its takeaway.</span>
           </a>
@@ -283,7 +280,7 @@ const presets = [
       </section>
 
       <section id="get" class="pc-section gk-get" aria-labelledby="get-title">
-        <header class="pc-section__heading"><p class="pc-kicker">07 / Get it</p><h2 id="get-title">One skill.<br />Claude Code or Codex.</h2><p>Install it in one step, as a plugin for Claude Code or a skill for any agent, or download it. Then ask for a figure the way you'd ask a colleague. Free, MIT licensed.</p><div class="pc-actions"><a class="pc-button" data-ascii-action="primary" href="/glyph-kit/">Get the kit <span aria-hidden="true">→</span></a><a data-ascii-action="text" href="https://github.com/alextraykov/glyph-kit">On GitHub <span aria-hidden="true">↗</span></a></div></header>
+        <header class="pc-section__heading"><p class="pc-kicker">07 Install</p><h2 id="get-title">One skill. Claude Code or Codex.</h2><div class="pc-actions"><a class="pc-button" data-ascii-action="primary" href="/glyph-kit/">Get the kit <span aria-hidden="true">→</span></a><a data-ascii-action="text" href="https://github.com/alextraykov/glyph-kit">On GitHub <span aria-hidden="true">↗</span></a></div></header>
       </section>
 
       <aside class="gk-note" aria-labelledby="gk-note-title">

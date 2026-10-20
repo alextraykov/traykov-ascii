@@ -6,6 +6,8 @@ import SiteHead from "../../components/SiteHead.astro";
 import SiteNav from "../../components/SiteNav.astro";
 import { AREA_DOCS, KIND_DOCS } from "../../../skills/glyph-kit/scripts/docs.mjs";
 import { AREAS, KINDS } from "../../../skills/glyph-kit/scripts/registry.mjs";
+import { ROW_NAMES, screen as drawWireframe } from "../../../skills/glyph-kit/scripts/areas/wireframes.mjs";
+import { screenSpec } from "../../../skills/glyph-kit/scripts/say.mjs";
 import { THEMES } from "../../../skills/glyph-kit/scripts/render/deck.mjs";
 import { paint } from "../../../skills/glyph-kit/scripts/render/paint.mjs";
 import { live, stillGrid } from "../../../skills/glyph-kit/scripts/live/kinds.mjs";
@@ -61,7 +63,8 @@ const moving = [
   ["states", "Every state of saving, including the failure and the retry, agreed before anything is drawn."],
   ["queue", "Two reviews at a time, and slow ones. Everything before it waits."],
   ["rollout", "The stages, the guard, and what happens when it trips."],
-  ["loading", "What someone sees in the first two seconds: a skeleton, then the text, then the image."]
+  ["loading", "What someone sees in the first two seconds: a skeleton, then the text, then the image."],
+  ["readings", "Four readings over two weeks. The intervals stop overlapping only at the end."]
 ].map(([name, about]) => {
   const spec = LIVE_SPECS[name];
   const { make, still, summary } = live(spec);
@@ -114,6 +117,20 @@ const presets = [
   ["wireframes", "Settings screen"],
   ["motion", "Toast motion"]
 ].map(([name, short]) => ({ name, short, ask: ASKS[name] }));
+const typedSample = {
+  kind: "screen",
+  data: {
+    title: "Choose environment",
+    rows: [
+      { type: "input", label: "Name", placeholder: "Enter name" },
+      { type: "space" },
+      { type: "radio", options: ["Staging", "Production"], selected: "Staging" }
+    ]
+  }
+};
+const typedSampleLines = drawWireframe(typedSample.data).split("\n");
+const typedSampleText = typedSampleLines.join("\n");
+const typedHints = Object.entries(ROW_NAMES).map(([type, names]) => `${type}: ${names[0]}`).join(" · ");
 ---
 <!doctype html>
 <html lang="en">
@@ -145,6 +162,38 @@ const presets = [
 
       <section id="try" class="pc-section gk-try" aria-labelledby="try-title">
         <header class="pc-section__heading"><p class="pc-kicker">01 Builder</p><h2 id="try-title">Ask in words, get a figure.</h2><p>Numbers you don't give are stamped as sample data.</p></header>
+        <div class="gk-say" data-gk-say>
+          <div class="gk-say__intro">
+            <div>
+              <p class="pc-label">Typed first · no model</p>
+              <h3>Say a screen.</h3>
+              <p>Describe a screen in short phrases. Your words draw the same rows the kit already knows.</p>
+              <p class="pc-caption">Try: “A popover called Choose environment. A name field. Then two radio options, staging and production.”</p>
+              <p class="pc-caption">Common words: {typedHints}</p>
+              <details class="pc-disclosure"><summary>More words it knows</summary><p>{Object.entries(ROW_NAMES).map(([type, names]) => `${type}: ${names.join(", ")}`).join(" · ")}</p></details>
+            </div>
+          </div>
+          <form class="gk-try__form gk-say__form" data-gk-say-form>
+            <label class="gk-try__field">
+              <span>Describe the screen</span>
+              <textarea name="say" maxlength="600" rows="3" placeholder="A name field. A Save button." disabled aria-describedby="gk-say-hint"></textarea>
+            </label>
+            <p class="pc-caption" id="gk-say-hint">Speech is optional. Your browser may send microphone audio to its speech service. Typing stays here.</p>
+            <div class="pc-actions" role="group" aria-label="Screen builder actions">
+              <button type="submit" data-ascii-action="secondary" data-gk-say-add disabled>Add</button>
+              <button type="button" data-ascii-action="text" data-gk-say-listen disabled>Listen</button>
+              <span data-gk-say-loader hidden aria-hidden="true"></span>
+              <button type="button" data-ascii-action="text" data-gk-say-undo disabled>Undo</button>
+              <button type="button" data-ascii-action="text" data-gk-say-reset disabled>Reset</button>
+              <output class="gk-try__status" data-gk-say-status aria-live="polite">Scripts on to type a screen.</output>
+            </div>
+          </form>
+          <figure class="pc-demo gk-try__out" data-gk-say-out>
+            <div class="pc-demo__bar"><span class="pc-label" data-gk-say-title>Choose environment</span><span class="pc-label" data-gk-say-state>Example</span></div>
+            <pre class="gk-live__grid" role="img" aria-label="Example environment chooser" data-gk-say-figure>{typedSampleText}</pre>
+            <figcaption><details class="pc-disclosure"><summary>Screen spec</summary><pre tabindex="0" data-gk-say-spec>{JSON.stringify(screenSpec(typedSample), null, 2)}</pre></details></figcaption>
+          </figure>
+        </div>
         <form class="gk-try__form" data-gk-try method="post" action="/api/glyph-kit-draw">
           <div class="pc-controls gk-try__presets" role="group" aria-label="Example asks">
             {presets.map((p) => <button type="button" data-gk-preset={p.ask}>{p.short}</button>)}
@@ -171,7 +220,7 @@ const presets = [
       </section>
 
       <section id="moving" class="pc-section" aria-labelledby="moving-title">
-        <header class="pc-section__heading"><p class="pc-kicker">03 Motion</p><h2 id="moving-title">Six kinds that move.</h2></header>
+        <header class="pc-section__heading"><p class="pc-kicker">03 Motion</p><h2 id="moving-title">Six keep moving. Every type arrives.</h2><p>On a page or in a deck, every type arrives once in the order that carries its point. These processes keep moving.</p></header>
         <div class="gk-gallery">
           {gallery.map((m) => (
             <figure class="pc-demo gk-live gk-pair">
@@ -206,7 +255,7 @@ const presets = [
       </section>
 
       <section id="areas" class="pc-section" aria-labelledby="areas-title">
-        <header class="pc-section__heading"><p class="pc-kicker">04 Coverage</p><h2 id="areas-title">{kindCount} kinds. Eight areas.</h2></header>
+        <header class="pc-section__heading"><p class="pc-kicker">04 Coverage</p><h2 id="areas-title">{kindCount} types. {areas.length} areas.</h2></header>
         <div class="gk-areas" data-reveal-group>
           {areas.map((area) => (
             <article class="gk-area">
@@ -294,6 +343,6 @@ const presets = [
       </aside>
     </main>
     <SiteFooter /><SiteAnalytics />
-    <script>import "../../scripts/motion/index.js"; import "../../scripts/glyph-kit.js"; import "../../scripts/glyph-kit-live.js"; import "../../scripts/glyph-kit-try.js";</script>
+    <script>import "../../scripts/motion/index.js"; import "../../scripts/glyph-kit.js"; import "../../scripts/glyph-kit-live.js"; import "../../scripts/glyph-kit-try.js"; import "../../scripts/glyph-kit-say.js";</script>
   </body>
 </html>

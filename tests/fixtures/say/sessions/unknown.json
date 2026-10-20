@@ -1,0 +1,46 @@
+{
+  "name": "unknown",
+  "provenance": "synthetic-authored; no microphone recording",
+  "expectedTypes": [
+    "text",
+    "toggle"
+  ],
+  "segments": [
+    {
+      "id": "title",
+      "text": "A screen called Settings",
+      "final": true,
+      "at": 0
+    },
+    {
+      "id": "extra",
+      "text": "A sort of card thing",
+      "final": false,
+      "at": 120
+    },
+    {
+      "id": "extra",
+      "text": "A sort of card thing with a thumbnail",
+      "final": true,
+      "at": 240
+    },
+    {
+      "id": "reset-draft",
+      "text": "An email field",
+      "final": false,
+      "at": 360
+    },
+    {
+      "id": "reset-draft",
+      "text": "",
+      "final": false,
+      "at": 480
+    },
+    {
+      "id": "toggle",
+      "text": "A switch for Weekly summary, off",
+      "final": true,
+      "at": 600
+    }
+  ]
+}

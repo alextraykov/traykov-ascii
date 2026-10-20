@@ -38,7 +38,7 @@ By hand, copy this folder into a skills directory:
 Node 18 or later, nothing to install.
 
 ```bash
-node scripts/glyph-kit.mjs kinds                                   # 45 kinds in 8 areas
+node scripts/glyph-kit.mjs types                                   # 60 types in 10 areas
 node scripts/glyph-kit.mjs render examples/product/settings.spec.json --to markdown
 node scripts/glyph-kit.mjs render examples/product/settings.spec.json --to html > settings.html
 node scripts/glyph-kit.mjs deck examples/decks/export-review.json > deck.html   # a 16-slide review
@@ -63,7 +63,7 @@ PDF and PNG use a Chromium browser already on the machine (see `reference/export
 
 ## Guardrails
 
-Made-up numbers can't pass as real: a spec with numbers and no `source` is refused, an "Illustrative" source stamps SAMPLE DATA on the figure in every format, `"data": "@results.csv"` reads numbers from your file, and each kind refuses data that can't be true (a funnel that grows, dates out of order). For model context, pass the spec, or render with `--compact` for plain ASCII. See `reference/benefits.md`.
+Made-up numbers can't pass as real: a spec with numbers and no `source` is refused, an "Illustrative" source stamps SAMPLE DATA on the figure in every format, `"data": "@results.csv"` reads numbers from your file, and each type refuses data that can't be true (a funnel that grows, dates out of order). For model context, pass the spec, or render with `--compact` for plain ASCII.
 
 The generators also import directly, in Node or a browser:
 
@@ -74,7 +74,7 @@ import { renderMarkdown } from "./scripts/render/text.mjs";
 
 ## Areas
 
-| Area | Kinds |
+| Area | Types |
 |---|---|
 | Research data | Likert answers, themes by participant, affinity counts, quote cards, task results, journey feeling |
 | Experiments and metrics | funnel, retention cohorts, test result with intervals, metric panel, bar chart, comparison, forecast, meter, sparkline, heatmap, calendar strip |
@@ -84,6 +84,7 @@ import { renderMarkdown } from "./scripts/render/text.mjs";
 | Design system | spacing scale, type scale, contrast check, component states, layer stack, token table, table |
 | Handoff and QA | spacing redline, QA checklist, before and after |
 | Motion | intent card, transition spec, stagger, frame strip, motion timing, easing tokens |
+| Processes | loop, queue, rollout, loading, states |
 
 ## Checks
 

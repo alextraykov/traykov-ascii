@@ -1,7 +1,8 @@
-// What each area and kind is for, and what to watch for. The area guides in reference/areas/
+// What each area and type is for, and what to watch for. The area guides in reference/areas/
 // are generated from this file and the examples (node scripts/build-reference.mjs).
 
 export const AREA_DOCS = {
+  process: "Processes over time: work moving between stages, waiting, returning and finishing.",
   research: "Turn interviews, surveys and usability tests into evidence a team can read in a PR or a ticket. Every figure keeps who said it and where it came from.",
   metrics: "Funnels, cohorts, test results and the everyday charts. Numbers are always printed next to the bars, so a reader or a model reads them instead of estimating lengths.",
   flows: "Agree on paths, states and journeys before anyone designs a screen. Text flows are quick to change in review and easy for an agent to turn into routes and state.",
@@ -9,10 +10,16 @@ export const AREA_DOCS = {
   wireframes: "Screens built from a small set of primitives. The same primitive names map to real components in the design-system map, which is what lets a text wireframe become a prototype and then production code without reinterpretation.",
   systems: "Document the design system as data: scales, contrast, component states, layers and tokens. Contrast is computed, not eyeballed.",
   handoff: "Measurements and checklists for handing work to engineering and checking what came back.",
+  layouts: "Whole deliverables on one page: a readout, a dashboard, a PR summary, a design review or a status update. Fill the slots with a sentence, short lists and ordinary specs; code places everything within 80 cells, putting narrow figures side by side and stacking the rest. Figures without their own source use the layout's. Export to HTML or PDF for a finished page in the kit's type; a file holding a list of layouts exports as one document, a layout to a page. Pick by the ask: a write-up or one-pager is a readout; weekly numbers a dashboard; what a PR changed a prSummary; choosing between options a designReview; where work stands a statusUpdate. When unsure, use a readout.",
   motion: "Write motion down as a decision before anyone animates it: why it moves, what starts it, how long, which curve, and what reduced motion shows instead. The HTML form plays it."
 };
 
 export const KIND_DOCS = {
+  loop: { when: "Work that returns to an earlier stage.", traps: "Keep the return share grounded in a source.", motion: "Work travels forward; a share returns for another pass." },
+  states: { when: "A state machine with a path to play.", traps: "Every step in the path needs a transition.", motion: "A token follows the played path." },
+  queue: { when: "Work waiting between limited columns.", traps: "State each column's limit and time per card.", motion: "Cards wait when the next column is full." },
+  rollout: { when: "A staged release with a guard metric.", traps: "A breach must name one of the stages.", motion: "Stages advance, pause and roll back at a breach." },
+  loading: { when: "What appears while a request finishes.", traps: "Keep phases in time order.", motion: "The card develops beside a time ruler." },
   likert: { when: "A survey question answered on a five-point scale, compared across questions.", traps: "Show the counts or percentages; never hide neutral answers, they change the story." },
   themeMatrix: { when: "Synthesis after interviews: which themes came from how many people.", traps: "A theme from one loud participant looks small here, which is the point. Keep participant codes, never names." },
   affinity: { when: "Counting notes per cluster after an affinity session.", traps: "State what was counted (notes, people, sessions) in the title." },
@@ -43,6 +50,15 @@ export const KIND_DOCS = {
   decisionLog: { when: "Recording what was decided and why.", traps: "Write the why as evidence, not opinion." },
   screen: { when: "A layout proposal: content, order and controls before visuals.", traps: "One screen per sketch; notes go outside the frame; use only the primitives so the map can translate them." },
   responsive: { when: "The same screen at two widths.", traps: "Show what moves or disappears, not just a narrower copy." },
+  appShell: { when: "An app page with a header, a sidebar and content: admin pages, settings apps, anything with navigation. The default for a screen.", traps: "Sidebar 10 to width − 24 cells (18 by default); regions take the screen primitives." },
+  cardGrid: { when: "Galleries, template pickers, grids of projects.", traps: "Up to 6 cards, 2 or 3 to a row by width; keep each card to a few rows." },
+  listDetail: { when: "Inboxes, master and detail, anything where picking an item shows it.", traps: "Mark the picked item with selected (its index or text)." },
+  modal: { when: "A dialog over a page: confirm, delete, a short form.", traps: "The page shows dimmed behind it; make the page tall enough for the dialog." },
+  readout: { when: "A one-pager on a test or a study: headline, up to 3 summary lines, up to 4 figures of evidence, next steps.", traps: "The headline is the finding in one sentence, not a topic." },
+  dashboard: { when: "Weekly numbers at a glance: 2 to 6 tiles and a note.", traps: "Tiles keep their natural width and share a row when they fit in 80 cells: narrow types (meter, sparkline) pack two or three to a row." },
+  prSummary: { when: "What a pull request changed: one line, before and after side by side, checks, risks.", traps: "Before and after use the same type and scale; each up to 38 cells wide sits side by side." },
+  designReview: { when: "Choosing between 2 or 3 options: the question, the options, a recommendation, open questions.", traps: "Give each option a title; draw them with the same type. Options up to 38 cells wide sit side by side." },
+  statusUpdate: { when: "Where work stands: the period, progress figures, done, next and blocked lists.", traps: "Each blocked item says why in words." },
   spacingScale: { when: "Documenting spacing tokens.", traps: "State the unit per cell under the chart." },
   typeScale: { when: "Documenting type sizes and line heights.", traps: "Sizes in one unit; bars compare size, not weight." },
   contrast: { when: "Checking colour pairs against WCAG 2 thresholds.", traps: "AA needs 4.5:1 for body text and 3:1 for large text and UI parts." },
@@ -52,6 +68,7 @@ export const KIND_DOCS = {
   table: { when: "Tables in places without Markdown: terminals, code comments.", traps: "In Markdown, use a Markdown table." },
   redline: { when: "Spacing and widths for handoff.", traps: "Widths are proportional but labels carry the real numbers." },
   qaChecklist: { when: "Design QA before release.", traps: "Blocked items need a reason in words." },
+  anatomy: { when: "The parts of a component for a spec page or handoff: what each numbered part is, its token or rule, and which parts are optional.", traps: "Name parts as the design system does and put the rule in spec, not the look. Up to 8 parts; parts side by side take a row, stacked parts (a card) take direction column. Sizes are proportions, so real measurements belong in a redline.", motion: "The container stands first with its legend line, then each part lands in number order on the same step as its legend line, so the eye ties the number, its place on the component and its rule together; the dashed-edge key lands last." },
   motionTiming: { when: "Comparing durations and easing, today against proposed.", traps: "Keep the 500ms scale fixed across a report; a + is usually the finding." },
   intentCard: { when: "Deciding a single motion before building it.", traps: "No intent, no animation: if 'why' is empty, cut it. Reduced motion is designed, not 'none'." },
   transitionSpec: { when: "One transition, property by property.", traps: "Animate transform and opacity; anything else needs a measured reason." },
@@ -59,3 +76,22 @@ export const KIND_DOCS = {
   filmstrip: { when: "Seeing an easing curve frame by frame.", traps: "Rows are equal slices of time, so bunched marks mean slow movement." },
   easingTable: { when: "Documenting easing tokens.", traps: "Three or four curves cover most products." }
 };
+
+KIND_DOCS.funnel.motion = "People fall through the steps and departures drift out to the side.";
+KIND_DOCS.abResult.motion = "Only with readings over time: give `data` as `{ days, readings: [{ day, people, variants }] }`. The intervals narrow reading by reading, numbers change in place and the verdict switches when the intervals part. The still is the last reading, with a line saying how long they overlapped.";
+
+export const LIVE_DOC = `# Moving diagrams
+
+Every type moves, in one of two ways. Seven keep moving, because change over time is what they show: six processes (a rework loop, a funnel of people, a state machine, a work queue, a staged rollout and a loading sequence) and a test result given readings over time. Every other type arrives once, in the order that carries its point, then stays still. Use \`node scripts/glyph-kit.mjs live spec.json --to html\` for a standalone page, or \`--to markdown\` for its still.
+
+The still makes the same point and is used for reduced motion, print and no-JavaScript output. Playback starts from the still, so nothing jumps. A standalone page has a Still button that pauses it without changing the data. Processes use the data shapes in \`reference/areas/process.md\`. A funnel accepts either a list of steps or \`{steps: [...]}\`.
+
+Structure changes in steps. Travelling marks use the kit’s \`▓▒░\` trail, arrivals flash, waiting work chases, and only changing values scramble. The clock is 120ms a step. No blur, sliding text or springs.
+
+Arrivals play in HTML pages and decks, once, when a figure comes into view; a small ↺ in the corner plays one again. They step on 40ms and settle within about 600ms; diagrams grow along their lines in about 1.1s, and the motion types play their own timing at real speed. Reduced motion, print, Markdown and text show the figure as it is.
+
+Cell-grid playback repaints text rather than using compositor transforms. Layout and routes are precomputed, the page is redrawn only when the step changes, and off-screen players stop. When a page has several moving diagrams, only the one most in view plays.
+
+## Types that keep moving
+
+`;

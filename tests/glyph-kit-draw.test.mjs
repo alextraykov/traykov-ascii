@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import drawHandler, { checkSpec, isBlocked, markInvented, MODEL, readReply } from "../api/glyph-kit-draw.js";
+import drawHandler, { checkSpec, getSystemPrompt, isBlocked, markInvented, MODEL, readReply, tryDraw, measure, MAX_ROWS } from "../api/glyph-kit-draw.js";
 
 const originalFetch = globalThis.fetch;
 const keys = ["DEEPSEEK_API_KEY", "TURNSTILE_SECRET_KEY", "VERCEL_ENV", "CONTACT_ALLOWED_ORIGINS"];
@@ -265,7 +265,7 @@ test("tries once more with the reason when the figure can't be drawn, then gives
   assert.equal(res.statusCode, 200);
   assert.equal(sent.length, 2);
   const check = sent[1].messages.at(-1).content;
-  assert.match(check, /^<check>The kit couldn't draw it: Unknown kind "pie"/);
+  assert.match(check, /^<check>The kit couldn't draw it: Unknown type "pie"/);
   assert.equal(sent[1].messages.at(-2).role, "assistant");
   assert.equal(res.body.fix, undefined);
 
@@ -279,15 +279,20 @@ test("tries once more with the reason when the figure can't be drawn, then gives
 });
 
 test("refuses drawings too big for the box", () => {
-  const rows = Array.from({ length: 45 }, (_, i) => ({ label: `Row ${i + 1}`, value: 100 - i }));
-  const big = readReply(JSON.stringify({ kind: "barChart", title: "Big", source: "Illustrative.", data: rows }));
+  const rows = Array.from({ length: 12 }, (_, i) => ({ label: `Step ${i + 1}` }));
+  const spec = { kind: "branchFlow", title: "Big", source: "Illustrative.", data: rows };
+  assert.ok(measure(tryDraw(spec).text).rows > MAX_ROWS);
+  const big = readReply(JSON.stringify(spec));
   assert.equal(big.reason, "draw");
   assert.match(big.fix, /rows tall/);
 });
 
 test("says when an animate ask gets a still figure", () => {
   const board = { kind: "board", title: "Roadmap", data: { now: ["A"], next: ["B"], later: ["C"] } };
-  assert.match(readReply(JSON.stringify(board), "animate our roadmap").note, /doesn't move yet/);
+  const still = readReply(JSON.stringify(board), "animate our roadmap");
+  assert.equal(still.mode, "still");
+  assert.equal(still.spec.motion, undefined);
+  assert.match(still.note, /doesn't keep moving/);
   assert.equal(readReply(JSON.stringify(board), "our roadmap").note, undefined);
   const loop = { kind: "loop", title: "Week", source: "Illustrative.", data: { stages: ["Build", "QA"], back: { from: "QA", to: "Build", share: 0.3 } } };
   assert.equal(readReply(JSON.stringify(loop), "animate the loop").note, undefined);
@@ -311,6 +316,51 @@ function streamResponse() {
 const events = (written) => written.trim().split("\n\n").map((block) => {
   const [, name] = block.match(/^event: (\w+)/m);
   return { name, data: JSON.parse(block.match(/^data: (.*)$/m)[1]) };
+});
+
+test("motion and language survive checked replies", () => {
+  const people = { ...funnel, motion: true, lang: "de" };
+  const read = readReply(JSON.stringify(people), "draw the funnel");
+  assert.equal(read.mode, "moving");
+  assert.equal(read.spec.lang, "de");
+  assert.equal(tryDraw(read.spec).mode, "moving");
+  assert.equal(readReply(JSON.stringify({ ...people, lang: "not_a_tag" })).spec.lang, undefined);
+  // Charts arrive once on a page but don't keep moving, so motion on a bar chart is dropped.
+  const bars = readReply(JSON.stringify({ ...funnel, kind: "barChart", motion: true }));
+  assert.equal(bars.mode, "still");
+  assert.equal(bars.spec.motion, undefined);
+  assert.equal(readReply(JSON.stringify({ ...funnel, data: { steps: funnel.data } })).mode, "moving");
+  assert.equal(readReply(JSON.stringify({ ...funnel, data: { steps: funnel.data }, motion: false })).mode, "still");
+});
+
+test("the system prompt includes processes and stays within its cache budget", () => {
+  const prompt = getSystemPrompt();
+  assert.ok(prompt.length < 70000, `${prompt.length} characters`);
+  assert.match(prompt, /Processes over time/);
+  assert.match(prompt, /motion.*true/);
+});
+
+test("rename preserves a moving base when the model omits its motion flag", async () => {
+  configure();
+  const base = { ...funnel, motion: true, lang: "de" };
+  modelReplies(JSON.stringify({ ...funnel, title: "Renamed" }));
+  const res = response();
+  await drawHandler(request({ ...ask, ask: "rename it", base }), res);
+  assert.equal(res.body.mode, "moving");
+  assert.equal(res.body.spec.motion, true);
+  assert.equal(res.body.spec.lang, "de");
+});
+
+test("an animated funnel streams as moving from its kind", async () => {
+  configure();
+  globalThis.fetch = async url => String(url).includes("turnstile")
+    ? new Response(JSON.stringify({ success: true, action: "glyph-kit", hostname: "traykov.cc" }))
+    : streamed(JSON.stringify(funnel));
+  const res = streamResponse();
+  await drawHandler(request({ ...ask, ask: "animated funnel of visits and paid" }, { accept: "text/event-stream" }), res);
+  const got = events(res.written);
+  assert.deepEqual(got.find(e => e.name === "kind").data, { kind: "funnel", moving: true });
+  assert.equal(got.at(-1).data.mode, "moving");
 });
 
 test("streams the kind first, then the checked figure", async () => {

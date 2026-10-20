@@ -1,0 +1,52 @@
+{
+  "name": "popover",
+  "provenance": "synthetic-authored; no microphone recording",
+  "expectedTypes": [
+    "input",
+    "radio"
+  ],
+  "segments": [
+    {
+      "id": "title",
+      "text": "A popover called Choose environment",
+      "final": true,
+      "at": 0
+    },
+    {
+      "id": "name",
+      "text": "A name",
+      "final": false,
+      "at": 120
+    },
+    {
+      "id": "name",
+      "text": "A name field",
+      "final": false,
+      "at": 240
+    },
+    {
+      "id": "name",
+      "text": "A name field",
+      "final": true,
+      "at": 360
+    },
+    {
+      "id": "name",
+      "text": "A name field",
+      "final": true,
+      "at": 480
+    },
+    {
+      "id": "choice",
+      "text": "Two radio options, staging",
+      "final": false,
+      "at": 600
+    },
+    {
+      "id": "choice",
+      "text": "Two radio options, staging and production",
+      "final": true,
+      "at": 720
+    }
+  ]
+}

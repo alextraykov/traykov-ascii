@@ -1,0 +1,46 @@
+{
+  "name": "correction",
+  "provenance": "synthetic-authored; no microphone recording",
+  "expectedTypes": [
+    "input",
+    "buttons"
+  ],
+  "segments": [
+    {
+      "id": "name",
+      "text": "A name field",
+      "final": true,
+      "at": 0
+    },
+    {
+      "id": "draft",
+      "text": "Actually a dropdown",
+      "final": false,
+      "at": 120
+    },
+    {
+      "id": "draft",
+      "text": "Actually a search box",
+      "final": false,
+      "at": 240
+    },
+    {
+      "id": "draft",
+      "text": "Actually a dropdown",
+      "final": true,
+      "at": 360
+    },
+    {
+      "id": "undo",
+      "text": "Undo",
+      "final": true,
+      "at": 480
+    },
+    {
+      "id": "button",
+      "text": "A Save and close button",
+      "final": true,
+      "at": 600
+    }
+  ]
+}

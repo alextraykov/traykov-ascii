@@ -1,30 +1,23 @@
 # Moving diagrams
 
-A moving diagram is a spec like any other, drawn on a character grid that animates. Structure (boxes, lines, labels) changes in steps; work, people and cursors glide between cells as `▓▒░`. Every kind has a still frame that makes the same point, used for reduced motion, print, Markdown and tickets.
+Every type moves, in one of two ways. Seven keep moving, because change over time is what they show: six processes (a rework loop, a funnel of people, a state machine, a work queue, a staged rollout and a loading sequence) and a test result given readings over time. Every other type arrives once, in the order that carries its point, then stays still. Use `node scripts/glyph-kit.mjs live spec.json --to html` for a standalone page, or `--to markdown` for its still.
 
-```bash
-node scripts/glyph-kit.mjs live spec.json --to html       # one page that plays
-node scripts/glyph-kit.mjs live spec.json --to markdown   # the still, with a description
-```
+The still makes the same point and is used for reduced motion, print and no-JavaScript output. Playback starts from the still, so nothing jumps. A standalone page has a Still button that pauses it without changing the data. Processes use the data shapes in `reference/areas/process.md`. A funnel accepts either a list of steps or `{steps: [...]}`.
 
-Colour has three roles: `ok` (done, shipped, the good path), `fail` (blocked, sent back, a breach) and `mute` (structure and waiting). The still reads without colour.
+Structure changes in steps. Travelling marks use the kit’s `▓▒░` trail, arrivals flash, waiting work chases, and only changing values scramble. The clock is 120ms a step. No blur, sliding text or springs.
 
-## Kinds
+Arrivals play in HTML pages and decks, once, when a figure comes into view; a small ↺ in the corner plays one again. They step on 40ms and settle within about 600ms; diagrams grow along their lines in about 1.1s, and the motion types play their own timing at real speed. Reduced motion, print, Markdown and text show the figure as it is.
 
-| Kind | Use it for | Data |
-|---|---|---|
-| `loop` | Work through stages, with rework sent back | `stages: [names]`, `back: { from, to, share, label? }` |
-| `funnel` | Where people leave, shown as people | `steps: [{ label, value }]`, largest first |
-| `states` | A state machine, with one path played through it | `states: [names]`, `transitions: [{ from, to, label? }]`, `path: [names]` |
-| `queue` | Work-in-progress limits and the bottleneck | `columns: [{ label, limit?, pace? }]`; first is the backlog, last is done; `pace` is how long a card stays |
-| `rollout` | A staged release, its guard metric and a rollback | `stages: [percent]`, `metric`, `limit`, `breachAt?` |
-| `loading` | What someone sees in the first seconds | `duration` (ms), `phases: [{ at, show }]` with `show` one of `tap`, `skeleton`, `text`, `image` |
+Cell-grid playback repaints text rather than using compositor transforms. Layout and routes are precomputed, the page is redrawn only when the step changes, and off-screen players stop. When a page has several moving diagrams, only the one most in view plays.
 
-Examples for each are in `examples/live/`, with the HTML they make.
+## Types that keep moving
 
-## Watch for
-
-- The motion is an illustration of the data, not a measurement. Seeded randomness keeps every run the same, but say "sample data" unless the numbers are real.
-- Keep it under 80 columns; the kinds size themselves from their labels, so long labels widen the grid.
-- One moving diagram per screen. Several at once compete for attention; the Labs page plays only what's on screen.
-- Hand-drawn compositions ([`tools/pace.mjs`](https://github.com/alextraykov/glyph-kit/blob/main/tools/pace.mjs) in the repository) show what the grid can do for an argument. Build new ones on `scripts/live/grid.mjs` the same way: a function from (step, fraction) to a grid.
+| Type | Motion |
+|---|---|
+| `funnel` | People fall through the steps and departures drift out to the side. |
+| `abResult` | Only with readings over time: give `data` as `{ days, readings: [{ day, people, variants }] }`. The intervals narrow reading by reading, numbers change in place and the verdict switches when the intervals part. The still is the last reading, with a line saying how long they overlapped. |
+| `loop` | Work travels forward; a share returns for another pass. |
+| `states` | A token follows the played path. |
+| `queue` | Cards wait when the next column is full. |
+| `rollout` | Stages advance, pause and roll back at a breach. |
+| `loading` | The card develops beside a time ruler. |

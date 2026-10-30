@@ -34,14 +34,14 @@ const ERRORS = {
 const BLOCKED = /\b(?:dicks?|cocks?|penis(?:es)?|vaginas?|pussy|pussies|boobs?|tits|porn\w*|nudes?|cum|fuck\w*|cunts?)\b/iu;
 export const isBlocked = (text) => BLOCKED.test(String(text));
 
-const SPEC_KEYS = ["kind", "title", "intent", "source", "data", "options", "motion", "lang"];
+const SPEC_KEYS = ["kind", "title", "intent", "source", "data", "options", "motion", "lang", "focus"];
 // The page scales a figure to fit its box; past this it would need scrolling, so the model tries again smaller.
 export const MAX_COLS = 96;
 export const MAX_ROWS = 40;
-// When someone asks for motion that the kind can't do, the page says so instead of quietly drawing it still.
+// When someone asks for motion that the kind can't loop, the page says what it does instead: it arrives.
 const WANTS_MOTION = /\b(?:animat\w*|moving|in motion)\b/iu;
 export const STILL_NOTE =
-  "This type doesn't keep moving, so here it is still. The ones that do: loops, funnels, state machines, queues, rollouts, loading and test results over time.";
+  "This type arrives, then holds to be read. Funnels, loops and queues keep moving.";
 const MAX_STRING = 160; // anything drawn in the figure
 const MAX_PROSE = 320; // title, intent and source: read, not drawn
 const MAX_REPLY = 12_000;
@@ -211,6 +211,7 @@ export function getSystemPrompt() {
     "Put the numbers the ask gives in data. When the ask gives none and the figure needs them, use plausible illustrative ones and start source with \"Illustrative:\". Never point data at a file.",
     "When the ask names real-world data without giving the numbers (the GDP of countries, a population), use rounded figures you are confident of, name the year in the title, and start source with \"Illustrative: approximate figures, check before use.\" Include only the items the ask names or implies: for a region, only the countries in it. Keep to at most eight rows.",
     "Write a short title and a one-sentence intent. Keep the drawing under 80 columns: short labels, at most about eight rows of data.",
+    "When the ask wants something highlighted, called out or emphasised (a drop-off, the slowest step, a failing row), add focus: {\"on\": [the row labels or column headings exactly as they will be drawn], \"tone\": \"problem\" or \"good\" or \"plain\", \"say\": one short sentence with the point}. Never add colours to the data. Keep focus from the current spec unless the ask changes it.",
     rules,
     read("reference/spec.md"),
     read("reference/live.md"),

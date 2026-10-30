@@ -292,7 +292,7 @@ test("says when an animate ask gets a still figure", () => {
   const still = readReply(JSON.stringify(board), "animate our roadmap");
   assert.equal(still.mode, "still");
   assert.equal(still.spec.motion, undefined);
-  assert.match(still.note, /doesn't keep moving/);
+  assert.match(still.note, /arrives, then holds to be read/);
   assert.equal(readReply(JSON.stringify(board), "our roadmap").note, undefined);
   const loop = { kind: "loop", title: "Week", source: "Illustrative.", data: { stages: ["Build", "QA"], back: { from: "QA", to: "Build", share: 0.3 } } };
   assert.equal(readReply(JSON.stringify(loop), "animate the loop").note, undefined);

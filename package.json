@@ -8,7 +8,7 @@
     "export:blocktype-wave": "node scripts/export-blocktype-wave-video.mjs",
     "sync:glyph-kit": "node scripts/sync-glyph-kit.mjs",
     "smoke:product-kit": "node scripts/product-systems-kit-smoke.mjs",
-    "verify": "node scripts/verify-site.mjs && node --test tests/contact-api.test.mjs tests/local-image-dimensions.test.mjs tests/private-work.test.mjs tests/glyph-kit-draw.test.mjs tests/glyph-kit-say.test.mjs",
+    "verify": "node scripts/verify-site.mjs && node --test tests/contact-api.test.mjs tests/local-image-dimensions.test.mjs tests/private-work.test.mjs tests/glyph-kit-draw.test.mjs tests/glyph-kit-feedback.test.mjs tests/glyph-kit-say.test.mjs",
     "check:fast": "npm run verify && npm run build",
     "check:browser": "node scripts/run-browser-check.mjs scripts/browser-contract.mjs",
     "check": "npm run check:fast && npm run check:browser",

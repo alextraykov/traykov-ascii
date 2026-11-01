@@ -23,25 +23,19 @@
     {
       "source": "/private/:privatePath*",
       "destination": "/api/private-work?action=route&privatePath=:privatePath*"
-    },
-    {
-      "source": "/glyph-kit",
-      "destination": "https://glyph-kit-zeta.vercel.app/glyph-kit/"
-    },
-    {
-      "source": "/glyph-kit/",
-      "destination": "https://glyph-kit-zeta.vercel.app/glyph-kit/"
-    },
-    {
-      "source": "/glyph-kit/:path*/",
-      "destination": "https://glyph-kit-zeta.vercel.app/glyph-kit/:path*/"
-    },
-    {
-      "source": "/glyph-kit/:path*",
-      "destination": "https://glyph-kit-zeta.vercel.app/glyph-kit/:path*"
     }
   ],
   "redirects": [
+    {
+      "source": "/glyph-kit",
+      "destination": "https://glyph-kit.traykov.cc/",
+      "permanent": true
+    },
+    {
+      "source": "/glyph-kit/:path(.*)",
+      "destination": "https://glyph-kit.traykov.cc/:path",
+      "permanent": true
+    },
     {
       "source": "/case-studies/pave-blueprint/",
       "destination": "/case-studies/pave-new-look/",

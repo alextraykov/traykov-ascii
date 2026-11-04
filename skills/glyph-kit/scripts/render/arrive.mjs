@@ -3,7 +3,7 @@
 // without JavaScript, under reduced motion and in print the figure is simply there.
 import { resolve } from "../registry.mjs";
 import { cellsOf } from "../arrive.mjs";
-import { paintLine } from "./paint.mjs";
+import { classify, paintLine, paintOptions } from "./paint.mjs";
 
 const STAMP = /^\s*SAMPLE DATA\s*$/;
 // Block cells step blank → ░ → ▒ → final, one step each; text snaps.
@@ -14,8 +14,9 @@ const layer = (run, glyph) => [...run].map((ch) => (STEPS.test(ch) ? glyph : " "
 // A run of block cells: ░ and ▒ layers sit on top of the final cells, each shown for one step, then
 // the final cells. The layers are hidden unless the figure is arriving, so nothing else ever sees them.
 // `under` keeps a scale visible (░ or ·) behind cells that haven't arrived yet.
-const stepped = (run, at, under) =>
-  `<span class="gk-s">${under ? `<span class="gk-s0" aria-hidden="true" style="--d:${at}ms">${paintLine(layer(run, under))}</span>` : ""}<span class="gk-s1" aria-hidden="true" style="--d:${at}ms">${paintLine(layer(run, "░"))}</span><span class="gk-s2" aria-hidden="true" style="--d:${at + STEP_MS}ms">${paintLine(layer(run, "▒"))}</span><span class="gk-a" style="--d:${at + 2 * STEP_MS}ms">${paintLine(run)}</span></span>`;
+// The layers are painted as what they show (░, ▒); only the final cells take the line's roles.
+const stepped = (run, at, under, { roles, ...layerOpts }) =>
+  `<span class="gk-s">${under ? `<span class="gk-s0" aria-hidden="true" style="--d:${at}ms">${paintLine(layer(run, under), layerOpts)}</span>` : ""}<span class="gk-s1" aria-hidden="true" style="--d:${at}ms">${paintLine(layer(run, "░"), layerOpts)}</span><span class="gk-s2" aria-hidden="true" style="--d:${at + STEP_MS}ms">${paintLine(layer(run, "▒"), layerOpts)}</span><span class="gk-a" style="--d:${at + 2 * STEP_MS}ms">${paintLine(run, { ...layerOpts, roles })}</span></span>`;
 
 /** The figure's lines as HTML, with arrival spans when the type has an order. */
 export function arriveLines(spec, text) {
@@ -25,26 +26,43 @@ export function arriveLines(spec, text) {
   let end = lines.length;
   if (STAMP.test(lines.at(-1) ?? "")) end = lines.length - 2;
   if (!def.arrive) return null;
+  const paintOpts = paintOptions(spec, text);
   const options = { ...spec.options, ...(spec.lang ? { lang: spec.lang } : {}) };
   const delay = def.arrive(lines.slice(0, end), def.data, options);
+  // A focus arrives last: one step after everything else has settled, then lands with the flash.
+  let last = 0;
+  if (paintOpts.mask) cellsOf(lines.slice(0, end)).forEach((cells, r) => cells.forEach(({ ch, col }) => ch !== " " && (last = Math.max(last, Math.round(delay(r, col, ch) ?? 0)))));
+  // The rest is pressed into 360ms: the focus lands at 480ms and its flash ends at 600ms, on the 40ms grid.
+  const squeeze = paintOpts.mask && last > 360 ? 360 / last : 1;
+  const snap = (ms) => Math.round(ms / STEP_MS) * STEP_MS;
+  const when = (r, col, ch) => {
+    const d = Math.max(0, Math.round(delay(r, col, ch) ?? 0));
+    if (!paintOpts.mask) return d;
+    return paintOpts.mask.get(r)?.has(col) ? snap(last * squeeze) + 120 : snap(d * squeeze);
+  };
   const html = cellsOf(lines).map((cells, r) => {
-    if (r >= end) return paintLine(lines[r]);
+    if (r >= end) return paintLine(lines[r], paintOpts);
     let out = "";
     let run = "";
     let at = 0;
-    const flush = () => {
-      if (run) out += !at ? paintLine(run) : !delay.exact && STEPS.test(run) && ![...run].every((ch) => ch === "▒" || ch === " ") ? stepped(run, at, delay.under) : `<span class="gk-a" style="--d:${at}ms">${paintLine(run)}</span>`;
+    let start = 0;
+    // Roles come from the whole line, so a word or a swatch split across runs keeps its colour.
+    const lineRoles = classify(lines[r], { ...paintOpts, row: r });
+    const flush = (col) => {
+      const opts = { ...paintOpts, roles: lineRoles.slice(start, col) };
+      if (run) out += !at ? paintLine(run, opts) : !delay.exact && STEPS.test(run) && ![...run].every((ch) => ch === "▒" || ch === " ") ? stepped(run, at, delay.under, opts) : `<span class="gk-a" style="--d:${at}ms">${paintLine(run, opts)}</span>`;
       run = "";
+      start = col;
     };
     for (const { ch, col } of cells) {
-      const d = ch === " " ? at : Math.max(0, Math.round(delay(r, col, ch) ?? 0));
+      const d = ch === " " ? at : when(r, col, ch);
       if (d !== at) {
-        flush();
+        flush(col);
         at = d;
       }
       run += ch;
     }
-    flush();
+    flush(Infinity);
     return out;
   });
   // Real-time orders (the motion types) are marked, so a page can offer to play them again.
@@ -60,7 +78,7 @@ export const ARRIVE_CSS = `${REPLAY_CSS}
 .is-waiting .gk-a{visibility:hidden}
 @keyframes gk-land{from{background:var(--gk-arrive-ink);color:var(--gk-arrive-paper)}to{background:transparent}}
 .is-arriving .gk-a{animation:gk-wait calc(var(--base,0ms) + var(--d)) steps(1,end)}
-.is-arriving .gk-a .gk-x,.is-arriving .gk-a .gk-d{animation:gk-land 120ms steps(1,end) calc(var(--base,0ms) + var(--d))}
+.is-arriving .gk-a .gk-x,.is-arriving .gk-a .gk-d,.is-arriving .gk-a .gk-ok{animation:gk-land 120ms steps(1,end) calc(var(--base,0ms) + var(--d))}
 @keyframes gk-gone{from,to{visibility:hidden}}
 .gk-s{position:relative}.gk-s0,.gk-s1,.gk-s2{position:absolute;left:0;top:0;visibility:hidden;user-select:none}
 .is-waiting .gk-s0{visibility:visible}.is-arriving .gk-s0{visibility:visible;animation:gk-gone 1ms steps(1,end) calc(var(--base,0ms) + var(--d)) forwards}

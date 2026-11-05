@@ -37,6 +37,16 @@
       "permanent": true
     },
     {
+      "source": "/labs/block-glyphs",
+      "destination": "/labs/glyph-kit/",
+      "permanent": true
+    },
+    {
+      "source": "/labs/block-glyphs/:path(.*)",
+      "destination": "/labs/glyph-kit/",
+      "permanent": true
+    },
+    {
       "source": "/case-studies/pave-blueprint/",
       "destination": "/case-studies/pave-new-look/",
       "permanent": true
